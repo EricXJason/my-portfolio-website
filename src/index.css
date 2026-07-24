@@ -292,3 +292,13 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   100% { opacity: 1; letter-spacing: normal; filter: blur(0); }
 }
 .animate-hero-title { animation: hero-title 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

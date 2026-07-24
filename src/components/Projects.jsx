@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { projectsData } from '../data/projectsData';
+import projectsData from '../data/projects.json';
 import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 

@@ -1,0 +1,57 @@
+{
+  "toeic": {
+    "score": "TOEIC 755",
+    "driveUrl": "https://drive.google.com/file/d/1VtJS1tH3Spu58gd_9dZMEEzTYeZcInlK/view?usp=sharing"
+  },
+  "driveFolderUrl": "https://drive.google.com/drive/folders/1cUZ24IncYkmTiAZAA1xbxjWp9Bu_jXS8?usp=sharing",
+  "zh": [
+    {
+      "group": "國家級技術士技能檢定",
+      "iconType": "languages",
+      "items": [
+        { "name": "丙級電腦輔助機械製圖技術士", "org": "勞動部國家技能檢定" },
+        { "name": "丙級電腦輔助立體製圖技術士", "org": "勞動部國家技能檢定" },
+        { "name": "丙級電腦硬體裝修技術士", "org": "勞動部國家技能檢定" }
+      ]
+    },
+    {
+      "group": "多媒體與軟體原廠國際認證",
+      "iconType": "box",
+      "items": [
+        { "name": "3dsMax ACU 國際認證", "org": "Autodesk Certified User" },
+        { "name": "AutoCAD ACU 國際認證", "org": "Autodesk Certified User" },
+        { "name": "ACP Photoshop 國際認證", "org": "Adobe Certified Professional" },
+        { "name": "ACP Dreamweaver 國際認證", "org": "Adobe Certified Professional" },
+        { "name": "ACP Flash 國際認證", "org": "Adobe Certified Professional" },
+        { "name": "MOS Access Expert 國際認證", "org": "Microsoft Office Specialist" },
+        { "name": "MOS Excel Expert 國際認證", "org": "Microsoft Office Specialist" },
+        { "name": "MOS Word Expert / PowerPoint 認證", "org": "Microsoft Office Specialist" }
+      ]
+    }
+  ],
+  "en": [
+    {
+      "group": "National Skill Licenses",
+      "iconType": "languages",
+      "items": [
+        { "name": "Level-C Computer Aided Drafting Technician", "org": "Ministry of Labor" },
+        { "name": "Level-C Computer Aided 3D Modeling Technician", "org": "Ministry of Labor" },
+        { "name": "Level-C Computer Hardware Maintenance Technician", "org": "Ministry of Labor" }
+      ]
+    },
+    {
+      "group": "Software Int'l Certifications",
+      "iconType": "box",
+      "items": [
+        { "name": "Autodesk 3dsMax ACU", "org": "Autodesk Certified User" },
+        { "name": "Autodesk AutoCAD ACU", "org": "Autodesk Certified User" },
+        { "name": "ACP Photoshop", "org": "Adobe Certified Professional" },
+        { "name": "ACP Dreamweaver", "org": "Adobe Certified Professional" },
+        { "name": "ACP Flash", "org": "Adobe Certified Professional" },
+        { "name": "MOS Access Expert", "org": "Microsoft Office Specialist" },
+        { "name": "MOS Excel Expert", "org": "Microsoft Office Specialist" },
+        { "name": "MOS Word Expert & PowerPoint", "org": "Microsoft Office Specialist" }
+      ]
+    }
+  ]
+}

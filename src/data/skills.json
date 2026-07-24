@@ -1,0 +1,84 @@
+{
+  "zh": [
+    {
+      "category": "【互動遊戲開發】",
+      "catColor": "#22d3ee",
+      "catType": "game",
+      "items": [
+        { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
+        { "label": "設計模式與架構", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
+        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / Editor Scripting / Saving System / AI Navigation / Cinemachine / DOTween / Timeline" },
+        { "label": "XR 實境開發", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
+        { "label": "多人連線開發", "rowType": "tech", "content": "Netcode / Photon Pun" }
+      ]
+    },
+    {
+      "category": "【全端開發】",
+      "catColor": "#c084fc",
+      "catType": "web",
+      "items": [
+        { "label": "後端程式語言", "rowType": "tech", "content": "Java / Python" },
+        { "label": "後端框架與技術", "rowType": "tech", "content": "Spring Boot / Hibernate / Flask / Django" },
+        { "label": "前端程式語言", "rowType": "tech", "content": "HTML / CSS / JavaScript / TypeScript" },
+        { "label": "前端框架與樣式", "rowType": "tech", "content": "React / Angular / SCSS / Tailwind / Bootstrap" },
+        { "label": "資料庫與服務", "rowType": "tech", "content": "MySQL / PostgreSQL" },
+        { "label": "雲端服務", "rowType": "tech", "content": "AWS / GCP" },
+        { "label": "開發與建構工具", "rowType": "tech", "content": "Git / Docker / Vite" },
+        { "label": "CI/CD 自動化", "rowType": "tech", "content": "GitHub Actions" }
+      ]
+    },
+    {
+      "category": "【多媒體設計】",
+      "catColor": "#34d399",
+      "catType": "media",
+      "items": [
+        { "label": "視覺設計與 UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
+        { "label": "AI 內容創作", "rowType": "tech", "content": "ChatGPT / Gemini / ComfyUI / Suno" },
+        { "label": "流程圖設計與文書", "rowType": "tech", "content": "draw.io / Word / Excel / PowerPoint" },
+        { "label": "影片剪輯與後製", "rowType": "tech", "content": "Premiere / DaVinci" },
+        { "label": "3D 建模與材質", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3dsMax / RizomUV / Zbrush / Substance Painter" }
+      ]
+    }
+  ],
+  "en": [
+    {
+      "category": "Interactive Game Dev",
+      "catColor": "#22d3ee",
+      "catType": "game",
+      "items": [
+        { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
+        { "label": "Design Patterns", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
+        { "label": "Core Tech", "rowType": "text", "content": "URP / Shader Graph / Addressables / Editor Scripting / Saving System / AI Navigation / Cinemachine / DOTween / Timeline" },
+        { "label": "XR Development", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
+        { "label": "Multiplayer Networking", "rowType": "tech", "content": "Netcode / Photon Pun" }
+      ]
+    },
+    {
+      "category": "Fullstack Web Dev",
+      "catColor": "#c084fc",
+      "catType": "web",
+      "items": [
+        { "label": "Backend Languages", "rowType": "tech", "content": "Java / Python" },
+        { "label": "Backend Frameworks", "rowType": "tech", "content": "Spring Boot / Hibernate / Flask / Django" },
+        { "label": "Frontend Languages", "rowType": "tech", "content": "HTML / CSS / JavaScript / TypeScript" },
+        { "label": "Frontend Frameworks", "rowType": "tech", "content": "React / Angular / SCSS / Tailwind / Bootstrap" },
+        { "label": "Databases", "rowType": "tech", "content": "MySQL / PostgreSQL" },
+        { "label": "Cloud Services", "rowType": "tech", "content": "AWS / GCP" },
+        { "label": "Dev & Build Tools", "rowType": "tech", "content": "Git / Docker / Vite" },
+        { "label": "CI/CD Automation", "rowType": "tech", "content": "GitHub Actions" }
+      ]
+    },
+    {
+      "category": "Multimedia Design",
+      "catColor": "#34d399",
+      "catType": "media",
+      "items": [
+        { "label": "Visual Design & UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
+        { "label": "AIGC Creation", "rowType": "tech", "content": "ChatGPT / Gemini / ComfyUI / Suno" },
+        { "label": "Flowcharts & Office", "rowType": "tech", "content": "draw.io / Word / Excel / PowerPoint" },
+        { "label": "Video Post-Production", "rowType": "tech", "content": "Premiere / DaVinci" },
+        { "label": "3D Modeling & Materials", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3dsMax / RizomUV / Zbrush / Substance Painter" }
+      ]
+    }
+  ]
+}

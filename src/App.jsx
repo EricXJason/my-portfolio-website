@@ -9,6 +9,7 @@ import { Projects } from './components/Projects';
 import { Certifications } from './components/Certifications';
 import { Education } from './components/Education';
 import { ArtGallery } from './components/ArtGallery';
+import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { CustomCursor } from './components/CustomCursor';
 import { BackToTop } from './components/BackToTop';
@@ -16,15 +17,15 @@ import { SideNav } from './components/SideNav';
 import { ScrollProgress } from './components/ScrollProgress';
 import { CyberParticles } from './components/CyberParticles';
 import { YoutubeModal } from './components/YoutubeModal';
+import { LangSelectModal } from './components/LangSelectModal';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
 
 function AppContent() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [soundPlaying, setSoundPlaying] = useState(false);
   const [soundVolume, setSoundVolume] = useState(0.3);
   const [ytModal, setYtModal] = useState({ open: false, videoId: '', title: '' });
 
-  // Sync volume → synth whenever slider changes
   useEffect(() => {
     setBGMVolume(soundVolume);
   }, [soundVolume]);
@@ -44,6 +45,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] relative transition-colors duration-300">
+
+      {/* Language Select Modal — renders on first visit */}
+      <LangSelectModal />
 
       {/* Fixed ambient mesh + particles */}
       <div className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-500"
@@ -72,6 +76,7 @@ function AppContent() {
         <Certifications />
         <Education />
         <ArtGallery />
+        <Contact />
       </main>
 
       <Footer lastUpdated="2026-07-24" />
