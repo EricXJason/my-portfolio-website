@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLang } from '../context/LangContext';
+import { Workflow } from 'lucide-react';
 
 // Official Tech Icons for Bottombar Display
 const TechIcons = {
@@ -38,6 +39,9 @@ const TechIcons = {
       <path d="M22.632 3.633L12.753 22.37a.89.89 0 01-1.564 0L1.368 3.633a.89.89 0 01.81-1.317h19.645a.89.89 0 01.809 1.317z"/>
     </svg>
   ),
+  githubActions: (
+    <Workflow className="w-4 h-4 shrink-0 text-[#2088FF]" />
+  )
 };
 
 // Clean Tech Badges without Version Numbers
@@ -49,6 +53,7 @@ const techBadges = [
   { name: 'JavaScript', icon: TechIcons.javascript },
   { name: 'React', icon: TechIcons.react },
   { name: 'Vite', icon: TechIcons.vite },
+  { name: 'GitHub Actions (CI/CD)', icon: TechIcons.githubActions },
 ];
 
 // Footer Component: Copyright Top & Clean Versionless Tech Badges Below
@@ -76,8 +81,8 @@ export const Footer = ({ lastUpdated }) => {
           </span>
         </div>
 
-        {/* BOTTOM ROW: Versionless Clean Tech Badges Directly Below Copyright */}
-        <div className="flex flex-wrap items-center justify-center gap-2 max-w-4xl mx-auto pt-2">
+        {/* BOTTOM ROW: Tech Badges with GitHub Actions CI/CD */}
+        <div className="flex flex-wrap items-center justify-center gap-2 max-w-5xl mx-auto pt-2">
           {techBadges.map((tech, idx) => (
             <div
               key={idx}

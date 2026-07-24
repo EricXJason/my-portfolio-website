@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Menu, X, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
 
 export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolume }) => {
-  const { toggleLang, t } = useLang();
+  const { lang, toggleLang, t } = useLang();
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
@@ -90,7 +90,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
         </nav>
 
         {/* Right Controls */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
 
           {/* Sound Button + Volume Slider Popup */}
           <div
@@ -122,7 +122,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
               }
             </button>
 
-            {/* Volume Popup — stays visible on slider hover too */}
+            {/* Volume Popup */}
             {showVolumePopup && (
               <div className="absolute top-full right-0 pt-2.5 z-50">
                 <div
@@ -153,37 +153,66 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
             )}
           </div>
 
-          {/* Theme Toggle */}
+          {/* ── Theme Toggle Switch ── */}
           <button
             onClick={toggleTheme}
-            className="p-2.5 rounded-xl border transition-all cursor-pointer"
+            className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer shadow-inner"
             style={{
-              backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
-              borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)',
+              backgroundColor: isLight ? '#e0f2fe' : '#0f172a',
+              borderColor: isLight ? '#bae6fd' : '#334155',
             }}
             aria-label="Toggle Theme"
             title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
           >
-            {isLight
-              ? <Moon size={18} style={{ color: '#4f46e5' }} />
-              : <Sun size={18} style={{ color: '#fbbf24' }} />
-            }
+            {/* Background Icons */}
+            <div className="absolute inset-0 px-1.5 flex items-center justify-between pointer-events-none text-xs">
+              <Sun size={13} className="text-amber-500" />
+              <Moon size={13} className="text-indigo-400" />
+            </div>
+
+            {/* Sliding Knob */}
+            <div
+              className="w-6 h-6 rounded-full shadow-md flex items-center justify-center transition-transform duration-300 z-10"
+              style={{
+                transform: isLight ? 'translateX(0px)' : 'translateX(24px)',
+                backgroundColor: isLight ? '#ffffff' : '#1e293b',
+                color: isLight ? '#f59e0b' : '#818cf8',
+              }}
+            >
+              {isLight ? <Sun size={13} /> : <Moon size={13} />}
+            </div>
           </button>
 
-          {/* Language Toggle */}
+          {/* ── Language Toggle Switch ── */}
           <button
             onClick={toggleLang}
-            className="px-3.5 py-2 rounded-xl border transition-all cursor-pointer font-code text-sm font-bold"
+            className="w-16 h-8 rounded-full border p-1 relative flex items-center justify-between transition-all cursor-pointer font-code text-xs font-bold"
             style={{
-              backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
-              borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)',
-              color: isLight ? '#0f172a' : '#f8fafc',
+              backgroundColor: isLight ? '#f1f5f9' : '#0f172a',
+              borderColor: isLight ? '#cbd5e1' : '#334155',
             }}
             aria-label="Switch Language"
+            title="Switch Language"
           >
-            <span style={{ color: isLight ? '#0369a1' : '#22d3ee' }}>EN</span>
-            <span className="mx-1" style={{ color: isLight ? '#94a3b8' : '#475569' }}>/</span>
-            <span>中</span>
+            {/* Background Track Labels */}
+            <span className="z-0 px-1.5" style={{ color: lang === 'en' ? 'transparent' : isLight ? '#64748b' : '#94a3b8' }}>
+              EN
+            </span>
+            <span className="z-0 px-1.5" style={{ color: lang === 'zh' ? 'transparent' : isLight ? '#64748b' : '#94a3b8' }}>
+              中
+            </span>
+
+            {/* Sliding Active Knob */}
+            <div
+              className="absolute top-1 left-1 w-7 h-6 rounded-full shadow-md flex items-center justify-center transition-transform duration-300 z-10"
+              style={{
+                transform: lang === 'zh' ? 'translateX(28px)' : 'translateX(0px)',
+                backgroundColor: '#06b6d4',
+                color: '#ffffff',
+              }}
+            >
+              {lang === 'en' ? 'EN' : '中'}
+            </div>
           </button>
 
           {/* Mobile Hamburger */}
