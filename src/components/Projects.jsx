@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects.json';
-import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video, Layout } from 'lucide-react';
+import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video, Layout, ExternalLink } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
 export const Projects = ({ onOpenYoutube }) => {
@@ -91,11 +91,16 @@ export const Projects = ({ onOpenYoutube }) => {
               >
                 {/* Left Side: 16:9 Preview */}
                 <div className="w-full lg:w-5/12 shrink-0 space-y-4">
-                  <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-950 shadow-xl border border-slate-800">
+                  {/* Click Video Thumbnail itself -> opens Modal Window */}
+                  <div
+                    onClick={() => onOpenYoutube(project.ytId, title)}
+                    className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-950 shadow-xl border border-slate-800 cursor-pointer group/video"
+                    title={lang === 'zh' ? '點擊播放展示影片' : 'Click to play demo video'}
+                  >
                     <img
                       src={getAssetUrl(project.image)}
                       alt={title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover group-hover/video:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" aria-hidden="true" />
 
@@ -107,26 +112,27 @@ export const Projects = ({ onOpenYoutube }) => {
                       </div>
                     )}
 
-                    {/* Play Video Button */}
-                    <button
-                      onClick={() => onOpenYoutube(project.ytId, title)}
-                      className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-xl shadow-red-600/50 group-hover:scale-110 transition-transform cursor-pointer"
-                      title="YouTube 播放展示"
-                      aria-label={`YouTube 播放展示: ${title}`}
+                    {/* Play Video Button Overlay */}
+                    <div
+                      className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-xl shadow-red-600/50 group-hover/video:scale-110 transition-transform"
+                      aria-hidden="true"
                     >
                       <Play size={22} className="ml-1 fill-white" />
-                    </button>
+                    </div>
                   </div>
 
-                  {/* YouTube Demo Action Button */}
+                  {/* YouTube Direct Link Button -> jumps directly to YouTube */}
                   <div>
-                    <button
-                      onClick={() => onOpenYoutube(project.ytId, title)}
+                    <a
+                      href={`https://www.youtube.com/watch?v=${project.ytId}`}
+                      target="_blank"
+                      rel="noreferrer"
                       className="w-full h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-code text-sm font-bold flex items-center justify-center gap-2 border border-red-500 shadow-md shadow-red-600/20 transition-all cursor-pointer"
                     >
                       <Video size={18} className="text-white" />
-                      <span>{lang === 'zh' ? 'YouTube 播放展示' : 'YouTube Demo'}</span>
-                    </button>
+                      <span>{lang === 'zh' ? 'YouTube 播放展示' : 'Watch on YouTube'}</span>
+                      <ExternalLink size={14} className="text-white/80 shrink-0" />
+                    </a>
                   </div>
                 </div>
 
