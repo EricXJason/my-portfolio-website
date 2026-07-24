@@ -95,6 +95,21 @@ export const CyberParticles = ({ soundPlaying }) => {
       {/* Canvas Layer for Particles */}
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
 
+      {/* Cybernetic Digital Grid (Dark Mode Overlay) */}
+      <div
+        className="absolute inset-0 dark:opacity-40 light:opacity-0 transition-opacity duration-500 pointer-events-none"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(6, 182, 212, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: '4rem 4rem',
+        }}
+      />
+
+      {/* Futuristic Sweeping Laser Beam (New Media Scanline Effect) */}
+      <div className="absolute inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent animate-cyber-scan pointer-events-none filter blur-[1px]" />
+
       {/* Light Mode Aurora Gradient Mesh Background */}
       <div className="light-aurora-bg absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none" />
     </div>

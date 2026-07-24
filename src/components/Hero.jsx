@@ -146,7 +146,7 @@ export const Hero = ({ soundPlaying }) => {
               borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)',
             }}
           >
-            <p className="text-sm sm:text-xl lg:text-2xl font-extrabold font-code tracking-wide bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 bg-clip-text text-transparent whitespace-nowrap">
+            <p className="text-sm sm:text-xl lg:text-2xl font-extrabold font-code tracking-wide bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent animate-shimmer-text whitespace-nowrap">
               {t('hero_subtitle_pc')}
             </p>
           </div>

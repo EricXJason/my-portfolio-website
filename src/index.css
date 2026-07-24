@@ -328,3 +328,25 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .animate-audio-ring {
   animation: audio-ring-pulse 2.2s ease-in-out infinite;
 }
+
+/* Shimmering Metallic / Neon Text Gradient */
+@keyframes shimmer-text {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-shimmer-text {
+  background-size: 200% auto !important;
+  animation: shimmer-text 5s ease infinite !important;
+}
+
+/* Futuristic Cyber Laser Scanline Beam */
+@keyframes cyber-scan {
+  0%   { transform: translateY(-100px); opacity: 0; }
+  15%  { opacity: 0.8; }
+  85%  { opacity: 0.8; }
+  100% { transform: translateY(105vh); opacity: 0; }
+}
+.animate-cyber-scan {
+  animation: cyber-scan 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
