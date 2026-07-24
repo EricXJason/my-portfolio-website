@@ -8,8 +8,8 @@
         { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
         { "label": "設計模式與架構", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
         { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / Editor Scripting / Saving System / AI Navigation / Cinemachine / DOTween / Timeline" },
-        { "label": "XR 實境開發", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
-        { "label": "多人連線開發", "rowType": "tech", "content": "Netcode / Photon Pun" }
+        { "label": "XR 實境開發", "rowType": "text", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
+        { "label": "多人連線開發", "rowType": "text", "content": "Netcode / Photon Pun" }
       ]
     },
     {
@@ -49,8 +49,8 @@
         { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
         { "label": "Design Patterns", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
         { "label": "Core Tech", "rowType": "text", "content": "URP / Shader Graph / Addressables / Editor Scripting / Saving System / AI Navigation / Cinemachine / DOTween / Timeline" },
-        { "label": "XR Development", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
-        { "label": "Multiplayer Networking", "rowType": "tech", "content": "Netcode / Photon Pun" }
+        { "label": "XR Development", "rowType": "text", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
+        { "label": "Multiplayer Networking", "rowType": "text", "content": "Netcode / Photon Pun" }
       ]
     },
     {

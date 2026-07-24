@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLang } from '../context/LangContext';
+import { useTheme } from '../context/ThemeContext';
 import { GraduationCap, ExternalLink, FileText, CheckCircle2, Gamepad2, Video, Box, Code } from 'lucide-react';
 
 const driveLinks = {
@@ -12,7 +13,7 @@ const driveLinks = {
   thesis2: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
 };
 
-// Bilingual Verbatim Workshops Dataset Sourced 100% from Data.txt
+// Workshops Dataset
 const workshopsData = {
   zh: [
     {
@@ -22,7 +23,7 @@ const workshopsData = {
       icon: <Gamepad2 size={20} className="text-cyan-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "專業內容與技能學習：",
-      btnText: "研習證明 (Google Drive)",
+      btnText: "檢視研習證明",
       skills: [
         "掌握 Unreal Engine 遊戲引擎基礎架構與開發流程，熟悉核心機制運作。",
         "研習 Blueprint 開發邏輯，具備遊戲互動事件與邏輯控制之編程能力。",
@@ -37,7 +38,7 @@ const workshopsData = {
       icon: <Video size={20} className="text-purple-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "專業內容與技能學習：",
-      btnText: "研習證明 (Google Drive)",
+      btnText: "檢視研習證明",
       skills: [
         "學習 VRoid Studio，掌握從角色設定到即時動態呈現之完整流程。",
         "熟悉 動作捕捉系統 之設備操作、數據錄製與虛擬角色骨骼驅動應用。",
@@ -51,7 +52,7 @@ const workshopsData = {
       icon: <Box size={20} className="text-emerald-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "專業內容與技能學習：",
-      btnText: "研習證明 (Google Drive)",
+      btnText: "檢視研習證明",
       skills: [
         "接受為期 18 週之次世代遊戲美術產業實戰培訓，深入學習 PBR 標準開發流程。",
         "掌握高低模製作、烘焙、拆 UV 等精密建模技術。",
@@ -65,13 +66,13 @@ const workshopsData = {
       icon: <Code size={20} className="text-amber-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "專業內容與技能學習：",
-      btnText: "研習證明 (Google Drive)",
+      btnText: "檢視研習證明",
       skills: [
-        "AI 賦能與開發流程：運用 AI 工具（如 Large Language Model API、Prompt 提示詞工程）輔助系統分析、生成測試代碼與 Code Review，提升開發效率。",
-        "前端技術與框架：掌握 HTML5/CSS3、JavaScript/TypeScript、Bootstrap 及 Angular 框架，實現模組化組件開發、RxJS 響應式編程與 RESTful API 串接。",
-        "後端開發與微服務：熟練 Java 物件導向程式設計（OOP）、JUnit 單元測試，並運用 Spring Boot、Spring MVC、Spring Data JPA 與 Hibernate 打造 RESTful API 及微服務架構。",
-        "資料庫與資安實務：具備 ER Model 資料庫設計、MySQL/SQL 語法優化、JDBC 整合及資訊安全防護（防止 SQL Injection、XSS、CSRF）實作經驗。",
-        "專案管理與團隊實作：使用 Git/GitHub 進行版本控制與 CI/CD 流程構建，並透過企業真實需求團隊專案完成從需求分析、系統設計到上線部署之全端開發。"
+        "AI 賦能與開發流程：運用 AI 工具輔助系統分析、生成測試代碼與 Code Review，提升開發效率。",
+        "前端技術與框架：掌握 HTML5/CSS3、JavaScript/TypeScript、Bootstrap 及 Angular 框架。",
+        "後端開發與微服務：運用 Java OOP、Spring Boot、Hibernate 打造 RESTful API 及微服務架構。",
+        "資料庫與資安實務：具備 ER Model 設計、MySQL/SQL 語法優化及資訊安全防護實作經驗。",
+        "專案管理與團隊實作：使用 Git/GitHub 進行版本控制與 CI/CD 流程構建。"
       ]
     }
   ],
@@ -83,7 +84,7 @@ const workshopsData = {
       icon: <Gamepad2 size={20} className="text-cyan-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "Skills & Content Mastered:",
-      btnText: "Workshop Proof (Drive)",
+      btnText: "View Proof",
       skills: [
         "Mastered Unreal Engine core architecture, event logic, and game dev pipelines.",
         "Studied Blueprint programming for interactive events, state flows, and logic control.",
@@ -98,7 +99,7 @@ const workshopsData = {
       icon: <Video size={20} className="text-purple-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "Skills & Content Mastered:",
-      btnText: "Workshop Proof (Drive)",
+      btnText: "View Proof",
       skills: [
         "Learned VRoid Studio for character modeling, texture mapping, and real-time rendering.",
         "Operated optical motion capture hardware, bone rigging, and live avatar tracking.",
@@ -112,7 +113,7 @@ const workshopsData = {
       icon: <Box size={20} className="text-emerald-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "Skills & Content Mastered:",
-      btnText: "Workshop Proof (Drive)",
+      btnText: "View Proof",
       skills: [
         "Completed 18 weeks of AAA game art production training adhering to PBR standards.",
         "Mastered high-to-low poly baking, UV unwrapping, topology optimization, and texturing.",
@@ -126,7 +127,7 @@ const workshopsData = {
       icon: <Code size={20} className="text-amber-400" />,
       driveLink: "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
       skillsHeader: "Skills & Content Mastered:",
-      btnText: "Workshop Proof (Drive)",
+      btnText: "View Proof",
       skills: [
         "AI-Enabled Workflow: Leveraged LLM APIs and prompt engineering for code review and automated unit tests.",
         "Frontend Engineering: Mastered HTML5/CSS3, TypeScript, Bootstrap, and Angular with RxJS and REST APIs.",
@@ -140,20 +141,20 @@ const workshopsData = {
 
 export const Education = () => {
   const { t, lang } = useLang();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const currentWorkshops = workshopsData[lang] ?? workshopsData.zh;
+
+  const btnBg = isLight ? '#ffffff' : '#0f172a';
+  const btnBdr = isLight ? '#cbd5e1' : '#334155';
 
   return (
     <section id="experience" className="py-24 relative select-text">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
 
-        {/* 1. Academic Journey Section Header */}
+        {/* 1. Education Section Header */}
         <div>
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-2">
-            {lang === 'en' && (
-              <span className="text-xs font-code text-cyan-400 tracking-widest uppercase block mb-1">
-                {t('exp_subtitle')}
-              </span>
-            )}
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
               {t('exp_title')}
             </h2>
@@ -168,7 +169,7 @@ export const Education = () => {
             
             {/* Master Degree Card */}
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-4 shadow-md">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 pb-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/40 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="p-3 rounded-xl bg-cyan-500/10 text-cyan-400">
                     <GraduationCap size={24} />
@@ -186,13 +187,14 @@ export const Education = () => {
                 {t('edu_master_desc')}
               </p>
 
-              {/* Drive Action Buttons */}
+              {/* Master Proof Action Buttons */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <a
                   href={driveLinks.masterCert}
                   target="_blank"
                   rel="noreferrer"
-                  className="h-11 px-5 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-700 light:border-slate-300 hover:border-cyan-400 text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  className="h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                 >
                   <ExternalLink size={14} className="text-cyan-400" />
                   <span>{t('btn_certificate')}</span>
@@ -201,7 +203,8 @@ export const Education = () => {
                   href={driveLinks.transcript}
                   target="_blank"
                   rel="noreferrer"
-                  className="h-11 px-5 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-700 light:border-slate-300 hover:border-cyan-400 text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  className="h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                 >
                   <ExternalLink size={14} className="text-cyan-400" />
                   <span>{t('btn_transcript')}</span>
@@ -211,7 +214,7 @@ export const Education = () => {
 
             {/* Bachelor Degree Card */}
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-4 shadow-md">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 pb-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/40 pb-4">
                 <div className="flex items-center gap-3">
                   <div className="p-3 rounded-xl bg-purple-500/10 text-purple-400">
                     <GraduationCap size={24} />
@@ -229,22 +232,34 @@ export const Education = () => {
                 {t('edu_bachelor_desc')}
               </p>
 
-              {/* Drive Action Buttons */}
+              {/* Bachelor Proof Action Buttons — All 3 buttons present */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
                 <a
                   href={driveLinks.bachelorCert}
                   target="_blank"
                   rel="noreferrer"
-                  className="h-11 px-5 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-700 light:border-slate-300 hover:border-purple-400 text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  className="h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                 >
                   <ExternalLink size={14} className="text-purple-400" />
                   <span>{t('btn_certificate')}</span>
                 </a>
                 <a
+                  href={driveLinks.transcript}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  style={{ backgroundColor: btnBg, borderColor: btnBdr }}
+                >
+                  <ExternalLink size={14} className="text-purple-400" />
+                  <span>{t('btn_transcript')}</span>
+                </a>
+                <a
                   href={driveLinks.ranking}
                   target="_blank"
                   rel="noreferrer"
-                  className="h-11 px-5 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-700 light:border-slate-300 hover:border-purple-400 text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  className="h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs"
+                  style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                 >
                   <ExternalLink size={14} className="text-purple-400" />
                   <span>{t('btn_ranking')}</span>
@@ -267,9 +282,9 @@ export const Education = () => {
           <div className="space-y-6">
             {currentWorkshops.map((ws, wIdx) => (
               <div key={wIdx} className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-4 shadow-md">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 pb-3">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-slate-100 border border-slate-700 light:border-slate-300">
+                    <div className="p-2.5 rounded-xl border" style={{ backgroundColor: btnBg, borderColor: btnBdr }}>
                       {ws.icon}
                     </div>
                     <div>
@@ -282,12 +297,12 @@ export const Education = () => {
                     </div>
                   </div>
 
-                  {/* Individual Drive Button */}
                   <a
                     href={ws.driveLink}
                     target="_blank"
                     rel="noreferrer"
-                    className="h-10 px-4 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-700 light:border-slate-300 hover:border-cyan-400 text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs shrink-0"
+                    className="h-10 px-4 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs shrink-0"
+                    style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                   >
                     <ExternalLink size={14} className="text-cyan-400" />
                     <span>{ws.btnText}</span>
@@ -325,7 +340,7 @@ export const Education = () => {
             
             {/* Thesis 1 */}
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-3 shadow-md">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
                 <div className="flex items-center gap-2">
                   <FileText size={20} className="text-cyan-400 shrink-0" />
                   <h4 className="font-extrabold text-lg sm:text-xl text-[var(--text-main)]">
@@ -344,7 +359,8 @@ export const Education = () => {
                   href={driveLinks.thesis1}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-700 light:border-slate-300 hover:border-cyan-400 text-xs font-bold text-[var(--text-main)] transition-colors shadow-xs"
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors shadow-xs"
+                  style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                 >
                   <ExternalLink size={14} className="text-cyan-400" />
                   <span>{t('btn_view_paper')}</span>
@@ -354,7 +370,7 @@ export const Education = () => {
 
             {/* Thesis 2 */}
             <div className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-3 shadow-md">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/80 dark:border-slate-800/80 light:border-slate-200 pb-3">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
                 <div className="flex items-center gap-2">
                   <FileText size={20} className="text-purple-400 shrink-0" />
                   <h4 className="font-extrabold text-lg sm:text-xl text-[var(--text-main)]">
@@ -373,7 +389,8 @@ export const Education = () => {
                   href={driveLinks.thesis2}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-700 light:border-slate-300 hover:border-purple-400 text-xs font-bold text-[var(--text-main)] transition-colors shadow-xs"
+                  className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors shadow-xs"
+                  style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                 >
                   <ExternalLink size={14} className="text-purple-400" />
                   <span>{t('btn_view_paper')}</span>

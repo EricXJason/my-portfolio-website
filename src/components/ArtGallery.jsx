@@ -1,21 +1,21 @@
 import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
-import { Palette, X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
-// Multimedia Artworks Dataset
+// Reorganized Multimedia Artworks Dataset
 const artGalleryData = [
-  // 3D Environments
-  { id: '3d-scene-01', cat: '3d-scene', img: '/assets/gallery/3d-scene-01.jpg' },
-  { id: '3d-scene-02', cat: '3d-scene', img: '/assets/gallery/3d-scene-02.jpg' },
-  { id: '3d-scene-03', cat: '3d-scene', img: '/assets/gallery/3d-scene-03.jpg' },
+  // 3D Environments & Scenes
+  { id: '3d-scene-01', cat: '3d-scene', img: '/assets/gallery/3d-scene/01.jpg' },
+  { id: '3d-scene-02', cat: '3d-scene', img: '/assets/gallery/3d-scene/02.jpg' },
+  { id: '3d-scene-03', cat: '3d-scene', img: '/assets/gallery/3d-scene/03.jpg' },
 
   // 3D Props & Assets
-  { id: '3d-prop-01', cat: '3d-prop', img: '/assets/gallery/3d-prop-01.jpg' },
-  { id: '3d-prop-02', cat: '3d-prop', img: '/assets/gallery/3d-prop-02.jpg' },
-  { id: '3d-prop-03', cat: '3d-prop', img: '/assets/gallery/3d-prop-03.jpg' },
-  { id: '3d-prop-04', cat: '3d-prop', img: '/assets/gallery/3d-prop-04.jpg' },
-  { id: '3d-prop-05', cat: '3d-prop', img: '/assets/gallery/3d-prop-05.jpg' },
+  { id: '3d-prop-01', cat: '3d-prop', img: '/assets/gallery/3d-prop/01.jpg' },
+  { id: '3d-prop-02', cat: '3d-prop', img: '/assets/gallery/3d-prop/02.jpg' },
+  { id: '3d-prop-03', cat: '3d-prop', img: '/assets/gallery/3d-prop/03.jpg' },
+  { id: '3d-prop-04', cat: '3d-prop', img: '/assets/gallery/3d-prop/04.jpg' },
+  { id: '3d-prop-05', cat: '3d-prop', img: '/assets/gallery/3d-prop/05.jpg' },
 
   // 2D Fine Sketches
   { id: 'sketch-01', cat: 'sketch', img: '/assets/gallery/sketch/01.jpg' },
@@ -69,14 +69,6 @@ export const ArtGallery = () => {
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-2">
-          {lang === 'en' && (
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-purple-500/30 bg-purple-500/10 mb-2">
-              <Palette size={14} className="text-purple-400" />
-              <span className="text-xs font-code text-purple-600 dark:text-purple-300 tracking-widest uppercase">
-                {t('gallery_subtitle')}
-              </span>
-            </div>
-          )}
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('gallery_title')}
           </h2>
@@ -139,7 +131,11 @@ export const ArtGallery = () => {
               onClick={() => setIsExpanded(!isExpanded)}
               className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 light:border-slate-300 hover:border-purple-500 text-[var(--text-main)] font-bold text-sm transition-all shadow-md inline-flex items-center gap-2 cursor-pointer"
             >
-              <span>{isExpanded ? (lang === 'zh' ? '收起美術作品' : 'Collapse Gallery') : (lang === 'zh' ? `檢視更多美術作品 (${filteredArt.length - 4})` : `View More Artworks (${filteredArt.length - 4})`)}</span>
+              <span>
+                {isExpanded
+                  ? (lang === 'zh' ? '收起美術作品' : 'Collapse Gallery')
+                  : (lang === 'zh' ? `檢視更多美術作品 (${filteredArt.length - 4})` : `View More Artworks (${filteredArt.length - 4})`)}
+              </span>
               {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
             </button>
           </div>

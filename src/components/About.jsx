@@ -1,18 +1,16 @@
 import React from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Award, GraduationCap, Briefcase, ExternalLink } from 'lucide-react';
+import { Award, GraduationCap, Briefcase } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
-const toeicProofLink = "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing";
-
 export const About = () => {
-  const { t, lang } = useLang();
+  const { t } = useLang();
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
   const statIconBg = isLight ? '#f1f5f9' : 'rgba(15,23,42,0.8)';
-  const statIconBdr = isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)';
+  const statIconBdr = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.08)';
 
   return (
     <section id="about" className="py-24 relative select-text">
@@ -20,11 +18,6 @@ export const About = () => {
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-2">
-          {lang === 'en' && (
-            <span className="text-xs font-code text-cyan-400 tracking-widest uppercase block mb-1">
-              {t('about_subtitle')}
-            </span>
-          )}
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('about_title')}
           </h2>
@@ -37,15 +30,15 @@ export const About = () => {
         {/* Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
 
-          {/* Portrait */}
+          {/* Portrait Image */}
           <div className="lg:col-span-5 flex justify-center">
             <div className="relative group max-w-sm w-full">
-              <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 opacity-40 group-hover:opacity-80 blur-lg transition-all duration-500" aria-hidden="true" />
-              <div className="relative rounded-3xl overflow-hidden glass-card border-2 border-cyan-500/30 p-2.5 shadow-2xl">
+              <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 opacity-30 group-hover:opacity-70 blur-lg transition-all duration-500" aria-hidden="true" />
+              <div className="relative rounded-3xl overflow-hidden glass-card border-2 border-cyan-500/30 p-2 shadow-2xl">
                 <div className="aspect-square w-full rounded-2xl overflow-hidden shadow-inner"
-                  style={{ backgroundColor: isLight ? '#f1f5f9' : '#030712' }}>
+                  style={{ backgroundColor: isLight ? '#ffffff' : '#030712' }}>
                   <img
-                    src={getAssetUrl('/assets/images/personal-01.jpg')}
+                    src={getAssetUrl('/assets/images/personal.jpg')}
                     alt="Che-Cheng Hsu Portrait"
                     className="w-full h-full object-cover object-[center_18%] group-hover:scale-105 transition-transform duration-700"
                   />
@@ -54,7 +47,7 @@ export const About = () => {
             </div>
           </div>
 
-          {/* Bio + Stats */}
+          {/* Bio + Achievement Stats */}
           <div className="lg:col-span-7 space-y-8">
 
             <div className="space-y-4">
@@ -66,10 +59,10 @@ export const About = () => {
               </p>
             </div>
 
-            {/* Achievement Stats */}
+            {/* Achievement Stats — 3 Statistic Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
 
-              <div className="glass-card p-4 rounded-2xl space-y-2">
+              <div className="glass-card p-4 rounded-2xl space-y-2 border border-[var(--border-color)]">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
                     <GraduationCap size={18} style={{ color: '#22d3ee' }} />
@@ -79,7 +72,7 @@ export const About = () => {
                 <p className="text-xs text-[var(--text-sub)]">{t('stat_exp_label')}</p>
               </div>
 
-              <div className="glass-card p-4 rounded-2xl space-y-2">
+              <div className="glass-card p-4 rounded-2xl space-y-2 border border-[var(--border-color)]">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
                     <Briefcase size={18} style={{ color: '#c084fc' }} />
@@ -89,7 +82,8 @@ export const About = () => {
                 <p className="text-xs text-[var(--text-sub)]">{t('stat_projects_label')}</p>
               </div>
 
-              <div className="glass-card p-4 rounded-2xl space-y-2">
+              {/* TOEIC — Score statistics card (no drive proof button) */}
+              <div className="glass-card p-4 rounded-2xl space-y-2 border border-[var(--border-color)]">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
                     <Award size={18} style={{ color: '#fbbf24' }} />
@@ -99,32 +93,6 @@ export const About = () => {
                 <p className="text-xs text-[var(--text-sub)]">{t('stat_toeic_label')}</p>
               </div>
 
-            </div>
-
-            {/* TOEIC Button */}
-            <div className="pt-2">
-              <a
-                href={toeicProofLink}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-2 h-12 px-6 rounded-xl border-2 font-code text-sm font-bold transition-all cursor-pointer"
-                style={{
-                  backgroundColor: isLight ? '#ffffff' : '#0f172a',
-                  borderColor: isLight ? '#e2e8f0' : '#334155',
-                  color: isLight ? '#0f172a' : '#f8fafc',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = '#fbbf24';
-                  e.currentTarget.style.color = '#f59e0b';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = isLight ? '#e2e8f0' : '#334155';
-                  e.currentTarget.style.color = isLight ? '#0f172a' : '#f8fafc';
-                }}
-              >
-                <ExternalLink size={16} style={{ color: '#fbbf24' }} />
-                <span>{t('btn_toeic_proof')}</span>
-              </a>
             </div>
 
           </div>

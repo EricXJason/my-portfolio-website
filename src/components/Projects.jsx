@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects.json';
-import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video } from 'lucide-react';
+import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video, Layout } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
-// Projects Component: Single YouTube Demo Button & Vertically Centered Alignment (items-center)
 export const Projects = ({ onOpenYoutube }) => {
   const { t, lang } = useLang();
   const { theme } = useTheme();
@@ -19,6 +18,7 @@ export const Projects = ({ onOpenYoutube }) => {
   const filters = [
     { key: 'all', label: t('cat_all'), icon: <Layers size={16} /> },
     { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={16} /> },
+    { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={16} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={16} /> },
   ];
 
@@ -28,11 +28,6 @@ export const Projects = ({ onOpenYoutube }) => {
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-2">
-          {lang === 'en' && (
-            <span className="text-xs font-code text-cyan-400 tracking-widest uppercase block mb-1">
-              {t('projects_subtitle')}
-            </span>
-          )}
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('projects_title')}
           </h2>
@@ -62,24 +57,26 @@ export const Projects = ({ onOpenYoutube }) => {
           ))}
         </div>
 
-        {/* Fullstack Web Empty State Notice */}
+        {/* Frontend / Fullstack Web Development Info Notice */}
         {filteredProjects.length === 0 && (
-          <div className="p-12 rounded-2xl glass-card text-center max-w-2xl mx-auto space-y-4 border border-slate-800 dark:border-slate-800 light:border-slate-300 shadow-lg">
+          <div className="p-8 sm:p-12 rounded-2xl glass-card text-center max-w-2xl mx-auto space-y-4 border border-slate-800 dark:border-slate-800 light:border-slate-300 shadow-lg">
             <div className="w-16 h-16 rounded-2xl bg-cyan-500/10 text-cyan-400 flex items-center justify-center mx-auto">
               <Sparkles size={32} className="animate-pulse" />
             </div>
             <h3 className="text-xl font-bold text-[var(--text-main)]">
-              {lang === 'zh' ? '全端開發實力展示' : 'Fullstack Development Expertise'}
+              {filter === 'frontend'
+                ? (lang === 'zh' ? '前端網頁開發實力展示' : 'Frontend Development Showcase')
+                : (lang === 'zh' ? '全端開發實力展示' : 'Fullstack Development Showcase')}
             </h3>
             <p className="text-sm sm:text-base text-[var(--text-sub)] leading-relaxed">
               {lang === 'zh'
-                ? '個人專案作品主要聚焦於 3D/VR/AR 互動遊戲與國科會計畫。本個人作品集網站即為採用 React、Vite、Java Spring Boot API、Sass/SCSS 與 Tailwind CSS 所獨立開發打造之個人全端網站專案展示。'
-                : 'Project portfolio primarily focuses on 3D/VR/AR interactive games and NSTC research projects. This portfolio website serves as an authentic fullstack showcase built with React, Vite, Spring Boot, Sass, and Tailwind CSS.'}
+                ? '個人專案作品主要聚焦於 3D/VR/AR 互動遊戲與國科會計畫。本個人作品集網站即為採用 React、Vite、Java Spring Boot API、Sass/SCSS 與 Tailwind CSS 所獨立開發打造之個人前端與全端網站專案展示。'
+                : 'Project portfolio primarily focuses on 3D/VR/AR interactive games and NSTC research projects. This portfolio website serves as an authentic frontend & fullstack showcase built with React, Vite, Spring Boot, Sass, and Tailwind CSS.'}
             </p>
           </div>
         )}
 
-        {/* Full-Width Horizontal Rows List: Vertically Centered (items-center) */}
+        {/* Project Card Rows */}
         <div className="space-y-8">
           {filteredProjects.map((project) => {
             const title = lang === 'zh' ? project.title : project.title_en;
@@ -121,7 +118,7 @@ export const Projects = ({ onOpenYoutube }) => {
                     </button>
                   </div>
 
-                  {/* Single Unified Action Button: YouTube Demo Showcase */}
+                  {/* YouTube Demo Action Button */}
                   <div>
                     <button
                       onClick={() => onOpenYoutube(project.ytId, title)}

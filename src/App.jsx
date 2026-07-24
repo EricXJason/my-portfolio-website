@@ -9,7 +9,6 @@ import { Projects } from './components/Projects';
 import { Certifications } from './components/Certifications';
 import { Education } from './components/Education';
 import { ArtGallery } from './components/ArtGallery';
-import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { CustomCursor } from './components/CustomCursor';
 import { BackToTop } from './components/BackToTop';
@@ -69,17 +68,16 @@ function AppContent() {
       <SideNav />
 
       <main className="relative z-10">
-        <Hero />
+        <Hero soundPlaying={soundPlaying} />
         <About />
         <Skills />
         <Projects onOpenYoutube={handleOpenYoutube} />
         <Certifications />
         <Education />
         <ArtGallery />
-        <Contact />
       </main>
 
-      <Footer lastUpdated="2026-07-24" />
+      <Footer lastUpdated="2026-07-25" />
       <BackToTop />
 
       <YoutubeModal

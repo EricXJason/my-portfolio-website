@@ -25,7 +25,8 @@
         { "name": "ACP Flash 國際認證", "org": "Adobe Certified Professional" },
         { "name": "MOS Access Expert 國際認證", "org": "Microsoft Office Specialist" },
         { "name": "MOS Excel Expert 國際認證", "org": "Microsoft Office Specialist" },
-        { "name": "MOS Word Expert / PowerPoint 認證", "org": "Microsoft Office Specialist" }
+        { "name": "MOS Word Expert 國際認證", "org": "Microsoft Office Specialist" },
+        { "name": "MOS PowerPoint 國際認證", "org": "Microsoft Office Specialist" }
       ]
     }
   ],
@@ -50,7 +51,8 @@
         { "name": "ACP Flash", "org": "Adobe Certified Professional" },
         { "name": "MOS Access Expert", "org": "Microsoft Office Specialist" },
         { "name": "MOS Excel Expert", "org": "Microsoft Office Specialist" },
-        { "name": "MOS Word Expert & PowerPoint", "org": "Microsoft Office Specialist" }
+        { "name": "MOS Word Expert", "org": "Microsoft Office Specialist" },
+        { "name": "MOS PowerPoint Expert", "org": "Microsoft Office Specialist" }
       ]
     }
   ]

@@ -14,8 +14,8 @@ const externalLinks = {
   artstation: 'https://www.artstation.com/ericxjason',
 };
 
-export const Hero = () => {
-  const { t } = useLang();
+export const Hero = ({ soundPlaying }) => {
+  const { t, lang } = useLang();
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [copiedKey, setCopiedKey] = useState(null);
@@ -27,13 +27,43 @@ export const Hero = () => {
   };
 
   /* Theme-aware style tokens */
-  const cardBg     = isLight ? '#ffffff' : 'rgba(15,23,42,0.65)';
-  const cardBdr    = isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)';
-  const copyBtnCol = isLight ? '#94a3b8' : '#64748b';
+  const cardBg     = isLight ? '#ffffff' : 'rgba(15,23,42,0.7)';
+  const cardBdr    = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)';
+  const copyBtnCol = isLight ? '#64748b' : '#94a3b8';
 
-  const iconCyan    = isLight ? 'rgba(6,182,212,0.09)'   : 'rgba(6,182,212,0.14)';
-  const iconPurple  = isLight ? 'rgba(124,58,237,0.07)'  : 'rgba(168,85,247,0.14)';
-  const iconEmerald = isLight ? 'rgba(16,185,129,0.08)'  : 'rgba(16,185,129,0.14)';
+  const iconCyan    = isLight ? 'rgba(6,182,212,0.1)'   : 'rgba(6,182,212,0.15)';
+  const iconPurple  = isLight ? 'rgba(124,58,237,0.08)'  : 'rgba(168,85,247,0.15)';
+  const iconEmerald = isLight ? 'rgba(16,185,129,0.09)'  : 'rgba(16,185,129,0.15)';
+
+  const contactList = [
+    {
+      key: 'phone',
+      labelZh: '電話',
+      labelEn: 'PHONE',
+      value: contactInfo.phone,
+      Icon: Phone,
+      color: '#06b6d4',
+      bgColor: iconCyan,
+    },
+    {
+      key: 'email',
+      labelZh: 'Email',
+      labelEn: 'EMAIL',
+      value: contactInfo.email,
+      Icon: Mail,
+      color: '#a855f7',
+      bgColor: iconPurple,
+    },
+    {
+      key: 'line',
+      labelZh: 'LINE ID',
+      labelEn: 'LINE ID',
+      value: contactInfo.line,
+      Icon: MessageSquare,
+      color: '#10b981',
+      bgColor: iconEmerald,
+    },
+  ];
 
   return (
     <section
@@ -66,15 +96,41 @@ export const Hero = () => {
             <span className="truncate">{t('hero_badge_spec')}</span>
           </div>
 
-          {/* Hero Name Title */}
-          <h1
-            className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight cursor-default"
-            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-          >
-            <span className="inline-block hover:scale-105 transition-transform duration-300">
-              {t('hero_title')}
-            </span>
-          </h1>
+          {/* Hero Name Title with Circular Interactive <JP/> Logo Badge */}
+          <div className="flex items-center justify-center gap-4 flex-wrap">
+            <h1
+              className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight cursor-default"
+              style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+            >
+              <span className="inline-block hover:scale-105 transition-transform duration-300">
+                {t('hero_title')}
+              </span>
+            </h1>
+
+            {/* Circular Interactive Logo Badge */}
+            <div
+              className={`relative group cursor-pointer transition-transform duration-300 hover:scale-110 ${
+                soundPlaying ? 'animate-bounce' : ''
+              }`}
+              title={soundPlaying ? 'BGM Playing' : 'JasonProduction Logo'}
+            >
+              {/* Outer pulsing ring when music plays */}
+              {soundPlaying && (
+                <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-ping opacity-60 pointer-events-none" />
+              )}
+              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-lg group-hover:shadow-cyan-500/40">
+                <div
+                  className="w-full h-full rounded-full flex items-center justify-center font-mono font-extrabold text-xs sm:text-sm tracking-wider"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : '#030712',
+                    color: isLight ? '#0369a1' : '#22d3ee',
+                  }}
+                >
+                  &lt;JP/&gt;
+                </div>
+              </div>
+            </div>
+          </div>
 
           {/* Specialty Subtitle Pill */}
           <div
@@ -138,76 +194,61 @@ export const Hero = () => {
             </a>
           </div>
 
-          {/* ── Contact Info Cards Section (Guaranteed Full Display & Zero Truncation) ── */}
+          {/* ── 3 Contact Info Cards (Guaranteed Full Display & Copy Button Always Visible) ── */}
           <div className="w-full max-w-4xl mt-2">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
-              
-              {/* Phone Card */}
-              <div
-                className="flex items-stretch rounded-2xl border overflow-hidden shadow-xs"
-                style={{ backgroundColor: cardBg, borderColor: cardBdr }}
-              >
-                <div className="shrink-0 flex items-center justify-center w-12" style={{ backgroundColor: iconCyan }}>
-                  <Phone size={16} style={{ color: '#06b6d4' }} />
-                </div>
-                <div className="flex-1 py-3 px-3.5 text-left">
-                  <p className="text-[10px] font-code font-bold uppercase tracking-widest mb-0.5" style={{ color: '#64748b' }}>Phone</p>
-                  <p className="text-sm font-bold font-code whitespace-nowrap" style={{ color: 'var(--text-main)' }}>{contactInfo.phone}</p>
-                </div>
-                <button
-                  onClick={() => handleCopy(contactInfo.phone, 'phone')}
-                  className="shrink-0 px-3 flex items-center justify-center cursor-pointer transition-colors"
-                  style={{ color: copiedKey === 'phone' ? '#10b981' : copyBtnCol }}
-                  title="Copy Phone"
-                >
-                  {copiedKey === 'phone' ? <Check size={15} /> : <Copy size={15} />}
-                </button>
-              </div>
+              {contactList.map((item) => {
+                const label = lang === 'zh' ? item.labelZh : item.labelEn;
+                const isCopied = copiedKey === item.key;
 
-              {/* Email Card */}
-              <div
-                className="flex items-stretch rounded-2xl border overflow-hidden shadow-xs"
-                style={{ backgroundColor: cardBg, borderColor: cardBdr }}
-              >
-                <div className="shrink-0 flex items-center justify-center w-12" style={{ backgroundColor: iconPurple }}>
-                  <Mail size={16} style={{ color: '#a855f7' }} />
-                </div>
-                <div className="flex-1 py-3 px-3.5 text-left">
-                  <p className="text-[10px] font-code font-bold uppercase tracking-widest mb-0.5" style={{ color: '#64748b' }}>Email</p>
-                  <p className="text-xs sm:text-sm font-bold font-code whitespace-nowrap" style={{ color: 'var(--text-main)' }}>{contactInfo.email}</p>
-                </div>
-                <button
-                  onClick={() => handleCopy(contactInfo.email, 'email')}
-                  className="shrink-0 px-3 flex items-center justify-center cursor-pointer transition-colors"
-                  style={{ color: copiedKey === 'email' ? '#10b981' : copyBtnCol }}
-                  title="Copy Email"
-                >
-                  {copiedKey === 'email' ? <Check size={15} /> : <Copy size={15} />}
-                </button>
-              </div>
+                return (
+                  <div
+                    key={item.key}
+                    className="flex items-center rounded-2xl border p-2.5 shadow-xs transition-all"
+                    style={{
+                      backgroundColor: cardBg,
+                      borderColor: cardBdr,
+                      minWidth: 0,
+                    }}
+                  >
+                    {/* Icon Box */}
+                    <div
+                      className="shrink-0 flex items-center justify-center w-10 h-10 rounded-xl"
+                      style={{ backgroundColor: item.bgColor }}
+                    >
+                      <item.Icon size={16} style={{ color: item.color }} />
+                    </div>
 
-              {/* LINE ID Card */}
-              <div
-                className="flex items-stretch rounded-2xl border overflow-hidden shadow-xs"
-                style={{ backgroundColor: cardBg, borderColor: cardBdr }}
-              >
-                <div className="shrink-0 flex items-center justify-center w-12" style={{ backgroundColor: iconEmerald }}>
-                  <MessageSquare size={16} style={{ color: '#10b981' }} />
-                </div>
-                <div className="flex-1 py-3 px-3.5 text-left">
-                  <p className="text-[10px] font-code font-bold uppercase tracking-widest mb-0.5" style={{ color: '#64748b' }}>LINE ID</p>
-                  <p className="text-sm font-bold font-code whitespace-nowrap" style={{ color: 'var(--text-main)' }}>{contactInfo.line}</p>
-                </div>
-                <button
-                  onClick={() => handleCopy(contactInfo.line, 'line')}
-                  className="shrink-0 px-3 flex items-center justify-center cursor-pointer transition-colors"
-                  style={{ color: copiedKey === 'line' ? '#10b981' : copyBtnCol }}
-                  title="Copy LINE ID"
-                >
-                  {copiedKey === 'line' ? <Check size={15} /> : <Copy size={15} />}
-                </button>
-              </div>
+                    {/* Text Label & Value (Truncates text if long, NEVER pushes copy button) */}
+                    <div className="flex-1 min-w-0 px-3 text-left">
+                      <p className="text-[10px] font-code font-bold uppercase tracking-widest leading-none mb-1" style={{ color: '#64748b' }}>
+                        {label}
+                      </p>
+                      <p
+                        className="text-xs sm:text-sm font-bold font-code leading-tight truncate"
+                        style={{ color: 'var(--text-main)' }}
+                        title={item.value}
+                      >
+                        {item.value}
+                      </p>
+                    </div>
 
+                    {/* Copy Button — Fixed size, NEVER hidden or truncated */}
+                    <button
+                      onClick={() => handleCopy(item.value, item.key)}
+                      className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"
+                      style={{
+                        color: isCopied ? '#10b981' : copyBtnCol,
+                        backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.05)',
+                      }}
+                      title={`Copy ${label}`}
+                      aria-label={`Copy ${label}`}
+                    >
+                      {isCopied ? <Check size={14} className="text-emerald-500" /> : <Copy size={14} />}
+                    </button>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
