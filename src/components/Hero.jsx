@@ -96,19 +96,22 @@ export const Hero = ({ soundPlaying }) => {
             <span className="truncate">{t('hero_badge_spec')}</span>
           </div>
 
-          {/* Hero Title with Circular Logo Badge Placed on the LEFT */}
+          {/* Hero Title Container with Logo Badge on the LEFT */}
           <div className="flex items-center justify-center gap-4 flex-wrap">
 
-            {/* Circular Interactive Logo Badge on the LEFT */}
-            <div
-              className="relative group cursor-pointer animate-logo-breath"
-              title={soundPlaying ? 'BGM Active Music Pulse' : 'JasonProduction Logo'}
-            >
-              {/* Dynamic Sound Reactive Aura Ring */}
+            {/* Circular Logo Badge Container — Fixed Dimensions (Zero Layout Shift on Title) */}
+            <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center">
+              
+              {/* Audio Reactive Glow Ring (Triggers on music play) */}
               {soundPlaying && (
-                <div className="absolute -inset-2.5 rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 animate-audio-aura blur-md pointer-events-none" />
+                <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-audio-ring blur-md pointer-events-none" />
               )}
-              <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-xl group-hover:shadow-cyan-500/50 transition-all">
+
+              {/* Logo Badge Element */}
+              <div
+                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-lg animate-logo-glow flex items-center justify-center transition-transform hover:scale-105 cursor-pointer"
+                title={soundPlaying ? 'BGM Active' : 'JasonProduction Logo'}
+              >
                 <div
                   className="w-full h-full rounded-full flex items-center justify-center font-mono font-extrabold text-xs sm:text-sm tracking-wider"
                   style={{

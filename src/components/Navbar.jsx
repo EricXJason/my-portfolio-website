@@ -37,7 +37,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
   return (
     <>
       <header
-        className="fixed top-0 left-0 w-full z-50 backdrop-blur-xl border-b transition-all duration-300"
+        className="fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl border-b transition-all duration-300"
         style={{
           backgroundColor: isLight ? 'rgba(255,255,255,0.97)' : 'rgba(7,9,14,0.88)',
           borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.07)',
@@ -100,76 +100,10 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
             ))}
           </nav>
 
-          {/* Right Controls */}
+          {/* Right Controls Container */}
           <div className="flex items-center gap-3">
 
-            {/* ── BGM Button + Click-to-open Volume Panel ── */}
-            <div className="relative" ref={volumeRef}>
-              <button
-                onClick={() => {
-                  onToggleSound();
-                  if (!soundPlaying) setShowVolumePopup(true);
-                  else setShowVolumePopup(false);
-                }}
-                onContextMenu={(e) => { e.preventDefault(); setShowVolumePopup(v => !v); }}
-                className="p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center"
-                style={soundPlaying
-                  ? { backgroundColor: isLight ? '#ecfeff' : 'rgba(6,182,212,0.12)', borderColor: '#06b6d4', color: isLight ? '#0891b2' : '#22d3ee' }
-                  : { backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)', borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)', color: '#64748b' }
-                }
-                aria-label={soundPlaying ? 'Mute BGM' : 'Play BGM'}
-                title={soundPlaying ? 'Mute BGM (right-click for volume)' : 'Play BGM (right-click for volume)'}
-              >
-                {soundPlaying
-                  ? <Volume2 size={18} className="animate-pulse" />
-                  : <VolumeX size={18} />
-                }
-              </button>
-
-              {/* Volume Popup — click to open/close */}
-              {showVolumePopup && (
-                <div className="absolute top-full right-0 mt-2 z-50">
-                  <div
-                    className="p-4 rounded-2xl border shadow-2xl space-y-3"
-                    style={{
-                      width: '200px',
-                      backgroundColor: isLight ? '#ffffff' : '#0f172a',
-                      borderColor: isLight ? '#e2e8f0' : '#1e293b',
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.35)',
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] font-code font-bold uppercase" style={{ color: isLight ? '#64748b' : '#475569' }}>
-                        BGM Volume
-                      </span>
-                      <span className="text-[11px] font-code font-bold text-cyan-400">
-                        {Math.round(soundVolume * 100)}%
-                      </span>
-                    </div>
-                    <input
-                      type="range"
-                      min="0" max="1" step="0.05"
-                      value={soundVolume}
-                      onChange={(e) => onChangeVolume(parseFloat(e.target.value))}
-                      className="w-full accent-cyan-500"
-                      style={{ height: '6px' }}
-                      aria-label="BGM Volume"
-                    />
-                    <button
-                      onClick={() => setShowVolumePopup(false)}
-                      className="w-full text-[11px] font-code font-bold text-center py-1 rounded-lg transition-colors cursor-pointer"
-                      style={{ color: isLight ? '#94a3b8' : '#475569' }}
-                      onMouseEnter={e => { e.currentTarget.style.color = '#22d3ee'; }}
-                      onMouseLeave={e => { e.currentTarget.style.color = isLight ? '#94a3b8' : '#475569'; }}
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* ── Theme Toggle ── */}
+            {/* 1. Theme Toggle (Sun / Moon) */}
             <button
               onClick={toggleTheme}
               className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer shadow-inner"
@@ -193,7 +127,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
               </div>
             </button>
 
-            {/* ── Language Toggle ── */}
+            {/* 2. Language Toggle (EN / 中) */}
             <button
               onClick={toggleLang}
               className="w-16 h-8 rounded-full border p-1 relative flex items-center justify-between transition-all cursor-pointer font-code text-xs font-bold"
@@ -214,6 +148,61 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
                 {lang === 'en' ? 'EN' : '中'}
               </div>
             </button>
+
+            {/* 3. BGM Sound Button (Positioned on the RIGHT of Theme & Language switches) */}
+            <div className="relative" ref={volumeRef}>
+              <button
+                onClick={() => {
+                  onToggleSound();
+                  if (!soundPlaying) setShowVolumePopup(true);
+                  else setShowVolumePopup(false);
+                }}
+                onContextMenu={(e) => { e.preventDefault(); setShowVolumePopup(v => !v); }}
+                className="p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center"
+                style={soundPlaying
+                  ? { backgroundColor: isLight ? '#ecfeff' : 'rgba(6,182,212,0.12)', borderColor: '#06b6d4', color: isLight ? '#0891b2' : '#22d3ee' }
+                  : { backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)', borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)', color: '#64748b' }
+                }
+                aria-label={soundPlaying ? 'Mute Sound' : 'Play Sound'}
+                title={soundPlaying ? 'Mute' : 'Play Sound'}
+              >
+                {soundPlaying
+                  ? <Volume2 size={18} className="animate-pulse text-cyan-400" />
+                  : <VolumeX size={18} />
+                }
+              </button>
+
+              {/* Minimalist Volume Popup Panel (Clean slider + volume %, no language text) */}
+              {showVolumePopup && (
+                <div className="absolute top-full right-0 mt-2 z-50">
+                  <div
+                    className="p-3.5 rounded-2xl border shadow-2xl space-y-2 flex flex-col items-center justify-center"
+                    style={{
+                      width: '160px',
+                      backgroundColor: isLight ? '#ffffff' : '#0f172a',
+                      borderColor: isLight ? '#e2e8f0' : '#1e293b',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+                    }}
+                  >
+                    <div className="w-full flex items-center justify-center gap-1.5">
+                      <Volume2 size={13} className="text-cyan-400" />
+                      <span className="text-xs font-code font-bold text-cyan-400">
+                        {Math.round(soundVolume * 100)}%
+                      </span>
+                    </div>
+                    <input
+                      type="range"
+                      min="0" max="1" step="0.05"
+                      value={soundVolume}
+                      onChange={(e) => onChangeVolume(parseFloat(e.target.value))}
+                      className="w-full accent-cyan-500 cursor-pointer"
+                      style={{ height: '5px' }}
+                      aria-label="Volume"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Mobile Hamburger */}
             <button
