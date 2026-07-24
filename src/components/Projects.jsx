@@ -121,7 +121,7 @@ export const Projects = ({ onOpenYoutube }) => {
                     </button>
                   </div>
 
-                  {/* Single Unified Action Button: YouTube 播放展示 */}
+                  {/* Single Unified Action Button: YouTube Demo Showcase */}
                   <div>
                     <button
                       onClick={() => onOpenYoutube(project.ytId, title)}

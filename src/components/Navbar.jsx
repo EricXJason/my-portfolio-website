@@ -45,7 +45,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
               &lt;JP/&gt;
             </div>
           </div>
-          <div className="flex flex-col text-left leading-tight">
+          <div className="hidden sm:flex flex-col text-left leading-tight">
             <span
               className="text-sm font-extrabold tracking-wide font-mono group-hover:text-cyan-500 transition-colors"
               style={{ color: isLight ? '#0f172a' : '#f8fafc' }}

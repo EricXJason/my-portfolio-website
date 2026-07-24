@@ -38,7 +38,7 @@ export const SideNav = () => {
 
   return (
     <div
-      className="fixed right-5 top-1/2 -translate-y-1/2 z-40 hidden md:flex flex-col items-center gap-4 select-none"
+      className="fixed right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-4 select-none"
       role="navigation"
       aria-label="Section Position Indicator"
     >

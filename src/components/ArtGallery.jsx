@@ -6,16 +6,16 @@ import { getAssetUrl } from '../utils/assetPath';
 // Multimedia Artworks Dataset
 const artGalleryData = [
   // 3D Environments
-  { id: '3d-scene-01', cat: '3d-scene', img: '/assets/gallery/科幻實驗室.png' },
-  { id: '3d-scene-02', cat: '3d-scene', img: '/assets/gallery/機器工廠.jpg' },
-  { id: '3d-scene-03', cat: '3d-scene', img: '/assets/gallery/客廳.jpg' },
+  { id: '3d-scene-01', cat: '3d-scene', img: '/assets/gallery/3d-scene-01.jpg' },
+  { id: '3d-scene-02', cat: '3d-scene', img: '/assets/gallery/3d-scene-02.jpg' },
+  { id: '3d-scene-03', cat: '3d-scene', img: '/assets/gallery/3d-scene-03.jpg' },
 
   // 3D Props & Assets
-  { id: '3d-prop-01', cat: '3d-prop', img: '/assets/gallery/克蘇魯雕像.jpg' },
-  { id: '3d-prop-02', cat: '3d-prop', img: '/assets/gallery/叉車.jpg' },
-  { id: '3d-prop-03', cat: '3d-prop', img: '/assets/gallery/太空樂高人.jpg' },
-  { id: '3d-prop-04', cat: '3d-prop', img: '/assets/gallery/手套.jpg' },
-  { id: '3d-prop-05', cat: '3d-prop', img: '/assets/gallery/轉盤電話.jpg' },
+  { id: '3d-prop-01', cat: '3d-prop', img: '/assets/gallery/3d-prop-01.jpg' },
+  { id: '3d-prop-02', cat: '3d-prop', img: '/assets/gallery/3d-prop-02.jpg' },
+  { id: '3d-prop-03', cat: '3d-prop', img: '/assets/gallery/3d-prop-03.jpg' },
+  { id: '3d-prop-04', cat: '3d-prop', img: '/assets/gallery/3d-prop-04.jpg' },
+  { id: '3d-prop-05', cat: '3d-prop', img: '/assets/gallery/3d-prop-05.jpg' },
 
   // 2D Fine Sketches
   { id: 'sketch-01', cat: 'sketch', img: '/assets/gallery/sketch/01.jpg' },

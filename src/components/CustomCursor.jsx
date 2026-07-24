@@ -28,7 +28,7 @@ export const CustomCursor = () => {
     <div
       ref={cursorRef}
       aria-hidden="true"
-      className="fixed top-0 left-0 pointer-events-none z-[9999] transition-transform duration-75 ease-out filter drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]"
+      className="hidden lg:block fixed top-0 left-0 pointer-events-none z-[9999] transition-transform duration-75 ease-out filter drop-shadow-[0_0_10px_rgba(6,182,212,0.8)]"
     >
       {/* High-Tech Cyber Blue SVG Arrow Cursor */}
       <svg

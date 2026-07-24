@@ -1,26 +1,35 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Neon Glow Gradient -->
-    <linearGradient id="cyber-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+    <linearGradient id="fav-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#00f2fe" />
-      <stop offset="50%" stop-color="#0284c7" />
-      <stop offset="100%" stop-color="#6366f1" />
+      <stop offset="50%" stop-color="#0077ff" />
+      <stop offset="100%" stop-color="#a855f7" />
     </linearGradient>
-    <!-- Dark Emblem Radial Background -->
-    <radialGradient id="dark-bg" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
-      <stop offset="0%" stop-color="#0f172a" />
-      <stop offset="100%" stop-color="#07090e" />
-    </radialGradient>
+    <linearGradient id="fav-glow" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38ef7d" />
+      <stop offset="100%" stop-color="#00f2fe" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
   </defs>
 
-  <!-- Background Circle with Neon Border -->
-  <circle cx="256" cy="256" r="240" fill="url(#dark-bg)" stroke="url(#cyber-gradient)" stroke-width="16" />
+  <!-- Outer Rounded Square Background -->
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="#07090e" stroke="url(#fav-gradient)" stroke-width="16" />
 
-  <!-- Concentric Dash Circle (Tech Ring) -->
-  <circle cx="256" cy="256" r="215" fill="none" stroke="url(#cyber-gradient)" stroke-width="4" stroke-dasharray="16 20" opacity="0.65" />
+  <!-- Inner Tech Ring -->
+  <rect x="48" y="48" width="416" height="416" rx="88" fill="none" stroke="url(#fav-gradient)" stroke-width="4" stroke-dasharray="24 16" opacity="0.4" />
 
-  <!-- Futuristic Geometric Font for <JP/> -->
-  <text x="256" y="296" font-family="-apple-system, BlinkMacSystemFont, 'Fira Code', 'Outfit', monospace" font-weight="900" font-size="115" fill="url(#cyber-gradient)" text-anchor="middle" letter-spacing="-2">
-    &lt;JP/&gt;
-  </text>
+  <!-- Futuristic Geometric Symbol (Hexagonal Prism Core + Interlocking Diamond Polygon) -->
+  <g filter="url(#glow)">
+    <!-- Central Prism Diamond -->
+    <polygon points="256,96 384,176 384,336 256,416 128,336 128,176" fill="none" stroke="url(#fav-gradient)" stroke-width="28" stroke-linejoin="round" />
+    <!-- Inner Converging Chevron Facets -->
+    <polygon points="256,152 336,204 336,308 256,360 176,308 176,204" fill="url(#fav-gradient)" opacity="0.25" />
+    <!-- Core Bright Cyber Core -->
+    <polygon points="256,180 310,218 310,294 256,332 202,294 202,218" fill="none" stroke="url(#fav-glow)" stroke-width="18" stroke-linejoin="round" />
+    <!-- Center Radiant Node -->
+    <circle cx="256" cy="256" r="28" fill="url(#fav-glow)" />
+  </g>
 </svg>

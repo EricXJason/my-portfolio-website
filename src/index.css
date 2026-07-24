@@ -58,9 +58,9 @@
 }
 
 /* ════════════════════════════════════════════════════════════
-   CUSTOM CURSOR (hide native on desktop)
+   CUSTOM CURSOR (hide native cursor only on desktop lg+)
    ════════════════════════════════════════════════════════════ */
-@media (hover: hover) and (pointer: fine) {
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
   *, *::before, *::after, html, body, a, button, input,
   select, textarea, [role="button"] {
     cursor: none !important;
@@ -68,15 +68,20 @@
 }
 
 /* ════════════════════════════════════════════════════════════
-   GLOBAL BODY
+   GLOBAL BODY & HTML OVERFLOW SAFETY
    ════════════════════════════════════════════════════════════ */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 body {
   font-family: 'Inter', 'Noto Sans TC', sans-serif;
   font-size: 16px;
   line-height: 1.6;
   background-color: var(--bg-dark);
   color: var(--text-main);
-  overflow-x: hidden;
   scroll-behavior: smooth;
   transition: background-color 0.3s ease, color 0.3s ease;
   user-select: text !important;
@@ -229,9 +234,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ════════════════════════════════════════════════════════════
-   SCROLLBAR — vivid cyber gradient, hidden on mobile
+   SCROLLBAR — RWD width: 14px desktop -> 10px tablet -> 0px mobile
    ════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar { width: 14px; }
 ::-webkit-scrollbar-track { background: #07090e; }
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #00f2fe 0%, #0077ff 100%);
@@ -243,9 +248,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Light mode scrollbar */
-:root.light ::-webkit-scrollbar-track {
-  background: #e5e7eb;
-}
+:root.light ::-webkit-scrollbar-track { background: #e5e7eb; }
 :root.light ::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #38bdf8 0%, #2563eb 100%);
   border-radius: 6px;
@@ -255,7 +258,9 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(180deg, #0ea5e9 0%, #1d4ed8 100%);
 }
 
-/* Hide scrollbar on mobile */
+@media (max-width: 1024px) {
+  ::-webkit-scrollbar { width: 10px; }
+}
 @media (max-width: 639px) {
   ::-webkit-scrollbar { display: none !important; width: 0 !important; }
 }

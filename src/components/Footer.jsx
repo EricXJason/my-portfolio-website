@@ -30,8 +30,13 @@ const TechIcons = {
     </svg>
   ),
   react: (
-    <svg className="w-4 h-4 shrink-0 text-[#61DAFB] fill-current animate-[spin_10s_linear_infinite]" viewBox="0 0 24 24">
-      <path d="M12 9a3 3 0 100 6 3 3 0 000-6zm0-7.5C6.75 1.5 2.5 6.2 2.5 12S6.75 22.5 12 22.5s9.5-4.7 9.5-10.5S17.25 1.5 12 1.5zm0 19c-4.2 0-7.5-3.8-7.5-8.5S7.8 3.5 12 3.5s7.5 3.8 7.5 8.5-3.3 8.5-7.5 8.5z"/>
+    <svg className="w-4 h-4 shrink-0 text-[#61DAFB] fill-none stroke-current stroke-[1.5] animate-[spin_12s_linear_infinite]" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="2" fill="#61DAFB" />
+      <g stroke="#61DAFB" strokeWidth="1.2">
+        <ellipse cx="12" cy="12" rx="9" ry="3.5" />
+        <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(60 12 12)" />
+        <ellipse cx="12" cy="12" rx="9" ry="3.5" transform="rotate(120 12 12)" />
+      </g>
     </svg>
   ),
   vite: (
