@@ -25,7 +25,7 @@ Official personal portfolio website for **HSU, CHE-CHENG**. Showcasing projects,
 ## 📂 目錄結構 | Structure
 
 ```text
-PortfolioWebsite/
+my-portfolio-website/
 ├── public/assets/         # 3D, 2D Artworks & Images
 ├── src/
 │   ├── components/        # Modular React UI Components
