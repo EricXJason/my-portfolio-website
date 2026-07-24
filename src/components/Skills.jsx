@@ -57,7 +57,7 @@ const rawSkillsData = {
       catColor: MEDIA_COL,
       catIcon: Palette,
       items: [
-        { icon: itemIcon(Figma,    MEDIA_COL), label: '視覺設計與 UI/UX', content: 'Figma / Canva / Photoshop / Illustrator' },
+        { icon: itemIcon(PenTool,   MEDIA_COL), label: '視覺設計與 UI/UX', content: 'Figma / Canva / Photoshop / Illustrator' },
         { icon: itemIcon(Bot,      MEDIA_COL), label: 'AI 內容創作',       content: 'ChatGPT / Gemini / ComfyUI / Suno' },
         { icon: itemIcon(FileText, MEDIA_COL), label: '流程圖設計與文書',  content: 'draw.io / Word / Excel / PowerPoint' },
         { icon: itemIcon(Film,     MEDIA_COL), label: '影片剪輯與後製',    content: 'Premiere / DaVinci' },

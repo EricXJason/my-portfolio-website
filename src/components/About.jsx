@@ -2,6 +2,7 @@ import React from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Award, GraduationCap, Briefcase, ExternalLink } from 'lucide-react';
+import { getAssetUrl } from '../utils/assetPath';
 
 const toeicProofLink = "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing";
 
@@ -44,7 +45,7 @@ export const About = () => {
                 <div className="aspect-square w-full rounded-2xl overflow-hidden shadow-inner"
                   style={{ backgroundColor: isLight ? '#f1f5f9' : '#030712' }}>
                   <img
-                    src="/assets/images/personal-01.jpg"
+                    src={getAssetUrl('/assets/images/personal-01.jpg')}
                     alt="Che-Cheng Hsu Portrait"
                     className="w-full h-full object-cover object-[center_18%] group-hover:scale-105 transition-transform duration-700"
                   />

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { Palette, X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp } from 'lucide-react';
+import { getAssetUrl } from '../utils/assetPath';
 
 // Multimedia Artworks Dataset
 const artGalleryData = [
@@ -117,7 +118,7 @@ export const ArtGallery = () => {
               className="group glass-card rounded-2xl overflow-hidden cursor-pointer relative aspect-square border border-[var(--border-color)] hover:border-purple-500/50 transition-all duration-300 shadow-sm"
             >
               <img
-                src={art.img}
+                src={getAssetUrl(art.img)}
                 alt="Artwork Preview"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 loading="lazy"
@@ -178,7 +179,7 @@ export const ArtGallery = () => {
               <X size={20} />
             </button>
             <img
-              src={activeImage.img}
+              src={getAssetUrl(activeImage.img)}
               alt="Artwork Full View"
               className="max-h-[80vh] w-auto object-contain rounded-lg"
             />

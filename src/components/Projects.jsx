@@ -3,6 +3,7 @@ import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { projectsData } from '../data/projectsData';
 import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video } from 'lucide-react';
+import { getAssetUrl } from '../utils/assetPath';
 
 // Projects Component: Single YouTube Demo Button & Vertically Centered Alignment (items-center)
 export const Projects = ({ onOpenYoutube }) => {
@@ -95,7 +96,7 @@ export const Projects = ({ onOpenYoutube }) => {
                 <div className="w-full lg:w-5/12 shrink-0 space-y-4">
                   <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden bg-slate-950 shadow-xl border border-slate-800">
                     <img
-                      src={project.image}
+                      src={getAssetUrl(project.image)}
                       alt={title}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
