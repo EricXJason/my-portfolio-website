@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
-import { X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp } from 'lucide-react';
+import { X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
 // Reorganized Multimedia Artworks Dataset
@@ -54,6 +54,40 @@ export const ArtGallery = () => {
   );
 
   const displayedArt = isExpanded ? filteredArt : filteredArt.slice(0, 4);
+
+  const activeIndex = activeImage
+    ? filteredArt.findIndex((item) => item.id === activeImage.id)
+    : -1;
+
+  const handlePrevImage = (e) => {
+    if (e) e.stopPropagation();
+    if (filteredArt.length === 0) return;
+    const prevIdx = (activeIndex - 1 + filteredArt.length) % filteredArt.length;
+    setActiveImage(filteredArt[prevIdx]);
+  };
+
+  const handleNextImage = (e) => {
+    if (e) e.stopPropagation();
+    if (filteredArt.length === 0) return;
+    const nextIdx = (activeIndex + 1) % filteredArt.length;
+    setActiveImage(filteredArt[nextIdx]);
+  };
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
+    if (!activeImage) return;
+    const handleKeyDown = (e) => {
+      if (e.key === 'ArrowLeft') {
+        handlePrevImage();
+      } else if (e.key === 'ArrowRight') {
+        handleNextImage();
+      } else if (e.key === 'Escape') {
+        setActiveImage(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeImage, activeIndex, filteredArt]);
 
   const tabs = [
     { key: 'all', label: lang === 'zh' ? '全部作品' : 'All Works', icon: <Layers size={16} /> },
@@ -155,33 +189,71 @@ export const ArtGallery = () => {
 
       </div>
 
-      {/* Lightbox Modal */}
+      {/* Lightbox Modal with Prev/Next Navigation */}
       {activeImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 bg-slate-950/90 backdrop-blur-md animate-fade-in"
           onClick={() => setActiveImage(null)}
           role="dialog"
           aria-modal="true"
         >
+          {/* Main Modal Container */}
           <div
             className="relative max-w-5xl w-full max-h-[90vh] bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-800 dark:border-slate-800 light:border-slate-300 rounded-2xl overflow-hidden shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <button
-              onClick={() => setActiveImage(null)}
-              className="absolute top-4 right-4 p-2 rounded-xl bg-slate-800/80 text-slate-300 hover:text-white transition-colors cursor-pointer z-10"
-              aria-label="Close Lightbox"
-            >
-              <X size={20} />
-            </button>
-            <img
-              src={getAssetUrl(activeImage.img)}
-              alt="Artwork Full View"
-              className="max-h-[80vh] w-auto object-contain rounded-lg"
-            />
+            {/* Top Toolbar (Counter + Close) */}
+            <div className="w-full flex items-center justify-between pb-3 border-b border-slate-800 dark:border-slate-800 light:border-slate-200 mb-4">
+              <span className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-code font-bold">
+                {activeIndex + 1} / {filteredArt.length}
+              </span>
+              <button
+                onClick={() => setActiveImage(null)}
+                className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                aria-label="Close Lightbox"
+                title="Close (Esc)"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Image & Prev / Next Controls Container */}
+            <div className="relative w-full flex items-center justify-center max-h-[75vh]">
+              {/* Previous Image Button */}
+              {filteredArt.length > 1 && (
+                <button
+                  onClick={handlePrevImage}
+                  className="absolute left-2 sm:left-4 z-20 p-3 rounded-full bg-slate-950/80 hover:bg-purple-600 text-white border border-white/20 hover:border-purple-400 shadow-xl transition-all cursor-pointer group"
+                  aria-label="Previous Image"
+                  title={lang === 'zh' ? '上一張 (← 鍵盤左鍵)' : 'Previous (← Arrow)'}
+                >
+                  <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
+                </button>
+              )}
+
+              {/* Artwork Full Image */}
+              <img
+                src={getAssetUrl(activeImage.img)}
+                alt="Artwork Full View"
+                className="max-h-[72vh] w-auto object-contain rounded-lg shadow-lg select-none"
+              />
+
+              {/* Next Image Button */}
+              {filteredArt.length > 1 && (
+                <button
+                  onClick={handleNextImage}
+                  className="absolute right-2 sm:right-4 z-20 p-3 rounded-full bg-slate-950/80 hover:bg-purple-600 text-white border border-white/20 hover:border-purple-400 shadow-xl transition-all cursor-pointer group"
+                  aria-label="Next Image"
+                  title={lang === 'zh' ? '下一張 (→ 鍵盤右鍵)' : 'Next (→ Arrow)'}
+                >
+                  <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       )}
     </section>
   );
 };
+

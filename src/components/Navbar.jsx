@@ -172,23 +172,34 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
                 }
               </button>
 
-              {/* Minimalist Volume Popup Panel (Clean slider + volume %, no language text) */}
+              {/* Minimalist Volume Popup Panel (Clean slider + volume %, X close button) */}
               {showVolumePopup && (
                 <div className="absolute top-full right-0 mt-2 z-50">
                   <div
-                    className="p-3.5 rounded-2xl border shadow-2xl space-y-2 flex flex-col items-center justify-center"
+                    className="p-3.5 rounded-2xl border shadow-2xl space-y-2 flex flex-col items-center justify-center relative"
                     style={{
-                      width: '160px',
+                      width: '170px',
                       backgroundColor: isLight ? '#ffffff' : '#0f172a',
                       borderColor: isLight ? '#e2e8f0' : '#1e293b',
                       boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     }}
                   >
-                    <div className="w-full flex items-center justify-center gap-1.5">
-                      <Volume2 size={13} className="text-cyan-400" />
-                      <span className="text-xs font-code font-bold text-cyan-400">
-                        {Math.round(soundVolume * 100)}%
-                      </span>
+                    {/* Header Row: Volume % + X Close Button */}
+                    <div className="w-full flex items-center justify-between gap-1.5 px-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <Volume2 size={13} className="text-cyan-400" />
+                        <span className="text-xs font-code font-bold text-cyan-400">
+                          {Math.round(soundVolume * 100)}%
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setShowVolumePopup(false)}
+                        className="p-1 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 dark:hover:bg-slate-800/60 light:hover:bg-slate-100 transition-colors cursor-pointer"
+                        aria-label="Close Volume Panel"
+                        title="Close"
+                      >
+                        <X size={13} />
+                      </button>
                     </div>
                     <input
                       type="range"

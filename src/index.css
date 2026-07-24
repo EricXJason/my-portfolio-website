@@ -322,9 +322,9 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 }
 
 @keyframes audio-ring-pulse {
-  0%, 100% { transform: scale(1); opacity: 0.3; }
-  50%       { transform: scale(1.25); opacity: 0.75; }
+  0%, 100% { transform: scale(1.0); opacity: 0.25; }
+  50%       { transform: scale(1.08); opacity: 0.65; }
 }
 .animate-audio-ring {
-  animation: audio-ring-pulse 2s ease-in-out infinite;
+  animation: audio-ring-pulse 2.2s ease-in-out infinite;
 }

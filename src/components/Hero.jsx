@@ -105,7 +105,7 @@ export const Hero = ({ soundPlaying }) => {
               {/* Audio Reactive Glow Aura Ring — strictly BEHIND logo badge (z-0) */}
               {soundPlaying && (
                 <div
-                  className="absolute -inset-3 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-audio-ring blur-lg pointer-events-none z-0 opacity-75"
+                  className="absolute -inset-1 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-audio-ring blur-md pointer-events-none z-0 opacity-60"
                   aria-hidden="true"
                 />
               )}
