@@ -96,29 +96,19 @@ export const Hero = ({ soundPlaying }) => {
             <span className="truncate">{t('hero_badge_spec')}</span>
           </div>
 
-          {/* Hero Name Title with Circular Interactive <JP/> Logo Badge */}
+          {/* Hero Title with Circular Logo Badge Placed on the LEFT */}
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <h1
-              className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight cursor-default"
-              style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-            >
-              <span className="inline-block hover:scale-105 transition-transform duration-300">
-                {t('hero_title')}
-              </span>
-            </h1>
 
-            {/* Circular Interactive Logo Badge */}
+            {/* Circular Interactive Logo Badge on the LEFT */}
             <div
-              className={`relative group cursor-pointer transition-transform duration-300 hover:scale-110 ${
-                soundPlaying ? 'animate-bounce' : ''
-              }`}
-              title={soundPlaying ? 'BGM Playing' : 'JasonProduction Logo'}
+              className="relative group cursor-pointer animate-logo-breath"
+              title={soundPlaying ? 'BGM Active Music Pulse' : 'JasonProduction Logo'}
             >
-              {/* Outer pulsing ring when music plays */}
+              {/* Dynamic Sound Reactive Aura Ring */}
               {soundPlaying && (
-                <div className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-ping opacity-60 pointer-events-none" />
+                <div className="absolute -inset-2.5 rounded-full bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 animate-audio-aura blur-md pointer-events-none" />
               )}
-              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-lg group-hover:shadow-cyan-500/40">
+              <div className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-xl group-hover:shadow-cyan-500/50 transition-all">
                 <div
                   className="w-full h-full rounded-full flex items-center justify-center font-mono font-extrabold text-xs sm:text-sm tracking-wider"
                   style={{
@@ -130,6 +120,16 @@ export const Hero = ({ soundPlaying }) => {
                 </div>
               </div>
             </div>
+
+            {/* Name Title */}
+            <h1
+              className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight cursor-default"
+              style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+            >
+              <span className="inline-block hover:scale-105 transition-transform duration-300">
+                {t('hero_title')}
+              </span>
+            </h1>
           </div>
 
           {/* Specialty Subtitle Pill */}
@@ -194,7 +194,7 @@ export const Hero = ({ soundPlaying }) => {
             </a>
           </div>
 
-          {/* ── 3 Contact Info Cards (Guaranteed Full Display & Copy Button Always Visible) ── */}
+          {/* ── 3 Contact Info Cards ── */}
           <div className="w-full max-w-4xl mt-2">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
               {contactList.map((item) => {
@@ -219,7 +219,7 @@ export const Hero = ({ soundPlaying }) => {
                       <item.Icon size={16} style={{ color: item.color }} />
                     </div>
 
-                    {/* Text Label & Value (Truncates text if long, NEVER pushes copy button) */}
+                    {/* Text Label & Value */}
                     <div className="flex-1 min-w-0 px-3 text-left">
                       <p className="text-[10px] font-code font-bold uppercase tracking-widest leading-none mb-1" style={{ color: '#64748b' }}>
                         {label}
@@ -233,7 +233,7 @@ export const Hero = ({ soundPlaying }) => {
                       </p>
                     </div>
 
-                    {/* Copy Button — Fixed size, NEVER hidden or truncated */}
+                    {/* Copy Button */}
                     <button
                       onClick={() => handleCopy(item.value, item.key)}
                       className="shrink-0 w-9 h-9 rounded-xl flex items-center justify-center cursor-pointer transition-all hover:scale-105 active:scale-95"

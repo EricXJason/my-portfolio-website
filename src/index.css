@@ -302,3 +302,19 @@ a:focus-visible, button:focus-visible, input:focus-visible {
   from { opacity: 0; transform: translateY(12px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes logo-breath {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(6,182,212,0.25)); }
+  50%       { transform: scale(1.08); filter: drop-shadow(0 0 22px rgba(6,182,212,0.6)); }
+}
+.animate-logo-breath {
+  animation: logo-breath 3.6s ease-in-out infinite;
+}
+
+@keyframes audio-aura {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.4; }
+  50%       { transform: scale(1.38) rotate(180deg); opacity: 0.9; filter: hue-rotate(120deg); }
+}
+.animate-audio-aura {
+  animation: audio-aura 2.2s ease-in-out infinite;
+}

@@ -1,7 +1,7 @@
 {
   "zh": [
     {
-      "category": "【互動遊戲開發】",
+      "category": "互動遊戲開發",
       "catColor": "#22d3ee",
       "catType": "game",
       "items": [
@@ -13,7 +13,7 @@
       ]
     },
     {
-      "category": "【全端開發】",
+      "category": "全端開發",
       "catColor": "#c084fc",
       "catType": "web",
       "items": [
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "category": "【多媒體設計】",
+      "category": "多媒體設計",
       "catColor": "#34d399",
       "catType": "media",
       "items": [

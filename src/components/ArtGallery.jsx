@@ -134,7 +134,7 @@ export const ArtGallery = () => {
               <span>
                 {isExpanded
                   ? (lang === 'zh' ? '收起美術作品' : 'Collapse Gallery')
-                  : (lang === 'zh' ? `檢視更多美術作品 (${filteredArt.length - 4})` : `View More Artworks (${filteredArt.length - 4})`)}
+                  : (lang === 'zh' ? '檢視更多美術作品' : 'View More Artworks')}
               </span>
               {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
             </button>
