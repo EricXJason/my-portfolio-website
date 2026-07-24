@@ -1,7 +1,7 @@
-# 許哲誠 個人作品集網站 | Che-Cheng Hsu Portfolio
+# 許哲誠 個人作品集網站 | HSU, CHE-CHENG Portfolio
 
 <p align="center">
-  <b>許哲誠 (Jason Hsu) 個人作品集網站</b><br/>
+  <b>許哲誠 (HSU, CHE-CHENG) 個人作品集網站</b><br/>
   <i>Master of M.A. in New Media Art — Interactive Game Dev | Fullstack Dev | Multimedia Design</i>
 </p>
 
@@ -9,9 +9,9 @@
 
 ## 🌐 網站簡介 | Overview
 
-本專案為 **許哲誠 (Jason Hsu)** 之個人官方響應式作品集網站。展示個人於 **互動遊戲開發**、**全端開發** 與 **多媒体設計** 之專案成果、學術論文、專業證照與美術畫廊。
+本專案為 **許哲誠** 之個人官方響應式作品集網站。展示個人於 **互動遊戲開發**、**全端開發** 與 **多媒體設計** 之專案成果、學術論文、專業證照與美術畫廊。
 
-Official personal portfolio website for **Che-Cheng Hsu**. Showcasing projects, research papers, professional credentials, and multimedia artworks across **Interactive Game Dev**, **Fullstack Web Engineering**, and **Multimedia Design**.
+Official personal portfolio website for **HSU, CHE-CHENG**. Showcasing projects, research papers, professional credentials, and multimedia artworks across **Interactive Game Dev**, **Fullstack Web Engineering**, and **Multimedia Design**.
 
 - 🔗 **Live Demo**: [https://ericxjason.github.io/my-portfolio-website/](https://ericxjason.github.io/my-portfolio-website/)
 

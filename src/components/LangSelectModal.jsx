@@ -97,8 +97,8 @@ export const LangSelectModal = () => {
           </p>
         </div>
 
-        {/* Action Buttons — Clean Typography without Flag Icons */}
-        <div className="flex flex-col sm:flex-row gap-3.5 w-full">
+        {/* Action Buttons — Side-by-side 2-column grid on all screens */}
+        <div className="grid grid-cols-2 gap-3.5 w-full">
           {/* Traditional Chinese Button */}
           <button
             onClick={() => choose('zh')}
