@@ -58,9 +58,9 @@
 }
 
 /* ════════════════════════════════════════════════════════════
-   CUSTOM CURSOR (hide native cursor only on desktop lg+)
+   CUSTOM CURSOR — Hide native cursor on fine-pointer desktop devices
    ════════════════════════════════════════════════════════════ */
-@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+@media (pointer: fine) {
   *, *::before, *::after, html, body, a, button, input,
   select, textarea, [role="button"] {
     cursor: none !important;
