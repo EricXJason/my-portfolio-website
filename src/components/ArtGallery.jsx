@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
+import { useTheme } from '../context/ThemeContext';
 import { X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
@@ -45,6 +46,9 @@ const artGalleryData = [
 
 export const ArtGallery = () => {
   const { t, lang } = useLang();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
   const [activeTab, setActiveTab] = useState('all');
   const [activeImage, setActiveImage] = useState(null);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -202,14 +206,16 @@ export const ArtGallery = () => {
             className="relative max-w-5xl w-full max-h-[90vh] bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-800 dark:border-slate-800 light:border-slate-300 rounded-2xl overflow-hidden shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top Toolbar (Counter + Close) */}
-            <div className="w-full flex items-center justify-between pb-3 border-b border-slate-800 dark:border-slate-800 light:border-slate-200 mb-4">
-              <span className="px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-code font-bold">
-                {activeIndex + 1} / {filteredArt.length}
-              </span>
+            {/* Top Toolbar (Close Button Only) */}
+            <div className="w-full flex items-center justify-end pb-3 border-b border-slate-800 dark:border-slate-800 light:border-slate-200 mb-4">
               <button
                 onClick={() => setActiveImage(null)}
-                className="p-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
+                className="p-2 rounded-xl border transition-colors cursor-pointer"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.08)',
+                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
+                  color: isLight ? '#0f172a' : '#f8fafc',
+                }}
                 aria-label="Close Lightbox"
                 title="Close (Esc)"
               >
@@ -223,7 +229,23 @@ export const ArtGallery = () => {
               {filteredArt.length > 1 && (
                 <button
                   onClick={handlePrevImage}
-                  className="absolute left-2 sm:left-4 z-20 p-3 rounded-full bg-slate-950/80 hover:bg-purple-600 text-white border border-white/20 hover:border-purple-400 shadow-xl transition-all cursor-pointer group"
+                  className="absolute left-2 sm:left-4 z-20 p-3 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)',
+                    color: isLight ? '#0f172a' : '#ffffff',
+                    boxShadow: isLight ? '0 10px 25px -5px rgba(0, 0, 0, 0.2)' : '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#9333ea';
+                    e.currentTarget.style.borderColor = '#c084fc';
+                    e.currentTarget.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)';
+                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.color = isLight ? '#0f172a' : '#ffffff';
+                  }}
                   aria-label="Previous Image"
                   title={lang === 'zh' ? '上一張 (← 鍵盤左鍵)' : 'Previous (← Arrow)'}
                 >
@@ -242,7 +264,23 @@ export const ArtGallery = () => {
               {filteredArt.length > 1 && (
                 <button
                   onClick={handleNextImage}
-                  className="absolute right-2 sm:right-4 z-20 p-3 rounded-full bg-slate-950/80 hover:bg-purple-600 text-white border border-white/20 hover:border-purple-400 shadow-xl transition-all cursor-pointer group"
+                  className="absolute right-2 sm:right-4 z-20 p-3 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)',
+                    color: isLight ? '#0f172a' : '#ffffff',
+                    boxShadow: isLight ? '0 10px 25px -5px rgba(0, 0, 0, 0.2)' : '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#9333ea';
+                    e.currentTarget.style.borderColor = '#c084fc';
+                    e.currentTarget.style.color = '#ffffff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)';
+                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.color = isLight ? '#0f172a' : '#ffffff';
+                  }}
                   aria-label="Next Image"
                   title={lang === 'zh' ? '下一張 (→ 鍵盤右鍵)' : 'Next (→ Arrow)'}
                 >
@@ -256,4 +294,5 @@ export const ArtGallery = () => {
     </section>
   );
 };
+
 
