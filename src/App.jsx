@@ -67,7 +67,7 @@ function AppContent() {
 
       <SideNav />
 
-      <main className="relative z-10">
+      <main className="relative">
         <Hero soundPlaying={soundPlaying} />
         <About />
         <Skills />

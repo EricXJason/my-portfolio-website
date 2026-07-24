@@ -196,7 +196,7 @@ export const ArtGallery = () => {
       {/* Lightbox Modal with Prev/Next Navigation */}
       {activeImage && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-8 bg-slate-950/90 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-slate-950/90 backdrop-blur-md animate-fade-in"
           onClick={() => setActiveImage(null)}
           role="dialog"
           aria-modal="true"

@@ -82,7 +82,7 @@ export const Footer = ({ lastUpdated }) => {
   const { lang } = useLang();
 
   return (
-    <footer className="w-full relative z-20 border-t border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-2xl py-10 transition-colors duration-300 select-text">
+    <footer className="w-full relative z-10 border-t border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-2xl py-10 transition-colors duration-300 select-text">
 
       {/* Top Gradient Line */}
       <div className="absolute top-0 left-0 w-full h-[2.5px] bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600" aria-hidden="true" />

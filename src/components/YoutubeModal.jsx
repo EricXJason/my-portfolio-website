@@ -7,7 +7,7 @@ export const YoutubeModal = ({ isOpen, onClose, videoId, title }) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
