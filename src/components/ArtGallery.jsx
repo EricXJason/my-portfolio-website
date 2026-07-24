@@ -152,6 +152,7 @@ export const ArtGallery = () => {
                 alt="Artwork Preview"
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                 loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 p-4 flex items-center justify-center">
                 <div className="p-3 rounded-full bg-purple-600/90 text-white shadow-xl group-hover:scale-110 transition-transform">
@@ -258,6 +259,7 @@ export const ArtGallery = () => {
                 src={getAssetUrl(activeImage.img)}
                 alt="Artwork Full View"
                 className="max-h-[72vh] w-auto object-contain rounded-lg shadow-lg select-none"
+                decoding="async"
               />
 
               {/* Next Image Button */}

@@ -41,6 +41,8 @@ export const About = () => {
                     src={getAssetUrl('/assets/images/personal.jpg')}
                     alt="Che-Cheng Hsu Portrait"
                     className="w-full h-full object-cover object-[center_18%] group-hover:scale-105 transition-transform duration-700"
+                    decoding="async"
+                    fetchPriority="high"
                   />
                 </div>
               </div>

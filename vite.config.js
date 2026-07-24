@@ -8,5 +8,9 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
-  base: '/my-portfolio-website/'
+  base: '/my-portfolio-website/',
+  build: {
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 1000,
+  },
 })

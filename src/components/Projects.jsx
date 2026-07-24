@@ -101,6 +101,8 @@ export const Projects = ({ onOpenYoutube }) => {
                       src={getAssetUrl(project.image)}
                       alt={title}
                       className="w-full h-full object-cover group-hover/video:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                      decoding="async"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent" aria-hidden="true" />
 
