@@ -99,17 +99,20 @@ export const Hero = ({ soundPlaying }) => {
           {/* Hero Title Container with Logo Badge on the LEFT */}
           <div className="flex items-center justify-center gap-4 flex-wrap">
 
-            {/* Circular Logo Badge Container — Fixed Dimensions (Zero Layout Shift on Title) */}
+            {/* Circular Logo Badge Container — Fixed Dimensions (Zero Layout Shift) */}
             <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center">
               
-              {/* Audio Reactive Glow Ring (Triggers on music play) */}
+              {/* Audio Reactive Glow Aura Ring — strictly BEHIND logo badge (z-0) */}
               {soundPlaying && (
-                <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-audio-ring blur-md pointer-events-none" />
+                <div
+                  className="absolute -inset-3 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-audio-ring blur-lg pointer-events-none z-0 opacity-75"
+                  aria-hidden="true"
+                />
               )}
 
-              {/* Logo Badge Element */}
+              {/* Front Logo Badge Element — strictly IN FRONT of aura (z-10) */}
               <div
-                className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-lg animate-logo-glow flex items-center justify-center transition-transform hover:scale-105 cursor-pointer"
+                className="relative z-10 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-xl animate-logo-glow flex items-center justify-center transition-transform hover:scale-105 cursor-pointer"
                 title={soundPlaying ? 'BGM Active' : 'JasonProduction Logo'}
               >
                 <div
