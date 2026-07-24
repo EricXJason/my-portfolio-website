@@ -1,0 +1,60 @@
+@use 'variables' as *;
+
+// Glassmorphism Card Style
+@mixin glass-panel($bg: var(--card-bg), $border: var(--border-color)) {
+  background: $bg;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid $border;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+}
+
+// Cyberpunk Neon Glow Effect
+@mixin neon-glow($color: $cyan-glow, $opacity: 0.3) {
+  box-shadow: 0 0 15px rgba($color, $opacity),
+              0 0 30px rgba($color, $opacity * 0.5);
+}
+
+// Shimmer Animation for Interactive Elements
+@mixin shimmer-effect {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.15) 50%,
+      transparent 100%
+    );
+    transform: skewX(-20deg);
+    transition: left 0.6s ease;
+  }
+
+  &:hover::after {
+    left: 150%;
+  }
+}
+
+// Custom Scrollbar
+@mixin custom-scrollbar {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  &::-webkit-scrollbar-track {
+    background: rgba(7, 9, 14, 0.8);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 242, 254, 0.3);
+    border-radius: 3px;
+    &:hover {
+      background: rgba(0, 242, 254, 0.6);
+    }
+  }
+}

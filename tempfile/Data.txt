@@ -1,0 +1,394 @@
+個人資訊
+-------------
+中文姓名:許哲誠
+英文姓名:HSU, CHE-CHENG
+性別:男
+生日:2001/08/15
+年紀:24歲(請根據生日與當前時間進行換算，為浮動資料)  
+手機:0908683096
+E-mail:user46972@gmail.com
+LINE ID : ericxjason
+駕駛執照:輕型機車駕照  普通小型車駕照
+興趣:家機遊戲、登山
+
+網站連結
+-------------
+個人履歷連結:xxx.xxx.com
+作品集簡報連結:xxx.xxx.com
+github連結:xxx.xxx.com
+
+個人標籤
+-------------
+互動遊戲開發、全端開發、多媒體設計
+
+關於我
+-------------
+許哲誠，25歲，畢業於國立臺灣藝術大學新媒體藝術碩士班。我具備創新思維、優秀的溝通協調與企劃能力，並擅長自我管理。對新挑戰充滿熱忱，持續學習與成長。
+
+學歷
+-------------
+國立臺灣藝術大學 (最高學歷)  新媒體藝術碩士班  碩士畢業  2024/9~2026/6
+碩士畢業證書連結:https://drive.google.com/file/d/1VtJS1tH3Spu58gd_9dZMEEzTYeZcInlK/view?usp=sharing
+碩士歷年成績單連結:https://drive.google.com/file/d/1Tq2Brki5bDfGOXYKD1slZFQ-3xL4zku3/view?usp=sharing
+
+國立虎尾科技大學 多媒體設計系  大學畢業 2019/9~2023/6
+大學畢業證書連結:https://drive.google.com/file/d/1glFihHgetRpeVIaF5FGh0-rKcXuA6ReK/view?usp=drive_link
+大學跨學期系排名連結:https://drive.google.com/file/d/1MmDMcdjDReBNk5NpqS0Idc7-r-Op9kZd/view?usp=drive_link
+大學歷年成績單連結:https://drive.google.com/file/d/1qPB3worwJJAP9GNxAL9vCwlF3MIgTXGw/view?usp=drive_link
+
+
+專業技能
+-------------
+【互動遊戲開發】
+遊戲引擎： Unity ( C#) / Unreal Engine ( Blueprints )
+
+設計模式與架構： Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture
+
+核心技術： URP / Shader Graph / Addressables / Editor Scripting ( Inspector, EditorWindow ) / Saving System / AI Navigation / Cinemachine / DOTween / Timeline
+
+XR 實境開發： Vuforia / Meta SDK / XR Interaction Toolkit
+
+多人連線開發： Netcode / Photon Pun
+
+【全端開發】
+後端程式語言： Java / Python
+
+後端框架與技術： Spring Boot / Hibernate / Flask / Django 
+
+前端程式語言： HTML / CSS / JavaScript / TypeScript
+
+前端框架與樣式： React / Angular / Sass / Tailwind / Bootstrap
+
+資料庫與服務： MySQL / PostgreSQL
+
+雲端服務： AWS / GCP
+
+開發與建構工具： Git / Docker / Vite 
+
+CI/CD 自動化： GitHub Actions
+
+【多媒體設計】
+視覺設計與 UI/UX： Figma / Canva / Photoshop / Illustrator
+
+AI 內容創作： ChatGPT / Gemini / ComfyUI / Suno
+
+流程圖設計與文書： draw.io / Word / Excel / PowerPoint
+
+影片剪輯與後製： Premiere / DaVinci
+
+3D 建模與材質： AutoCAD / Blender / Maya / 3dsMax / RizomUV / Zbrush / Substance Painter
+
+
+專業證照
+-------------
+丙級電腦輔助機械製圖技術士
+丙級電腦輔助立體製圖
+丙級電腦硬體裝修技術士
+3dsMax ACU 
+AutoCAD ACU 
+MOS Access Expert
+MOS Powerpoint 
+MOS Excel Expert 
+MOS Word Expert 
+ACP Photoshop 
+ACP Dreamweaver
+ACP Flash 
+連結:https://drive.google.com/drive/folders/1cUZ24IncYkmTiAZAA1xbxjWp9Bu_jXS8?usp=sharing
+
+論文與期刊
+-------------
+1.2025 臺北數位圖像國際學術研討會論文
+
+跑酷遊戲的創新策略：行動遊戲市場的案例
+
+摘要
+
+隨著智慧型手機的普及,手機遊戲市場如雨後春筍般迅速崛起。跑酷類遊戲作為早期最受
+玩家歡迎的遊戲類型之一,一度風靡全球。然而,隨著市場逐漸成熟與遊戲類型的多元化,跑
+酷遊戲因創新停滯而逐漸失去優勢,玩家興趣減退,開發者也將重心轉向更具商業價值的遊戲
+品類,導致跑酷遊戲在市場上逐步衰退。
+本文通過文獻分析和案例研究,詳細探討了市面上多款跑酷遊戲的設計和盈利元素。這些
+設計包括但不限於:引入多層次關卡設計以增加遊戲的深度和挑戰性;結合隨機生成元素以提
+升遊戲的可重玩性;引入角色成長系統以增加玩家的投入感和遊戲黏性;以及探索新的美術風
+格和敘事手法以提升遊戲的整體吸引力。最終,基於研究結果,本文提出了跑酷遊戲未來可能
+的創新方向,並提供具體的改進建議,為未來的遊戲設計提供更具實證性的建議。
+
+關鍵字:行動遊戲、手機遊戲、跑酷遊戲、遊戲設計、盈利機制
+
+Abstract
+
+With the widespread adoption of smartphones, the mobile gaming market has risen rapidly, akin to
+a flourishing industry. Among the early game genres most beloved by players, runner games once
+enjoyed global popularity. However, as the market matured and game genres diversified, the stagnation
+of innovation in runner games led to their decline. Player interest waned, and developers shifted their
+focus to more commercially lucrative game genres, causing runner games to gradually fade from the
+market.
+
+This paper employs literature analysis and case studies to explore in detail the design and
+monetization elements of various runner games on the market. These designs include, but are not limited
+to: introducing multi-layered level designs to enhance game depth and challenge; incorporating
+procedurally generated elements to improve replayability; implementing character progression systems
+to increase player engagement and retention; and experimenting with new art styles and narrative
+techniques to enhance overall game appeal. Based on the research findings, this paper proposes potential
+innovative directions for runner games and provides concrete recommendations for improvement,
+offering evidence-based insights for future game design.
+
+Keywords: mobile gaming, smartphone games, runner games, game design, monetization strategies
+
+文章連結:https://drive.google.com/file/d/1CfK6twu0UKu1o3v8BsKA3RZVvYv4yxgn/view?usp=sharing
+
+
+2.碩士論文
+
+《覺醒協議》：基於認知發展理論的虛擬實境遊戲設計
+
+摘要
+
+本研究採實踐本位研究取向,以 Piaget 之認知發展四階段作為設計架構,將
+感知探索、符號表徵、具體因果與抽象整合等心智特徵,轉譯為虛擬實境作品《覺
+醒協議》中遞進式之場景關卡。本創作旨在將虛擬生命由「受控規訓」邁向「自主
+意識覺醒」的心理轉變進行結構化呈現,使主體心智之建構奠基於體驗者的身體化
+行動。
+全案秉持身體化認知之觀點,運用虛擬實境的第一人稱感官封閉性與即時互
+動反饋,建構一套探討意識生成之交互機制。最終,本研究釐清了跨領域理論轉譯
+在藝術實踐中的邊界與限制,並提煉出從理論框架走向反思主體性生成之「去模型
+化」創作洞見。此一反思歷程可作為後續跨領域之新媒體交互敘事與實踐本位研究
+之實踐參照。
+
+關鍵詞:虛擬實境、認知發展、意識覺醒、身體化認知、互動敘事
+
+Abstract
+
+This study adopts a practice-based research approach, utilizing Piaget's four stages
+of cognitive development as a design framework. It translates cognitive characteristics—
+sensorimotor exploration, symbolic representation, concrete causality, and abstract
+integration—into progressive interactive levels within the virtual reality artwork
+“Awakening Protocol”. The project aims to structure the psychological transition of an
+artificial lifeform from "controlled discipline" to "autonomous awakening," grounding
+the construction of the subjective mind in the experiencer's embodied actions.
+This creative practice leverages virtual reality's first-person sensory isolation and
+real-time interactive feedback to construct an interactive mechanism for exploring
+consciousness generation. Ultimately, this research clarifies the boundaries and
+constraints of cross-disciplinary theoretical translation within artistic practice. It distills
+creative insights that transcend rigid modeling, shifting from an adherence to theoretical
+frameworks toward a critical reflection on the generation of subjectivity. This reflective
+process serves as a practice-based reference for future cross-disciplinary interactive
+narratives and practice-based research.
+
+Keywords: Virtual Reality, Cognitive Development, Consciousness Awakening,
+Embodied Cognition, Interactive Narrative
+
+文章連結:https://drive.google.com/file/d/1wEFkBi7V4wkTZzTKSGJeHoHqmICnHh3s/view?usp=sharing
+
+
+多益成績
+-------------
+TOEIC 755
+證明連結:https://drive.google.com/file/d/1dNqcM8BI9KjAXEPjKToNqDFmMqVbXFH6/view?usp=sharing
+
+榮譽
+-------------
+《飛機檢修行動學習平台》2021 第四屆台灣數位媒體設計獎-大專組互動科技應用 -銀賞
+《滅境之星》2022 Unreal Engine 5 台灣遊戲創意設計大賽-佳作
+《滅境之星》2022 全國大專及高中職學生專題製作競賽成果展示-第一名
+《滅境之星》2023 放視大賞-遊戲類-PC與主機遊戲組-初選入圍
+《小王子帶你去旅行》2023 通訊大賽聯網未來挑戰賽-決賽入圍
+《覺醒協議》國立臺灣藝術大學設計學院多媒體動畫藝術學系114學年度畢業創作影片補助
+《跑酷遊戲的創新策略：行動遊戲市場的案例研究》2025 年臺北數位圖像國際學術研討會 -優良論文獎
+
+
+
+研習歷程
+-------------
+2022 冒險者必學UE遊戲工程課研習  2022/9~2022/11
+
+主辦單位：夢想方舟
+專業內容與技能學習：
+掌握 Unreal Engine 遊戲引擎基礎架構與開發流程，熟悉核心機制運作。
+研習 Blueprint 開發邏輯，具備遊戲互動事件與邏輯控制之編程能力。
+學習 PBR 材質應用、動畫系統綁定、音效與粒子特效整合技術。
+實作遊戲互動階段運作流、場景渲染與後製合成效果處理。
+
+
+2023 VTuber 虛擬網紅快速開發應用研習課程  2023/4~2023/4
+
+主辦單位：國立虎尾科技大學多媒體設計系 × 愛迪斯科技股份有限公司
+
+專業內容與技能學習：
+
+學習 VRoid Studio，掌握從角色設定到即時動態呈現之完整流程。
+熟悉 動作捕捉系統 之設備操作、數據錄製與虛擬角色骨骼驅動應用。
+理解元宇宙虛擬角色創作設計實務，強化跨領域互動媒體與數位內容產出技能。
+
+
+2023 T大使計畫-PBR流程的次世代3D模型製作  2023/6~2023/10
+
+主辦單位：數位發展部 T大使計畫 × 樂美館股份有限公司
+
+專業內容與技能學習：
+
+接受為期 18 週之次世代遊戲美術產業實戰培訓，深入學習 PBR 標準開發流程。
+掌握高低模製作、烘焙、拆 UV 等精密建模技術。
+熟練繪製物理材質貼圖與渲染調校，具備符合遊戲產業標準之次世代 3D 資產製作能力。
+
+2026 AI 賦能：Java & Angular 全端整合開發實戰養成班
+
+主辦單位：勞動部高屏澎東分署 × 高雄市電腦商業同業公會  2026/7~2026/12
+
+
+專業內容與技能學習：
+
+AI 賦能與開發流程：運用 AI 工具（如 Large Language Model API、Prompt 提示詞工程）輔助系統分析、生成測試代碼與 Code Review，提升開發效率。 
+前端技術與框架：掌握 HTML5/CSS3、JavaScript/TypeScript、Bootstrap 及 Angular 框架，實現模組化組件開發、RxJS 響應式編程與 RESTful API 串接。 
+後端開發與微服務：熟練 Java 物件導向程式設計（OOP）、JUnit 單元測試，並運用 Spring Boot、Spring MVC、Spring Data JPA 與 Hibernate 打造 RESTful API 及微服務架構。 
+資料庫與資安實務：具備 ER Model 資料庫設計、MySQL/SQL 語法優化、JDBC 整合及資訊安全防護（防止 SQL Injection、XSS、CSRF）實作經驗。 
+專案管理與團隊實作：使用 Git/GitHub 進行版本控制與 CI/CD 流程構建，並透過企業真實需求團隊專案完成從需求分析、系統設計到上線部署之全端開發。
+
+專案作品
+-------------
+
+
+
+
+已為您針對工具與軟體清單進行全面校正：
+
+1. **使用工具修正**：
+* 《滅境之星》：移除 Behavior Tree 與 AIPerception，補上 **Blender** 與 **Substance Painter**。
+* 《飛機檢修行動學習平台》：補上 **Premiere**。
+* 《小王子帶你去旅行》：補上 **Substance Painter** 與 **Premiere**。
+* **Premiere 策略**：考慮到展示影片剪輯為專案共通流程，在《飛機檢修》與《小王子》中將其納入（因包含動態導覽與展示影片製作之核心貢獻），其餘專案則精簡保留核心開發與美術工具，維持專案焦點。
+
+
+
+以下為最終高度精簡且專業的作品集內容：
+
+---
+
+# 個人作品集 (Portfolio)
+
+---
+
+### 1. 覺醒協議 Awakening Protocol
+
+* **開發時間**：2025/09 ~ 2026/05
+
+
+* **使用工具**：Unity, C#, XR Interaction Toolkit, URP, DOTween Pro, Timeline, Blender, DeepVoice Pro, Suno AI
+
+
+* **簡介**：基於皮亞傑認知發展理論設計之沉浸式 VR 哲學解謎遊戲。體驗者化身虛擬生命體，於去文本化環境中透過具身操作與即時物理回饋，歷經感知探索至抽象推理之意識覺醒歷程。
+
+
+* **個人技術貢獻**（全案程式獨立開發）：
+
+
+* **事件驅動架構與設計模式**：建構全域 Event Bus，整合 Singleton、Observer 與 Registry 模式，實作 UI、音訊、動畫與物理機關之結構性解耦。
+
+
+* **具身互動與演算法**：基於 XR Interaction Toolkit 開發高精準度抓取與機關觸發，編寫多階代數驗證與遞迴迷宮生成演算法。
+
+
+* **渲染管線與著色器開發**：採用 URP 與 UV 頂點對齊色票技術，開發客製化拓撲線條著色器插件，實現極簡賽博龐克視覺風格。
+
+
+* **AIGC 與多媒體控制**：運用 Timeline 控管非線性過場；整合 DeepVoice Pro 語音合成與 Suno AI 聲場演算。
+
+
+
+
+* **榮譽**：國立臺灣藝術大學設計學院多媒體動畫藝術學系 114 學年度畢業創作影片補助
+
+
+
+---
+
+### 2. 滅境之星 Planet of Extinction
+
+* **開發時間**：2022/03 ~ 2023/04
+* **使用工具**：Unreal Engine 5, Blueprints, Blender, Substance Painter
+* **簡介**：由 Unreal Engine 5 開發之 3D 多人合作第一人稱射擊遊戲。玩家需於限時內對抗大量敵對目標並採集星球能源，考驗戰術反應與射擊操作。
+* **個人技術貢獻**（全案程式獨立開發）：
+* **核心系統全藍圖開發**：獨立建構玩家控制器、核心 UI 狀態流與關卡狀態機切換機制。
+* **AI 行為與感知系統**：結合 Behavior Tree 與 AIPerception，實作敵對目標巡邏、感知追擊、動態包圍與戰術移動邏輯。
+* **地形與 3D 資產整合**：負責 Landscape 巨型地形編輯、3D 武器模型製作、LOD 效能優化與引擎導入。
+
+
+* **榮譽**：
+* 2022 全國大專及高中職學生專題製作競賽成果展示 - 第一名
+* 2022 Unreal Engine 5 台灣遊戲創意設計大賽 - 佳作
+* 2023 放視大賞遊戲組 - 初選入圍
+
+
+
+---
+
+### 3. 節奏同奏 RhythmSync
+
+* **開發時間**：2024/10 ~ 2024/12
+* **使用工具**：Unity, C#, Cinemachine
+* **簡介**：灰階懷舊風格之 2D 音效同步動作跑酷遊戲。透過即時音訊頻譜動態驅動 UI、視覺特效、鏡頭運動與背景變化，打造視聽高度同步之沉浸體驗。
+* **個人技術貢獻**（全案程式獨立開發）：
+* **即時頻譜解析與映射**：呼叫 API 實時解析音域振幅數據，將特定頻段動態映射至場景物件縮放與粒子特效。
+* **Cinemachine 動態運鏡**：整合 Cinemachine 運鏡模組，將鏡頭震動與追蹤軌跡與音訊頻譜即時連動。
+* **全域狀態與資料持久化**：導入 Singleton 模式管理全域音訊狀態機，並透過 PlayerPrefs 實作數據存檔。
+
+
+
+---
+
+### 4. 社影流光 Temporal Shrine
+
+* **開發時間**：2025/10 ~ 2026/02
+* **使用工具**：Unity, C#, Vuforia SDK, Timeline
+* **簡介**：結合 AR 空間感測技術之新竹神社歷史文化導覽互動遊戲。使用者可透過觸發互動任務探索歷史故事並進行認知測驗。
+* **個人技術貢獻**（全案程式獨立開發）：
+* **AR 識別與空間定位**：整合 Vuforia SDK 實作圖像識別與空間座標追蹤，精準處理虛實物件疊加。
+* **過場編排與狀態管理**：運用 Timeline 系統精確控制過場動畫與音訊同步；採用 Singleton 模式管理全域場景載入與任務數據。
+
+
+
+---
+
+### 5. 環保投籃王 EcoHoops
+
+* **開發時間**：2025/03 ~ 2025/05
+* **使用工具**：Unity, C#, Meta Quest SDK
+* **簡介**：結合籃球投擲與環保分類教育之兒童 VR 沉浸式體驗遊戲。玩家透過將垃圾投擲至正確回收桶以學習資源分類。
+* **個人技術貢獻**（全案程式獨立開發）：
+* **VR 物理互動開發**：利用 Meta Quest SDK 實作手勢追蹤、控制器輸入映射與抓取邏輯，處理投籃物理軌跡與碰撞反饋。
+* **流程與計分狀態控管**：導入 Singleton 模式管理全域計分系統、計時器與關卡流程切換。
+
+
+
+---
+
+### 6. 飛機檢修行動學習平台 Aircraft Maintenance Action Learning Platform
+
+* **開發時間**：2020/07 ~ 2021/06
+* **使用工具**：Unity, C#, Photoshop, Illustrator, Premiere
+* **簡介**：針對空中巴士 A330 客機檢修訓練開發之跨平台行動學習軟體，以煞車器拆解與安裝模擬為核心教案。
+* **個人主要貢獻**（UI/UX 美術設計與 UGUI 邏輯開發）：
+* **UI/UX 視覺系統獨立設計**：獨立負責全套專業檢修介面視覺設計與美術素材製作。
+* **UGUI 流程與狀態機建置**：將素材導入 Unity 規劃 UGUI 邏輯，編寫複雜檢修步驟的核心互動機制與流程切換。
+
+
+* **榮譽**：
+* 通訊大賽聯發科技物聯網開發設計 - 特別獎
+* 2021 第四屆台灣數位媒體設計獎 - 大專組互動科技應用 - 銀賞
+
+
+
+---
+
+### 7. 小王子帶你去旅行 The Little Prince Takes You on a Journey
+
+* **開發時間**：2022/07 ~ 2023/06
+* **使用工具**：Unity, C#, Blender, Substance Painter, Premiere
+* **簡介**：基於情境教學與語言學習開發之 VTuber 虛擬角色互動直播與簡報系統。學習者透過扮演虛擬角色進行情境模擬，提升語言表達能力。
+* **個人主要貢獻**（3D 美術建置與多媒體整合）：
+* **3D 角色與場景資產建置**：獨立負責核心虛擬角色與 3D 故事場景建置、拓撲減面與引擎內效能優化。
+* **三維視覺與動態系統調校**：負責全案三維視覺呈現調校、動態導覽系統編排與展演影片剪輯製作。
+
+
+* **榮譽**：
+* 2023 通訊大賽聯網未來挑戰賽 - 決賽入圍

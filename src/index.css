@@ -1,0 +1,289 @@
+@import "tailwindcss";
+
+/* ════════════════════════════════════════════════════════════
+   TAILWIND v4 — Custom class-based theme variants
+   Registers `.light` and `.dark` class selectors as variants
+   so that `light:bg-white` and `dark:bg-slate-900` work in JSX
+   ════════════════════════════════════════════════════════════ */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant light (&:where(.light, .light *));
+
+/* ════════════════════════════════════════════════════════════
+   DESIGN TOKENS — CSS Custom Properties
+   
+   Light Mode Philosophy:
+   ─ Background: warm off-white (#f8f9fc) not pure white, avoids harshness
+   ─ Cards: pure white with subtle shadow, defined boundaries
+   ─ Text primary: near-black #0d1117 (GitHub style), highest contrast
+   ─ Text secondary: #4b5563 neutral-gray, readable but visually receded
+   ─ Borders: #e5e7eb (Tailwind gray-200), clean hairline definition
+   ─ Accent: sky-600 #0284c7 for interactive affordance
+   ─ Icon bg: very light tint of the icon color (5-10% opacity)
+   ─ Skill rows: #f3f4f6 (Tailwind gray-100) for subtle alternation
+   ════════════════════════════════════════════════════════════ */
+:root {
+  /* ── Dark mode tokens ── */
+  --bg:           #07090e;
+  --bg-dark:      #07090e;
+  --header-bg:    rgba(7, 9, 14, 0.90);
+  --text-main:    #f0f6fc;
+  --text-sub:     #8b949e;
+  --card-bg:      rgba(13, 17, 23, 0.70);
+  --border-color: rgba(255, 255, 255, 0.08);
+
+  /* Utility token vars */
+  --skill-row-bg:     rgba(13, 17, 23, 0.45);
+  --skill-row-border: rgba(255, 255, 255, 0.06);
+  --cat-icon-bg:      rgba(13, 17, 23, 0.80);
+  --cat-icon-border:  rgba(255, 255, 255, 0.10);
+}
+
+:root.light {
+  /* ── Light mode tokens ── 
+     Core palette: warm neutral base, strong contrast, clear hierarchy
+  */
+  --bg:           #f5f7fa;      /* warm off-white base */
+  --bg-dark:      #f5f7fa;
+  --header-bg:    rgba(255, 255, 255, 0.98);
+  --text-main:    #0d1117;      /* near-black, highest legibility */
+  --text-sub:     #4b5563;      /* gray-600, readable secondary */
+  --card-bg:      #ffffff;
+  --border-color: #e5e7eb;      /* gray-200, clean separation */
+
+  /* Skill component tokens */
+  --skill-row-bg:     #f3f4f6;  /* gray-100 subtle row tint */
+  --skill-row-border: #e5e7eb;
+  --cat-icon-bg:      #eef2ff;  /* indigo-50 for category icons */
+  --cat-icon-border:  #c7d2fe;  /* indigo-200 */
+}
+
+/* ════════════════════════════════════════════════════════════
+   CUSTOM CURSOR (hide native on desktop)
+   ════════════════════════════════════════════════════════════ */
+@media (hover: hover) and (pointer: fine) {
+  *, *::before, *::after, html, body, a, button, input,
+  select, textarea, [role="button"] {
+    cursor: none !important;
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   GLOBAL BODY
+   ════════════════════════════════════════════════════════════ */
+body {
+  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   LAYOUT — container side padding
+   ════════════════════════════════════════════════════════════ */
+.max-w-7xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
+  padding-left: 1.5rem !important;
+  padding-right: 1.5rem !important;
+}
+@media (min-width: 640px) {
+  .max-w-7xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+  }
+}
+section[id] { scroll-margin-top: 88px; }
+
+/* ════════════════════════════════════════════════════════════
+   HEADINGS — follow --text-main token
+   ════════════════════════════════════════════════════════════ */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-main) !important;
+  transition: color 0.3s ease;
+}
+
+/* ════════════════════════════════════════════════════════════
+   LIGHT MODE BACKGROUND AURORA MESH
+   ════════════════════════════════════════════════════════════ */
+:root.light .light-aurora-bg {
+  opacity: 1 !important;
+  background-color: #f5f7fa;
+  background-image:
+    radial-gradient(ellipse at 5% 8%,  rgba(186,230,255,0.55) 0%, transparent 40%),
+    radial-gradient(ellipse at 92% 15%, rgba(199,210,254,0.45) 0%, transparent 42%),
+    radial-gradient(ellipse at 48% 90%, rgba(167,243,208,0.35) 0%, transparent 50%),
+    radial-gradient(#d1d5db 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   GLASS CARD
+   ════════════════════════════════════════════════════════════ */
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root.light .glass-card {
+  background: #ffffff !important;
+  border-color: #e5e7eb !important;
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    0 4px 16px -2px rgba(0, 0, 0, 0.06) !important;
+}
+
+:root.light .glass-card:hover {
+  border-color: #93c5fd !important;   /* blue-300 — clear but not aggressive */
+  box-shadow:
+    0 4px 20px -4px rgba(59, 130, 246, 0.18),
+    0 1px 4px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CSS UTILITY CLASSES using var() tokens
+   ════════════════════════════════════════════════════════════ */
+.skill-row-bg {
+  background-color: var(--skill-row-bg) !important;
+  border-color: var(--skill-row-border) !important;
+}
+.cat-icon-bg {
+  background-color: var(--cat-icon-bg) !important;
+  border-color: var(--cat-icon-border) !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   FILTER BUTTONS (Projects & Gallery) — active / inactive states
+   ════════════════════════════════════════════════════════════ */
+/* Dark mode base */
+.filter-btn-active {
+  background-color: rgba(2, 132, 199, 0.15);
+  color: #38bdf8;
+  border-color: #0284c7;
+}
+.filter-btn-inactive {
+  background-color: rgba(15, 23, 42, 0.50);
+  color: var(--text-sub);
+  border-color: rgba(255,255,255,0.08);
+}
+.filter-btn-inactive:hover {
+  background-color: rgba(15, 23, 42, 0.80);
+  color: #f0f6fc;
+  border-color: rgba(56, 189, 248, 0.35);
+}
+
+/* Light mode — clearly different selected vs unselected */
+:root.light .filter-btn-active {
+  background-color: #0f172a !important;  /* slate-900 fill */
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 2px 8px rgba(2,132,199,0.25) !important;
+}
+:root.light .filter-btn-inactive {
+  background-color: #ffffff !important;
+  color: #374151 !important;             /* gray-700 */
+  border-color: #d1d5db !important;      /* gray-300 */
+}
+:root.light .filter-btn-inactive:hover {
+  background-color: #eff6ff !important;  /* blue-50 */
+  color: #1d4ed8 !important;             /* blue-700 */
+  border-color: #93c5fd !important;      /* blue-300 */
+}
+
+/* ════════════════════════════════════════════════════════════
+   TECH TAGS (project technology labels)
+   ════════════════════════════════════════════════════════════ */
+:root.light .tech-tag {
+  background-color: #eff6ff !important;  /* blue-50 */
+  border-color: #bfdbfe !important;      /* blue-200 */
+  color: #1e40af !important;             /* blue-800 */
+  font-weight: 700 !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DARK TAILWIND UTILITIES → LIGHT EQUIVALENTS
+   Override Tailwind slate-700/800/900/950 classes in light mode
+   to prevent dark backgrounds from bleeding through
+   ════════════════════════════════════════════════════════════ */
+:root.light .border-slate-800,
+:root.light .border-slate-700,
+:root.light .border-slate-800\/80,
+:root.light .border-slate-800\/60 {
+  border-color: #e5e7eb !important;      /* gray-200 */
+}
+:root.light .bg-slate-900\/40,
+:root.light .bg-slate-900\/60,
+:root.light .bg-slate-900\/80 {
+  background-color: rgba(249,250,251,0.9) !important;  /* gray-50 */
+}
+:root.light .bg-slate-950,
+:root.light .bg-slate-950\/70,
+:root.light .bg-slate-950\/80 {
+  background-color: #f9fafb !important;  /* gray-50 */
+}
+
+/* ════════════════════════════════════════════════════════════
+   SCROLLBAR — vivid cyber gradient, hidden on mobile
+   ════════════════════════════════════════════════════════════ */
+::-webkit-scrollbar { width: 12px; }
+::-webkit-scrollbar-track { background: #07090e; }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00f2fe 0%, #0077ff 100%);
+  border-radius: 6px;
+  border: 2px solid #07090e;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #38ef7d 0%, #11998e 100%);
+}
+
+/* Light mode scrollbar */
+:root.light ::-webkit-scrollbar-track {
+  background: #e5e7eb;
+}
+:root.light ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #38bdf8 0%, #2563eb 100%);
+  border-radius: 6px;
+  border: 2px solid #e5e7eb;
+}
+:root.light ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #0ea5e9 0%, #1d4ed8 100%);
+}
+
+/* Hide scrollbar on mobile */
+@media (max-width: 639px) {
+  ::-webkit-scrollbar { display: none !important; width: 0 !important; }
+}
+
+/* ════════════════════════════════════════════════════════════
+   FOCUS RING
+   ════════════════════════════════════════════════════════════ */
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid #0284c7 !important;
+  outline-offset: 2px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   KEYFRAME ANIMATIONS
+   ════════════════════════════════════════════════════════════ */
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
+  33%       { transform: translateY(-28px) translateX(18px) scale(1.04); }
+  66%       { transform: translateY(14px) translateX(-12px) scale(0.97); }
+}
+@keyframes hero-sweep {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%       { opacity: 1.0; transform: scaleY(1.08); }
+}
+.animate-hero-sweep { animation: hero-sweep 8s ease-in-out infinite; }
+
+@keyframes hero-title {
+  0%   { opacity: 0; letter-spacing: 0.2em; filter: blur(4px); }
+  100% { opacity: 1; letter-spacing: normal; filter: blur(0); }
+}
+.animate-hero-title { animation: hero-title 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }

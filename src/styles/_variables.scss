@@ -1,0 +1,49 @@
+// SCSS Design Tokens & Color Palette
+$font-sans: 'Inter', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, sans-serif;
+$font-code: 'Fira Code', 'JetBrains Mono', monospace;
+
+// Dark Theme Variables
+$bg-dark: #07090e;
+$header-dark: rgba(7, 9, 14, 0.75);
+$card-dark: rgba(15, 23, 42, 0.65);
+$text-dark-main: #f8fafc;
+$text-dark-sub: #94a3b8;
+$border-dark: rgba(255, 255, 255, 0.08);
+
+// Light Theme Variables
+$bg-light: #f8fafc;
+$header-light: rgba(255, 255, 255, 0.85);
+$card-light: rgba(255, 255, 255, 0.8);
+$text-light-main: #0f172a;
+$text-light-sub: #475569;
+$border-light: rgba(15, 23, 42, 0.08);
+
+// Brand Accents
+$cyan-glow: #00f2fe;
+$cyan-deep: #0284c7;
+$purple-glow: #8b5cf6;
+$purple-deep: #4f46e5;
+$emerald-glow: #10b981;
+$amber-glow: #f59e0b;
+
+:root {
+  --bg-dark: #{$bg-dark};
+  --header-bg: #{$header-dark};
+  --text-main: #{$text-dark-main};
+  --text-sub: #{$text-dark-sub};
+  --card-bg: #{$card-dark};
+  --border-color: #{$border-dark};
+  --cyan-primary: #{$cyan-glow};
+  --purple-primary: #{$purple-glow};
+
+  &.light {
+    --bg-dark: #{$bg-light};
+    --header-bg: #{$header-light};
+    --text-main: #{$text-light-main};
+    --text-sub: #{$text-light-sub};
+    --card-bg: #{$card-light};
+    --border-color: #{$border-light};
+    --cyan-primary: #{$cyan-deep};
+    --purple-primary: #{$purple-deep};
+  }
+}

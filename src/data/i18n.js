@@ -1,0 +1,197 @@
+// Internationalization Dictionary (English & Traditional Chinese)
+export const i18n = {
+  zh: {
+    // Navigation
+    nav_home: "首頁",
+    nav_about: "關於我",
+    nav_skills: "專業技能",
+    nav_projects: "專案作品",
+    nav_gallery: "美術畫廊",
+    nav_awards: "專業證照",
+    nav_experience: "學習經歷",
+
+    // Hero Section
+    hero_badge_spec: "AI 技術與前沿技術持續跟進中",
+    hero_title: "許哲誠",
+    hero_subtitle_pc: "互動遊戲開發／全端開發／多媒體設計",
+    hero_desc: "許哲誠，24歲，畢業於國立臺灣藝術大學新媒體藝術碩士班。具備創新思維、優秀的溝通協調與企劃能力，擅長自我管理，對新挑戰充滿熱忱，專注於互動遊戲開發、全端開發與多媒體設計。",
+    btn_github: "GitHub 專頁",
+    btn_artstation: "ArtStation 作品集",
+
+    // About Section
+    about_title: "關於我",
+    about_subtitle: "ABOUT ME",
+    about_intro: "具備新媒體藝術碩士背景的我，專注於互動遊戲開發、全端網頁與多媒體設計。",
+    about_heading: "核心專長與專業定位",
+    about_p1: "許哲誠，24歲，畢業於國立臺灣藝術大學新媒體藝術碩士班。具備創新思維、優秀的溝通協調與企劃能力，並擅長自我管理，對新挑戰充滿熱忱，持續學習與成長。",
+    stat_exp: "臺藝大碩士",
+    stat_exp_label: "新媒體藝術碩士畢業",
+    stat_projects: "7 核心專案",
+    stat_projects_label: "包含全國競賽第一名與國科會計畫案",
+    stat_toeic: "TOEIC 755",
+    stat_toeic_label: "英文多益檢定成績",
+    btn_toeic_proof: "多益成績證明 (Google Drive)",
+
+    // Skills Section
+    skills_title: "專業技能",
+    skills_subtitle: "PROFESSIONAL SKILLS",
+    skills_intro: "涵蓋 3D 互動遊戲開發、全端 Web 架構與多媒體美學設計，展現跨領域全方位開發實力。",
+
+    // Projects Section
+    projects_title: "專案作品",
+    projects_subtitle: "FEATURED PROJECTS & DEMOS",
+    projects_note: "所有專案均包含真實展示畫面，點擊播放按鈕即可線上觀看 Demo 影片。",
+    cat_all: "全部作品 (7)",
+    cat_interactive: "互動遊戲開發",
+    cat_nstc: "國科會計畫",
+    cat_fullstack: "全端網站",
+    yt_watch_demo: "線上觀看展示",
+    yt_direct_link: "跳轉 YouTube 觀看",
+
+    // Art Gallery Section
+    gallery_title: "美術畫廊",
+    gallery_subtitle: "2D & 3D MULTIMEDIA ARTWORKS",
+    gallery_note: "展示個人 3D 場景建模、3D 精細物件、2D 麥克筆設計與素描作品，點擊圖片即可放大預覽。",
+    cat_gal_all: "全部作品",
+    cat_gal_3d: "3D 渲染與建模",
+    cat_gal_marker: "2D 麥克筆設計",
+    cat_gal_sketch: "2D 精細素描",
+
+    // Education & Experience Section
+    exp_title: "學習經歷",
+    exp_subtitle: "ACADEMIC JOURNEY",
+    exp_intro: "扎實的學術研究歷程、專業原廠研習培訓與國際學術論文發表成果。",
+    edu_master: "國立臺灣藝術大學 — 新媒體藝術碩士班 (最高學歷)",
+    edu_master_desc: "主修新媒體藝術、VR/AR 互動系統架構與遊戲開發。畢業論文《覺醒協議：基於認知發展理論的虛擬實境遊戲設計》，獲臺藝大設計學院 114 學年度畢業創作影片補助。",
+    edu_bachelor: "國立虎尾科技大學 — 多媒體設計系 (大學)",
+    edu_bachelor_desc: "主修遊戲軟體開發、3D 建模與互動視覺系統。榮獲 2022 全國專題競賽成果展示第一名、2021 台灣數位媒體設計展銀賞及 2022 UE5 台灣遊戲大賽佳作。",
+    btn_certificate: "畢業證書 (Google Drive)",
+    btn_transcript: "歷年成績單 (Google Drive)",
+    btn_ranking: "系排名證明 (Google Drive)",
+
+    // Workshops
+    workshop_section_title: "研習歷程",
+    workshop_section_subtitle: "WORKSHOPS & TRAINING",
+    btn_workshop_proof: "檢視研習證明 (Google Drive)",
+
+    // Thesis Section
+    thesis_section_title: "論文與期刊發表",
+    thesis_section_subtitle: "ACADEMIC PUBLICATIONS",
+    thesis_1_title: "《覺醒協議》：基於認知發展理論的虛擬實境遊戲設計",
+    thesis_1_venue: "國立臺灣藝術大學設計學院 碩士論文 (2026)",
+    thesis_1_award: "碩士學位論文",
+    thesis_1_desc: "採實踐本位研究，以 Piaget 認知發展四階段為設計架構，將感知探索至抽象推理轉譯為 VR 遞進關卡。獲設計學院畢業創作影片補助。",
+    thesis_2_title: "跑酷遊戲的創新策略：行動遊戲市場的案例研究",
+    thesis_2_venue: "2025 臺北數位圖像國際學術研討會",
+    thesis_2_award: "優良論文獎",
+    thesis_2_desc: "運用文獻分析與案例研究，深入探討行動跑酷遊戲之多層次關卡、隨機生成與角色成長機制，提出遊戲市場創新與盈利改進建議。",
+    btn_view_paper: "檢視論文全文 (Google Drive)",
+
+    // Certifications Section
+    awards_title: "專業證照",
+    awards_subtitle: "PROFESSIONAL CREDENTIALS",
+    awards_intro: "具備國家級技術士技能檢定與多項多媒體、3D 建模及 office 原廠國際專業認證。",
+    btn_view_cert_proof: "檢視證照 (Google Drive)",
+    btn_view_drive_folder: "檢視全部證照目錄 (Google Drive)",
+
+    // Footer
+    footer_copyright: "許哲誠 版權所有"
+  },
+  en: {
+    // Navigation
+    nav_home: "Home",
+    nav_about: "About",
+    nav_skills: "Skills",
+    nav_projects: "Projects",
+    nav_gallery: "Art Gallery",
+    nav_awards: "Credentials",
+    nav_experience: "Education",
+
+    // Hero Section
+    hero_badge_spec: "Continuously Evolving with AI & Emerging Tech",
+    hero_title: "HSU, CHE-CHENG",
+    hero_subtitle_pc: "Interactive Game Dev / Fullstack Dev / Multimedia Design",
+    hero_desc: "Che-Cheng Hsu, 24 years old, graduated with an M.A. in New Media Art from National Taiwan University of Arts. Creative-minded, communicative, self-managed, and passionate about challenges.",
+    btn_github: "GitHub Profile",
+    btn_artstation: "ArtStation Portfolio",
+
+    // About Section
+    about_title: "About Me",
+    about_subtitle: "ABOUT ME",
+    about_intro: "With a background in New Media Art M.A., I focus on interactive game development, fullstack web, and multimedia design.",
+    about_heading: "Core Competency & Specialization",
+    about_p1: "Che-Cheng Hsu, 24 years old, holding an M.A. in New Media Art from NTUA. Possesses innovative thinking, strong communication, project planning skills, self-management, and a passion for new challenges.",
+    stat_exp: "NTUA Master",
+    stat_exp_label: "M.A. in New Media Art",
+    stat_projects: "7 Core Projects",
+    stat_projects_label: "Including 1st Place National Awards & NSTC Projects",
+    stat_toeic: "TOEIC 755",
+    stat_toeic_label: "English Proficiency Score",
+    btn_toeic_proof: "TOEIC Proof (Google Drive)",
+
+    // Skills Section
+    skills_title: "Professional Skills",
+    skills_subtitle: "PROFESSIONAL SKILLS",
+    skills_intro: "Covering 3D game dev, fullstack web engineering, and multimedia design aesthetics.",
+
+    // Projects Section
+    projects_title: "Projects",
+    projects_subtitle: "FEATURED PROJECTS & DEMOS",
+    projects_note: "All projects feature authentic previews and playable YouTube demos.",
+    cat_all: "All Works (7)",
+    cat_interactive: "Interactive Game Dev",
+    cat_nstc: "NSTC Projects",
+    cat_fullstack: "Fullstack Web",
+    yt_watch_demo: "Watch Live Demo",
+    yt_direct_link: "Open in YouTube",
+
+    // Art Gallery Section
+    gallery_title: "Art Gallery",
+    gallery_subtitle: "2D & 3D MULTIMEDIA ARTWORKS",
+    gallery_note: "Showcasing personal 3D environments, 3D props, 2D marker designs, and detailed sketches.",
+    cat_gal_all: "All Artworks",
+    cat_gal_3d: "3D Modeling & Render",
+    cat_gal_marker: "2D Marker Art",
+    cat_gal_sketch: "2D Fine Sketch",
+
+    // Education Section
+    exp_title: "Academic Journey",
+    exp_subtitle: "ACADEMIC JOURNEY",
+    exp_intro: "Solid academic research, industry training programs, and published research papers.",
+    edu_master: "National Taiwan University of Arts — M.A. in New Media Art (Highest Degree)",
+    edu_master_desc: "Majored in New Media Art, VR/AR interactive architecture, and game dev. Thesis: 'Awakening Protocol: VR Game Design Based on Cognitive Development Theory'. Awarded NTUA Graduation Film Grant.",
+    edu_bachelor: "National Formosa University — B.A. in Multimedia Design",
+    edu_bachelor_desc: "Majored in game software development, 3D modeling, and interactive systems. Won 1st Place in National Special Topic Competition and Silver Award in Taiwan Digital Media Design.",
+    btn_certificate: "Diploma (Google Drive)",
+    btn_transcript: "Transcript (Google Drive)",
+    btn_ranking: "Ranking (Google Drive)",
+
+    // Workshops
+    workshop_section_title: "Professional Workshops",
+    workshop_section_subtitle: "WORKSHOPS & TRAINING",
+    btn_workshop_proof: "View Proof (Google Drive)",
+
+    // Thesis Section
+    thesis_section_title: "Academic Publications & Papers",
+    thesis_section_subtitle: "ACADEMIC PUBLICATIONS",
+    thesis_1_title: "Awakening Protocol: Virtual Reality Game Design Based on Cognitive Development Theory",
+    thesis_1_venue: "NTUA Design College — Master's Thesis (2026)",
+    thesis_1_award: "Master's Thesis",
+    thesis_1_desc: "Practice-based research translating Piaget's cognitive development stages into progressive VR gameplay. Awarded NTUA Design College Graduation Film Grant.",
+    thesis_2_title: "Innovative Strategies of Parkour Games: A Case Study in Mobile Gaming Market",
+    thesis_2_venue: "2025 Taipei Digital Image International Symposium",
+    thesis_2_award: "Excellent Paper Award",
+    thesis_2_desc: "Explores level design, procedural generation, and monetization in mobile runner games, proposing innovative frameworks for modern game design.",
+    btn_view_paper: "View Paper (Google Drive)",
+
+    // Certifications Section
+    awards_title: "Professional Credentials",
+    awards_subtitle: "PROFESSIONAL CREDENTIALS",
+    awards_intro: "Holding national technician licenses and international professional software certifications.",
+    btn_view_cert_proof: "View Cert (Google Drive)",
+    btn_view_drive_folder: "View All Credentials Folder (Google Drive)",
+
+    // Footer
+    footer_copyright: "HSU, CHE-CHENG All Rights Reserved"
+  }
+};
