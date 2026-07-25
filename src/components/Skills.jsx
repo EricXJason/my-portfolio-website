@@ -3,69 +3,12 @@ import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, FileText, Film, Box } from 'lucide-react';
 import skillsData from '../data/skills.json';
-import { getAssetUrl } from '../utils/assetPath';
 
 /* ── Category icon map ── */
 const CAT_ICON_MAP = {
   game:  Gamepad2,
   web:   Globe,
   media: Palette,
-};
-
-/* ── Official Tech Logo Helper (Supports Theme Variants for Dark & Light Modes) ── */
-const getTechLogo = (sub, isLight) => {
-  const s = sub.toLowerCase();
-
-  // Dark/Light Theme Variants for monochrome icons
-  if (s === 'flask') return getAssetUrl(isLight ? '/assets/logos/flask-light.png' : '/assets/logos/flask-dark.png');
-  if (s === 'aws') return getAssetUrl(isLight ? '/assets/logos/aws-light.png' : '/assets/logos/aws-dark.png');
-  if (s === 'chatgpt') return getAssetUrl(isLight ? '/assets/logos/chatgpt-light.png' : '/assets/logos/chatgpt-dark.png');
-
-  // Universal High-Contrast Multi-Color Official Brand Logos
-  const universalMap = {
-    'java': getAssetUrl('/assets/logos/java.png'),
-    'python': getAssetUrl('/assets/logos/python.png'),
-    'spring boot': getAssetUrl('/assets/logos/spring-boot.png'),
-    'hibernate': getAssetUrl('/assets/logos/hibernate.png'),
-    'django': getAssetUrl('/assets/logos/django.png'),
-    'html': getAssetUrl('/assets/logos/html5.png'),
-    'html5': getAssetUrl('/assets/logos/html5.png'),
-    'css': getAssetUrl('/assets/logos/css3.png'),
-    'css3': getAssetUrl('/assets/logos/css3.png'),
-    'javascript': getAssetUrl('/assets/logos/javascript.png'),
-    'typescript': getAssetUrl('/assets/logos/typescript.png'),
-    'react': getAssetUrl('/assets/logos/react.png'),
-    'angular': getAssetUrl('/assets/logos/angular.png'),
-    'scss': getAssetUrl('/assets/logos/scss.png'),
-    'tailwind': getAssetUrl('/assets/logos/tailwind.png'),
-    'tailwind css': getAssetUrl('/assets/logos/tailwind.png'),
-    'bootstrap': getAssetUrl('/assets/logos/bootstrap.png'),
-    'mysql': getAssetUrl('/assets/logos/mysql.png'),
-    'postgresql': getAssetUrl('/assets/logos/postgresql.png'),
-    'gcp': getAssetUrl('/assets/logos/gcp.png'),
-    'git': getAssetUrl('/assets/logos/git.png'),
-    'docker': getAssetUrl('/assets/logos/docker.png'),
-    'vite': getAssetUrl('/assets/logos/vite.png'),
-    'github actions': getAssetUrl('/assets/logos/github-actions.png'),
-    'figma': getAssetUrl('/assets/logos/figma.png'),
-    'canva': getAssetUrl('/assets/logos/canva.png'),
-    'photoshop': getAssetUrl('/assets/logos/photoshop.png'),
-    'illustrator': getAssetUrl('/assets/logos/illustrator.png'),
-    'gemini': getAssetUrl('/assets/logos/gemini.png'),
-    'comfyui': getAssetUrl('/assets/logos/comfyui.png'),
-    'suno': getAssetUrl('/assets/logos/suno.png'),
-    'premiere': getAssetUrl('/assets/logos/premiere.png'),
-    'blender': getAssetUrl('/assets/logos/blender.png'),
-    'maya': getAssetUrl('/assets/logos/maya.png'),
-    '3dsmax': getAssetUrl('/assets/logos/3dsmax.png'),
-    'rizomuv': getAssetUrl('/assets/logos/rizomuv.png'),
-    'zbrush': getAssetUrl('/assets/logos/zbrush.png'),
-    'substance painter': getAssetUrl('/assets/logos/substance-painter.png'),
-    'autocad': getAssetUrl('/assets/logos/autocad.png'),
-    'davinci': getAssetUrl('/assets/logos/davinci.png'),
-  };
-
-  return universalMap[s] ?? null;
 };
 
 /* ── Sub-row label icon map ── */
@@ -118,7 +61,6 @@ export const Skills = () => {
         <div className="space-y-10 max-w-5xl mx-auto">
           {currentSkills.map((cat, idx) => {
             const CatIcon = CAT_ICON_MAP[cat.catType] ?? Gamepad2;
-            const isGameCategory = cat.catType === 'game';
 
             return (
               <div key={idx} className="rounded-2xl glass-card overflow-hidden shadow-md border border-[var(--border-color)]">
@@ -165,35 +107,22 @@ export const Skills = () => {
                         {/* Divider */}
                         <div className="hidden sm:block w-px h-5 shrink-0" style={{ backgroundColor: 'var(--border-color)' }} />
 
-                        {/* Tech Chips */}
+                        {/* Tech Chips (Text Only) */}
                         <div className="flex flex-wrap items-center gap-2">
-                          {tokens.map((sub, sIdx) => {
-                            const logoUrl = !isGameCategory ? getTechLogo(sub, isLight) : null;
-
-                            return (
-                              <span
-                                key={sIdx}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold font-code transition-all hover:scale-105 shadow-xs"
-                                style={{
-                                  backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
-                                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)',
-                                  color: isLight ? '#0f172a' : '#f8fafc',
-                                  borderWidth: '1px',
-                                }}
-                              >
-                                {logoUrl && (
-                                  <img
-                                    src={logoUrl}
-                                    alt={`${sub} logo`}
-                                    className="w-3.5 h-3.5 object-contain shrink-0"
-                                    loading="lazy"
-                                    decoding="async"
-                                  />
-                                )}
-                                <span>{sub}</span>
-                              </span>
-                            );
-                          })}
+                          {tokens.map((sub, sIdx) => (
+                            <span
+                              key={sIdx}
+                              className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold font-code transition-all hover:scale-105 shadow-xs"
+                              style={{
+                                backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
+                                borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)',
+                                color: isLight ? '#0f172a' : '#f8fafc',
+                                borderWidth: '1px',
+                              }}
+                            >
+                              <span>{sub}</span>
+                            </span>
+                          ))}
                         </div>
                       </div>
                     );
