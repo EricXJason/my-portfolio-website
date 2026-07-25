@@ -57,6 +57,10 @@
   --cat-icon-border:  #c7d2fe;  /* indigo-200 */
 }
 
+section[id] {
+  scroll-margin-top: 88px;
+}
+
 /* ════════════════════════════════════════════════════════════
    CUSTOM CURSOR — Hide native cursor on fine-pointer desktop devices
    ════════════════════════════════════════════════════════════ */
