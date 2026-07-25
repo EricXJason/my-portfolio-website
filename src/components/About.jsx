@@ -38,9 +38,9 @@ export const About = () => {
                 <div className="aspect-square w-full rounded-2xl overflow-hidden shadow-inner"
                   style={{ backgroundColor: isLight ? '#ffffff' : '#030712' }}>
                   <img
-                    src={getAssetUrl('/assets/images/personal.jpg')}
+                    src={isLight ? getAssetUrl('/assets/images/personal-light.jpg') : getAssetUrl('/assets/images/personal-dark.jpg')}
                     alt="Che-Cheng Hsu Portrait"
-                    className="w-full h-full object-cover object-[center_18%] group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     decoding="async"
                     fetchPriority="high"
                   />
