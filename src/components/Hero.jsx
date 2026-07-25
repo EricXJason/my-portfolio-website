@@ -140,13 +140,13 @@ export const Hero = ({ soundPlaying }) => {
 
           {/* Specialty Subtitle Pill */}
           <div
-            className="px-4 sm:px-6 py-3 rounded-2xl border max-w-full overflow-x-auto"
+            className="px-4 sm:px-6 py-3 rounded-2xl border max-w-full text-center flex items-center justify-center"
             style={{
               backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.5)',
               borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)',
             }}
           >
-            <p className="text-sm sm:text-xl lg:text-2xl font-extrabold font-code tracking-wide bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent animate-shimmer-text whitespace-nowrap">
+            <p className="text-xs sm:text-xl lg:text-2xl font-extrabold font-code tracking-wide bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent animate-shimmer-text sm:whitespace-nowrap whitespace-normal text-center break-words leading-relaxed">
               {t('hero_subtitle_pc')}
             </p>
           </div>
