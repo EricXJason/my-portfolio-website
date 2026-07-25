@@ -19,6 +19,7 @@ const getMediaTechLogo = (sub, isLight) => {
 
   // Dark & Light Mode Theme-aware variants for monochrome logos
   if (s === 'chatgpt') return getAssetUrl(isLight ? '/assets/logos/chatgpt.png' : '/assets/logos/chatgpt-dark.png');
+  if (s === 'zbrush') return getAssetUrl(isLight ? '/assets/logos/zbrush.png' : '/assets/logos/zbrush-dark.png');
   if (s === 'suno') return getAssetUrl(isLight ? '/assets/logos/suno.png' : '/assets/logos/suno-dark.png');
 
   // Universal Normalized 128x128 1:1 Square Logos
@@ -40,7 +41,6 @@ const getMediaTechLogo = (sub, isLight) => {
     'maya': getAssetUrl('/assets/logos/maya.png'),
     '3dsmax': getAssetUrl('/assets/logos/3dsmax.png'),
     'rizomuv': getAssetUrl('/assets/logos/rizomuv.png'),
-    'zbrush': getAssetUrl('/assets/logos/zbrush.png'),
     'substance painter': getAssetUrl('/assets/logos/substance-painter.png'),
   };
 
