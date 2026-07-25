@@ -158,32 +158,6 @@ export const Certifications = () => {
               </div>
             );
           })}
-
-          {/* Drive Folder Button */}
-          <div className="pt-6 border-t border-slate-800/40 text-center">
-            <a
-              href={certData.driveFolderUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-2 h-12 px-8 rounded-xl border-2 font-code text-sm font-bold transition-all shadow-md cursor-pointer"
-              style={{
-                backgroundColor: isLight ? '#ffffff' : '#0f172a',
-                borderColor: isLight ? '#06b6d4' : '#06b6d4',
-                color: isLight ? '#0284c7' : '#38bdf8',
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.backgroundColor = isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)';
-                e.currentTarget.style.transform = 'translateY(-2px)';
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : '#0f172a';
-                e.currentTarget.style.transform = '';
-              }}
-            >
-              <ExternalLink size={16} className="text-cyan-500" />
-              <span>{t('btn_view_drive_folder')}</span>
-            </a>
-          </div>
         </div>
 
       </div>

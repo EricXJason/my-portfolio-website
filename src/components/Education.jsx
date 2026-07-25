@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { GraduationCap, ExternalLink, FileText, CheckCircle2, Gamepad2, Video, Box, Code } from 'lucide-react';
+import { GraduationCap, ExternalLink, FileText, CheckCircle2, Gamepad2, Video, Box, Code, Trophy } from 'lucide-react';
 import eduData from '../data/education.json';
 
 const iconMap = {
@@ -21,6 +21,14 @@ export const Education = () => {
 
   const btnBg = isLight ? '#ffffff' : '#0f172a';
   const btnBdr = isLight ? '#cbd5e1' : '#334155';
+
+  const workshopPalette = [
+    { text: '#06b6d4', bg: isLight ? '#ecfeff' : 'rgba(6,182,212,0.12)', border: isLight ? '#a5f3fc' : 'rgba(6,182,212,0.3)' },
+    { text: '#a855f7', bg: isLight ? '#faf5ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#e9d5ff' : 'rgba(168,85,247,0.3)' },
+    { text: '#10b981', bg: isLight ? '#ecfdf5' : 'rgba(16,185,129,0.12)', border: isLight ? '#a7f3d0' : 'rgba(16,185,129,0.3)' },
+    { text: '#f59e0b', bg: isLight ? '#fffbeb' : 'rgba(245,158,11,0.12)', border: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)' },
+    { text: '#ec4899', bg: isLight ? '#fdf2f8' : 'rgba(236,72,153,0.12)', border: isLight ? '#fbcfe8' : 'rgba(236,72,153,0.3)' },
+  ];
 
   return (
     <section id="experience" className="py-24 relative select-text">
@@ -77,7 +85,7 @@ export const Education = () => {
                       href={driveLinks[btn.linkKey]}
                       target="_blank"
                       rel="noreferrer"
-                      className="h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs cursor-pointer"
+                      className="h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs cursor-pointer hover:scale-105"
                       style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                     >
                       <ExternalLink
@@ -105,6 +113,8 @@ export const Education = () => {
           <div className="space-y-6">
             {currentData.workshops.map((ws, wIdx) => {
               const IconComponent = iconMap[ws.iconType] ?? Gamepad2;
+              const colorItem = workshopPalette[wIdx % workshopPalette.length];
+
               return (
                 <div
                   key={wIdx}
@@ -112,7 +122,14 @@ export const Education = () => {
                 >
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
                     <div className="flex items-center gap-3">
-                      <div className="p-2.5 rounded-xl border text-cyan-400" style={{ backgroundColor: btnBg, borderColor: btnBdr }}>
+                      <div
+                        className="p-2.5 rounded-xl border shrink-0 transition-transform group-hover:scale-105"
+                        style={{
+                          backgroundColor: colorItem.bg,
+                          borderColor: colorItem.border,
+                          color: colorItem.text,
+                        }}
+                      >
                         <IconComponent size={20} />
                       </div>
                       <div>
@@ -129,7 +146,7 @@ export const Education = () => {
                       href={driveLinks[ws.driveLinkKey]}
                       target="_blank"
                       rel="noreferrer"
-                      className="h-10 px-4 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs shrink-0 cursor-pointer"
+                      className="h-10 px-4 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors flex items-center gap-2 shadow-xs shrink-0 cursor-pointer hover:scale-105"
                       style={{ backgroundColor: btnBg, borderColor: btnBdr }}
                     >
                       <ExternalLink size={14} className="text-cyan-400" />
@@ -166,45 +183,65 @@ export const Education = () => {
           </div>
 
           <div className="space-y-6">
-            {currentData.theses.map((thesis, tIdx) => (
-              <div
-                key={tIdx}
-                className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-3 shadow-md"
-              >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
-                  <div className="flex items-center gap-2">
-                    <FileText size={20} className={tIdx === 0 ? 'text-cyan-400 shrink-0' : 'text-purple-400 shrink-0'} />
-                    <h4 className="font-extrabold text-lg sm:text-xl text-[var(--text-main)]">
-                      {thesis.title}
-                    </h4>
-                  </div>
-                  <span
-                    className={`px-3 py-1 rounded-md font-code text-xs font-bold shrink-0 border ${
-                      tIdx === 0
-                        ? 'bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-300'
-                        : 'bg-purple-500/10 border-purple-500/30 text-purple-600 dark:text-purple-300'
-                    }`}
-                  >
-                    {thesis.award}
-                  </span>
-                </div>
-                <p className="text-xs sm:text-sm font-code text-[var(--text-sub)]">{thesis.venue}</p>
-                <p className="text-sm sm:text-base text-[var(--text-sub)] leading-relaxed">{thesis.desc}</p>
+            {currentData.theses.map((thesis, tIdx) => {
+              const isHonor = thesis.award && (thesis.award.includes('獎') || thesis.award.toLowerCase().includes('award'));
 
-                <div className="pt-2">
-                  <a
-                    href={driveLinks[thesis.driveLinkKey]}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors shadow-xs cursor-pointer"
-                    style={{ backgroundColor: btnBg, borderColor: btnBdr }}
-                  >
-                    <ExternalLink size={14} className={tIdx === 0 ? 'text-cyan-400' : 'text-purple-400'} />
-                    <span>{thesis.btnText}</span>
-                  </a>
+              return (
+                <div
+                  key={tIdx}
+                  className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-4 shadow-md"
+                >
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
+                    <div className="flex items-center gap-2.5">
+                      <FileText size={22} className={tIdx === 0 ? 'text-cyan-400 shrink-0' : 'text-purple-400 shrink-0'} />
+                      <h4 className="font-extrabold text-lg sm:text-xl text-[var(--text-main)]">
+                        {thesis.title}
+                      </h4>
+                    </div>
+
+                    {!isHonor && thesis.award && (
+                      <span
+                        className="px-3 py-1 rounded-lg font-code text-xs font-bold shrink-0 border bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-300"
+                      >
+                        {thesis.award}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="text-xs sm:text-sm font-code text-[var(--text-sub)] font-semibold">{thesis.venue}</p>
+
+                  {/* Honor Highlight Box for 優良論文獎 (Matching Project Honor design) */}
+                  {isHonor && (
+                    <div
+                      className="px-4 py-2 rounded-xl border inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold shadow-xs max-w-fit"
+                      style={{
+                        backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.1)',
+                        borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)',
+                        color: isLight ? '#b45309' : '#fbbf24',
+                      }}
+                    >
+                      <Trophy size={16} className="text-amber-500 shrink-0" />
+                      <span>{thesis.award}</span>
+                    </div>
+                  )}
+
+                  <p className="text-sm sm:text-base text-[var(--text-sub)] leading-relaxed">{thesis.desc}</p>
+
+                  <div className="pt-1">
+                    <a
+                      href={driveLinks[thesis.driveLinkKey]}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border text-xs font-bold text-[var(--text-main)] transition-colors shadow-xs cursor-pointer hover:scale-105"
+                      style={{ backgroundColor: btnBg, borderColor: btnBdr }}
+                    >
+                      <ExternalLink size={14} className={tIdx === 0 ? 'text-cyan-400' : 'text-purple-400'} />
+                      <span>{thesis.btnText}</span>
+                    </a>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 
