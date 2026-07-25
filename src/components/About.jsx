@@ -1,11 +1,11 @@
 import React from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Award, GraduationCap, Briefcase } from 'lucide-react';
+import { Award, GraduationCap, Briefcase, Sparkles } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
 export const About = () => {
-  const { t } = useLang();
+  const { t, lang } = useLang();
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
@@ -62,7 +62,8 @@ export const About = () => {
               <h3 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-main)]">
                 {t('about_heading')}
               </h3>
-              <p className="text-[var(--text-sub)] text-base sm:text-lg lg:text-xl leading-relaxed font-medium">
+
+              <p className="text-[var(--text-sub)] text-base sm:text-lg leading-relaxed font-medium">
                 {t('about_p1')}
               </p>
             </div>
@@ -70,35 +71,35 @@ export const About = () => {
             {/* Achievement Stats — 3 Statistic Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
 
-              <div className="glass-card p-4 rounded-2xl space-y-2 border border-[var(--border-color)]">
+              <div className="glass-card p-4.5 rounded-2xl space-y-2 border border-[var(--border-color)] hover:-translate-y-1 transition-transform">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
                     <GraduationCap size={18} style={{ color: '#22d3ee' }} />
                   </div>
                   <span className="font-bold text-base text-[var(--text-main)]">{t('stat_exp')}</span>
                 </div>
-                <p className="text-xs text-[var(--text-sub)]">{t('stat_exp_label')}</p>
+                <p className="text-xs text-[var(--text-sub)] font-medium">{t('stat_exp_label')}</p>
               </div>
 
-              <div className="glass-card p-4 rounded-2xl space-y-2 border border-[var(--border-color)]">
+              <div className="glass-card p-4.5 rounded-2xl space-y-2 border border-[var(--border-color)] hover:-translate-y-1 transition-transform">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
                     <Briefcase size={18} style={{ color: '#c084fc' }} />
                   </div>
                   <span className="font-bold text-base text-[var(--text-main)]">{t('stat_projects')}</span>
                 </div>
-                <p className="text-xs text-[var(--text-sub)]">{t('stat_projects_label')}</p>
+                <p className="text-xs text-[var(--text-sub)] font-medium">{t('stat_projects_label')}</p>
               </div>
 
-              {/* TOEIC — Score statistics card (no drive proof button) */}
-              <div className="glass-card p-4 rounded-2xl space-y-2 border border-[var(--border-color)]">
+              {/* TOEIC — Score statistics card */}
+              <div className="glass-card p-4.5 rounded-2xl space-y-2 border border-[var(--border-color)] hover:-translate-y-1 transition-transform">
                 <div className="flex items-center gap-2.5">
                   <div className="p-2 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
                     <Award size={18} style={{ color: '#fbbf24' }} />
                   </div>
                   <span className="font-bold text-base text-[var(--text-main)]">{t('stat_toeic')}</span>
                 </div>
-                <p className="text-xs text-[var(--text-sub)]">{t('stat_toeic_label')}</p>
+                <p className="text-xs text-[var(--text-sub)] font-medium">{t('stat_toeic_label')}</p>
               </div>
 
             </div>

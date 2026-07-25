@@ -81,19 +81,21 @@ html, body {
 }
 
 body {
-  font-family: 'Inter', 'Noto Sans TC', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
   font-size: 16px;
-  line-height: 1.6;
+  line-height: 1.75;
+  letter-spacing: -0.01em;
   background-color: var(--bg-dark);
   color: var(--text-main);
   scroll-behavior: smooth;
   transition: background-color 0.3s ease, color 0.3s ease;
   user-select: text !important;
   -webkit-user-select: text !important;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
 }
 
 /* ════════════════════════════════════════════════════════════
-   LAYOUT — container side padding
+   LAYOUT — container side padding & breathing room
    ════════════════════════════════════════════════════════════ */
 .max-w-7xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
   padding-left: 1.5rem !important;
@@ -101,17 +103,18 @@ body {
 }
 @media (min-width: 640px) {
   .max-w-7xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
-    padding-left: 2rem !important;
-    padding-right: 2rem !important;
+    padding-left: 2.25rem !important;
+    padding-right: 2.25rem !important;
   }
 }
-section[id] { scroll-margin-top: 88px; }
+section[id] { scroll-margin-top: 96px; }
 
 /* ════════════════════════════════════════════════════════════
-   HEADINGS — follow --text-main token
+   HEADINGS — follow --text-main token & tight tracking
    ════════════════════════════════════════════════════════════ */
 h1, h2, h3, h4, h5, h6 {
   color: var(--text-main) !important;
+  letter-spacing: -0.02em;
   transition: color 0.3s ease;
 }
 
@@ -120,39 +123,44 @@ h1, h2, h3, h4, h5, h6 {
    ════════════════════════════════════════════════════════════ */
 :root.light .light-aurora-bg {
   opacity: 1 !important;
-  background-color: #f5f7fa;
+  background-color: #f8fafc;
   background-image:
-    radial-gradient(ellipse at 5% 8%,  rgba(186,230,255,0.55) 0%, transparent 40%),
-    radial-gradient(ellipse at 92% 15%, rgba(199,210,254,0.45) 0%, transparent 42%),
-    radial-gradient(ellipse at 48% 90%, rgba(167,243,208,0.35) 0%, transparent 50%),
-    radial-gradient(#d1d5db 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 28px 28px;
+    radial-gradient(ellipse at 10% 10%, rgba(186,230,255,0.45) 0%, transparent 45%),
+    radial-gradient(ellipse at 90% 15%, rgba(199,210,254,0.35) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 85%, rgba(167,243,208,0.25) 0%, transparent 55%),
+    radial-gradient(#cbd5e1 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
 }
 
 /* ════════════════════════════════════════════════════════════
-   GLASS CARD
+   GLASS CARD — World-class elevation & breathing borders
    ════════════════════════════════════════════════════════════ */
 .glass-card {
   background: var(--card-bg);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-color);
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(6, 182, 212, 0.35);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 30px -10px rgba(6, 182, 212, 0.15);
 }
 
 :root.light .glass-card {
   background: #ffffff !important;
-  border-color: #e5e7eb !important;
+  border-color: #e2e8f0 !important;
   box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 4px 16px -2px rgba(0, 0, 0, 0.06) !important;
+    0 1px 3px rgba(0, 0, 0, 0.03),
+    0 8px 24px -4px rgba(0, 0, 0, 0.05) !important;
 }
 
 :root.light .glass-card:hover {
-  border-color: #93c5fd !important;   /* blue-300 — clear but not aggressive */
+  border-color: #93c5fd !important;
   box-shadow:
-    0 4px 20px -4px rgba(59, 130, 246, 0.18),
-    0 1px 4px rgba(0, 0, 0, 0.05) !important;
+    0 12px 32px -6px rgba(59, 130, 246, 0.14),
+    0 2px 8px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* ════════════════════════════════════════════════════════════
