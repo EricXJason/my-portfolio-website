@@ -11,7 +11,7 @@
     "hero_badge_spec": "AI 技術與前沿技術持續跟進中",
     "hero_title": "許哲誠",
     "hero_subtitle_pc": "互動遊戲開發／全端開發／多媒體設計",
-    "hero_desc": "專注於 3D 互動遊戲開發、全端網頁架構與新媒體藝術實踐，致力打造具沉浸感與技術含量的數位體驗。",
+    "hero_desc": "專注於互動遊戲開發、全端網頁架構與新媒體藝術實踐，致力打造具沉浸感與技術含量的數位體驗。",
     "btn_github": "GitHub 專頁",
     "btn_artstation": "ArtStation 作品集",
 
@@ -28,7 +28,7 @@
     "btn_toeic_proof": "多益成績證明",
 
     "skills_title": "專業技能",
-    "skills_intro": "涵蓋 3D 互動遊戲開發、全端 Web 架構與多媒體美學設計，展現跨領域全方位開發實力。",
+    "skills_intro": "涵蓋互動遊戲開發、全端架構與多媒體美學設計，展現跨領域全方位開發實力。",
 
     "projects_title": "專案作品",
     "projects_note": "所有專案均包含真實展示畫面，點擊播放按鈕即可線上觀看 Demo 影片。",
@@ -89,7 +89,7 @@
     "hero_badge_spec": "Continuously Evolving with AI & Emerging Tech",
     "hero_title": "HSU, CHE-CHENG",
     "hero_subtitle_pc": "Interactive Game Dev / Fullstack Dev / Multimedia Design",
-    "hero_desc": "Specializing in 3D interactive game development, fullstack web architecture, and new media design aesthetics to deliver immersive digital experiences.",
+    "hero_desc": "Specializing in interactive game development, fullstack web architecture, and new media design aesthetics to deliver immersive digital experiences.",
     "btn_github": "GitHub Profile",
     "btn_artstation": "ArtStation Portfolio",
 
@@ -106,7 +106,7 @@
     "btn_toeic_proof": "TOEIC Certificate",
 
     "skills_title": "Professional Skills",
-    "skills_intro": "Covering 3D game dev, fullstack web engineering, and multimedia design aesthetics.",
+    "skills_intro": "Covering interactive game dev, fullstack architecture, and multimedia design aesthetics.",
 
     "projects_title": "Projects",
     "projects_note": "All projects feature authentic previews and playable YouTube demos.",
