@@ -32,11 +32,11 @@ export const Education = () => {
 
   return (
     <section id="experience" className="py-24 relative select-text">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
 
         {/* 1. Education Section Header */}
         <div>
-          <div className="text-center max-w-3xl mx-auto mb-16 space-y-2">
+          <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-16 space-y-2">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
               {t('exp_title')}
             </h2>
@@ -47,7 +47,7 @@ export const Education = () => {
           </div>
 
           {/* Education Timeline Cards from JSON */}
-          <div className="space-y-8 max-w-5xl mx-auto">
+          <div className="space-y-8 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
             {currentData.degrees.map((deg) => (
               <div
                 key={deg.id}
@@ -102,7 +102,7 @@ export const Education = () => {
         </div>
 
         {/* 2. Workshops Section from JSON */}
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <h3 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-main)]">
               {t('workshop_section_title')}
@@ -174,7 +174,7 @@ export const Education = () => {
         </div>
 
         {/* 3. Thesis Section from JSON */}
-        <div className="max-w-5xl mx-auto space-y-8">
+        <div className="max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <h3 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-main)]">
               {t('thesis_section_title')}

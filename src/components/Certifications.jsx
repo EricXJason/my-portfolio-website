@@ -23,10 +23,10 @@ export const Certifications = () => {
 
   return (
     <section id="awards" className="py-24 relative select-text">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-2">
+        <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-16 space-y-2">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('awards_title')}
           </h2>
@@ -36,7 +36,7 @@ export const Certifications = () => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        <div className="glass-card rounded-2xl p-6 sm:p-10 border border-[var(--border-color)] shadow-xl max-w-5xl mx-auto space-y-8">
+        <div className="glass-card rounded-2xl p-6 sm:p-10 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8">
 
           {/* ── TOEIC 755 Premium Card ── */}
           <div

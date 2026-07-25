@@ -97,12 +97,12 @@ body {
 /* ════════════════════════════════════════════════════════════
    LAYOUT — container side padding & breathing room
    ════════════════════════════════════════════════════════════ */
-.max-w-7xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
+.max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
   padding-left: 1.5rem !important;
   padding-right: 1.5rem !important;
 }
 @media (min-width: 640px) {
-  .max-w-7xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
+  .max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
     padding-left: 2.25rem !important;
     padding-right: 2.25rem !important;
   }

@@ -14,10 +14,10 @@ export const About = () => {
 
   return (
     <section id="about" className="py-24 relative select-text">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-2">
+        <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-16 space-y-2">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('about_title')}
           </h2>
@@ -32,7 +32,7 @@ export const About = () => {
 
           {/* Portrait Image */}
           <div className="lg:col-span-5 flex justify-center">
-            <div className="relative group max-w-sm w-full">
+            <div className="relative group max-w-sm xl:max-w-md w-full">
               <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 opacity-30 group-hover:opacity-70 blur-lg transition-all duration-500" aria-hidden="true" />
               <div className="relative rounded-3xl overflow-hidden glass-card border-2 border-cyan-500/30 p-2 shadow-2xl">
                 <div

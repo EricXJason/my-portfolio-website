@@ -22,7 +22,7 @@ export const Footer = ({ lastUpdated }) => {
       {/* Top Gradient Line */}
       <div className="absolute top-0 left-0 w-full h-[2.5px] bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600" aria-hidden="true" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center">
 
         {/* Copyright Row */}
         <div className="flex flex-wrap items-center justify-center gap-3 text-sm sm:text-base font-semibold text-[var(--text-main)]">
@@ -36,7 +36,7 @@ export const Footer = ({ lastUpdated }) => {
         </div>
 
         {/* Tech Badges */}
-        <div className="flex flex-wrap items-center justify-center gap-2 max-w-5xl mx-auto pt-2">
+        <div className="flex flex-wrap items-center justify-center gap-2 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto pt-2">
           {techBadges.map((tech, idx) => (
             <div
               key={idx}

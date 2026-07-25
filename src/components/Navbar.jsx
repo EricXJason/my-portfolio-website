@@ -44,7 +44,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
           boxShadow: isLight ? '0 2px 20px rgba(15,23,42,0.07)' : '0 2px 20px rgba(0,0,0,0.3)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
 
           {/* Brand Logo */}
           <a href="#home" className="flex items-center gap-3 group shrink-0" aria-label="JasonProduction Home">

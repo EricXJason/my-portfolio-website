@@ -44,10 +44,10 @@ export const Skills = () => {
 
   return (
     <section id="skills" className="py-24 relative select-text">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-2">
+        <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-16 space-y-2">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('skills_title')}
           </h2>
@@ -58,7 +58,7 @@ export const Skills = () => {
         </div>
 
         {/* Skill Categories */}
-        <div className="space-y-10 max-w-5xl mx-auto">
+        <div className="space-y-10 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
           {currentSkills.map((cat, idx) => {
             const CatIcon = CAT_ICON_MAP[cat.catType] ?? Gamepad2;
 

@@ -80,8 +80,8 @@ export const Hero = ({ soundPlaying }) => {
         style={{ background: isLight ? 'rgba(124,58,237,0.05)' : 'rgba(124,58,237,0.07)' }}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div className="flex flex-col items-center text-center gap-8 max-w-4xl mx-auto">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+        <div className="flex flex-col items-center text-center gap-8 max-w-4xl xl:max-w-5xl mx-auto">
 
           {/* Specialization Badge */}
           <div
@@ -153,7 +153,7 @@ export const Hero = ({ soundPlaying }) => {
 
           {/* Professional Overview Bio */}
           <p
-            className="text-base sm:text-lg max-w-2xl leading-relaxed font-medium"
+            className="text-base sm:text-lg max-w-2xl xl:max-w-3xl leading-relaxed font-medium"
             style={{ color: isLight ? '#475569' : '#94a3b8' }}
           >
             {t('hero_desc')}
@@ -201,7 +201,7 @@ export const Hero = ({ soundPlaying }) => {
           </div>
 
           {/* ── 3 Contact Info Cards ── */}
-          <div className="w-full max-w-4xl mt-2">
+          <div className="w-full max-w-4xl xl:max-w-5xl mt-2">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 w-full">
               {contactList.map((item) => {
                 const label = lang === 'zh' ? item.labelZh : item.labelEn;
