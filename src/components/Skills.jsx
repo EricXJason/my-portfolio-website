@@ -12,45 +12,60 @@ const CAT_ICON_MAP = {
   media: Palette,
 };
 
-/* ── Official Tech Logo Map ── */
-const TECH_LOGO_MAP = {
-  'java': getAssetUrl('/assets/logos/java.png'),
-  'python': getAssetUrl('/assets/logos/python.png'),
-  'spring boot': getAssetUrl('/assets/logos/spring-boot.png'),
-  'hibernate': getAssetUrl('/assets/logos/hibernate.png'),
-  'flask': getAssetUrl('/assets/logos/flask.png'),
-  'django': getAssetUrl('/assets/logos/django.png'),
-  'html': getAssetUrl('/assets/logos/html5.png'),
-  'html5': getAssetUrl('/assets/logos/html5.png'),
-  'css': getAssetUrl('/assets/logos/css3.png'),
-  'css3': getAssetUrl('/assets/logos/css3.png'),
-  'javascript': getAssetUrl('/assets/logos/javascript.png'),
-  'typescript': getAssetUrl('/assets/logos/typescript.png'),
-  'react': getAssetUrl('/assets/logos/react.png'),
-  'angular': getAssetUrl('/assets/logos/angular.png'),
-  'scss': getAssetUrl('/assets/logos/scss.png'),
-  'tailwind': getAssetUrl('/assets/logos/tailwind.png'),
-  'tailwind css': getAssetUrl('/assets/logos/tailwind.png'),
-  'bootstrap': getAssetUrl('/assets/logos/bootstrap.png'),
-  'mysql': getAssetUrl('/assets/logos/mysql.png'),
-  'postgresql': getAssetUrl('/assets/logos/postgresql.png'),
-  'aws': getAssetUrl('/assets/logos/aws.png'),
-  'gcp': getAssetUrl('/assets/logos/gcp.png'),
-  'git': getAssetUrl('/assets/logos/git.png'),
-  'docker': getAssetUrl('/assets/logos/docker.png'),
-  'vite': getAssetUrl('/assets/logos/vite.png'),
-  'github actions': getAssetUrl('/assets/logos/github-actions.png'),
-  'figma': getAssetUrl('/assets/logos/figma.png'),
-  'canva': getAssetUrl('/assets/logos/canva.png'),
-  'photoshop': getAssetUrl('/assets/logos/photoshop.png'),
-  'illustrator': getAssetUrl('/assets/logos/illustrator.png'),
-  'chatgpt': getAssetUrl('/assets/logos/chatgpt.png'),
-  'gemini': getAssetUrl('/assets/logos/gemini.png'),
-  'premiere': getAssetUrl('/assets/logos/premiere.png'),
-  'blender': getAssetUrl('/assets/logos/blender.png'),
-  'maya': getAssetUrl('/assets/logos/maya.png'),
-  'autocad': getAssetUrl('/assets/logos/autocad.png'),
-  'substance painter': getAssetUrl('/assets/logos/substance-painter.png'),
+/* ── Official Tech Logo Helper (Supports Theme Variants for Dark & Light Modes) ── */
+const getTechLogo = (sub, isLight) => {
+  const s = sub.toLowerCase();
+
+  // Dark/Light Theme Variants for monochrome icons
+  if (s === 'flask') return getAssetUrl(isLight ? '/assets/logos/flask-light.png' : '/assets/logos/flask-dark.png');
+  if (s === 'aws') return getAssetUrl(isLight ? '/assets/logos/aws-light.png' : '/assets/logos/aws-dark.png');
+  if (s === 'chatgpt') return getAssetUrl(isLight ? '/assets/logos/chatgpt-light.png' : '/assets/logos/chatgpt-dark.png');
+
+  // Universal High-Contrast Multi-Color Official Brand Logos
+  const universalMap = {
+    'java': getAssetUrl('/assets/logos/java.png'),
+    'python': getAssetUrl('/assets/logos/python.png'),
+    'spring boot': getAssetUrl('/assets/logos/spring-boot.png'),
+    'hibernate': getAssetUrl('/assets/logos/hibernate.png'),
+    'django': getAssetUrl('/assets/logos/django.png'),
+    'html': getAssetUrl('/assets/logos/html5.png'),
+    'html5': getAssetUrl('/assets/logos/html5.png'),
+    'css': getAssetUrl('/assets/logos/css3.png'),
+    'css3': getAssetUrl('/assets/logos/css3.png'),
+    'javascript': getAssetUrl('/assets/logos/javascript.png'),
+    'typescript': getAssetUrl('/assets/logos/typescript.png'),
+    'react': getAssetUrl('/assets/logos/react.png'),
+    'angular': getAssetUrl('/assets/logos/angular.png'),
+    'scss': getAssetUrl('/assets/logos/scss.png'),
+    'tailwind': getAssetUrl('/assets/logos/tailwind.png'),
+    'tailwind css': getAssetUrl('/assets/logos/tailwind.png'),
+    'bootstrap': getAssetUrl('/assets/logos/bootstrap.png'),
+    'mysql': getAssetUrl('/assets/logos/mysql.png'),
+    'postgresql': getAssetUrl('/assets/logos/postgresql.png'),
+    'gcp': getAssetUrl('/assets/logos/gcp.png'),
+    'git': getAssetUrl('/assets/logos/git.png'),
+    'docker': getAssetUrl('/assets/logos/docker.png'),
+    'vite': getAssetUrl('/assets/logos/vite.png'),
+    'github actions': getAssetUrl('/assets/logos/github-actions.png'),
+    'figma': getAssetUrl('/assets/logos/figma.png'),
+    'canva': getAssetUrl('/assets/logos/canva.png'),
+    'photoshop': getAssetUrl('/assets/logos/photoshop.png'),
+    'illustrator': getAssetUrl('/assets/logos/illustrator.png'),
+    'gemini': getAssetUrl('/assets/logos/gemini.png'),
+    'comfyui': getAssetUrl('/assets/logos/comfyui.png'),
+    'suno': getAssetUrl('/assets/logos/suno.png'),
+    'premiere': getAssetUrl('/assets/logos/premiere.png'),
+    'blender': getAssetUrl('/assets/logos/blender.png'),
+    'maya': getAssetUrl('/assets/logos/maya.png'),
+    '3dsmax': getAssetUrl('/assets/logos/3dsmax.png'),
+    'rizomuv': getAssetUrl('/assets/logos/rizomuv.png'),
+    'zbrush': getAssetUrl('/assets/logos/zbrush.png'),
+    'substance painter': getAssetUrl('/assets/logos/substance-painter.png'),
+    'autocad': getAssetUrl('/assets/logos/autocad.png'),
+    'davinci': getAssetUrl('/assets/logos/davinci.png'),
+  };
+
+  return universalMap[s] ?? null;
 };
 
 /* ── Sub-row label icon map ── */
@@ -153,7 +168,7 @@ export const Skills = () => {
                         {/* Tech Chips */}
                         <div className="flex flex-wrap items-center gap-2">
                           {tokens.map((sub, sIdx) => {
-                            const logoUrl = !isGameCategory ? TECH_LOGO_MAP[sub.toLowerCase()] : null;
+                            const logoUrl = !isGameCategory ? getTechLogo(sub, isLight) : null;
 
                             return (
                               <span
