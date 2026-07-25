@@ -4,47 +4,11 @@ import { useTheme } from '../context/ThemeContext';
 import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, FileText, Film, Box } from 'lucide-react';
 import skillsData from '../data/skills.json';
 
-import { getAssetUrl } from '../utils/assetPath';
-
 /* ── Category icon map ── */
 const CAT_ICON_MAP = {
   game:  Gamepad2,
   web:   Globe,
   media: Palette,
-};
-
-/* ── Multimedia Design Logo Map (User Provided & Normalized) ── */
-const getMediaTechLogo = (sub, isLight) => {
-  const s = sub.toLowerCase();
-
-  // Dark & Light Mode Theme-aware variants for monochrome logos
-  if (s === 'chatgpt') return getAssetUrl(isLight ? '/assets/logos/chatgpt.png' : '/assets/logos/chatgpt-dark.png');
-  if (s === 'zbrush') return getAssetUrl(isLight ? '/assets/logos/zbrush.png' : '/assets/logos/zbrush-dark.png');
-  if (s === 'suno') return getAssetUrl(isLight ? '/assets/logos/suno.png' : '/assets/logos/suno-dark.png');
-
-  // Universal Normalized 128x128 1:1 Square Logos
-  const mediaLogoMap = {
-    'figma': getAssetUrl('/assets/logos/figma.png'),
-    'canva': getAssetUrl('/assets/logos/canva.png'),
-    'photoshop': getAssetUrl('/assets/logos/photoshop.png'),
-    'illustrator': getAssetUrl('/assets/logos/illustrator.png'),
-    'gemini': getAssetUrl('/assets/logos/gemini.png'),
-    'comfyui': getAssetUrl('/assets/logos/comfyui.png'),
-    'draw.io': getAssetUrl('/assets/logos/drawio.png'),
-    'word': getAssetUrl('/assets/logos/word.png'),
-    'excel': getAssetUrl('/assets/logos/excel.png'),
-    'powerpoint': getAssetUrl('/assets/logos/powerpoint.png'),
-    'premiere': getAssetUrl('/assets/logos/premiere.png'),
-    'davinci': getAssetUrl('/assets/logos/davinci.png'),
-    'autocad': getAssetUrl('/assets/logos/autocad.png'),
-    'blender': getAssetUrl('/assets/logos/blender.png'),
-    'maya': getAssetUrl('/assets/logos/maya.png'),
-    '3dsmax': getAssetUrl('/assets/logos/3dsmax.png'),
-    'rizomuv': getAssetUrl('/assets/logos/rizomuv.png'),
-    'substance painter': getAssetUrl('/assets/logos/substance-painter.png'),
-  };
-
-  return mediaLogoMap[s] ?? null;
 };
 
 /* ── Sub-row label icon map ── */
@@ -143,35 +107,22 @@ export const Skills = () => {
                         {/* Divider */}
                         <div className="hidden sm:block w-px h-5 shrink-0" style={{ backgroundColor: 'var(--border-color)' }} />
 
-                        {/* Tech Chips */}
+                        {/* Tech Chips (Text Only) */}
                         <div className="flex flex-wrap items-center gap-2">
-                          {tokens.map((sub, sIdx) => {
-                            const logoUrl = cat.catType === 'media' ? getMediaTechLogo(sub, isLight) : null;
-
-                            return (
-                              <span
-                                key={sIdx}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold font-code transition-all hover:scale-105 shadow-xs"
-                                style={{
-                                  backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
-                                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)',
-                                  color: isLight ? '#0f172a' : '#f8fafc',
-                                  borderWidth: '1px',
-                                }}
-                              >
-                                {logoUrl && (
-                                  <img
-                                    src={logoUrl}
-                                    alt={`${sub} logo`}
-                                    className="w-4 h-4 object-contain shrink-0"
-                                    loading="lazy"
-                                    decoding="async"
-                                  />
-                                )}
-                                <span>{sub}</span>
-                              </span>
-                            );
-                          })}
+                          {tokens.map((sub, sIdx) => (
+                            <span
+                              key={sIdx}
+                              className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold font-code transition-all hover:scale-105 shadow-xs"
+                              style={{
+                                backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
+                                borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)',
+                                color: isLight ? '#0f172a' : '#f8fafc',
+                                borderWidth: '1px',
+                              }}
+                            >
+                              <span>{sub}</span>
+                            </span>
+                          ))}
                         </div>
                       </div>
                     );
