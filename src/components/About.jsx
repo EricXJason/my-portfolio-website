@@ -35,12 +35,18 @@ export const About = () => {
             <div className="relative group max-w-sm w-full">
               <div className="absolute -inset-1.5 rounded-3xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 opacity-30 group-hover:opacity-70 blur-lg transition-all duration-500" aria-hidden="true" />
               <div className="relative rounded-3xl overflow-hidden glass-card border-2 border-cyan-500/30 p-2 shadow-2xl">
-                <div className="aspect-square w-full rounded-2xl overflow-hidden shadow-inner"
-                  style={{ backgroundColor: isLight ? '#ffffff' : '#030712' }}>
+                <div
+                  className="aspect-square w-full rounded-2xl overflow-hidden shadow-inner transition-all duration-500"
+                  style={{
+                    background: isLight
+                      ? 'radial-gradient(circle at 50% 40%, #ffffff 0%, #f1f5f9 60%, #e2e8f0 100%)'
+                      : 'radial-gradient(circle at 50% 40%, #1e293b 0%, #0f172a 60%, #030712 100%)'
+                  }}
+                >
                   <img
-                    src={getAssetUrl('/assets/images/personal.jpg')}
+                    src={getAssetUrl('/assets/images/personal.png')}
                     alt="Che-Cheng Hsu Portrait"
-                    className="w-full h-full object-cover object-[center_18%] group-hover:scale-105 transition-transform duration-700"
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
                     decoding="async"
                     fetchPriority="high"
                   />
