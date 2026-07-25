@@ -3,12 +3,54 @@ import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, FileText, Film, Box } from 'lucide-react';
 import skillsData from '../data/skills.json';
+import { getAssetUrl } from '../utils/assetPath';
 
 /* ── Category icon map ── */
 const CAT_ICON_MAP = {
   game:  Gamepad2,
   web:   Globe,
   media: Palette,
+};
+
+/* ── Official Tech Logo Map ── */
+const TECH_LOGO_MAP = {
+  'java': getAssetUrl('/assets/logos/java.png'),
+  'python': getAssetUrl('/assets/logos/python.png'),
+  'spring boot': getAssetUrl('/assets/logos/spring-boot.png'),
+  'hibernate': getAssetUrl('/assets/logos/hibernate.png'),
+  'flask': getAssetUrl('/assets/logos/flask.png'),
+  'django': getAssetUrl('/assets/logos/django.png'),
+  'html': getAssetUrl('/assets/logos/html5.png'),
+  'html5': getAssetUrl('/assets/logos/html5.png'),
+  'css': getAssetUrl('/assets/logos/css3.png'),
+  'css3': getAssetUrl('/assets/logos/css3.png'),
+  'javascript': getAssetUrl('/assets/logos/javascript.png'),
+  'typescript': getAssetUrl('/assets/logos/typescript.png'),
+  'react': getAssetUrl('/assets/logos/react.png'),
+  'angular': getAssetUrl('/assets/logos/angular.png'),
+  'scss': getAssetUrl('/assets/logos/scss.png'),
+  'tailwind': getAssetUrl('/assets/logos/tailwind.png'),
+  'tailwind css': getAssetUrl('/assets/logos/tailwind.png'),
+  'bootstrap': getAssetUrl('/assets/logos/bootstrap.png'),
+  'mysql': getAssetUrl('/assets/logos/mysql.png'),
+  'postgresql': getAssetUrl('/assets/logos/postgresql.png'),
+  'aws': getAssetUrl('/assets/logos/aws.png'),
+  'gcp': getAssetUrl('/assets/logos/gcp.png'),
+  'git': getAssetUrl('/assets/logos/git.png'),
+  'docker': getAssetUrl('/assets/logos/docker.png'),
+  'vite': getAssetUrl('/assets/logos/vite.png'),
+  'github actions': getAssetUrl('/assets/logos/github-actions.png'),
+  'figma': getAssetUrl('/assets/logos/figma.png'),
+  'canva': getAssetUrl('/assets/logos/canva.png'),
+  'photoshop': getAssetUrl('/assets/logos/photoshop.png'),
+  'illustrator': getAssetUrl('/assets/logos/illustrator.png'),
+  'chatgpt': getAssetUrl('/assets/logos/chatgpt.png'),
+  'gemini': getAssetUrl('/assets/logos/gemini.png'),
+  'premiere': getAssetUrl('/assets/logos/premiere.png'),
+  'blender': getAssetUrl('/assets/logos/blender.png'),
+  'maya': getAssetUrl('/assets/logos/maya.png'),
+  'autocad': getAssetUrl('/assets/logos/autocad.png'),
+  'substance painter': getAssetUrl('/assets/logos/substance-painter.png'),
 };
 
 /* ── Sub-row label icon map ── */
@@ -61,6 +103,8 @@ export const Skills = () => {
         <div className="space-y-10 max-w-5xl mx-auto">
           {currentSkills.map((cat, idx) => {
             const CatIcon = CAT_ICON_MAP[cat.catType] ?? Gamepad2;
+            const isGameCategory = cat.catType === 'game';
+
             return (
               <div key={idx} className="rounded-2xl glass-card overflow-hidden shadow-md border border-[var(--border-color)]">
 
@@ -106,22 +150,35 @@ export const Skills = () => {
                         {/* Divider */}
                         <div className="hidden sm:block w-px h-5 shrink-0" style={{ backgroundColor: 'var(--border-color)' }} />
 
-                        {/* Clean Tech Chips (Text Only) */}
+                        {/* Tech Chips */}
                         <div className="flex flex-wrap items-center gap-2">
-                          {tokens.map((sub, sIdx) => (
-                            <span
-                              key={sIdx}
-                              className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold font-code transition-all hover:scale-105 shadow-xs"
-                              style={{
-                                backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
-                                borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)',
-                                color: isLight ? '#0f172a' : '#f8fafc',
-                                borderWidth: '1px',
-                              }}
-                            >
-                              <span>{sub}</span>
-                            </span>
-                          ))}
+                          {tokens.map((sub, sIdx) => {
+                            const logoUrl = !isGameCategory ? TECH_LOGO_MAP[sub.toLowerCase()] : null;
+
+                            return (
+                              <span
+                                key={sIdx}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold font-code transition-all hover:scale-105 shadow-xs"
+                                style={{
+                                  backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
+                                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)',
+                                  color: isLight ? '#0f172a' : '#f8fafc',
+                                  borderWidth: '1px',
+                                }}
+                              >
+                                {logoUrl && (
+                                  <img
+                                    src={logoUrl}
+                                    alt={`${sub} logo`}
+                                    className="w-3.5 h-3.5 object-contain shrink-0"
+                                    loading="lazy"
+                                    decoding="async"
+                                  />
+                                )}
+                                <span>{sub}</span>
+                              </span>
+                            );
+                          })}
                         </div>
                       </div>
                     );
