@@ -108,32 +108,59 @@ export const Projects = ({ onOpenYoutube }) => {
 
                     {/* Date Badge */}
                     {project.date && (
-                      <div className="absolute top-3 right-3 z-10 flex items-center gap-1 px-2.5 py-1 rounded-md bg-slate-950/80 border border-white/10 text-slate-300 font-code text-[10px] backdrop-blur-md">
-                        <Calendar size={10} className="text-cyan-400" />
+                      <div
+                        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1 rounded-lg font-code text-xs font-bold shadow-md border backdrop-blur-md"
+                        style={{
+                          backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(15,23,42,0.9)',
+                          borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
+                          color: isLight ? '#0f172a' : '#f8fafc',
+                        }}
+                      >
+                        <Calendar size={12} className={isLight ? 'text-cyan-600' : 'text-cyan-400'} />
                         <span>{project.date}</span>
                       </div>
                     )}
 
                     {/* Play Video Button Overlay */}
                     <div
-                      className="absolute inset-0 m-auto w-14 h-14 rounded-full bg-red-600/90 text-white flex items-center justify-center shadow-xl shadow-red-600/50 group-hover/video:scale-110 transition-transform"
+                      className="absolute inset-0 m-auto w-14 h-14 rounded-full flex items-center justify-center shadow-xl group-hover/video:bg-red-600 group-hover/video:scale-110 transition-all duration-300 border"
+                      style={{
+                        backgroundColor: isLight ? 'rgba(15,23,42,0.85)' : 'rgba(3,7,18,0.85)',
+                        borderColor: isLight ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.2)',
+                        color: '#ffffff',
+                      }}
                       aria-hidden="true"
                     >
-                      <Play size={22} className="ml-1 fill-white" />
+                      <Play size={22} className="ml-1 fill-white text-white" />
                     </div>
                   </div>
 
-                  {/* YouTube Direct Link Button -> jumps directly to YouTube */}
+                  {/* YouTube Direct Link Button -> Theme-Aware Harmonized Saturation */}
                   <div>
                     <a
                       href={`https://www.youtube.com/watch?v=${project.ytId}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="w-full h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-code text-sm font-bold flex items-center justify-center gap-2 border border-red-500 shadow-md shadow-red-600/20 transition-all cursor-pointer"
+                      className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                      style={{
+                        backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.85)',
+                        borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                        color: isLight ? '#0f172a' : '#cbd5e1',
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.backgroundColor = '#dc2626';
+                        e.currentTarget.style.borderColor = '#dc2626';
+                        e.currentTarget.style.color = '#ffffff';
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15,23,42,0.85)';
+                        e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)';
+                        e.currentTarget.style.color = isLight ? '#0f172a' : '#cbd5e1';
+                      }}
                     >
-                      <Video size={18} className="text-white" />
-                      <span>{lang === 'zh' ? 'YouTube 播放展示' : 'Watch on YouTube'}</span>
-                      <ExternalLink size={14} className="text-white/80 shrink-0" />
+                      <Video size={16} className="shrink-0" />
+                      <span>{lang === 'zh' ? '▶ YouTube 播放展示' : '▶ Watch on YouTube'}</span>
+                      <ExternalLink size={13} className="opacity-70 shrink-0" />
                     </a>
                   </div>
                 </div>

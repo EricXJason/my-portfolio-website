@@ -204,11 +204,21 @@ export const ArtGallery = () => {
         >
           {/* Main Modal Container */}
           <div
-            className="relative max-w-5xl w-full max-h-[90vh] bg-slate-900 dark:bg-slate-900 light:bg-white border border-slate-800 dark:border-slate-800 light:border-slate-300 rounded-2xl overflow-hidden shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-center"
+            className="relative max-w-5xl w-full max-h-[90vh] border rounded-2xl overflow-hidden shadow-2xl p-4 sm:p-6 flex flex-col items-center justify-center"
+            style={{
+              backgroundColor: isLight ? '#ffffff' : '#0f172a',
+              borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
+              boxShadow: isLight
+                ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
+                : '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
+            }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Top Toolbar (Close Button Only) */}
-            <div className="w-full flex items-center justify-end pb-3 border-b border-slate-800 dark:border-slate-800 light:border-slate-200 mb-4">
+            <div
+              className="w-full flex items-center justify-end pb-3 border-b mb-4"
+              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}
+            >
               <button
                 onClick={() => setActiveImage(null)}
                 className="p-2 rounded-xl border transition-colors cursor-pointer"

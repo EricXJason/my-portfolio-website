@@ -65,17 +65,45 @@ export const Skills = () => {
             return (
               <div key={idx} className="rounded-2xl glass-card overflow-hidden shadow-md border border-[var(--border-color)]">
 
-                {/* Category Header */}
+                {/* Category Header with Hierarchy Badge */}
                 <div
-                  className="flex items-center gap-3 px-6 py-4 border-b border-[var(--border-color)]"
+                  className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-[var(--border-color)]"
                   style={{ borderLeftWidth: '4px', borderLeftColor: cat.catColor }}
                 >
-                  <div className="p-2.5 rounded-xl cat-icon-bg border">
-                    <CatIcon size={22} style={{ color: cat.catColor }} />
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-xl cat-icon-bg border">
+                      <CatIcon size={22} style={{ color: cat.catColor }} />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-extrabold text-[var(--text-main)]">
+                      {cat.category}
+                    </h3>
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-extrabold text-[var(--text-main)]">
-                    {cat.category}
-                  </h3>
+
+                  {/* Hierarchy Tag (3 Distinct Colors & Strict Language) */}
+                  <span
+                    className="px-3.5 py-1 rounded-full text-xs font-code font-bold uppercase tracking-wider border shadow-xs"
+                    style={{
+                      backgroundColor: cat.catType === 'game'
+                        ? (isLight ? '#ecfeff' : 'rgba(6,182,212,0.15)')
+                        : cat.catType === 'web'
+                        ? (isLight ? '#faf5ff' : 'rgba(192,132,252,0.15)')
+                        : (isLight ? '#ecfdf5' : 'rgba(52,211,153,0.15)'),
+                      borderColor: cat.catType === 'game'
+                        ? (isLight ? '#a5f3fc' : 'rgba(6,182,212,0.4)')
+                        : cat.catType === 'web'
+                        ? (isLight ? '#e9d5ff' : 'rgba(192,132,252,0.4)')
+                        : (isLight ? '#a7f3d0' : 'rgba(52,211,153,0.4)'),
+                      color: cat.catType === 'game'
+                        ? (isLight ? '#0891b2' : '#22d3ee')
+                        : cat.catType === 'web'
+                        ? (isLight ? '#7e22ce' : '#c084fc')
+                        : (isLight ? '#047857' : '#34d399'),
+                    }}
+                  >
+                    {cat.catType === 'game'
+                      ? (lang === 'zh' ? '★ 核心主修' : '★ Core Focus')
+                      : (lang === 'zh' ? '◆ 跨領域專長' : '◆ Cross-Domain')}
+                  </span>
                 </div>
 
                 {/* Skill Rows */}
