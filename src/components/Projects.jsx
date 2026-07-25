@@ -79,17 +79,11 @@ export const Projects = ({ onOpenYoutube }) => {
         {/* Project Grid */}
         <div className="space-y-12 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
           {filteredProjects.map((project) => {
-            const title = lang === 'zh' ? project.title : (project.title_en || project.title);
+            const rawTitle = lang === 'zh' ? project.title : (project.title_en || project.title);
+            const title = rawTitle.replace(/[《》]/g, '');
             const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
             const honorsList = lang === 'zh' ? project.honors : (project.honors_en || project.honors);
             const contribs = lang === 'zh' ? project.contributions : (project.contributions_en || project.contributions);
-
-            const categoryLabels = {
-              interactive: lang === 'zh' ? '互動遊戲' : 'Interactive Game',
-              fullstack: lang === 'zh' ? '全端作品' : 'Fullstack',
-              frontend: lang === 'zh' ? '前端作品' : 'Frontend',
-            };
-            const catLabel = categoryLabels[project.category] || 'Project';
 
             return (
               <article
@@ -174,11 +168,8 @@ export const Projects = ({ onOpenYoutube }) => {
                 <div className="w-full lg:w-7/12 space-y-4 flex flex-col justify-between h-full">
                   <div className="space-y-3.5">
 
-                    {/* Category Label Pill + Title */}
-                    <div className="space-y-1.5">
-                      <span className="inline-block text-[11px] font-code font-extrabold uppercase tracking-widest px-2.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20">
-                        {catLabel}
-                      </span>
+                    {/* Project Title */}
+                    <div>
                       <h3 className="text-2xl sm:text-3xl font-extrabold text-[var(--text-main)] group-hover:text-cyan-500 transition-colors tracking-tight">
                         {title}
                       </h3>

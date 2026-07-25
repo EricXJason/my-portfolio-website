@@ -1,8 +1,8 @@
 [
   {
     "id": "awakening",
-    "title": "《覺醒協議 Awakening Protocol》",
-    "title_en": "《Awakening Protocol》",
+    "title": "覺醒協議 Awakening Protocol",
+    "title_en": "Awakening Protocol",
     "category": "interactive",
     "image": "/assets/images/proj-awakening.jpg",
     "ytId": "b7NXCFqxN38",
@@ -27,8 +27,8 @@
   },
   {
     "id": "extinction",
-    "title": "《滅境之星 Planet of Extinction》",
-    "title_en": "《Planet of Extinction》",
+    "title": "滅境之星 Planet of Extinction",
+    "title_en": "Planet of Extinction",
     "category": "interactive",
     "image": "/assets/images/proj-extinction.jpg",
     "ytId": "amEg9Cjix10",
@@ -59,8 +59,8 @@
   },
   {
     "id": "rhythmsync",
-    "title": "《節奏同奏 RhythmSync》",
-    "title_en": "《RhythmSync》",
+    "title": "節奏同奏 RhythmSync",
+    "title_en": "RhythmSync",
     "category": "interactive",
     "image": "/assets/images/proj-rhythmsync.jpg",
     "ytId": "0h3oy0Y8f0o",
@@ -83,8 +83,8 @@
   },
   {
     "id": "temporal-shrine",
-    "title": "《社影流光 Temporal Shrine》",
-    "title_en": "《Temporal Shrine》",
+    "title": "社影流光 Temporal Shrine",
+    "title_en": "Temporal Shrine",
     "category": "interactive",
     "image": "/assets/images/proj-temporal-shrine.jpg",
     "ytId": "VR360ch3UmI",
@@ -105,8 +105,8 @@
   },
   {
     "id": "ecohoops",
-    "title": "《環保投籃王 EcoHoops》",
-    "title_en": "《EcoHoops》",
+    "title": "環保投籃王 EcoHoops",
+    "title_en": "EcoHoops",
     "category": "interactive",
     "image": "/assets/images/proj-ecohoops.jpg",
     "ytId": "O-GtG-Gwb78",
@@ -127,8 +127,8 @@
   },
   {
     "id": "aircraft",
-    "title": "《飛機檢修行動學習平台 Aircraft Maintenance Action Learning Platform》",
-    "title_en": "《Aircraft Maintenance Action Learning Platform》",
+    "title": "飛機檢修行動學習平台 Aircraft Maintenance Action Learning Platform",
+    "title_en": "Aircraft Maintenance Action Learning Platform",
     "category": "interactive",
     "image": "/assets/images/proj-aircraft.jpg",
     "ytId": "bY66zTSSS6Y",
@@ -149,8 +149,8 @@
   },
   {
     "id": "little-prince",
-    "title": "《小王子帶你去旅行 The Little Prince Takes You on a Journey》",
-    "title_en": "《Traveling with The Little Prince》",
+    "title": "小王子帶你去旅行 The Little Prince Takes You on a Journey",
+    "title_en": "Traveling with The Little Prince",
     "category": "interactive",
     "image": "/assets/images/proj-little-prince.jpg",
     "ytId": "dQw4w9WgXcQ",
