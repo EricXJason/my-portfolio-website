@@ -49,10 +49,9 @@ function AppContent() {
       <LangSelectModal />
 
       {/* Fixed ambient mesh + particles */}
-      <div className="fixed inset-0 pointer-events-none z-0 transition-opacity duration-500"
-        style={{ opacity: theme === 'light' ? 1 : 0.4 }}>
+      <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 light-aurora-bg" />
-        <CyberParticles theme={theme} />
+        <CyberParticles theme={theme} soundPlaying={soundPlaying} />
       </div>
 
       <ScrollProgress />
