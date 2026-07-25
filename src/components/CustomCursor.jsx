@@ -85,8 +85,8 @@ export const CustomCursor = () => {
       >
         <path
           d="M3 3l7 18 3-7 7-3L3 3z"
-          fill={isLight ? '#0284c7' : 'rgba(6, 182, 212, 0.45)'}
-          stroke={isLight ? '#0f172a' : '#22d3ee'}
+          fill={isLight ? '#000000' : 'rgba(6, 182, 212, 0.45)'}
+          stroke={isLight ? '#000000' : '#22d3ee'}
           strokeWidth={isLight ? '2.2' : '2'}
           strokeLinejoin="round"
         />

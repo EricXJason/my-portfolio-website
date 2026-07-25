@@ -268,12 +268,12 @@ h1, h2, h3, h4, h5, h6 {
   margin-top: 80px;
 }
 :root.light ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0284c7 0%, #3b82f6 100%);
+  background: #000000;
   border-radius: 8px;
   border: 3px solid #f1f5f9;
 }
 :root.light ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #0369a1 0%, #1d4ed8 100%);
+  background: #334155;
 }
 
 @media (max-width: 1024px) {
