@@ -3,14 +3,14 @@ import { useLang } from '../context/LangContext';
 import { getAssetUrl } from '../utils/assetPath';
 
 const techBadges = [
-  { name: 'HTML5',          icon: getAssetUrl('/assets/logos/html5.svg') },
-  { name: 'CSS3',           icon: getAssetUrl('/assets/logos/css3.svg') },
-  { name: 'SCSS',           icon: getAssetUrl('/assets/logos/scss.svg') },
-  { name: 'Tailwind CSS',   icon: getAssetUrl('/assets/logos/tailwind.svg') },
-  { name: 'JavaScript',     icon: getAssetUrl('/assets/logos/javascript.svg') },
-  { name: 'React',          icon: getAssetUrl('/assets/logos/react.svg') },
-  { name: 'Vite',           icon: getAssetUrl('/assets/logos/vite.svg') },
-  { name: 'GitHub Actions', icon: getAssetUrl('/assets/logos/github-actions.svg') },
+  { name: 'HTML5',          icon: getAssetUrl('/assets/logos/html5.png') },
+  { name: 'CSS3',           icon: getAssetUrl('/assets/logos/css3.png') },
+  { name: 'SCSS',           icon: getAssetUrl('/assets/logos/scss.png') },
+  { name: 'Tailwind CSS',   icon: getAssetUrl('/assets/logos/tailwind.png') },
+  { name: 'JavaScript',     icon: getAssetUrl('/assets/logos/javascript.png') },
+  { name: 'React',          icon: getAssetUrl('/assets/logos/react.png') },
+  { name: 'Vite',           icon: getAssetUrl('/assets/logos/vite.png') },
+  { name: 'GitHub Actions', icon: getAssetUrl('/assets/logos/github-actions.png') },
 ];
 
 export const Footer = ({ lastUpdated }) => {
