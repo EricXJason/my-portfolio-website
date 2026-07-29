@@ -9,3 +9,4 @@
 2026-07-29T19:40:00+08:00 | refactor | Refined README.md Project Overview to focus on website concepts, modular JSON architecture, multilayer shadow visual design, and Web Audio synth | README.md
 2026-07-29T19:42:00+08:00 | refactor | Streamlined README.md into Chinese (English) section titles and clear, concise project overview | README.md
 2026-07-29T19:44:00+08:00 | refactor | Removed redundant parenthetical details from README.md Project Overview | README.md
+2026-07-29T19:45:00+08:00 | refactor | Added bilingual support feature to README.md Project Overview | README.md
