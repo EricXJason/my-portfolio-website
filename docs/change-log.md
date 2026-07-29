@@ -7,3 +7,4 @@
 2026-07-29T19:35:00+08:00 | refactor | Deprecated docs/system-spec.md per AGENTS.md v2.7.0 and restructured README.md into 4 strict sections | README.md, docs/system-spec.md
 2026-07-29T19:36:00+08:00 | refactor | Refined README.md Technology Stack to accurately reflect technologies used strictly by this portfolio website repository | README.md
 2026-07-29T19:40:00+08:00 | refactor | Refined README.md Project Overview to focus on website concepts, modular JSON architecture, multilayer shadow visual design, and Web Audio synth | README.md
+2026-07-29T19:42:00+08:00 | refactor | Streamlined README.md into Chinese (English) section titles and clear, concise project overview | README.md
