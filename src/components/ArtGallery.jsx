@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ZoomIn, ShieldAlert, Layers, Box, Component, PenTool, Paintbrush, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
 // Reorganized Multimedia Artworks Dataset
@@ -110,7 +110,7 @@ export const ArtGallery = () => {
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('gallery_title')}
           </h2>
-          <p className="text-sm sm:text-base text-[var(--text-sub)] font-medium leading-relaxed">
+          <p className="text-sm sm:text-base text-[var(--text-sub)] font-normal leading-relaxed">
             {t('gallery_note')}
           </p>
           <div className="w-16 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
@@ -194,7 +194,7 @@ export const ArtGallery = () => {
 
       </div>
 
-      {/* Lightbox Modal with Prev/Next Navigation */}
+      {/* Lightbox Modal without top-left filename text */}
       {activeImage && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-slate-950/90 backdrop-blur-md animate-fade-in"
@@ -214,24 +214,45 @@ export const ArtGallery = () => {
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top Toolbar (Close Button Only) */}
+            {/* Top Toolbar (Download Button + Close Button ONLY, zero filename text) */}
             <div
               className="w-full flex items-center justify-end pb-3 border-b mb-4"
               style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}
             >
-              <button
-                onClick={() => setActiveImage(null)}
-                className="p-2 rounded-xl border transition-colors cursor-pointer"
-                style={{
-                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.08)',
-                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
-                  color: isLight ? '#0f172a' : '#f8fafc',
-                }}
-                aria-label="Close Lightbox"
-                title="Close (Esc)"
-              >
-                <X size={20} />
-              </button>
+              <div className="flex items-center gap-3">
+                {/* Download Button */}
+                <a
+                  href={getAssetUrl(activeImage.img)}
+                  download={`artwork-${activeImage.id}.jpg`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="h-10 px-4 rounded-xl border text-xs font-bold font-code transition-all flex items-center gap-2 cursor-pointer shadow-xs hover:scale-105"
+                  style={{
+                    backgroundColor: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)',
+                    borderColor: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)',
+                    color: isLight ? '#0369a1' : '#22d3ee',
+                  }}
+                  title={lang === 'zh' ? '下載作品原圖' : 'Download Image'}
+                >
+                  <Download size={15} />
+                  <span>{lang === 'zh' ? '下載圖片' : 'Download'}</span>
+                </a>
+
+                {/* Close Button */}
+                <button
+                  onClick={() => setActiveImage(null)}
+                  className="p-2 rounded-xl border transition-colors cursor-pointer hover:scale-105"
+                  style={{
+                    backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.08)',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
+                    color: isLight ? '#0f172a' : '#f8fafc',
+                  }}
+                  aria-label="Close Lightbox"
+                  title="Close (Esc)"
+                >
+                  <X size={20} />
+                </button>
+              </div>
             </div>
 
             {/* Image & Prev / Next Controls Container */}
@@ -267,7 +288,7 @@ export const ArtGallery = () => {
               {/* Artwork Full Image */}
               <img
                 src={getAssetUrl(activeImage.img)}
-                alt="Artwork Full View"
+                alt="Artwork View"
                 className="max-h-[72vh] w-auto object-contain rounded-lg shadow-lg select-none"
                 decoding="async"
               />
@@ -306,5 +327,3 @@ export const ArtGallery = () => {
     </section>
   );
 };
-
-

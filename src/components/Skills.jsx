@@ -2,7 +2,7 @@ import React from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, FileText, Film, Box } from 'lucide-react';
-import skillsData from '../data/skills.json';
+import skillsData from '../data/skills-section.json';
 
 /* ── Category icon map ── */
 const CAT_ICON_MAP = {
@@ -51,7 +51,7 @@ export const Skills = () => {
           <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
             {t('skills_title')}
           </h2>
-          <p className="text-sm sm:text-base text-[var(--text-sub)] font-medium leading-relaxed">
+          <p className="text-sm sm:text-base font-normal leading-relaxed text-[var(--text-sub)]">
             {t('skills_intro')}
           </p>
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
@@ -65,7 +65,7 @@ export const Skills = () => {
             return (
               <div key={idx} className="rounded-2xl glass-card overflow-hidden shadow-md border border-[var(--border-color)]">
 
-                {/* Category Header with Hierarchy Badge */}
+                {/* Category Header */}
                 <div
                   className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-[var(--border-color)]"
                   style={{ borderLeftWidth: '4px', borderLeftColor: cat.catColor }}
@@ -79,7 +79,6 @@ export const Skills = () => {
                     </h3>
                   </div>
 
-                  {/* Hierarchy Tag (3 Distinct Colors & Strict Language) */}
                   <span
                     className="px-3.5 py-1 rounded-full text-xs font-code font-bold uppercase tracking-wider border shadow-xs"
                     style={{
@@ -132,15 +131,14 @@ export const Skills = () => {
                           </span>
                         </div>
 
-                        {/* Divider */}
                         <div className="hidden sm:block w-px h-5 shrink-0" style={{ backgroundColor: 'var(--border-color)' }} />
 
-                        {/* Tech Chips (Text Only) */}
+                        {/* Tech Chips */}
                         <div className="flex flex-wrap items-center gap-2">
                           {tokens.map((sub, sIdx) => (
                             <span
                               key={sIdx}
-                              className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs sm:text-sm font-semibold font-code transition-all hover:scale-105 shadow-xs"
+                              className="inline-flex items-center px-3 py-1.5 rounded-xl text-xs sm:text-sm font-medium font-code transition-all hover:scale-105 shadow-xs"
                               style={{
                                 backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
                                 borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)',

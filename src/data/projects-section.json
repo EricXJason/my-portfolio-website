@@ -1,9 +1,10 @@
 [
   {
     "id": "awakening",
-    "title": "覺醒協議 Awakening Protocol",
+    "title_zh": "覺醒協議",
     "title_en": "Awakening Protocol",
     "category": "interactive",
+    "featured": true,
     "image": "/assets/images/proj-awakening.jpg",
     "ytId": "b7NXCFqxN38",
     "honors": ["國立臺灣藝術大學設計學院多媒體動畫藝術學系 114 學年度畢業創作影片補助"],
@@ -27,9 +28,10 @@
   },
   {
     "id": "extinction",
-    "title": "滅境之星 Planet of Extinction",
+    "title_zh": "滅境之星",
     "title_en": "Planet of Extinction",
     "category": "interactive",
+    "featured": true,
     "image": "/assets/images/proj-extinction.jpg",
     "ytId": "amEg9Cjix10",
     "honors": [
@@ -59,9 +61,10 @@
   },
   {
     "id": "rhythmsync",
-    "title": "節奏同奏 RhythmSync",
+    "title_zh": "節奏同奏",
     "title_en": "RhythmSync",
     "category": "interactive",
+    "featured": false,
     "image": "/assets/images/proj-rhythmsync.jpg",
     "ytId": "0h3oy0Y8f0o",
     "honors": [],
@@ -83,9 +86,10 @@
   },
   {
     "id": "temporal-shrine",
-    "title": "社影流光 Temporal Shrine",
+    "title_zh": "社影流光",
     "title_en": "Temporal Shrine",
     "category": "interactive",
+    "featured": false,
     "image": "/assets/images/proj-temporal-shrine.jpg",
     "ytId": "VR360ch3UmI",
     "honors": [],
@@ -105,9 +109,10 @@
   },
   {
     "id": "ecohoops",
-    "title": "環保投籃王 EcoHoops",
+    "title_zh": "環保投籃王",
     "title_en": "EcoHoops",
     "category": "interactive",
+    "featured": false,
     "image": "/assets/images/proj-ecohoops.jpg",
     "ytId": "O-GtG-Gwb78",
     "honors": [],
@@ -127,9 +132,10 @@
   },
   {
     "id": "aircraft",
-    "title": "飛機檢修行動學習平台 Aircraft Maintenance Action Learning Platform",
+    "title_zh": "飛機檢修行動學習平台",
     "title_en": "Aircraft Maintenance Action Learning Platform",
     "category": "interactive",
+    "featured": false,
     "image": "/assets/images/proj-aircraft.jpg",
     "ytId": "bY66zTSSS6Y",
     "honors": ["2021 第四屆台灣數位媒體設計獎 - 大專組互動科技應用 - 銀賞"],
@@ -149,9 +155,10 @@
   },
   {
     "id": "little-prince",
-    "title": "小王子帶你去旅行 The Little Prince Takes You on a Journey",
+    "title_zh": "小王子帶你去旅行",
     "title_en": "Traveling with The Little Prince",
     "category": "interactive",
+    "featured": false,
     "image": "/assets/images/proj-little-prince.jpg",
     "ytId": "dQw4w9WgXcQ",
     "honors": ["2023 通訊大賽聯網未來挑戰賽 - 決賽入圍"],

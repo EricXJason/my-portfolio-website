@@ -1,11 +1,11 @@
 {
   "zh": [
     {
-      "category": "互動遊戲開發",
+      "category": "互動應用開發",
       "catColor": "#22d3ee",
       "catType": "game",
       "items": [
-        { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
+        { "label": "遊戲引擎與開發環境", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
         { "label": "設計模式與架構", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
         { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / Editor Scripting / Saving System / AI Navigation / Cinemachine / DOTween / Timeline" },
         { "label": "XR 實境開發", "rowType": "text", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
@@ -33,16 +33,16 @@
       "catType": "media",
       "items": [
         { "label": "視覺設計與 UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
-        { "label": "AI 內容創作", "rowType": "tech", "content": "ChatGPT / Gemini / ComfyUI / Suno" },
+        { "label": "AI 內容創作", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
         { "label": "流程圖設計與文書", "rowType": "tech", "content": "draw.io / Word / Excel / PowerPoint" },
         { "label": "影片剪輯與後製", "rowType": "tech", "content": "Premiere / DaVinci" },
-        { "label": "3D 建模與材質", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3dsMax / RizomUV / Zbrush / Substance Painter" }
+        { "label": "3D 建模與材質", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3dsMax / RizomUV / Zbrush / Substance Painter / Marmoset Toolbag" }
       ]
     }
   ],
   "en": [
     {
-      "category": "Interactive Game Dev",
+      "category": "Interactive App Dev",
       "catColor": "#22d3ee",
       "catType": "game",
       "items": [
@@ -74,10 +74,10 @@
       "catType": "media",
       "items": [
         { "label": "Visual Design & UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
-        { "label": "AIGC Creation", "rowType": "tech", "content": "ChatGPT / Gemini / ComfyUI / Suno" },
+        { "label": "AIGC Creation", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
         { "label": "Flowcharts & Office", "rowType": "tech", "content": "draw.io / Word / Excel / PowerPoint" },
         { "label": "Video Post-Production", "rowType": "tech", "content": "Premiere / DaVinci" },
-        { "label": "3D Modeling & Materials", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3dsMax / RizomUV / Zbrush / Substance Painter" }
+        { "label": "3D Modeling & Materials", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3dsMax / RizomUV / Zbrush / Substance Painter / Marmoset Toolbag" }
       ]
     }
   ]

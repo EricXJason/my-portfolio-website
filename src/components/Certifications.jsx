@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Languages, Box, CheckCircle2, ExternalLink, Trophy, Award, ChevronDown, ChevronUp } from 'lucide-react';
-import certData from '../data/certifications.json';
+import certData from '../data/certifications-section.json';
 
 const groupIconMap = {
   languages: Languages,
@@ -27,10 +27,10 @@ export const Certifications = () => {
 
         {/* Section Header */}
         <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-16 space-y-2">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
+          <h2 className="text-3xl sm:text-4xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
             {t('awards_title')}
           </h2>
-          <p className="text-sm sm:text-base text-[var(--text-sub)] font-medium leading-relaxed">
+          <p className="text-sm sm:text-base font-normal leading-relaxed text-[var(--text-sub)]">
             {t('awards_intro')}
           </p>
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
@@ -38,7 +38,7 @@ export const Certifications = () => {
 
         <div className="glass-card rounded-2xl p-6 sm:p-10 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8">
 
-          {/* ── TOEIC 755 Premium Card ── */}
+          {/* TOEIC 755 Premium Card */}
           <div
             className="p-5 rounded-2xl border-2 flex flex-col sm:flex-row sm:items-center gap-4 justify-between shadow-xs"
             style={{
@@ -54,10 +54,10 @@ export const Certifications = () => {
                 <p className="text-[10px] font-code font-bold tracking-widest uppercase text-amber-500 mb-0.5">
                   {lang === 'zh' ? '英文能力檢定' : 'English Proficiency'}
                 </p>
-                <h3 className="text-xl sm:text-2xl font-extrabold text-[var(--text-main)]">
+                <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                   TOEIC 755
                 </h3>
-                <p className="text-xs text-[var(--text-sub)] font-code mt-0.5">
+                <p className="text-xs font-code font-medium mt-0.5" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
                   {lang === 'zh' ? 'ETS 多益英語測驗成績' : 'ETS Test of English for International Communication'}
                 </p>
               </div>
@@ -78,7 +78,7 @@ export const Certifications = () => {
             </a>
           </div>
 
-          {/* ── Certification Groups (Top 3 Default Visible, Expandable Rest) ── */}
+          {/* Certification Groups */}
           {groups.map((group, gIdx) => {
             const IconComp = groupIconMap[group.iconType] ?? Award;
             const isExpanded = !!expandedGroups[gIdx];
@@ -92,12 +92,12 @@ export const Certifications = () => {
                     <div className="p-2.5 rounded-xl border" style={{ backgroundColor: isLight ? '#f1f5f9' : '#0f172a', borderColor: isLight ? '#cbd5e1' : '#1e293b' }}>
                       <IconComp size={20} className={gIdx === 0 ? 'text-cyan-400' : 'text-purple-400'} />
                     </div>
-                    <h3 className="font-extrabold text-base sm:text-lg text-[var(--text-main)] tracking-wide">
+                    <h3 className="font-extrabold text-base sm:text-lg tracking-wide" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                       {group.group}
                     </h3>
                   </div>
 
-                  <span className="text-xs font-code font-medium text-[var(--text-sub)]">
+                  <span className="text-xs font-code font-medium" style={{ color: isLight ? '#475569' : '#94a3b8' }}>
                     {lang === 'zh' ? `共 ${group.items.length} 項認證` : `${group.items.length} Credentials`}
                   </span>
                 </div>
@@ -107,7 +107,7 @@ export const Certifications = () => {
                   {displayedItems.map((cert, idx) => (
                     <a
                       key={idx}
-                      href={certData.driveFolderUrl}
+                      href={cert.driveUrl || certData.driveFolderUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="p-4 rounded-xl border transition-all flex items-center justify-between group shadow-xs hover:scale-[1.02]"
@@ -121,10 +121,10 @@ export const Certifications = () => {
                       <div className="flex items-center gap-3 min-w-0 pr-2">
                         <CheckCircle2 size={18} className="text-cyan-500 shrink-0" />
                         <div className="truncate">
-                          <p className="text-sm font-bold text-[var(--text-main)] truncate">
+                          <p className="text-sm font-bold truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                             {cert.name}
                           </p>
-                          <p className="text-xs text-[var(--text-sub)] font-code truncate mt-0.5">{cert.org}</p>
+                          <p className="text-xs font-code font-normal truncate mt-0.5" style={{ color: isLight ? '#475569' : '#94a3b8' }}>{cert.org}</p>
                         </div>
                       </div>
                       <ExternalLink size={15} className="text-slate-400 group-hover:text-cyan-400 shrink-0 transition-colors" />
@@ -132,7 +132,7 @@ export const Certifications = () => {
                   ))}
                 </div>
 
-                {/* ArtGallery-style View More / Collapse Button */}
+                {/* Expand / Collapse Button */}
                 {hasMore && (
                   <div className="pt-2 text-center">
                     <button
@@ -141,7 +141,7 @@ export const Certifications = () => {
                       style={{
                         backgroundColor: isLight ? '#ffffff' : '#0f172a',
                         borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
-                        color: 'var(--text-main)',
+                        color: isLight ? '#0f172a' : '#ffffff',
                       }}
                       onMouseEnter={e => { e.currentTarget.style.borderColor = '#06b6d4'; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)'; }}

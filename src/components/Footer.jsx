@@ -15,6 +15,7 @@ const techBadges = [
 
 export const Footer = ({ lastUpdated }) => {
   const { lang } = useLang();
+  const displayDate = lastUpdated || new Date().toISOString().split('T')[0];
 
   return (
     <footer className="w-full relative z-10 border-t border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-2xl py-10 transition-colors duration-300 select-text">
@@ -31,7 +32,7 @@ export const Footer = ({ lastUpdated }) => {
             {lang === 'zh' ? '許哲誠 版權所有' : 'HSU, CHE-CHENG All Rights Reserved'}
           </span>
           <span className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 font-code text-xs font-bold">
-            {lastUpdated}
+            {displayDate}
           </span>
         </div>
 

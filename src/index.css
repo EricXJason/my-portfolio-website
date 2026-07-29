@@ -362,3 +362,13 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .animate-cyber-scan {
   animation: cyber-scan 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
+
+/* Slow Continuous Orbit Rotation */
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+

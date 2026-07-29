@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Menu, X, Volume2, VolumeX, Sun, Moon } from 'lucide-react';
+import { Menu, X, Volume2, VolumeX, Sun, Moon, ChevronDown } from 'lucide-react';
 
 export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolume }) => {
   const { lang, toggleLang, t } = useLang();
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileExpOpen, setMobileExpOpen] = useState(false);
+  const [desktopExpHover, setDesktopExpHover] = useState(false);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
   const volumeRef = useRef(null);
 
@@ -24,13 +26,20 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
     return () => document.removeEventListener('mousedown', handler);
   }, [showVolumePopup]);
 
-  const navItems = [
+  const expSubItems = [
+    { key: 'nav_sub_degrees', href: '#education-degrees' },
+    { key: 'nav_sub_work', href: '#work-experience' },
+    { key: 'nav_sub_workshops', href: '#workshops' },
+    { key: 'nav_sub_publications', href: '#publications' },
+  ];
+
+  const mainNavItems = [
     { key: 'nav_home', href: '#home' },
     { key: 'nav_about', href: '#about' },
     { key: 'nav_skills', href: '#skills' },
     { key: 'nav_projects', href: '#projects' },
     { key: 'nav_awards', href: '#awards' },
-    { key: 'nav_experience', href: '#experience' },
+    { key: 'nav_experience', href: '#experience', isDropdown: true },
     { key: 'nav_gallery', href: '#gallery' },
   ];
 
@@ -48,7 +57,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
 
           {/* Brand Logo */}
           <a href="#home" className="flex items-center gap-3 group shrink-0" aria-label="JasonProduction Home">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[1.5px] group-hover:scale-105 transition-transform">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[1.5px] group-hover:scale-105 active:scale-95 transition-transform">
               <div
                 className="w-full h-full rounded-[10px] flex items-center justify-center font-mono font-extrabold text-xs"
                 style={{ backgroundColor: isLight ? '#ffffff' : '#030712', color: isLight ? '#0369a1' : '#22d3ee' }}
@@ -80,33 +89,102 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
               borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.07)',
             }}
           >
-            {navItems.map((item) => (
-              <a
-                key={item.key}
-                href={item.href}
-                className="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap"
-                style={{ color: isLight ? '#475569' : '#94a3b8' }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.backgroundColor = isLight ? '#eff6ff' : 'rgba(30,41,59,0.9)';
-                  e.currentTarget.style.color = isLight ? '#1d4ed8' : '#f8fafc';
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.color = isLight ? '#475569' : '#94a3b8';
-                }}
-              >
-                {t(item.key)}
-              </a>
-            ))}
+            {mainNavItems.map((item) => {
+              if (item.isDropdown) {
+                return (
+                  <div
+                    key={item.key}
+                    className="relative group/exp"
+                    onMouseEnter={() => setDesktopExpHover(true)}
+                    onMouseLeave={() => setDesktopExpHover(false)}
+                  >
+                    <a
+                      href={item.href}
+                      className="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-1 cursor-pointer"
+                      style={{ color: isLight ? '#475569' : '#94a3b8' }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.backgroundColor = isLight ? '#eff6ff' : 'rgba(30,41,59,0.9)';
+                        e.currentTarget.style.color = isLight ? '#1d4ed8' : '#f8fafc';
+                      }}
+                      onMouseLeave={e => {
+                        if (!desktopExpHover) {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = isLight ? '#475569' : '#94a3b8';
+                        }
+                      }}
+                    >
+                      <span>{t(item.key)}</span>
+                      <ChevronDown
+                        size={14}
+                        className={`transition-transform duration-200 ${desktopExpHover ? 'rotate-180 text-cyan-400' : ''}`}
+                      />
+                    </a>
+
+                    {/* Desktop Submenu Dropdown Panel */}
+                    {desktopExpHover && (
+                      <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
+                        <div
+                          className="w-48 py-2 rounded-2xl border shadow-2xl space-y-0.5 overflow-hidden backdrop-blur-2xl"
+                          style={{
+                            backgroundColor: isLight ? '#ffffff' : '#0f172a',
+                            borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.12)',
+                            boxShadow: '0 12px 32px rgba(0,0,0,0.35)',
+                          }}
+                        >
+                          {expSubItems.map((sub) => (
+                            <a
+                              key={sub.key}
+                              href={sub.href}
+                              onClick={() => setDesktopExpHover(false)}
+                              className="block px-4 py-2.5 text-xs font-bold font-code transition-all hover:pl-6"
+                              style={{ color: isLight ? '#334155' : '#cbd5e1' }}
+                              onMouseEnter={e => {
+                                e.currentTarget.style.backgroundColor = isLight ? '#f0f9ff' : 'rgba(6,182,212,0.15)';
+                                e.currentTarget.style.color = isLight ? '#0284c7' : '#38bdf8';
+                              }}
+                              onMouseLeave={e => {
+                                e.currentTarget.style.backgroundColor = 'transparent';
+                                e.currentTarget.style.color = isLight ? '#334155' : '#cbd5e1';
+                              }}
+                            >
+                              {t(sub.key)}
+                            </a>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <a
+                  key={item.key}
+                  href={item.href}
+                  className="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap"
+                  style={{ color: isLight ? '#475569' : '#94a3b8' }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.backgroundColor = isLight ? '#eff6ff' : 'rgba(30,41,59,0.9)';
+                    e.currentTarget.style.color = isLight ? '#1d4ed8' : '#f8fafc';
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = isLight ? '#475569' : '#94a3b8';
+                  }}
+                >
+                  {t(item.key)}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Right Controls Container */}
           <div className="flex items-center gap-3">
 
-            {/* 1. Theme Toggle (Sun / Moon) */}
+            {/* 1. Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer shadow-inner"
+              className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer shadow-inner active:scale-95 hover:border-cyan-400"
               style={{ backgroundColor: isLight ? '#e0f2fe' : '#0f172a', borderColor: isLight ? '#bae6fd' : '#334155' }}
               aria-label="Toggle Theme"
               title={isLight ? 'Switch to Dark Mode' : 'Switch to Light Mode'}
@@ -127,10 +205,10 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
               </div>
             </button>
 
-            {/* 2. Language Toggle (EN / 中) */}
+            {/* 2. Language Toggle */}
             <button
               onClick={toggleLang}
-              className="w-16 h-8 rounded-full border p-1 relative flex items-center justify-between transition-all cursor-pointer font-code text-xs font-bold"
+              className="w-16 h-8 rounded-full border p-1 relative flex items-center justify-between transition-all cursor-pointer font-code text-xs font-bold active:scale-95 hover:border-cyan-400"
               style={{ backgroundColor: isLight ? '#f1f5f9' : '#0f172a', borderColor: isLight ? '#cbd5e1' : '#334155' }}
               aria-label="Switch Language"
               title="Switch Language"
@@ -149,7 +227,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
               </div>
             </button>
 
-            {/* 3. BGM Sound Button (Positioned on the RIGHT of Theme & Language switches) */}
+            {/* 3. BGM Sound Button */}
             <div className="relative" ref={volumeRef}>
               <button
                 onClick={() => {
@@ -158,7 +236,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
                   else setShowVolumePopup(false);
                 }}
                 onContextMenu={(e) => { e.preventDefault(); setShowVolumePopup(v => !v); }}
-                className="p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center"
+                className="p-2.5 rounded-xl border transition-all cursor-pointer flex items-center justify-center active:scale-95 hover:scale-105"
                 style={soundPlaying
                   ? { backgroundColor: isLight ? '#ecfeff' : 'rgba(6,182,212,0.12)', borderColor: '#06b6d4', color: isLight ? '#0891b2' : '#22d3ee' }
                   : { backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)', borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)', color: '#64748b' }
@@ -172,7 +250,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
                 }
               </button>
 
-              {/* Minimalist Volume Popup Panel (Clean slider + volume %, X close button) */}
+              {/* Minimalist Volume Popup Panel */}
               {showVolumePopup && (
                 <div className="absolute top-full right-0 mt-2 z-50">
                   <div
@@ -184,7 +262,6 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
                       boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
                     }}
                   >
-                    {/* Header Row: Volume % + X Close Button */}
                     <div className="w-full flex items-center justify-between gap-1.5 px-0.5">
                       <div className="flex items-center gap-1.5">
                         <Volume2 size={13} className="text-cyan-400" />
@@ -194,7 +271,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
                       </div>
                       <button
                         onClick={() => setShowVolumePopup(false)}
-                        className="p-1 rounded-md text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 dark:hover:bg-slate-800/60 light:hover:bg-slate-100 transition-colors cursor-pointer"
+                        className="p-1 rounded-md text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                         aria-label="Close Volume Panel"
                         title="Close"
                       >
@@ -218,7 +295,7 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
             {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              className="lg:hidden p-2.5 rounded-xl border transition-all cursor-pointer"
+              className="lg:hidden p-2.5 rounded-xl border transition-all cursor-pointer active:scale-95 hover:border-cyan-400"
               style={{
                 backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.7)',
                 borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)',
@@ -231,33 +308,71 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
           </div>
         </div>
 
-        {/* Mobile Drawer */}
+        {/* Mobile Drawer with Hover / Active Interactivity */}
         {mobileOpen && (
           <div
-            className="lg:hidden border-t px-6 py-6 space-y-1"
+            className="lg:hidden border-t px-6 py-6 space-y-2 max-h-[85vh] overflow-y-auto"
             style={{
               backgroundColor: isLight ? '#ffffff' : '#07090e',
               borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.07)',
             }}
           >
-            {navItems.map((item) => (
-              <a
-                key={item.key}
-                href={item.href}
-                onClick={() => setMobileOpen(false)}
-                className="block py-3 px-4 rounded-xl text-base font-semibold transition-all"
-                style={{ color: isLight ? '#0f172a' : '#f8fafc' }}
-                onMouseEnter={e => { e.currentTarget.style.backgroundColor = isLight ? '#eff6ff' : 'rgba(30,41,59,0.8)'; }}
-                onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'transparent'; }}
-              >
-                {t(item.key)}
-              </a>
-            ))}
+            {mainNavItems.map((item) => {
+              if (item.isDropdown) {
+                return (
+                  <div key={item.key} className="space-y-1">
+                    <button
+                      onClick={() => setMobileExpOpen(!mobileExpOpen)}
+                      className="w-full flex items-center justify-between py-3 px-4 rounded-xl text-base font-semibold transition-all cursor-pointer border border-transparent hover:border-cyan-500/30 hover:bg-cyan-500/10 active:bg-cyan-500/20 active:scale-[0.99]"
+                      style={{ color: isLight ? '#0f172a' : '#f8fafc' }}
+                    >
+                      <span>{t(item.key)}</span>
+                      <ChevronDown
+                        size={18}
+                        className={`transition-transform duration-300 ${mobileExpOpen ? 'rotate-180 text-cyan-400' : ''}`}
+                      />
+                    </button>
+
+                    {/* Mobile Accordion Submenu Panel */}
+                    {mobileExpOpen && (
+                      <div className="pl-4 space-y-1.5 border-l-2 border-cyan-500/30 ml-4 py-2">
+                        {expSubItems.map((sub) => (
+                          <a
+                            key={sub.key}
+                            href={sub.href}
+                            onClick={() => {
+                              setMobileOpen(false);
+                              setMobileExpOpen(false);
+                            }}
+                            className="block py-2.5 px-3 rounded-lg text-sm font-semibold font-code transition-all hover:bg-cyan-500/15 hover:text-cyan-400 active:bg-cyan-500/25 active:scale-95"
+                            style={{ color: isLight ? '#334155' : '#cbd5e1' }}
+                          >
+                            • {t(sub.key)}
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
+              return (
+                <a
+                  key={item.key}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className="block py-3 px-4 rounded-xl text-base font-semibold transition-all border border-transparent hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-400 active:bg-cyan-500/20 active:scale-[0.99]"
+                  style={{ color: isLight ? '#0f172a' : '#f8fafc' }}
+                >
+                  {t(item.key)}
+                </a>
+              );
+            })}
           </div>
         )}
       </header>
 
-      {/* Mobile Drawer Backdrop — click to close */}
+      {/* Mobile Drawer Backdrop */}
       {mobileOpen && (
         <div
           className="lg:hidden fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-sm"

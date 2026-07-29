@@ -1,0 +1,61 @@
+{
+  "driveLinks": {
+    "toeic755CertificateDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing"
+  },
+  "zh": {
+    "title": "關於我",
+    "intro": "具備新媒體藝術碩士背景，專注於互動應用開發、全端網頁與多媒體設計。",
+    "heading": "核心專長與專業定位",
+    "p1": "許哲誠，24歲，畢業於國立臺灣藝術大學新媒體藝術碩士班。主修 VR/AR 互動應用開發、全端網頁架構與多媒體美學設計。具備創新思維、跨領域溝通協調與專案企劃能力，擅長自我管理，對新技術與挑戰充滿熱忱。",
+    "stats": [
+      {
+        "id": "exp",
+        "title": "臺藝大碩士",
+        "label": "新媒體藝術碩士畢業",
+        "icon": "graduation"
+      },
+      {
+        "id": "projects",
+        "title": "7 核心專案",
+        "label": "包含全國競賽第一名與國科會計畫案",
+        "icon": "briefcase"
+      },
+      {
+        "id": "toeic",
+        "title": "TOEIC 755",
+        "label": "英文多益檢定成績",
+        "icon": "award",
+        "proofKey": "toeic755CertificateDriveUrl",
+        "btnLabel": "檢視多益證明"
+      }
+    ]
+  },
+  "en": {
+    "title": "About Me",
+    "intro": "Holding an M.A. in New Media Art, focusing on interactive application development, fullstack web engineering, and multimedia design.",
+    "heading": "Core Competency & Specialization",
+    "p1": "Che-Cheng Hsu, 24 years old, graduated with an M.A. in New Media Art from National Taiwan University of Arts. Majoring in VR/AR interactive application development, fullstack web engineering, and multimedia design. Possesses innovative thinking, cross-domain communication skills, project planning expertise, self-management, and a passion for new technology challenges.",
+    "stats": [
+      {
+        "id": "exp",
+        "title": "NTUA Master",
+        "label": "M.A. in New Media Art",
+        "icon": "graduation"
+      },
+      {
+        "id": "projects",
+        "title": "7 Core Projects",
+        "label": "Including 1st Place National Awards & NSTC Projects",
+        "icon": "briefcase"
+      },
+      {
+        "id": "toeic",
+        "title": "TOEIC 755",
+        "label": "English Proficiency Score",
+        "icon": "award",
+        "proofKey": "toeic755CertificateDriveUrl",
+        "btnLabel": "TOEIC Certificate"
+      }
+    ]
+  }
+}

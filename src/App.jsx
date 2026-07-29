@@ -25,6 +25,9 @@ function AppContent() {
   const [soundVolume, setSoundVolume] = useState(0.3);
   const [ytModal, setYtModal] = useState({ open: false, videoId: '', title: '' });
 
+  // Dynamic local date formatting (ISO YYYY-MM-DD)
+  const currentLocalDate = new Date().toISOString().split('T')[0];
+
   useEffect(() => {
     setBGMVolume(soundVolume);
   }, [soundVolume]);
@@ -76,7 +79,7 @@ function AppContent() {
         <ArtGallery />
       </main>
 
-      <Footer lastUpdated="2026-07-25" />
+      <Footer lastUpdated={currentLocalDate} />
       <BackToTop />
 
       <YoutubeModal

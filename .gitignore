@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Dynamic Checklist Git Isolation (AGENTS.md Protocol)
+docs/check-list.md
+docs/check-lists/
