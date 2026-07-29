@@ -1,7 +1,7 @@
-# 許哲誠 個人作品集網站 | HSU, CHE-CHENG Portfolio
+# 許哲誠 個人作品集網站 | Portfolio
 
 [![Author: HSU, CHE-CHENG](https://img.shields.io/badge/Author-HSU%2C_CHE--CHENG-orange?style=flat-square)](#)
-[![Version: 3.0.0](https://img.shields.io/badge/Version-3.0.0-blue?style=flat-square)](#)
+[![Version: 3.2.0](https://img.shields.io/badge/Version-3.2.0-blue?style=flat-square)](#)
 [![Standard: Clean Code](https://img.shields.io/badge/Standard-Clean_Code-000000?style=flat-square)](#)
 
 ---
@@ -9,10 +9,10 @@
 ## 1. 🌐 專案簡介與宣言 | Project Manifesto & Overview
 
 **繁體中文**:
-本專案為 **許哲誠 (HSU, CHE-CHENG)** 之個人官方響應式作品集網站。採用全模組化直觀語意 JSON 架構，整合個人於 **互動應用開發 (Unity / UE5 / VR / AR)**、**全端開發 (React / Spring Boot / Angular)** 與 **多媒體美學設計** 之專案成果、實務工作經歷、研習歷程、學術論文與專業證照。
+本專案為 **許哲誠 (HSU, CHE-CHENG)** 之個人官方作品集網站（Website Title: **Portfolio**）。採用全模組化直觀語意 JSON 架構，整合個人於 **互動應用開發 (Unity / UE5 / VR / AR)**、**全端開發 (React / Spring Boot / Angular)** 與 **多媒體美學設計** 之專案成果、實務工作經歷、研習歷程、學術論文與專業證照。
 
 **English**:
-Official personal portfolio website for **HSU, CHE-CHENG**. Showcasing interactive applications, research projects, professional work experience, academic papers, credentials, and multimedia artworks across **Interactive Application Dev**, **Fullstack Web Engineering**, and **Multimedia Design** with a fully semantic modular JSON architecture.
+Official personal portfolio website for **HSU, CHE-CHENG** (Website Title: **Portfolio**). Showcasing interactive applications, research projects, professional work experience, academic papers, credentials, and multimedia artworks across **Interactive Application Dev**, **Fullstack Web Engineering**, and **Multimedia Design** with a fully semantic modular JSON architecture.
 
 - 🔗 **Live Demo**: [https://ericxjason.github.io/my-portfolio-website/](https://ericxjason.github.io/my-portfolio-website/)
 
@@ -20,11 +20,12 @@ Official personal portfolio website for **HSU, CHE-CHENG**. Showcasing interacti
 
 ## 2. ⚡ 核心能力與特色 | Core Capabilities & Features
 
+- **英文選單與區塊標題 1:1 絕對對齊 (Strict 1:1 English Navigation & Section Titles Alignment)**: 全面校對並對齊英文 Navigation 與各區塊 Title（如 `Degrees`, `Workshops`, `Publications`, `About`, `Skills`, `Credentials` 等），達致 100% 絕對一致。
+- **專案作品卡片媒體緊密垂直居中 (Centered Project Card Media Layout)**: 修復專案卡片左側縮圖與 YouTube 播放按鈕上下離很遠的問題，使縮圖與按鈕緊密結合並於卡片內垂直居中對齊。
+- **SEO & 社群 Meta 標籤優化 (SEO & Social Meta Tags Optimization)**: 網站 Title 正式調整為 `Portfolio`，並全面調整 Open Graph 與 Twitter Card 標籤。
+- **Navbar 下拉選單滑鼠離去自動復原 (Declarative Navbar Dropdown Hover Interaction)**: 修正 Navbar 「經歷」選單 hover 後離去背景與文字顏色自動重置為透明與預設樣式。
+- **統一論文與期刊名稱 (Unified Papers & Publications Title)**: 將區塊標題與導覽選單統一命名為「論文與期刊」(Papers & Publications)。
 - **深淺色模式專屬多層次陰影頭像 (Theme-Aware Multilayer Shadow Avatar)**: 針對深色與淺色模式量身定制雙重立體層次陰影 (`0 20px 40px -10px rgba(14,165,233,0.18)` / `0 20px 45px -10px rgba(6,182,212,0.3)`) 與柔和背景光暈。
-- **語意化模組 JSON 架構 (Semantic JSON Architecture)**: 徹底去除 `i18n` 命名，採用直觀無歧義之 JSON 設定檔（`site-translations.json`, `hero-section.json`, `about-section.json`, `skills-section.json`, `projects-section.json`, `experience-section.json`, `certifications-section.json`）。
-- **純粹彈跳視窗圖列 (Streamlined Gallery Lightbox)**: 彈跳視窗左上角無多餘檔名/ID標籤，工具列純淨收納下載與關閉按鈕。
-- **美術作品圖片下載 (Artwork Image Download)**: 美術畫廊彈跳視窗（Lightbox）右上角提供「下載圖片」按鈕，可直接下載原圖檔。
-- **動態本地時間格式化 (Dynamic Local Date Formatting)**: 頁腳與時間標記採動態 ISO-8601 本地時間計算。
 
 ---
 

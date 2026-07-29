@@ -90,8 +90,8 @@ export const Projects = ({ onOpenYoutube }) => {
                 key={project.id}
                 className="glass-card rounded-3xl p-6 sm:p-8 border border-[var(--border-color)] flex flex-col lg:flex-row gap-8 items-stretch group hover:-translate-y-1.5 transition-all duration-500 shadow-lg"
               >
-                {/* Left Side: Thumbnail Preview + Direct Action Button */}
-                <div className="w-full lg:w-5/12 flex flex-col justify-between gap-4">
+                {/* Left Side: Thumbnail Preview + Direct Action Button (Centered Together) */}
+                <div className="w-full lg:w-5/12 flex flex-col justify-center gap-3.5 shrink-0">
                   <div
                     className="relative aspect-video w-full rounded-2xl overflow-hidden cursor-pointer group/video border border-slate-800/40 shadow-inner"
                     onClick={() => onOpenYoutube(project.ytId, title)}

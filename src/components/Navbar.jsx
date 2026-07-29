@@ -101,16 +101,9 @@ export const Navbar = ({ soundPlaying, onToggleSound, soundVolume, onChangeVolum
                     <a
                       href={item.href}
                       className="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-1 cursor-pointer"
-                      style={{ color: isLight ? '#475569' : '#94a3b8' }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.backgroundColor = isLight ? '#eff6ff' : 'rgba(30,41,59,0.9)';
-                        e.currentTarget.style.color = isLight ? '#1d4ed8' : '#f8fafc';
-                      }}
-                      onMouseLeave={e => {
-                        if (!desktopExpHover) {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = isLight ? '#475569' : '#94a3b8';
-                        }
+                      style={{
+                        backgroundColor: desktopExpHover ? (isLight ? '#eff6ff' : 'rgba(30,41,59,0.9)') : 'transparent',
+                        color: desktopExpHover ? (isLight ? '#1d4ed8' : '#f8fafc') : (isLight ? '#475569' : '#94a3b8'),
                       }}
                     >
                       <span>{t(item.key)}</span>

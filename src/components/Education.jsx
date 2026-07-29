@@ -297,7 +297,7 @@ export const Education = () => {
           </div>
         </div>
 
-        {/* ── Sub-section 4: 論文與期刊發表 (Clean Header without extra subtitle) ── */}
+        {/* ── Sub-section 4: 論文與期刊 (Clean Header without extra subtitle) ── */}
         <div id="publications" className="space-y-8 scroll-mt-24">
           <div className="flex items-center gap-3 border-b pb-4 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
             <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">

@@ -11,7 +11,7 @@
     "nav_sub_degrees": "學歷",
     "nav_sub_work": "工作經歷",
     "nav_sub_workshops": "研習歷程",
-    "nav_sub_publications": "論文與期刊發表",
+    "nav_sub_publications": "論文與期刊",
 
     "hero_badge_spec": "AI 技術與前沿技術持續跟進中",
     "hero_title": "許哲誠",
@@ -67,7 +67,7 @@
     "workshop_section_title": "研習歷程",
     "btn_workshop_proof": "檢視研習證明",
 
-    "thesis_section_title": "論文與期刊發表",
+    "thesis_section_title": "論文與期刊",
     "thesis_1_title": "《覺醒協議》：基於認知發展理論的虛擬實境遊戲設計",
     "thesis_1_venue": "國立臺灣藝術大學設計學院 碩士論文",
     "thesis_1_award": "碩士學位論文",
@@ -107,7 +107,7 @@
     "btn_github": "GitHub Profile",
     "btn_artstation": "ArtStation Portfolio",
 
-    "about_title": "About Me",
+    "about_title": "About",
     "about_intro": "Holding an M.A. in New Media Art, focusing on interactive application development, fullstack web engineering, and multimedia design.",
     "about_heading": "Core Competency & Specialization",
     "about_p1": "Che-Cheng Hsu, 24 years old, graduated with an M.A. in New Media Art from National Taiwan University of Arts. Majoring in VR/AR interactive application development, fullstack web engineering, and multimedia design. Possesses innovative thinking, cross-domain communication skills, project planning expertise, self-management, and a passion for new technology challenges.",
@@ -119,7 +119,7 @@
     "stat_toeic_label": "English Proficiency Score",
     "btn_toeic_proof": "TOEIC Certificate",
 
-    "skills_title": "Professional Skills",
+    "skills_title": "Skills",
     "skills_intro": "Covering interactive application dev, fullstack architecture, and multimedia design aesthetics.",
 
     "projects_title": "Projects",
@@ -141,7 +141,7 @@
 
     "exp_title": "Experience",
     "exp_intro": "Comprehensive academic research, professional work experience, industry training programs, and published research papers.",
-    "degree_section_title": "Education & Degrees",
+    "degree_section_title": "Degrees",
     "work_section_title": "Work Experience",
     "edu_master": "National Taiwan University of Arts — M.A. in New Media Art (Highest Degree)",
     "edu_master_desc": "Majored in New Media Art, VR/AR interactive architecture, and app dev. Thesis: 'Awakening Protocol: VR Game Design Based on Cognitive Development Theory'. Awarded NTUA Graduation Film Grant.",
@@ -151,10 +151,10 @@
     "btn_transcript": "Transcript",
     "btn_ranking": "Department Ranking",
 
-    "workshop_section_title": "Professional Workshops",
+    "workshop_section_title": "Workshops",
     "btn_workshop_proof": "View Proof",
 
-    "thesis_section_title": "Academic Publications & Papers",
+    "thesis_section_title": "Publications",
     "thesis_1_title": "Awakening Protocol: Virtual Reality Game Design Based on Cognitive Development Theory",
     "thesis_1_venue": "NTUA Design College — Master's Thesis",
     "thesis_1_award": "Master's Thesis",
@@ -166,7 +166,7 @@
     "btn_view_paper": "View Paper",
     "btn_view_slides": "View Slides",
 
-    "awards_title": "Professional Credentials",
+    "awards_title": "Credentials",
     "awards_intro": "Holding national technician licenses and international professional software certifications.",
     "btn_view_cert_proof": "View Credential",
     "btn_view_drive_folder": "View All Credentials",
