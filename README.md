@@ -1,7 +1,7 @@
 # 許哲誠 個人作品集網站 | Portfolio
 
 [![Author: HSU, CHE-CHENG](https://img.shields.io/badge/Author-HSU%2C_CHE--CHENG-orange?style=flat-square)](#)
-[![Version: 3.3.0](https://img.shields.io/badge/Version-3.3.0-blue?style=flat-square)](#)
+[![Version: 3.4.0](https://img.shields.io/badge/Version-3.4.0-blue?style=flat-square)](#)
 [![Standard: Clean Code](https://img.shields.io/badge/Standard-Clean_Code-000000?style=flat-square)](#)
 
 ---
@@ -21,15 +21,15 @@ Official personal portfolio web application of **HSU, CHE-CHENG** (Website Title
 
 ## 2. Technology Stack (技術棧)
 
-| 領域 (Domain) | 主要技術與框架 (Primary Technologies & Frameworks) |
+| 分類 (Category) | 本作品集專案實際使用技術 (Technologies Used in This Project) |
 | :--- | :--- |
-| **Frontend Core** | React 18, Vite, SCSS, Tailwind CSS, Lucide Icons |
-| **Backend & Integrations** | Java Spring Boot, RESTful APIs, Node.js |
-| **Interactive & 3D Tools** | Unity (C#), Unreal Engine 5, XR Interaction Toolkit, Blender, Marmoset Toolbag |
-| **AI & Dev Assistants** | Codex, Antigravity, Claude Code, Cursor, Suno |
-| **State & Data Store** | React Context API (`LangContext`, `ThemeContext`), Semantic JSON |
-| **Audio Engine** | Web Audio API Custom Synth (`bgmSynth.js`) |
-| **CI/CD & Hosting** | GitHub Actions, GitHub Pages |
+| **Core Framework & Build Tool** | React 19, Vite 8, ES Modules |
+| **Styling & Styling Engine** | Tailwind CSS v4, SASS / SCSS, Lightning CSS |
+| **UI Components & Icons** | Lucide Icons, Custom Glassmorphism UI Components |
+| **State Management & Data Store** | React Context API (`LangContext`, `ThemeContext`), Semantic JSON Store |
+| **Audio & Canvas Engines** | Web Audio API Synthesizer (`bgmSynth.js`), HTML5 Canvas (`CyberParticles.jsx`) |
+| **Code Quality & Linter** | Oxlint |
+| **CI/CD & Hosting** | GitHub Actions (`deploy.yml`), GitHub Pages |
 
 ---
 
