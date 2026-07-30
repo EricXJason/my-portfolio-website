@@ -1,17 +1,18 @@
 {
   "driveLinks": {
-    "ntuaMasterDiplomaDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "nfuBachelorDiplomaDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "nfuBachelorTranscriptDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "nfuBachelorDepartmentRankingDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "dreamArkUnrealEngineWorkshopProofDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "nfuVtuberMoCapWorkshopProofDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "tAmbassadorPbr3dModelingWorkshopProofDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
+    "ntuaMasterDiplomaDriveUrl": "https://drive.google.com/file/d/1VtJS1tH3Spu58gd_9dZMEEzTYeZcInlK/view?usp=drive_link",
+    "nfuBachelorDiplomaDriveUrl": "https://drive.google.com/file/d/1glFihHgetRpeVIaF5FGh0-rKcXuA6ReK/view?usp=drive_link",
+    "nfuBachelorTranscriptDriveUrl": "https://drive.google.com/file/d/1qPB3worwJJAP9GNxAL9vCwlF3MIgTXGw/view?usp=drive_link",
+    "ntuaMasterTranscriptDriveUrl": "https://drive.google.com/file/d/1VtJS1tH3Spu58gd_9dZMEEzTYeZcInlK/view?usp=drive_link",
+    "nfuBachelorDepartmentRankingDriveUrl": "https://drive.google.com/file/d/1MmDMcdjDReBNk5NpqS0Idc7-r-Op9kZd/view?usp=drive_link",
+    "dreamArkUnrealEngineWorkshopProofDriveUrl": "https://drive.google.com/file/d/1G-VHZ33mXfUbJUEoQA1JNyIz91IfvYtV/view?usp=drive_link",
+    "nfuVtuberMoCapWorkshopProofDriveUrl": "https://drive.google.com/file/d/1NGTCQ5svmCsJ0IVibDXMfnYp1q_JjwXR/view?usp=drive_link",
+    "tAmbassadorPbr3dModelingWorkshopProofDriveUrl": "https://drive.google.com/file/d/1fWmcCIl2EcdXgRCJa91Y3DdU3PZvnShW/view?usp=drive_link",
     "taiwanLaborJavaAngularBootcampProofDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "thesisAwakeningProtocolFullpaperDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "thesisAwakeningProtocolSlidesDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "thesisParkourGameFullpaperDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing",
-    "thesisParkourGameSlidesDriveUrl": "https://drive.google.com/file/d/1B0q4F_g9oR3R0_g9oR3R0_g9oR3R0_g9/view?usp=sharing"
+    "thesisAwakeningProtocolFullpaperDriveUrl": "https://drive.google.com/file/d/1wEFkBi7V4wkTZzTKSGJeHoHqmICnHh3s/view?usp=drive_link",
+    "thesisAwakeningProtocolSlidesDriveUrl": "https://canva.link/htj29gthwfsyhfy",
+    "thesisParkourGameFullpaperDriveUrl": "https://drive.google.com/file/d/1CfK6twu0UKu1o3v8BsKA3RZVvYv4yxgn/view?usp=drive_link",
+    "thesisParkourGameSlidesDriveUrl": "https://canva.link/clwj9xwxn9a7z09"
   },
   "zh": {
     "degrees": [
@@ -30,7 +31,7 @@
           {
             "key": "transcript",
             "label": "歷年成績單",
-            "linkKey": "nfuBachelorTranscriptDriveUrl"
+            "linkKey": "ntuaMasterTranscriptDriveUrl"
           }
         ]
       },
@@ -223,7 +224,7 @@
           {
             "key": "transcript",
             "label": "Transcript",
-            "linkKey": "nfuBachelorTranscriptDriveUrl"
+            "linkKey": "ntuaMasterTranscriptDriveUrl"
           }
         ]
       },
