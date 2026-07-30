@@ -22,3 +22,5 @@
 2026-07-30T19:21:00+08:00 | feat | Implemented smooth CustomCursor hiding upon entering 3D ArtStation iframe control area and automatic restoration upon mouse exit | src/components/CustomCursor.tsx, src/components/ArtGallery.tsx
 2026-07-30T19:24:00+08:00 | docs | Audited mobile and tablet RWD container margins, updated README.md to v4.1.0, and completed strict project optimization | README.md, docs/change-log.md, docs/check-list.md
 2026-07-30T19:25:00+08:00 | style | Refined bio paragraph typography in About.tsx and Hero.tsx (changed font weight to font-normal and color to non-glaring soft slate #475569 / #cbd5e1) | src/components/About.tsx, src/components/Hero.tsx
+2026-07-30T19:46:29+08:00 | refactor | Eradicated obsolete javascript.webp and scss.webp logo assets, optimized SEO meta titles, and executed strict project optimization | public/assets/logos/javascript.webp, public/assets/logos/scss.webp, index.html, docs/check-list.md, docs/change-log.md
+
