@@ -188,7 +188,6 @@
       {
         "title": "《覺醒協議》：基於認知發展理論的虛擬實境遊戲設計",
         "venue": "國立臺灣藝術大學設計學院 碩士論文",
-        "award": "碩士學位論文",
         "desc": "採實踐本位研究，以 Piaget 認知發展四階段為設計架構，將感知探索至抽象推理轉譯為 VR 遞進關卡。獲設計學院畢業創作影片補助。",
         "driveLinkKey": "thesisAwakeningProtocolFullpaperDriveUrl",
         "btnText": "檢視論文全文",
@@ -198,7 +197,6 @@
       {
         "title": "跑酷遊戲的創新策略：行動遊戲市場的案例研究",
         "venue": "2025 臺北數位圖像國際學術研討會",
-        "award": "",
         "desc": "運用文獻分析與案例研究，深入探討行動跑酷遊戲之多層次關卡、隨機生成與角色成長機制，提出遊戲市場創新與盈利改進建議。",
         "driveLinkKey": "thesisParkourGameFullpaperDriveUrl",
         "btnText": "檢視論文全文",
@@ -381,7 +379,6 @@
       {
         "title": "Awakening Protocol: Virtual Reality Game Design Based on Cognitive Development Theory",
         "venue": "NTUA Design College — Master's Thesis",
-        "award": "Master's Thesis",
         "desc": "Practice-based research translating Piaget's cognitive development stages into progressive VR gameplay. Awarded NTUA Graduation Film Grant.",
         "driveLinkKey": "thesisAwakeningProtocolFullpaperDriveUrl",
         "btnText": "View Paper",
@@ -391,7 +388,6 @@
       {
         "title": "Innovative Strategies of Parkour Games: A Case Study in Mobile Gaming Market",
         "venue": "2025 Taipei Digital Image International Symposium",
-        "award": "",
         "desc": "Explores level design, procedural generation, and monetization in mobile runner games, proposing innovative frameworks for modern game design.",
         "driveLinkKey": "thesisParkourGameFullpaperDriveUrl",
         "btnText": "View Paper",
