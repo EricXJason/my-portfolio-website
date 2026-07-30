@@ -48,7 +48,6 @@ Official personal portfolio web application for **HSU, CHE-CHENG** (**Portfolio*
 
 ```text
 my-portfolio-website/
-├── docs/                  # 動態專案文件 (check-list.md, change-log.md)
 ├── public/assets/         # 靜態視覺媒體與圖片資源
 ├── src/
 │   ├── components/        # 模組化 React TypeScript UI 組件 (.tsx)
