@@ -25,9 +25,6 @@ Official personal portfolio web application for **HSU, CHE-CHENG** (**Portfolio*
 - **Audio-Visual Interactions**: Integrated Web Audio API background synthesizer and dynamic Canvas particle renderer.
 - **Modular Data Architecture**: Maintainable text and asset data store powered by clean, structured JSON files.
 
-- **作者 (Author)**: 許哲誠 (HSU, CHE-CHENG)
-- **線上展示 (Live Demo)**: [https://ericxjason.github.io/my-portfolio-website/](https://ericxjason.github.io/my-portfolio-website/)
-
 ---
 
 ## 2. 技術棧 (Technology Stack)
