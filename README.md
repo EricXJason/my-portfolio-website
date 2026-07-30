@@ -5,6 +5,7 @@
 [![Standard: Clean Code](https://img.shields.io/badge/Standard-Clean_Code-0D9488?style=flat-square)](#)
 
 ---
+**線上展示 (Live Demo)**: [https://ericxjason.github.io/my-portfolio-website/](https://ericxjason.github.io/my-portfolio-website/)
 
 ## 1. 專案簡介 (Project Overview)
 
