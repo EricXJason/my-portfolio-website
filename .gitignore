@@ -23,6 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
-# Dynamic Checklist Git Isolation (AGENTS.md Protocol)
-docs/check-list.md
-docs/check-lists/
+# Dynamic Documentation & Checklist Git Isolation
+docs/
+
