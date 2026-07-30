@@ -4,29 +4,43 @@
     "driveUrl": "https://drive.google.com/file/d/1dNqcM8BI9KjAXEPjKToNqDFmMqVbXFH6/view?usp=drive_link"
   },
   "driveFolderUrl": "https://drive.google.com/drive/folders/1cUZ24IncYkmTiAZAA1xbxjWp9Bu_jXS8?usp=sharing",
+  "driveLinks": {
+    "cadMachining": "https://drive.google.com/file/d/1czTkeily8S2Wi3haxOxS7Nr7GOqpa7CJ/view?usp=drive_link",
+    "cad3dModeling": "https://drive.google.com/file/d/1slxOMy2BeU0bEz_piHd8oTmK94Ruhhdo/view?usp=drive_link",
+    "hardwareRepair": "https://drive.google.com/file/d/1G-RDt1GPsbZzeo-3ewn6-7S8UWWpyNek/view?usp=drive_link",
+    "acu3dsMax": "https://drive.google.com/file/d/1p91N4Mo4Dtz_S_st8njDOn6oWFXyPvtR/view?usp=drive_link",
+    "acuAutoCAD": "https://drive.google.com/file/d/17u4kTGRVSSN6xOOg7-UcSCrvSVOUqhuX/view?usp=drive_link",
+    "acaPhotoshop": "https://drive.google.com/file/d/1S_deAjSn0eosKQUDMCBobgusPNleWVyW/view?usp=drive_link",
+    "acpDreamweaver": "https://drive.google.com/file/d/1LPrA8f9m5ENjarY51ZMALHJvdbKlwyTg/view?usp=drive_link",
+    "acaFlash": "https://drive.google.com/file/d/1ASEHRPjjikL6-vP-llTzgIpAyZlpvpal/view?usp=drive_link",
+    "mosAccess": "https://drive.google.com/file/d/1fVzUcTs6xoNEqlCL5uZ-ELJHU5Dp7bfr/view?usp=drive_link",
+    "mosExcel": "https://drive.google.com/file/d/1Ecgn4WUUdaFodTQlEFwOc6SG5urPjroX/view?usp=drive_link",
+    "mosWord": "https://drive.google.com/file/d/1aHSh0mmikABTikRmH8E7MU67sQHuEK4R/view?usp=drive_link",
+    "mosPowerPoint": "https://drive.google.com/file/d/1gASMceHqZ3ZSiHSFgueD2k67qyp6dv8w/view?usp=drive_link"
+  },
   "zh": [
     {
       "group": "國家級技術士技能檢定",
       "iconType": "languages",
       "items": [
-        { "name": "丙級電腦輔助機械製圖技術士", "org": "勞動部國家技能檢定", "driveUrl": "https://drive.google.com/file/d/1czTkeily8S2Wi3haxOxS7Nr7GOqpa7CJ/view?usp=drive_link" },
-        { "name": "丙級電腦輔助立體製圖技術士", "org": "勞動部國家技能檢定", "driveUrl": "https://drive.google.com/file/d/1slxOMy2BeU0bEz_piHd8oTmK94Ruhhdo/view?usp=drive_link" },
-        { "name": "丙級電腦硬體裝修技術士", "org": "勞動部國家技能檢定", "driveUrl": "https://drive.google.com/file/d/1G-RDt1GPsbZzeo-3ewn6-7S8UWWpyNek/view?usp=drive_link" }
+        { "name": "丙級電腦輔助機械製圖技術士", "org": "勞動部國家技能檢定", "linkKey": "cadMachining" },
+        { "name": "丙級電腦輔助立體製圖技術士", "org": "勞動部國家技能檢定", "linkKey": "cad3dModeling" },
+        { "name": "丙級電腦硬體裝修技術士", "org": "勞動部國家技能檢定", "linkKey": "hardwareRepair" }
       ]
     },
     {
       "group": "多媒體與軟體原廠國際認證",
       "iconType": "box",
       "items": [
-        { "name": "3dsMax ACU 國際認證", "org": "Autodesk", "driveUrl": "https://drive.google.com/file/d/1p91N4Mo4Dtz_S_st8njDOn6oWFXyPvtR/view?usp=drive_link" },
-        { "name": "AutoCAD ACU 國際認證", "org": "Autodesk", "driveUrl": "https://drive.google.com/file/d/17u4kTGRVSSN6xOOg7-UcSCrvSVOUqhuX/view?usp=drive_link" },
-        { "name": "ACA Photoshop 國際認證", "org": "Adobe", "driveUrl": "https://drive.google.com/file/d/1S_deAjSn0eosKQUDMCBobgusPNleWVyW/view?usp=drive_link" },
-        { "name": "ACP Dreamweaver 國際認證", "org": "Adobe", "driveUrl": "https://drive.google.com/file/d/1LPrA8f9m5ENjarY51ZMALHJvdbKlwyTg/view?usp=drive_link" },
-        { "name": "ACA Flash 國際認證", "org": "Adobe", "driveUrl": "https://drive.google.com/file/d/1ASEHRPjjikL6-vP-llTzgIpAyZlpvpal/view?usp=drive_link" },
-        { "name": "MOS Access Expert 國際認證", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1fVzUcTs6xoNEqlCL5uZ-ELJHU5Dp7bfr/view?usp=drive_link" },
-        { "name": "MOS Excel Expert 國際認證", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1Ecgn4WUUdaFodTQlEFwOc6SG5urPjroX/view?usp=drive_link" },
-        { "name": "MOS Word Expert 國際認證", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1aHSh0mmikABTikRmH8E7MU67sQHuEK4R/view?usp=drive_link" },
-        { "name": "MOS PowerPoint 國際認證", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1gASMceHqZ3ZSiHSFgueD2k67qyp6dv8w/view?usp=drive_link" }
+        { "name": "3dsMax ACU 國際認證", "org": "Autodesk", "linkKey": "acu3dsMax" },
+        { "name": "AutoCAD ACU 國際認證", "org": "Autodesk", "linkKey": "acuAutoCAD" },
+        { "name": "ACA Photoshop 國際認證", "org": "Adobe", "linkKey": "acaPhotoshop" },
+        { "name": "ACP Dreamweaver 國際認證", "org": "Adobe", "linkKey": "acpDreamweaver" },
+        { "name": "ACA Flash 國際認證", "org": "Adobe", "linkKey": "acaFlash" },
+        { "name": "MOS Access Expert 國際認證", "org": "Microsoft", "linkKey": "mosAccess" },
+        { "name": "MOS Excel Expert 國際認證", "org": "Microsoft", "linkKey": "mosExcel" },
+        { "name": "MOS Word Expert 國際認證", "org": "Microsoft", "linkKey": "mosWord" },
+        { "name": "MOS PowerPoint 國際認證", "org": "Microsoft", "linkKey": "mosPowerPoint" }
       ]
     }
   ],
@@ -35,24 +49,24 @@
       "group": "National Skill Licenses",
       "iconType": "languages",
       "items": [
-        { "name": "Level-C Computer Aided Drafting Technician", "org": "Ministry of Labor", "driveUrl": "https://drive.google.com/file/d/1czTkeily8S2Wi3haxOxS7Nr7GOqpa7CJ/view?usp=drive_link" },
-        { "name": "Level-C Computer Aided 3D Modeling Technician", "org": "Ministry of Labor", "driveUrl": "https://drive.google.com/file/d/1slxOMy2BeU0bEz_piHd8oTmK94Ruhhdo/view?usp=drive_link" },
-        { "name": "Level-C Computer Hardware Maintenance Technician", "org": "Ministry of Labor", "driveUrl": "https://drive.google.com/file/d/1G-RDt1GPsbZzeo-3ewn6-7S8UWWpyNek/view?usp=drive_link" }
+        { "name": "Level-C Computer Aided Drafting Technician", "org": "Ministry of Labor", "linkKey": "cadMachining" },
+        { "name": "Level-C Computer Aided 3D Modeling Technician", "org": "Ministry of Labor", "linkKey": "cad3dModeling" },
+        { "name": "Level-C Computer Hardware Maintenance Technician", "org": "Ministry of Labor", "linkKey": "hardwareRepair" }
       ]
     },
     {
       "group": "Software Int'l Certifications",
       "iconType": "box",
       "items": [
-        { "name": "Autodesk 3dsMax ACU", "org": "Autodesk", "driveUrl": "https://drive.google.com/file/d/1p91N4Mo4Dtz_S_st8njDOn6oWFXyPvtR/view?usp=drive_link" },
-        { "name": "Autodesk AutoCAD ACU", "org": "Autodesk", "driveUrl": "https://drive.google.com/file/d/17u4kTGRVSSN6xOOg7-UcSCrvSVOUqhuX/view?usp=drive_link" },
-        { "name": "ACA Photoshop", "org": "Adobe", "driveUrl": "https://drive.google.com/file/d/1S_deAjSn0eosKQUDMCBobgusPNleWVyW/view?usp=drive_link" },
-        { "name": "ACA Dreamweaver", "org": "Adobe", "driveUrl": "https://drive.google.com/file/d/1LPrA8f9m5ENjarY51ZMALHJvdbKlwyTg/view?usp=drive_link" },
-        { "name": "ACP Flash", "org": "Adobe", "driveUrl": "https://drive.google.com/file/d/1ASEHRPjjikL6-vP-llTzgIpAyZlpvpal/view?usp=drive_link" },
-        { "name": "MOS Access Expert", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1fVzUcTs6xoNEqlCL5uZ-ELJHU5Dp7bfr/view?usp=drive_link" },
-        { "name": "MOS Excel Expert", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1Ecgn4WUUdaFodTQlEFwOc6SG5urPjroX/view?usp=drive_link" },
-        { "name": "MOS Word Expert", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1aHSh0mmikABTikRmH8E7MU67sQHuEK4R/view?usp=drive_link" },
-        { "name": "MOS PowerPoint", "org": "Microsoft", "driveUrl": "https://drive.google.com/file/d/1gASMceHqZ3ZSiHSFgueD2k67qyp6dv8w/view?usp=drive_link" }
+        { "name": "Autodesk 3dsMax ACU", "org": "Autodesk", "linkKey": "acu3dsMax" },
+        { "name": "Autodesk AutoCAD ACU", "org": "Autodesk", "linkKey": "acuAutoCAD" },
+        { "name": "ACA Photoshop", "org": "Adobe", "linkKey": "acaPhotoshop" },
+        { "name": "ACA Dreamweaver", "org": "Adobe", "linkKey": "acpDreamweaver" },
+        { "name": "ACP Flash", "org": "Adobe", "linkKey": "acaFlash" },
+        { "name": "MOS Access Expert", "org": "Microsoft", "linkKey": "mosAccess" },
+        { "name": "MOS Excel Expert", "org": "Microsoft", "linkKey": "mosExcel" },
+        { "name": "MOS Word Expert", "org": "Microsoft", "linkKey": "mosWord" },
+        { "name": "MOS PowerPoint", "org": "Microsoft", "linkKey": "mosPowerPoint" }
       ]
     }
   ]
