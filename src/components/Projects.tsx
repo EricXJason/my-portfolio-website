@@ -83,8 +83,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Category Filter Buttons — Equal width & constrained width on mobile (with generous side margins), single-row flex layout on PC */}
-        <div className="grid grid-cols-2 max-w-[340px] xs:max-w-[360px] sm:max-w-full sm:flex sm:flex-nowrap md:flex-nowrap items-center justify-center gap-2.5 sm:gap-3 mb-10 sm:mb-12 mx-auto px-2 sm:px-0 overflow-x-auto sm:overflow-visible py-1" role="tablist">
+        {/* Category Filter Buttons — Perfect RWD: 2-col equal grid on mobile, wrapped flex on iPad/tablet, single-row flex on PC */}
+        <div className="grid grid-cols-2 max-w-[340px] xs:max-w-[360px] sm:max-w-xl md:max-w-3xl lg:max-w-full sm:flex sm:flex-wrap lg:flex-nowrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto px-2 sm:px-4 overflow-x-auto sm:overflow-visible py-1" role="tablist">
           {filters.map((f) => (
             <button
               key={f.key}
