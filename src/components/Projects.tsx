@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video, ExternalLink, Bot, Star, ArrowRight, ChevronDown } from 'lucide-react';
+import { Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video, ExternalLink, Bot, Star, Layout, ChevronDown } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
 interface ProjectItem {
@@ -11,8 +11,13 @@ interface ProjectItem {
   title_en?: string;
   category: string;
   featured: boolean;
+  featuredOrder?: number;
+  order?: number;
   image: string;
-  ytId: string;
+  ytId?: string;
+  websiteUrl?: string;
+  githubUrl?: string;
+  aiAssisted?: boolean;
   honors: string[];
   honors_en?: string[];
   desc: string;
@@ -27,6 +32,12 @@ interface ProjectsProps {
   onOpenYoutube: (videoId: string, title: string) => void;
 }
 
+const GithubIcon: React.FC<{ className?: string }> = ({ className = "w-4 h-4 shrink-0" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+  </svg>
+);
+
 export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
   const { t, lang } = useLang();
   const { theme } = useTheme();
@@ -35,16 +46,24 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
 
   const projects = projectsData as ProjectItem[];
 
-  const filteredProjects = projects.filter((p) => {
-    if (filter === 'all') return true;
-    if (filter === 'featured') return p.featured === true;
-    return p.category === filter;
-  });
+  const filteredProjects = projects
+    .filter((p) => {
+      if (filter === 'all') return true;
+      if (filter === 'featured') return p.featured === true;
+      return p.category === filter;
+    })
+    .sort((a, b) => {
+      if (filter === 'featured') {
+        return (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999);
+      }
+      return (a.order ?? 999) - (b.order ?? 999);
+    });
 
   const filters = [
     { key: 'featured', label: t('cat_featured'), icon: <Star size={16} className="text-amber-400 fill-amber-400" /> },
     { key: 'all', label: t('cat_all'), icon: <Layers size={16} /> },
     { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={16} /> },
+    { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={16} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={16} /> },
     { key: 'linebot', label: t('cat_linebot'), icon: <Bot size={16} /> },
   ];
@@ -109,6 +128,27 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
             const honorsList = lang === 'zh' ? project.honors : (project.honors_en || project.honors);
             const contribs = lang === 'zh' ? project.contributions : (project.contributions_en || project.contributions);
 
+            const actionButtonsCount = (project.websiteUrl ? 1 : 0) + (project.ytId ? 1 : 0) + (project.githubUrl ? 1 : 0);
+
+            // Styling Tokens for Theme-Aware Action Buttons
+            const webBtnStyle = {
+              bg: isLight ? 'rgba(240, 249, 255, 0.95)' : 'rgba(14, 116, 144, 0.12)',
+              border: isLight ? '#bae6fd' : 'rgba(6, 182, 212, 0.3)',
+              color: isLight ? '#0369a1' : '#38bdf8',
+            };
+
+            const ytBtnStyle = {
+              bg: isLight ? 'rgba(255, 241, 242, 0.95)' : 'rgba(225, 29, 72, 0.12)',
+              border: isLight ? '#fecdd3' : 'rgba(244, 63, 94, 0.3)',
+              color: isLight ? '#9f1239' : '#fb7185',
+            };
+
+            const ghBtnStyle = {
+              bg: isLight ? 'rgba(241, 245, 249, 0.95)' : 'rgba(30, 41, 59, 0.6)',
+              border: isLight ? '#cbd5e1' : 'rgba(148, 163, 184, 0.25)',
+              color: isLight ? '#0f172a' : '#e2e8f0',
+            };
+
             return (
               <article
                 key={project.id}
@@ -121,7 +161,15 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                 <div className="w-full lg:w-5/12 flex flex-col justify-center gap-3.5 shrink-0">
                   <div
                     className="relative aspect-video w-full rounded-2xl overflow-hidden cursor-pointer group/video border border-slate-800/40 shadow-inner"
-                    onClick={() => onOpenYoutube(project.ytId, title)}
+                    onClick={() => {
+                      if (project.ytId) {
+                        onOpenYoutube(project.ytId, title);
+                      } else if (project.websiteUrl) {
+                        window.open(project.websiteUrl, '_blank', 'noopener,noreferrer');
+                      } else if (project.githubUrl) {
+                        window.open(project.githubUrl, '_blank', 'noopener,noreferrer');
+                      }
+                    }}
                   >
                     <img
                       src={getAssetUrl(project.image)}
@@ -132,10 +180,26 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" aria-hidden="true" />
 
+                    {/* Prominent AI-Assisted Development Overlay Badge on Thumbnail */}
+                    {project.aiAssisted && (
+                      <div
+                        className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-extrabold shadow-lg border backdrop-blur-md"
+                        style={{
+                          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+                          borderColor: isLight ? '#9333ea' : 'rgba(34, 211, 238, 0.6)',
+                          color: isLight ? '#581c87' : '#22d3ee',
+                          boxShadow: isLight ? '0 4px 14px rgba(147, 51, 234, 0.2)' : '0 4px 14px rgba(6, 182, 212, 0.25)',
+                        }}
+                      >
+                        <Sparkles size={13} className={isLight ? 'text-purple-600 fill-purple-600 animate-pulse' : 'text-cyan-300 fill-cyan-300 animate-pulse'} />
+                        <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
+                      </div>
+                    )}
+
                     {/* Date Badge */}
                     {project.date && (
                       <div
-                        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1 rounded-lg font-code text-xs font-bold shadow-md border backdrop-blur-md"
+                        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-bold shadow-md border backdrop-blur-md"
                         style={{
                           backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(15,23,42,0.9)',
                           borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
@@ -146,48 +210,93 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         <span>{project.date}</span>
                       </div>
                     )}
-
-                    {/* Play Video Overlay */}
-                    <div
-                      className="absolute inset-0 m-auto w-14 h-14 rounded-full flex items-center justify-center shadow-2xl group-hover/video:bg-red-600 group-hover/video:scale-110 transition-all duration-300 border"
-                      style={{
-                        backgroundColor: isLight ? 'rgba(15,23,42,0.85)' : 'rgba(3,7,18,0.85)',
-                        borderColor: isLight ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.2)',
-                        color: '#ffffff',
-                      }}
-                      aria-hidden="true"
-                    >
-                      <Play size={22} className="ml-1 fill-white text-white" />
-                    </div>
                   </div>
 
-                  {/* Direct YouTube Link Button */}
-                  <div>
-                    <a
-                      href={`https://www.youtube.com/watch?v=${project.ytId}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
-                      style={{
-                        backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.85)',
-                        borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
-                        color: isLight ? '#0f172a' : '#cbd5e1',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#dc2626';
-                        e.currentTarget.style.borderColor = '#dc2626';
-                        e.currentTarget.style.color = '#ffffff';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15,23,42,0.85)';
-                        e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)';
-                        e.currentTarget.style.color = isLight ? '#0f172a' : '#cbd5e1';
-                      }}
-                    >
-                      <Video size={16} className="shrink-0" />
-                      <span>{lang === 'zh' ? '▶ YouTube 播放展示' : '▶ Watch on YouTube'}</span>
-                      <ExternalLink size={13} className="opacity-70 shrink-0" />
-                    </a>
+                  {/* Direct Action Link Buttons */}
+                  <div className={actionButtonsCount > 1 ? "grid grid-cols-1 sm:grid-cols-2 gap-2" : "flex flex-col gap-2"}>
+                    {project.websiteUrl && (
+                      <a
+                        href={project.websiteUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        style={{
+                          backgroundColor: webBtnStyle.bg,
+                          borderColor: webBtnStyle.border,
+                          color: webBtnStyle.color,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#0284c7';
+                          e.currentTarget.style.borderColor = '#0284c7';
+                          e.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = webBtnStyle.bg;
+                          e.currentTarget.style.borderColor = webBtnStyle.border;
+                          e.currentTarget.style.color = webBtnStyle.color;
+                        }}
+                      >
+                        <Globe size={16} className="shrink-0" />
+                        <span>{lang === 'zh' ? '前往網站頁面' : 'Visit Website'}</span>
+                        <ExternalLink size={13} className="opacity-70 shrink-0" />
+                      </a>
+                    )}
+
+                    {project.ytId && (
+                      <a
+                        href={`https://www.youtube.com/watch?v=${project.ytId}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        style={{
+                          backgroundColor: ytBtnStyle.bg,
+                          borderColor: ytBtnStyle.border,
+                          color: ytBtnStyle.color,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#dc2626';
+                          e.currentTarget.style.borderColor = '#dc2626';
+                          e.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = ytBtnStyle.bg;
+                          e.currentTarget.style.borderColor = ytBtnStyle.border;
+                          e.currentTarget.style.color = ytBtnStyle.color;
+                        }}
+                      >
+                        <Video size={16} className="shrink-0" />
+                        <span>{lang === 'zh' ? 'YouTube 播放展示' : 'Watch on YouTube'}</span>
+                        <ExternalLink size={13} className="opacity-70 shrink-0" />
+                      </a>
+                    )}
+
+                    {project.githubUrl && (
+                      <a
+                        href={project.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        style={{
+                          backgroundColor: ghBtnStyle.bg,
+                          borderColor: ghBtnStyle.border,
+                          color: ghBtnStyle.color,
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = isLight ? '#0f172a' : '#1e293b';
+                          e.currentTarget.style.borderColor = isLight ? '#0f172a' : '#475569';
+                          e.currentTarget.style.color = '#ffffff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = ghBtnStyle.bg;
+                          e.currentTarget.style.borderColor = ghBtnStyle.border;
+                          e.currentTarget.style.color = ghBtnStyle.color;
+                        }}
+                      >
+                        <GithubIcon className="w-4 h-4 shrink-0" />
+                        <span>{lang === 'zh' ? '前往 GitHub 頁面' : 'GitHub Repository'}</span>
+                        <ExternalLink size={13} className="opacity-70 shrink-0" />
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -195,11 +304,27 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                 <div className="w-full lg:w-7/12 space-y-4 flex flex-col justify-between">
                   <div className="space-y-3.5">
 
-                    {/* Project Title */}
-                    <div>
+                    {/* Project Title & AI-Assisted Badge */}
+                    <div className="flex flex-wrap items-center gap-3">
                       <h3 className="text-2xl sm:text-3xl font-extrabold group-hover:text-cyan-500 transition-colors tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                         {title}
                       </h3>
+
+                      {/* Prominent AI-Assisted Development Badge */}
+                      {project.aiAssisted && (
+                        <span
+                          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-code font-extrabold shadow-sm backdrop-blur-md transition-all border"
+                          style={{
+                            backgroundColor: isLight ? 'rgba(124, 58, 237, 0.08)' : 'rgba(6, 182, 212, 0.15)',
+                            borderColor: isLight ? '#a855f7' : 'rgba(34, 211, 238, 0.6)',
+                            color: isLight ? '#6b21a8' : '#22d3ee',
+                            boxShadow: isLight ? '0 2px 10px rgba(168, 85, 247, 0.15)' : '0 2px 10px rgba(34, 211, 238, 0.2)',
+                          }}
+                        >
+                          <Sparkles size={14} className={isLight ? 'text-purple-600 fill-purple-600 animate-pulse' : 'text-cyan-300 fill-cyan-300 animate-pulse'} />
+                          <span>{lang === 'zh' ? '⚡ AI 輔助開發' : '⚡ AI-Assisted Dev'}</span>
+                        </span>
+                      )}
                     </div>
 
                     {/* Overview Bio */}
@@ -276,16 +401,16 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     )}
                   </div>
 
-                  {/* Specialized Tools Tags */}
+                  {/* Specialized Tools Tags (WCAG AAA Compliant Contrast) */}
                   <div className="pt-4 flex flex-wrap gap-2 border-t" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.07)' }}>
                     {project.tags.map((tag, idx) => (
                       <span
                         key={idx}
                         className="tech-tag text-xs font-code px-3 py-1 rounded-lg font-bold border transition-transform hover:scale-105 shadow-xs"
                         style={{
-                          backgroundColor: isLight ? '#f0f9ff' : 'rgba(15,23,42,0.9)',
-                          borderColor: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)',
-                          color: isLight ? '#0369a1' : '#22d3ee'
+                          backgroundColor: isLight ? '#e0f2fe' : 'rgba(15,23,42,0.9)',
+                          borderColor: isLight ? '#7dd3fc' : 'rgba(6,182,212,0.35)',
+                          color: isLight ? '#0c4a6e' : '#38bdf8'
                         }}
                       >
                         {tag}
