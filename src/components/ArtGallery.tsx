@@ -196,9 +196,9 @@ export const ArtGallery: React.FC = () => {
                         setRouletteIndex(idx);
                       }
                     }}
-                    className={`absolute w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer border-0 transition-all duration-700 ease-out shadow-2xl ${
+                    className={`absolute w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer border border-[var(--border-color)] hover:border-cyan-500/50 transition-all duration-700 ease-out shadow-2xl ${
                       isCenter
-                        ? 'shadow-cyan-500/25'
+                        ? 'shadow-cyan-500/25 border-cyan-500/40'
                         : 'shadow-slate-950/60'
                     }`}
                     style={{
