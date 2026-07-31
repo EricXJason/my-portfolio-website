@@ -160,7 +160,7 @@ export const ArtGallery: React.FC = () => {
 
         {/* FEATURED ROULETTE CAROUSEL VIEW */}
         {activeTab === 'featured' ? (
-          <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center py-6 sm:py-10">
+          <div className="relative w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto flex flex-col items-center py-4 sm:py-6">
 
             {/* 3D Roulette Stage */}
             <div
@@ -272,7 +272,7 @@ export const ArtGallery: React.FC = () => {
         ) : (
           /* TRADITIONAL GRID VIEW FOR OTHER TABS */
           <>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
               {displayedArt.map((art) => (
                 <div
                   key={art.id}
@@ -365,7 +365,7 @@ export const ArtGallery: React.FC = () => {
               <div className="flex items-center gap-2.5">
                 <a
                   href={getAssetUrl(activeImage.img)}
-                  download={`artwork-${activeImage.id}.webp`}
+                  download={`artwork-${activeImage.id}.avif`}
                   target="_blank"
                   rel="noreferrer"
                   className="h-9 px-3.5 rounded-xl border text-xs font-bold font-code transition-all flex items-center gap-1.5 cursor-pointer shadow-xs hover:scale-105"

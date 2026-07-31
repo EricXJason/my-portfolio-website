@@ -8,13 +8,13 @@ interface TechBadge {
 }
 
 const techBadges: TechBadge[] = [
-  { name: 'HTML',           icon: getAssetUrl('/assets/logos/html5.webp') },
-  { name: 'CSS',            icon: getAssetUrl('/assets/logos/css3.webp') },
-  { name: 'Tailwind CSS',   icon: getAssetUrl('/assets/logos/tailwind.webp') },
-  { name: 'TypeScript',     icon: getAssetUrl('/assets/logos/typescript.webp') },
-  { name: 'React',          icon: getAssetUrl('/assets/logos/react.webp') },
-  { name: 'Vite',           icon: getAssetUrl('/assets/logos/vite.webp') },
-  { name: 'GitHub Actions', icon: getAssetUrl('/assets/logos/github-actions.webp') },
+  { name: 'HTML',           icon: getAssetUrl('/assets/logos/html5.avif') },
+  { name: 'CSS',            icon: getAssetUrl('/assets/logos/css3.avif') },
+  { name: 'Tailwind CSS',   icon: getAssetUrl('/assets/logos/tailwind.avif') },
+  { name: 'TypeScript',     icon: getAssetUrl('/assets/logos/typescript.avif') },
+  { name: 'React',          icon: getAssetUrl('/assets/logos/react.avif') },
+  { name: 'Vite',           icon: getAssetUrl('/assets/logos/vite.avif') },
+  { name: 'GitHub Actions', icon: getAssetUrl('/assets/logos/github-actions.avif') },
 ];
 
 interface FooterProps {

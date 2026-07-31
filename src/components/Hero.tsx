@@ -109,7 +109,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       />
 
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-        <div className="flex flex-col items-center text-center gap-8 max-w-4xl xl:max-w-5xl mx-auto">
+        <div className="flex flex-col items-center text-center gap-8 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
 
           {/* Specialization Badge */}
           <div

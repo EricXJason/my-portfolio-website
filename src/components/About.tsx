@@ -85,7 +85,7 @@ export const About: React.FC = () => {
                 >
                   <div className="w-full h-full rounded-full overflow-hidden shadow-inner">
                     <img
-                      src={getAssetUrl('/assets/images/personal.webp')}
+                      src={getAssetUrl('/assets/images/personal.avif')}
                       alt="Che-Cheng Hsu Portrait"
                       className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                       decoding="async"

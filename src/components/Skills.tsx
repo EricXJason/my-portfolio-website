@@ -69,8 +69,8 @@ export const Skills: React.FC = () => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Skill Categories */}
-        <div className="space-y-10 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
+        {/* Master Content Card */}
+        <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-6 sm:space-y-8">
           {currentSkills.map((cat, idx) => {
             const CatIcon = CAT_ICON_MAP[cat.catType] ?? Gamepad2;
 
@@ -125,28 +125,27 @@ export const Skills: React.FC = () => {
                     return (
                       <div
                         key={iIdx}
-                        className="skill-row-bg rounded-xl p-3.5 flex flex-col sm:flex-row sm:items-center gap-3 border"
+                        className="p-3.5 sm:p-4 rounded-xl border transition-all space-y-2.5"
+                        style={{
+                          backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
+                          borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.06)',
+                        }}
                       >
-                        {/* Label */}
-                        <div className="flex items-center gap-2.5 shrink-0 sm:w-[220px]">
+                        <div className="flex items-center justify-between gap-2">
                           <span
-                            className="shrink-0 flex items-center justify-center w-7 h-7 rounded-lg"
-                            style={{
-                              backgroundColor: `${cat.catColor}14`,
-                              border: `1px solid ${cat.catColor}28`,
-                            }}
+                            className="font-bold text-sm sm:text-base tracking-wide flex items-center gap-2"
+                            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
                           >
-                            {getLabelIcon(item.label, cat.catColor)}
-                          </span>
-                          <span className="font-bold text-sm text-[var(--text-main)]">
+                            <span
+                              className="w-2 h-2 rounded-full shrink-0"
+                              style={{ backgroundColor: cat.catColor }}
+                            />
                             {item.label}
                           </span>
                         </div>
 
-                        <div className="hidden sm:block w-px h-5 shrink-0" style={{ backgroundColor: 'var(--border-color)' }} />
-
                         {/* Tech Chips */}
-                        <div className="flex flex-wrap items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
                           {tokens.map((sub, sIdx) => (
                             <span
                               key={sIdx}

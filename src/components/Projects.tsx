@@ -101,8 +101,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
           </div>
         )}
 
-        {/* Project Grid */}
-        <div className="space-y-12 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
+        {/* Master Content Card — 100% matched to About & Certifications container width */}
+        <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8 sm:space-y-12">
           {filteredProjects.map((project) => {
             const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
             const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
@@ -112,7 +112,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
             return (
               <article
                 key={project.id}
-                className="glass-card rounded-3xl p-6 sm:p-8 border border-[var(--border-color)] flex flex-col lg:flex-row gap-8 items-stretch group hover:-translate-y-1.5 transition-all duration-500 shadow-lg"
+                className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] flex flex-col lg:flex-row gap-8 items-stretch group hover:-translate-y-1.5 transition-all duration-500 shadow-sm"
+                style={{
+                  backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
+                }}
               >
                 {/* Left Side: Thumbnail Preview + Direct Action Button */}
                 <div className="w-full lg:w-5/12 flex flex-col justify-center gap-3.5 shrink-0">
