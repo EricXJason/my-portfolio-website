@@ -86,6 +86,8 @@ export const YoutubeModal: React.FC<YoutubeModalProps> = ({ isOpen, onClose, vid
             title={title || 'YouTube Video Player'}
             className="w-full h-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            referrerPolicy="strict-origin-when-cross-origin"
+            loading="lazy"
             allowFullScreen
           />
         </div>

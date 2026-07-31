@@ -77,7 +77,7 @@ export const SideNav: React.FC = () => {
             href={`#${section.id}`}
             onClick={(e) => handleNavClick(e, section.id)}
             aria-label={t(section.labelKey)}
-            className="group relative flex items-center justify-center py-1 cursor-pointer"
+            className="group relative flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] cursor-pointer"
           >
             {/* Tooltip Label on Hover */}
             <span className="absolute right-7 px-2.5 py-1 rounded-md bg-slate-900 dark:bg-slate-900 light:bg-white text-cyan-400 dark:text-cyan-400 light:text-cyan-700 font-code text-[11px] font-bold border border-slate-700 dark:border-slate-700 light:border-slate-300 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap shadow-lg">

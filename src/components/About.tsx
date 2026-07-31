@@ -55,8 +55,8 @@ export const About: React.FC = () => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Master Content Card — 100% matched to Certifications section padding & border */}
-        <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
+        {/* Master Content Container — Borderless & Clean Layout */}
+        <div className="rounded-2xl p-2 sm:p-6 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
 
             {/* High-End Portrait Avatar */}

@@ -54,6 +54,8 @@ export const Footer: React.FC<FooterProps> = ({ lastUpdated }) => {
               <img
                 src={tech.icon}
                 alt={`${tech.name} logo`}
+                width={16}
+                height={16}
                 className="w-4 h-4 object-contain shrink-0"
                 loading="lazy"
                 decoding="async"
