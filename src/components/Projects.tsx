@@ -83,22 +83,22 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Category Filter Buttons — Equal width & neat grid layout on all devices */}
-        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10 sm:mb-12 max-w-4xl mx-auto" role="tablist">
+        {/* Category Filter Buttons — Equal width & constrained width on mobile (with generous side margins), single-row flex layout on PC */}
+        <div className="grid grid-cols-2 max-w-[340px] xs:max-w-[360px] sm:max-w-full sm:flex sm:flex-nowrap md:flex-nowrap items-center justify-center gap-2.5 sm:gap-3 mb-10 sm:mb-12 mx-auto px-2 sm:px-0 overflow-x-auto sm:overflow-visible py-1" role="tablist">
           {filters.map((f) => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
               role="tab"
               aria-selected={filter === f.key}
-              className={`h-12 px-3 sm:px-5 sm:min-w-[150px] rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto ${
+              className={`h-11 sm:h-12 px-3 sm:px-4 md:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto shrink-0 sm:shrink-0 ${
                 filter === f.key
                   ? 'filter-btn-active bg-slate-900 text-white border-cyan-500 shadow-md shadow-cyan-500/20 scale-105'
                   : 'filter-btn-inactive bg-slate-900/60 text-[var(--text-sub)] border-slate-800 hover:border-cyan-600'
               }`}
             >
               {f.icon}
-              <span className="truncate">{f.label}</span>
+              <span className="whitespace-nowrap">{f.label}</span>
             </button>
           ))}
         </div>
