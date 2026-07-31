@@ -1,7 +1,7 @@
 # 許哲誠 個人作品集網站 | Portfolio
 
 [![Author: HSU, CHE-CHENG](https://img.shields.io/badge/Author-HSU%2C_CHE--CHENG-0F172A?style=flat-square&logo=github&logoColor=white)](#)
-[![Version: 4.2.0](https://img.shields.io/badge/Version-4.2.0-2563EB?style=flat-square)](#)
+[![Version: 4.3.0](https://img.shields.io/badge/Version-4.3.0-2563EB?style=flat-square)](#)
 [![Standard: Clean Code](https://img.shields.io/badge/Standard-Clean_Code-0D9488?style=flat-square)](#)
 
 ---

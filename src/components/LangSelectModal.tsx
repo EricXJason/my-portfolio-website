@@ -54,7 +54,7 @@ export const LangSelectModal: React.FC = () => {
       aria-label="Select Language"
     >
       <div
-        className="relative w-full max-w-sm sm:max-w-md rounded-2xl border p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6"
+        className="relative w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6"
         style={{
           backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.96)',
           borderColor: isLight ? '#cbd5e1' : 'rgba(6,182,212,0.35)',

@@ -100,11 +100,11 @@ export const Education: React.FC = () => {
   const btnBdr = isLight ? '#cbd5e1' : '#334155';
 
   const workshopPalette = [
-    { text: '#06b6d4', bg: isLight ? '#ecfeff' : 'rgba(6,182,212,0.12)', border: isLight ? '#a5f3fc' : 'rgba(6,182,212,0.3)' },
-    { text: '#a855f7', bg: isLight ? '#faf5ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#e9d5ff' : 'rgba(168,85,247,0.3)' },
-    { text: '#10b981', bg: isLight ? '#ecfdf5' : 'rgba(16,185,129,0.12)', border: isLight ? '#a7f3d0' : 'rgba(16,185,129,0.3)' },
-    { text: '#f59e0b', bg: isLight ? '#fffbeb' : 'rgba(245,158,11,0.12)', border: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)' },
-    { text: '#ec4899', bg: isLight ? '#fdf2f8' : 'rgba(236,72,153,0.12)', border: isLight ? '#fbcfe8' : 'rgba(236,72,153,0.3)' },
+    { text: isLight ? '#0284c7' : '#22d3ee', bg: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)', border: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)' },
+    { text: isLight ? '#7e22ce' : '#c084fc', bg: isLight ? '#faf5ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#e9d5ff' : 'rgba(168,85,247,0.3)' },
+    { text: isLight ? '#047857' : '#34d399', bg: isLight ? '#ecfdf5' : 'rgba(16,185,129,0.12)', border: isLight ? '#a7f3d0' : 'rgba(16,185,129,0.3)' },
+    { text: isLight ? '#b45309' : '#fbbf24', bg: isLight ? '#fffbeb' : 'rgba(245,158,11,0.12)', border: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)' },
+    { text: isLight ? '#be185d' : '#f472b6', bg: isLight ? '#fdf2f8' : 'rgba(236,72,153,0.12)', border: isLight ? '#fbcfe8' : 'rgba(236,72,153,0.3)' },
   ];
 
   return (
@@ -126,7 +126,7 @@ export const Education: React.FC = () => {
         <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-12">
 
           {/* ── Sub-section 1: 學歷 ── */}
-          <div id="education-degrees" className="space-y-6 scroll-mt-24">
+          <div id="education-degrees" className="space-y-6 scroll-mt-32">
             <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
               <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                 <GraduationCap size={22} />
@@ -198,7 +198,7 @@ export const Education: React.FC = () => {
         </div>
 
           {/* ── Sub-section 2: 工作經歷 ── */}
-          <div id="work-experience" className="space-y-6 scroll-mt-24">
+          <div id="work-experience" className="space-y-6 scroll-mt-32">
             <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
               <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
                 <Briefcase size={22} />
@@ -308,7 +308,7 @@ export const Education: React.FC = () => {
           </div>
 
           {/* ── Sub-section 3: 研習歷程 ── */}
-          <div id="workshops" className="space-y-6 scroll-mt-24">
+          <div id="workshops" className="space-y-6 scroll-mt-32">
             <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
               <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <Layers size={22} />
@@ -385,7 +385,7 @@ export const Education: React.FC = () => {
           </div>
 
           {/* ── Sub-section 4: 論文與期刊 ── */}
-          <div id="publications" className="space-y-6 scroll-mt-24">
+          <div id="publications" className="space-y-6 scroll-mt-32">
             <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
               <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
                 <FileText size={22} />

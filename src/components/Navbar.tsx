@@ -45,6 +45,43 @@ export const Navbar: React.FC<NavbarProps> = ({
     }
   }, [mobileOpen]);
 
+  // Handle window resize & orientation change to prevent menu state mismatch
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', handleResize, { passive: true });
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
+
+  // Smooth scroll handler with precise header offset calculation
+  const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith('#')) {
+      e.preventDefault();
+      const targetId = href.substring(1);
+      const element = document.getElementById(targetId);
+      if (element) {
+        const headerOffset = 116;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
+      }
+      if (window.history.pushState) {
+        window.history.pushState(null, '', href);
+      }
+    }
+  };
+
   const expSubItems = [
     { key: 'nav_sub_degrees', href: '#education-degrees' },
     { key: 'nav_sub_work', href: '#work-experience' },
@@ -75,7 +112,15 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
 
           {/* Brand Logo */}
-          <a href="#home" className="flex items-center gap-3 group shrink-0" aria-label="JasonProduction Home">
+          <a
+            href="#home"
+            onClick={(e) => {
+              scrollToSection(e, '#home');
+              setMobileOpen(false);
+            }}
+            className="flex items-center gap-3 group shrink-0"
+            aria-label="JasonProduction Home"
+          >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[1.5px] group-hover:scale-105 active:scale-95 transition-transform">
               <div
                 className="w-full h-full rounded-[10px] flex items-center justify-center font-mono font-extrabold text-xs"
@@ -119,6 +164,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   >
                     <a
                       href={item.href}
+                      onClick={(e) => scrollToSection(e, item.href)}
                       className="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap flex items-center gap-1 cursor-pointer"
                       style={{
                         backgroundColor: desktopExpHover ? (isLight ? '#eff6ff' : 'rgba(30,41,59,0.9)') : 'transparent',
@@ -147,7 +193,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                             <a
                               key={sub.key}
                               href={sub.href}
-                              onClick={() => setDesktopExpHover(false)}
+                              onClick={(e) => {
+                                scrollToSection(e, sub.href);
+                                setDesktopExpHover(false);
+                              }}
                               className="block px-4 py-2.5 text-xs font-bold font-code transition-all hover:pl-6"
                               style={{ color: isLight ? '#334155' : '#cbd5e1' }}
                               onMouseEnter={(e) => {
@@ -173,6 +222,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <a
                   key={item.key}
                   href={item.href}
+                  onClick={(e) => scrollToSection(e, item.href)}
                   className="px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 whitespace-nowrap"
                   style={{ color: isLight ? '#475569' : '#94a3b8' }}
                   onMouseEnter={(e) => {
@@ -352,7 +402,8 @@ export const Navbar: React.FC<NavbarProps> = ({
                           <a
                             key={sub.key}
                             href={sub.href}
-                            onClick={() => {
+                            onClick={(e) => {
+                              scrollToSection(e, sub.href);
                               setMobileOpen(false);
                               setMobileExpOpen(false);
                             }}
@@ -372,7 +423,10 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <a
                   key={item.key}
                   href={item.href}
-                  onClick={() => setMobileOpen(false)}
+                  onClick={(e) => {
+                    scrollToSection(e, item.href);
+                    setMobileOpen(false);
+                  }}
                   className="block py-3 px-4 rounded-xl text-base font-semibold transition-all border border-transparent hover:border-cyan-500/30 hover:bg-cyan-500/10 hover:text-cyan-400 active:bg-cyan-500/20 active:scale-[0.99]"
                   style={{ color: isLight ? '#0f172a' : '#f8fafc' }}
                 >

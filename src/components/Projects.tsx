@@ -210,7 +210,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     {/* Technical Contributions Box */}
                     {contribs && contribs.length > 0 && (
                       <div className="pt-1 space-y-2">
-                        <div className="flex items-center gap-1.5 text-xs font-code font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider">
+                        <div className="flex items-center gap-1.5 text-xs font-code font-bold uppercase tracking-wider" style={{ color: isLight ? '#0369a1' : '#22d3ee' }}>
                           <Cpu size={14} />
                           <span>{lang === 'zh' ? '核心架構與技術亮點' : 'Key Architecture & Highlights'}</span>
                         </div>

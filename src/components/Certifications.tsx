@@ -70,7 +70,7 @@ export const Certifications: React.FC = () => {
                 <Trophy size={24} className="text-amber-400" />
               </div>
               <div>
-                <p className="text-[10px] font-code font-bold tracking-widest uppercase text-amber-500 mb-0.5">
+                <p className="text-[10px] font-code font-bold tracking-widest uppercase mb-0.5" style={{ color: isLight ? '#b45309' : '#f59e0b' }}>
                   {lang === 'zh' ? '英文能力檢定' : 'English Proficiency'}
                 </p>
                 <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>

@@ -35,7 +35,7 @@ export const Footer: React.FC<FooterProps> = ({ lastUpdated }) => {
 
         {/* Copyright Row */}
         <div className="flex flex-wrap items-center justify-center gap-3 text-sm sm:text-base font-semibold text-[var(--text-main)]">
-          <span className="text-xl sm:text-2xl font-bold font-mono text-cyan-600 dark:text-cyan-400 leading-none">©</span>
+          <span className="text-xl sm:text-2xl font-bold font-mono text-sky-700 dark:text-cyan-400 leading-none">©</span>
           <span className="text-[var(--text-main)] font-bold">
             {lang === 'zh' ? '許哲誠 版權所有' : 'HSU, CHE-CHENG All Rights Reserved'}
           </span>

@@ -37,8 +37,31 @@ export const SideNav: React.FC = () => {
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll, { passive: true });
+    window.addEventListener('orientationchange', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      window.removeEventListener('orientationchange', handleScroll);
+    };
   }, []);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 116;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
+    }
+    if (window.history.pushState) {
+      window.history.pushState(null, '', `#${id}`);
+    }
+  };
 
   return (
     <div
@@ -52,6 +75,7 @@ export const SideNav: React.FC = () => {
           <a
             key={section.id}
             href={`#${section.id}`}
+            onClick={(e) => handleNavClick(e, section.id)}
             aria-label={t(section.labelKey)}
             className="group relative flex items-center justify-center py-1 cursor-pointer"
           >

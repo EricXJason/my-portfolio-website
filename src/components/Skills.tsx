@@ -105,7 +105,7 @@ export const Skills: React.FC = () => {
                         ? (isLight ? '#e9d5ff' : 'rgba(192,132,252,0.4)')
                         : (isLight ? '#a7f3d0' : 'rgba(52,211,153,0.4)'),
                       color: cat.catType === 'game'
-                        ? (isLight ? '#0891b2' : '#22d3ee')
+                        ? (isLight ? '#0369a1' : '#22d3ee')
                         : cat.catType === 'web'
                         ? (isLight ? '#7e22ce' : '#c084fc')
                         : (isLight ? '#047857' : '#34d399'),

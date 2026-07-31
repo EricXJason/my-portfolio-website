@@ -34,6 +34,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
     };
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
+    window.addEventListener('orientationchange', resizeCanvas);
 
     const mouse = { x: -1000, y: -1000, active: false };
     const handleMouseMove = (e: MouseEvent) => {
@@ -151,6 +152,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
 
     return () => {
       window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('orientationchange', resizeCanvas);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseleave', handleMouseLeave);
       cancelAnimationFrame(animationFrameId);
