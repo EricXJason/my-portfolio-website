@@ -41,7 +41,7 @@ export const About: React.FC = () => {
   const statIconBdr = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.08)';
 
   return (
-    <section id="about" className="py-24 relative select-text">
+    <section id="about" className="py-16 sm:py-24 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
@@ -97,9 +97,9 @@ export const About: React.FC = () => {
           </div>
 
           {/* Bio + Achievement Stats */}
-          <div className="lg:col-span-7 space-y-8">
+          <div className="lg:col-span-7 space-y-8 w-full text-left">
 
-            <div className="space-y-4">
+            <div className="space-y-4 w-full px-0">
               <h3 className="text-2xl sm:text-3xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                 {currentData.heading}
               </h3>
@@ -110,7 +110,7 @@ export const About: React.FC = () => {
             </div>
 
             {/* Achievement Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 w-full px-0">
               {currentData.stats.map((st) => {
                 const IconComponent = iconMap[st.icon] ?? Award;
                 const proofUrl = st.proofKey ? driveLinks[st.proofKey] : null;

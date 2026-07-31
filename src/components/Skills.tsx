@@ -55,7 +55,7 @@ export const Skills: React.FC = () => {
   const currentSkills: SkillCategory[] = dataMap[lang] ?? dataMap.zh;
 
   return (
-    <section id="skills" className="py-24 relative select-text">
+    <section id="skills" className="py-16 sm:py-24 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
@@ -79,7 +79,7 @@ export const Skills: React.FC = () => {
 
                 {/* Category Header */}
                 <div
-                  className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-[var(--border-color)]"
+                  className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 border-b border-[var(--border-color)]"
                   style={{ borderLeftWidth: '4px', borderLeftColor: cat.catColor }}
                 >
                   <div className="flex items-center gap-3">
@@ -118,7 +118,7 @@ export const Skills: React.FC = () => {
                 </div>
 
                 {/* Skill Rows */}
-                <div className="p-4 sm:p-6 space-y-3">
+                <div className="p-3.5 sm:p-6 space-y-3">
                   {cat.items.map((item, iIdx) => {
                     const tokens = item.content.split('/').map((s) => s.trim()).filter(Boolean);
 

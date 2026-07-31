@@ -8,8 +8,8 @@ interface TechBadge {
 }
 
 const techBadges: TechBadge[] = [
-  { name: 'HTML5',          icon: getAssetUrl('/assets/logos/html5.webp') },
-  { name: 'CSS3',           icon: getAssetUrl('/assets/logos/css3.webp') },
+  { name: 'HTML',           icon: getAssetUrl('/assets/logos/html5.webp') },
+  { name: 'CSS',            icon: getAssetUrl('/assets/logos/css3.webp') },
   { name: 'Tailwind CSS',   icon: getAssetUrl('/assets/logos/tailwind.webp') },
   { name: 'TypeScript',     icon: getAssetUrl('/assets/logos/typescript.webp') },
   { name: 'React',          icon: getAssetUrl('/assets/logos/react.webp') },

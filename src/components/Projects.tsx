@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video, ExternalLink, Bot, Star, ArrowRight } from 'lucide-react';
+import { Play, Trophy, Calendar, Cpu, Layers, Gamepad2, Globe, Sparkles, Video, ExternalLink, Bot, Star, ArrowRight, ChevronDown } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 
 interface ProjectItem {
@@ -42,15 +42,15 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
   });
 
   const filters = [
-    { key: 'all', label: t('cat_all'), icon: <Layers size={16} /> },
     { key: 'featured', label: t('cat_featured'), icon: <Star size={16} className="text-amber-400 fill-amber-400" /> },
+    { key: 'all', label: t('cat_all'), icon: <Layers size={16} /> },
     { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={16} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={16} /> },
     { key: 'linebot', label: t('cat_linebot'), icon: <Bot size={16} /> },
   ];
 
   return (
-    <section id="projects" className="py-24 relative select-text">
+    <section id="projects" className="py-16 sm:py-24 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
@@ -302,15 +302,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
               onClick={() => {
                 setFilter('all');
               }}
-              className="px-8 py-3.5 rounded-2xl font-code font-bold text-sm transition-all duration-300 inline-flex items-center gap-3 cursor-pointer shadow-lg hover:scale-105 active:scale-95 border-2"
-              style={{
-                backgroundColor: isLight ? '#0f172a' : '#1e293b',
-                borderColor: '#06b6d4',
-                color: '#ffffff',
-              }}
+              className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 text-[var(--text-main)] font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20"
             >
-              <span>{lang === 'zh' ? '展開全部作品' : 'Expand All Works'}</span>
-              <ArrowRight size={18} className="text-cyan-400" />
+              <span>{lang === 'zh' ? '展開全部作品' : 'Expand All Projects'}</span>
+              <ChevronDown size={18} className="text-cyan-400" />
             </button>
           </div>
         )}

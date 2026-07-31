@@ -41,7 +41,7 @@ export const Certifications: React.FC = () => {
   };
 
   return (
-    <section id="awards" className="py-24 relative select-text">
+    <section id="awards" className="py-16 sm:py-24 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
@@ -55,7 +55,7 @@ export const Certifications: React.FC = () => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        <div className="glass-card rounded-2xl p-6 sm:p-10 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8">
+        <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8">
 
           {/* TOEIC 755 Card */}
           <div
@@ -147,24 +147,17 @@ export const Certifications: React.FC = () => {
                 </div>
 
                 {hasMore && (
-                  <div className="pt-2 text-center">
+                  <div className="pt-3 text-center">
                     <button
                       onClick={() => toggleGroup(gIdx)}
-                      className="h-10 px-6 rounded-xl border text-xs font-code font-bold transition-all shadow-xs inline-flex items-center gap-2 cursor-pointer hover:scale-105"
-                      style={{
-                        backgroundColor: isLight ? '#ffffff' : '#0f172a',
-                        borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
-                        color: isLight ? '#0f172a' : '#ffffff',
-                      }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#06b6d4'; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)'; }}
+                      className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 text-[var(--text-main)] font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20"
                     >
                       <span>
                         {isExpanded
                           ? (lang === 'zh' ? '收起證照' : 'Collapse Credentials')
                           : (lang === 'zh' ? '檢視更多證照' : 'View More Credentials')}
                       </span>
-                      {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                      {isExpanded ? <ChevronUp size={18} className="text-cyan-400" /> : <ChevronDown size={18} className="text-cyan-400" />}
                     </button>
                   </div>
                 )}

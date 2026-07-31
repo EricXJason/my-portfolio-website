@@ -17,6 +17,7 @@ import { ScrollProgress } from './components/ScrollProgress';
 import { CyberParticles } from './components/CyberParticles';
 import { YoutubeModal } from './components/YoutubeModal';
 import { LangSelectModal } from './components/LangSelectModal';
+import { LoadingScreen } from './components/LoadingScreen';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
 
 interface YtModalState {
@@ -53,6 +54,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] relative transition-colors duration-300">
+
+      {/* Text-free Loading Screen with Percentage */}
+      <LoadingScreen />
 
       {/* Language Select Modal — renders on first visit */}
       <LangSelectModal />

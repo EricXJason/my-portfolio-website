@@ -24,9 +24,7 @@
         "id": "toeic",
         "title": "TOEIC 755",
         "label": "英文多益檢定成績",
-        "icon": "award",
-        "proofKey": "toeic755CertificateDriveUrl",
-        "btnLabel": "檢視多益證明"
+        "icon": "award"
       }
     ]
   },
@@ -52,9 +50,7 @@
         "id": "toeic",
         "title": "TOEIC 755",
         "label": "English Proficiency Score",
-        "icon": "award",
-        "proofKey": "toeic755CertificateDriveUrl",
-        "btnLabel": "TOEIC Certificate"
+        "icon": "award"
       }
     ]
   }

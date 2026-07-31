@@ -108,7 +108,7 @@ export const Education: React.FC = () => {
   ];
 
   return (
-    <section id="experience" className="py-24 relative select-text">
+    <section id="experience" className="py-16 sm:py-24 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
 
         {/* Master Section Header: 經歷 */}
@@ -137,7 +137,7 @@ export const Education: React.FC = () => {
             {currentData.degrees.map((deg) => (
               <div
                 key={deg.id}
-                className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-4 shadow-md"
+                className="glass-card p-4 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-4 shadow-md"
               >
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/40 pb-4">
                   <div className="flex items-center gap-3">
@@ -206,7 +206,7 @@ export const Education: React.FC = () => {
             {currentData.workExperiences && currentData.workExperiences.map((job, jIdx) => (
               <div
                 key={jIdx}
-                className="glass-card p-6 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-5 shadow-md"
+                className="glass-card p-4 sm:p-8 rounded-2xl border border-[var(--border-color)] space-y-5 shadow-md"
               >
                 {/* Job Header: Company & Role Side-by-Side with Left Icon Badge */}
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800/40 pb-4">
