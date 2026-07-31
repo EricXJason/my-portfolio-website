@@ -135,8 +135,8 @@ export const ArtGallery: React.FC = () => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Category Tabs — Visual styling aligned 1:1 with Projects component */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10 sm:mb-12" role="tablist">
+        {/* Category Tabs — Equal width & neat grid layout matching Projects */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2.5 sm:gap-3 mb-10 sm:mb-12 max-w-4xl mx-auto" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -146,14 +146,14 @@ export const ArtGallery: React.FC = () => {
               }}
               role="tab"
               aria-selected={activeTab === tab.key}
-              className={`h-11 sm:h-12 px-4 sm:px-6 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center gap-2.5 cursor-pointer shadow-sm border-2 ${
+              className={`h-11 sm:h-12 px-3 sm:px-5 sm:min-w-[150px] rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto ${
                 activeTab === tab.key
                   ? 'filter-btn-active bg-slate-900 text-white border-cyan-500 shadow-md shadow-cyan-500/20 scale-105'
                   : 'filter-btn-inactive bg-slate-900/60 dark:bg-slate-900/60 light:bg-white text-[var(--text-sub)] border-slate-800 dark:border-slate-800 light:border-slate-300 hover:border-cyan-600'
               }`}
             >
               {tab.icon}
-              <span>{tab.label}</span>
+              <span className="truncate">{tab.label}</span>
             </button>
           ))}
         </div>
