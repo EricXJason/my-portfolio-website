@@ -187,13 +187,13 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             {currentData.description}
           </p>
 
-          {/* Equal Sized CTA External Buttons — 2-Column Grid on Mobile */}
-          <div className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none pt-1">
+          {/* Equal Sized CTA External Buttons — Vertical on Mobile, Horizontal on PC */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-xs sm:max-w-none pt-1">
             <a
               href={links.github}
               target="_blank"
               rel="noreferrer"
-              className="w-full sm:w-60 h-12 sm:h-13 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer shadow-md"
+              className="w-full sm:w-60 h-12 sm:h-13 px-4 sm:px-6 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer shadow-md whitespace-nowrap"
               style={{
                 backgroundColor: isLight ? '#0f172a' : '#0f172a',
                 border: `2px solid ${isLight ? '#0f172a' : '#475569'}`,
@@ -206,27 +206,27 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
                 e.currentTarget.style.borderColor = isLight ? '#0f172a' : '#475569';
               }}
             >
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="#ffffff">
+              <svg className="w-4.5 h-4.5 shrink-0" viewBox="0 0 24 24" fill="#ffffff">
                 <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
               </svg>
-              <span>{lang === 'zh' ? 'GitHub 專頁' : 'GitHub Profile'}</span>
-              <ExternalLink size={13} style={{ color: '#94a3b8', flexShrink: 0 }} />
+              <span className="whitespace-nowrap">{lang === 'zh' ? 'GitHub 專頁' : 'GitHub Profile'}</span>
+              <ExternalLink size={14} style={{ color: '#94a3b8', flexShrink: 0 }} />
             </a>
 
             <a
               href={links.artstation}
               target="_blank"
               rel="noreferrer"
-              className="w-full sm:w-60 h-12 sm:h-13 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer shadow-md"
+              className="w-full sm:w-60 h-12 sm:h-13 px-4 sm:px-6 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer shadow-md whitespace-nowrap"
               style={{ backgroundColor: '#13ACFE', border: '1px solid #0ea5e9', color: '#ffffff' }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0095e0'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#13ACFE'; }}
             >
-              <svg className="w-4 h-4 shrink-0" viewBox="0.09 0.31 799.44 700.63" fill="#ffffff">
+              <svg className="w-4.5 h-4.5 shrink-0" viewBox="0.09 0.31 799.44 700.63" fill="#ffffff">
                 <path d="M.09 540.65l67.25 115.89c13.6 26.34 40.8 44.4 71.78 44.4H587.2l-92.18-160.29zm799.44.75c0-15.81-4.54-30.86-12.85-43.65L523.73 43.21C510.13 17.62 483.68.31 452.7.31H313.67l405.76 699.88 64.23-110.63c12.09-21.07 15.87-30.1 15.87-48.16zM428.52 426.26L247.18 113.95 65.83 426.26z" />
               </svg>
-              <span>{lang === 'zh' ? 'ArtStation 作品集' : 'ArtStation Portfolio'}</span>
-              <ExternalLink size={13} style={{ color: 'rgba(255,255,255,0.85)', flexShrink: 0 }} />
+              <span className="whitespace-nowrap">{lang === 'zh' ? 'ArtStation 作品集' : 'ArtStation Portfolio'}</span>
+              <ExternalLink size={14} style={{ color: 'rgba(255,255,255,0.85)', flexShrink: 0 }} />
             </a>
           </div>
 

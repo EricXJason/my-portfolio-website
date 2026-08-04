@@ -366,7 +366,7 @@ export const Education: React.FC = () => {
                         href={driveLinks[ws.driveLinkKey]}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-10 px-4 rounded-xl border text-xs font-bold transition-colors flex items-center gap-2 shadow-xs shrink-0 cursor-pointer hover:scale-105"
+                        className="h-10 px-4 rounded-xl border text-xs sm:text-sm font-bold transition-colors inline-flex items-center gap-2 shadow-xs shrink-0 cursor-pointer hover:scale-105 self-end sm:self-auto"
                         style={{ backgroundColor: btnBg, borderColor: btnBdr, color: isLight ? '#0f172a' : '#ffffff' }}
                       >
                         <ExternalLink size={14} className="text-cyan-400" />

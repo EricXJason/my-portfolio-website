@@ -131,23 +131,23 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
             const honorsList = lang === 'zh' ? project.honors : (project.honors_en || project.honors);
             const contribs = lang === 'zh' ? project.contributions : (project.contributions_en || project.contributions);
 
-            // Styling Tokens for Theme-Aware Action Buttons
+            // Styling Tokens for High-Contrast Theme-Aware Action Buttons
             const webBtnStyle = {
-              bg: isLight ? 'rgba(240, 249, 255, 0.95)' : 'rgba(14, 116, 144, 0.12)',
-              border: isLight ? '#bae6fd' : 'rgba(6, 182, 212, 0.3)',
+              bg: isLight ? '#e0f2fe' : 'rgba(14, 165, 233, 0.18)',
+              border: isLight ? '#38bdf8' : 'rgba(56, 189, 248, 0.45)',
               color: isLight ? '#0369a1' : '#38bdf8',
             };
 
             const ytBtnStyle = {
-              bg: isLight ? 'rgba(255, 241, 242, 0.95)' : 'rgba(225, 29, 72, 0.12)',
-              border: isLight ? '#fecdd3' : 'rgba(244, 63, 94, 0.3)',
-              color: isLight ? '#9f1239' : '#fb7185',
+              bg: isLight ? '#ffe4e6' : 'rgba(225, 29, 72, 0.18)',
+              border: isLight ? '#fda4af' : 'rgba(244, 63, 94, 0.45)',
+              color: isLight ? '#be123c' : '#fb7185',
             };
 
             const ghBtnStyle = {
-              bg: isLight ? 'rgba(241, 245, 249, 0.95)' : 'rgba(30, 41, 59, 0.6)',
-              border: isLight ? '#cbd5e1' : 'rgba(148, 163, 184, 0.25)',
-              color: isLight ? '#0f172a' : '#e2e8f0',
+              bg: isLight ? '#f1f5f9' : 'rgba(30, 41, 59, 0.85)',
+              border: isLight ? '#94a3b8' : 'rgba(148, 163, 184, 0.35)',
+              color: isLight ? '#0f172a' : '#f8fafc',
             };
 
             return (
@@ -284,20 +284,20 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                           boxShadow: isLight ? '0 4px 14px rgba(147, 51, 234, 0.2)' : '0 4px 14px rgba(6, 182, 212, 0.25)',
                         }}
                       >
-                        <Sparkles size={13} className={isLight ? 'text-purple-600 fill-purple-600 animate-pulse' : 'text-cyan-300 fill-cyan-300 animate-pulse'} />
+                        <Sparkles size={14} className={isLight ? 'text-purple-600 shrink-0' : 'text-cyan-400 shrink-0'} />
                         <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Direct Action Link Buttons — Compact inline-flex with minimum width */}
-                  <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 pt-1">
+                  {/* Direct Action Link Buttons — Horizontal Equal Width Row */}
+                  <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 w-full pt-1">
                     {project.websiteUrl && (
                       <a
                         href={project.websiteUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-code text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-[130px] sm:min-w-[155px]"
+                        className="flex-1 h-11 px-2 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
                         style={{
                           backgroundColor: webBtnStyle.bg,
                           borderColor: webBtnStyle.border,
@@ -316,7 +316,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                       >
                         <Globe size={16} className="shrink-0" />
                         <span>{lang === 'zh' ? '前往網站頁面' : 'Visit Website'}</span>
-                        <ExternalLink size={13} className="opacity-70 shrink-0" />
+                        <ExternalLink size={13} className="opacity-75 shrink-0" />
                       </a>
                     )}
 
@@ -325,7 +325,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={`https://www.youtube.com/watch?v=${project.ytId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-code text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-[130px] sm:min-w-[155px]"
+                        className="flex-1 h-11 px-2 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
                         style={{
                           backgroundColor: ytBtnStyle.bg,
                           borderColor: ytBtnStyle.border,
@@ -344,7 +344,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                       >
                         <Video size={16} className="shrink-0" />
                         <span>{lang === 'zh' ? 'YouTube 播放展示' : 'Watch on YouTube'}</span>
-                        <ExternalLink size={13} className="opacity-70 shrink-0" />
+                        <ExternalLink size={13} className="opacity-75 shrink-0" />
                       </a>
                     )}
 
@@ -353,7 +353,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={project.githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-code text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-[130px] sm:min-w-[155px]"
+                        className="flex-1 h-11 px-2 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
                         style={{
                           backgroundColor: ghBtnStyle.bg,
                           borderColor: ghBtnStyle.border,
@@ -372,7 +372,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                       >
                         <GithubIcon className="w-4 h-4 shrink-0" />
                         <span>{lang === 'zh' ? '前往 GitHub 頁面' : 'GitHub Repository'}</span>
-                        <ExternalLink size={13} className="opacity-70 shrink-0" />
+                        <ExternalLink size={13} className="opacity-75 shrink-0" />
                       </a>
                     )}
                   </div>

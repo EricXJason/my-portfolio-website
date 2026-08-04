@@ -137,7 +137,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 JasonProduction
               </span>
               <span
-                className="text-[10px] font-code tracking-widest uppercase font-bold"
+                className="text-xs sm:text-sm font-code tracking-widest uppercase font-bold"
                 style={{ color: isLight ? '#0369a1' : '#22d3ee' }}
               >
                 許哲誠 HSU, CHE-CHENG

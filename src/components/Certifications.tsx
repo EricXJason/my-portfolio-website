@@ -70,13 +70,13 @@ export const Certifications: React.FC = () => {
                 <Trophy size={24} className="text-amber-400" />
               </div>
               <div>
-                <p className="text-[10px] font-code font-bold tracking-widest uppercase mb-0.5" style={{ color: isLight ? '#b45309' : '#f59e0b' }}>
+                <p className="text-xs sm:text-sm font-code font-bold tracking-widest uppercase mb-0.5" style={{ color: isLight ? '#b45309' : '#f59e0b' }}>
                   {lang === 'zh' ? '英文能力檢定' : 'English Proficiency'}
                 </p>
                 <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                   TOEIC 755
                 </h3>
-                <p className="text-xs font-code font-medium mt-0.5" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
+                <p className="text-xs sm:text-sm font-code font-medium mt-0.5" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
                   {lang === 'zh' ? 'ETS 多益英語測驗成績' : 'ETS Test of English for International Communication'}
                 </p>
               </div>
