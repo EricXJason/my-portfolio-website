@@ -148,61 +148,60 @@ export const Education: React.FC = () => {
               {currentData.degrees.map((deg) => (
                 <div
                   key={deg.id}
-                  className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] shadow-sm flex flex-col sm:flex-row gap-5"
+                  className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] space-y-4 shadow-sm"
                   style={{
                     backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
                   }}
                 >
-                  {/* Left: School Info + Description */}
-                  <div className="flex-1 space-y-3 border-b sm:border-b-0 sm:border-r pb-4 sm:pb-0 sm:pr-5" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`p-3 rounded-xl shrink-0 ${
-                          deg.type === 'master' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                        }`}
-                      >
-                        <GraduationCap size={24} />
-                      </div>
-                      <div>
-                        <h4 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                          {deg.school}
-                        </h4>
-                        <p className="text-xs sm:text-sm font-code font-semibold mt-0.5" style={{ color: isLight ? '#475569' : '#94a3b8' }}>
-                          {deg.period}
-                        </p>
-                      </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/40 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`p-3 rounded-xl ${
+                        deg.type === 'master' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
+                      }`}
+                    >
+                      <GraduationCap size={24} />
                     </div>
-
-                    <p className="text-sm sm:text-base leading-relaxed font-normal" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
-                      {deg.desc}
-                    </p>
-                  </div>
-
-                  {/* Right: Proof Buttons — centered both axes */}
-                  <div className="flex flex-wrap sm:flex-col justify-center items-center gap-3 sm:w-44 shrink-0">
-                    {deg.buttons.map((btn, bIdx) => (
-                      <a
-                        key={bIdx}
-                        href={driveLinks[btn.linkKey]}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="h-11 px-5 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer hover:scale-105 sm:w-full sm:justify-center"
-                        style={{
-                          backgroundColor: btnBg,
-                          borderColor: btnBdr,
-                          color: isLight ? '#0f172a' : '#ffffff',
-                        }}
-                      >
-                        <ExternalLink
-                          size={14}
-                          className={deg.type === 'master' ? 'text-cyan-400' : 'text-purple-400'}
-                        />
-                        <span>{btn.label}</span>
-                      </a>
-                    ))}
+                    <div>
+                      <h4 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                        {deg.school}
+                      </h4>
+                      <p className="text-xs sm:text-sm font-code font-semibold mt-0.5" style={{ color: isLight ? '#475569' : '#94a3b8' }}>
+                        {deg.period}
+                      </p>
+                    </div>
                   </div>
                 </div>
-              ))}
+
+                <p className="text-sm sm:text-base leading-relaxed font-normal" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                  {deg.desc}
+                </p>
+
+                {/* Proof Action Buttons — centered, natural width, wrap only if needed */}
+                <div className="flex flex-wrap justify-center gap-2.5 pt-2">
+                  {deg.buttons.map((btn, bIdx) => (
+                    <a
+                      key={bIdx}
+                      href={driveLinks[btn.linkKey]}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="h-11 px-4 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap"
+                      style={{
+                        backgroundColor: btnBg,
+                        borderColor: btnBdr,
+                        color: isLight ? '#0f172a' : '#ffffff',
+                      }}
+                    >
+                      <ExternalLink
+                        size={14}
+                        className={`shrink-0 ${deg.type === 'master' ? 'text-cyan-400' : 'text-purple-400'}`}
+                      />
+                      <span>{btn.label}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -472,16 +471,16 @@ export const Education: React.FC = () => {
 
                     <p className="text-sm sm:text-base leading-relaxed font-normal" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>{thesis.desc}</p>
 
-                    {/* Thesis Buttons */}
-                    <div className="pt-2 flex flex-wrap items-center gap-3">
+                    {/* Thesis Buttons — centered, side by side */}
+                    <div className="pt-2 flex flex-wrap justify-center gap-2.5">
                       <a
                         href={driveLinks[thesis.driveLinkKey]}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:scale-105"
+                        className="inline-flex items-center gap-2 h-11 px-4 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap"
                         style={{ backgroundColor: btnBg, borderColor: btnBdr, color: isLight ? '#0f172a' : '#ffffff' }}
                       >
-                        <ExternalLink size={14} className={tIdx === 0 ? 'text-cyan-400' : 'text-purple-400'} />
+                        <ExternalLink size={14} className={`shrink-0 ${tIdx === 0 ? 'text-cyan-400' : 'text-purple-400'}`} />
                         <span>{thesis.btnText}</span>
                       </a>
 
@@ -490,7 +489,7 @@ export const Education: React.FC = () => {
                           href={driveLinks[thesis.slidesDriveLinkKey]}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:scale-105"
+                          className="inline-flex items-center gap-2 h-11 px-4 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap"
                           style={{
                             backgroundColor: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)',
                             borderColor: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)',

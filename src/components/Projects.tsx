@@ -292,14 +292,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     )}
                   </div>
 
-                  {/* Direct Action Link Buttons — Centered, wrap horizontally on all viewports */}
+                  {/* Direct Action Link Buttons — centered, side-by-side on mobile */}
                   <div className="flex flex-wrap justify-center gap-2.5">
                     {project.websiteUrl && (
                       <a
                         href={project.websiteUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap"
                         style={{
                           backgroundColor: webBtnStyle.bg,
                           borderColor: webBtnStyle.border,
@@ -327,7 +327,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={`https://www.youtube.com/watch?v=${project.ytId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap"
                         style={{
                           backgroundColor: ytBtnStyle.bg,
                           borderColor: ytBtnStyle.border,
@@ -355,7 +355,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={project.githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap"
                         style={{
                           backgroundColor: ghBtnStyle.bg,
                           borderColor: ghBtnStyle.border,
