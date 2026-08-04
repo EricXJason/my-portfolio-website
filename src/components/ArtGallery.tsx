@@ -182,8 +182,8 @@ export const ArtGallery: React.FC = () => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Category Tabs — Centered, compact inline-flex with balanced min-width */}
-        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto max-w-4xl px-2 sm:px-4 py-1" role="tablist">
+        {/* Category Tabs — 2-Column Equal Grid on Mobile, Compact Flex on PC */}
+        <div className="grid grid-cols-2 max-w-[360px] xs:max-w-[400px] sm:max-w-none sm:flex sm:flex-wrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto px-2 sm:px-4 py-1" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -193,7 +193,7 @@ export const ArtGallery: React.FC = () => {
               }}
               role="tab"
               aria-selected={activeTab === tab.key}
-              className={`h-10 sm:h-12 px-4 sm:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 min-w-[110px] xs:min-w-[125px] sm:min-w-[140px] ${
+              className={`h-10 sm:h-12 px-3 sm:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto min-w-0 sm:min-w-[135px] ${
                 activeTab === tab.key
                   ? 'filter-btn-active scale-105'
                   : 'filter-btn-inactive'
