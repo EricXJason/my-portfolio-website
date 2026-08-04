@@ -80,7 +80,7 @@ export const SideNav: React.FC = () => {
             className="group relative flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] cursor-pointer"
           >
             {/* Tooltip Label on Hover */}
-            <span className="absolute right-7 px-2.5 py-1 rounded-md bg-slate-900 dark:bg-slate-900 light:bg-white text-cyan-400 dark:text-cyan-400 light:text-cyan-700 font-code text-[11px] font-bold border border-slate-700 dark:border-slate-700 light:border-slate-300 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap shadow-lg">
+            <span className="absolute right-7 px-2.5 py-1 rounded-md bg-slate-900 light:bg-white text-cyan-400 light:text-sky-700 font-code text-xs font-extrabold border border-slate-700 light:border-slate-300 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap shadow-lg">
               {t(section.labelKey)}
             </span>
 
@@ -88,8 +88,8 @@ export const SideNav: React.FC = () => {
             <div
               className={`transition-all duration-300 rounded-full ${
                 isActive
-                  ? 'w-3.5 h-3.5 bg-cyan-400 shadow-lg shadow-cyan-400/50 scale-125'
-                  : 'w-2 h-2 bg-slate-600 dark:bg-slate-600 light:bg-slate-400 hover:bg-cyan-300 hover:scale-110'
+                  ? 'w-3.5 h-3.5 bg-cyan-400 light:bg-sky-600 shadow-lg shadow-cyan-400/50 light:shadow-sky-500/50 scale-125'
+                  : 'w-2 h-2 bg-slate-600 light:bg-slate-300 hover:bg-cyan-300 light:hover:bg-sky-400 hover:scale-110'
               }`}
             />
           </a>

@@ -43,6 +43,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [filter, setFilter] = useState('featured');
+  const [showAllProjects, setShowAllProjects] = useState(false);
 
   const projects = projectsData as ProjectItem[];
 
@@ -58,6 +59,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
       }
       return (a.order ?? 999) - (b.order ?? 999);
     });
+
+  const visibleProjects = showAllProjects ? filteredProjects : filteredProjects.slice(0, 3);
 
   const filters = [
     { key: 'featured', label: t('cat_featured'), icon: <Star size={16} className="text-amber-400 fill-amber-400" /> },
@@ -93,8 +96,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
               aria-selected={filter === f.key}
               className={`h-11 sm:h-12 px-3 sm:px-4 md:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto shrink-0 sm:shrink-0 ${
                 filter === f.key
-                  ? 'filter-btn-active bg-slate-900 text-white border-cyan-500 shadow-md shadow-cyan-500/20 scale-105'
-                  : 'filter-btn-inactive bg-slate-900/60 text-[var(--text-sub)] border-slate-800 hover:border-cyan-600'
+                  ? 'filter-btn-active scale-105'
+                  : 'filter-btn-inactive'
               }`}
             >
               {f.icon}
@@ -122,7 +125,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
 
         {/* Master Content Card — 100% matched to About & Certifications container width */}
         <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8 sm:space-y-12">
-          {filteredProjects.map((project) => {
+          {visibleProjects.map((project) => {
             const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
             const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
             const honorsList = lang === 'zh' ? project.honors : (project.honors_en || project.honors);
@@ -152,7 +155,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
             return (
               <article
                 key={project.id}
-                className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] flex flex-col lg:flex-row gap-8 items-stretch group hover:-translate-y-1.5 transition-all duration-500 shadow-sm"
+                className="p-4 sm:p-6 rounded-2xl border border-[var(--border-color)] flex flex-col lg:flex-row gap-8 items-stretch group hover:-translate-y-1.5 transition-all duration-500 shadow-sm"
                 style={{
                   backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
                 }}
@@ -180,23 +183,84 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent" aria-hidden="true" />
 
-                    {/* Prominent AI-Assisted Development Overlay Badge on Thumbnail */}
-                    {project.aiAssisted && (
-                      <div
-                        className="absolute top-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-extrabold shadow-lg border backdrop-blur-md"
-                        style={{
-                          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.9)',
-                          borderColor: isLight ? '#9333ea' : 'rgba(34, 211, 238, 0.6)',
-                          color: isLight ? '#581c87' : '#22d3ee',
-                          boxShadow: isLight ? '0 4px 14px rgba(147, 51, 234, 0.2)' : '0 4px 14px rgba(6, 182, 212, 0.25)',
-                        }}
-                      >
-                        <Sparkles size={13} className={isLight ? 'text-purple-600 fill-purple-600 animate-pulse' : 'text-cyan-300 fill-cyan-300 animate-pulse'} />
-                        <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
-                      </div>
-                    )}
+                    {/* Top-Left Overlay: Project Category Badge (Enlarged + Category Lucide Icon) */}
+                    {(() => {
+                      const catConfig = (() => {
+                        switch (project.category) {
+                          case 'interactive':
+                            return {
+                              label: lang === 'zh' ? '互動應用開發' : 'Interactive App',
+                              Icon: Gamepad2,
+                              bgLight: '#f0f9ff',
+                              bgDark: 'rgba(15, 23, 42, 0.92)',
+                              borderLight: '#7dd3fc',
+                              borderDark: 'rgba(6, 182, 212, 0.5)',
+                              textLight: '#0284c7',
+                              textDark: '#22d3ee',
+                            };
+                          case 'frontend':
+                            return {
+                              label: lang === 'zh' ? '前端開發' : 'Frontend Dev',
+                              Icon: Layout,
+                              bgLight: '#faf5ff',
+                              bgDark: 'rgba(15, 23, 42, 0.92)',
+                              borderLight: '#e9d5ff',
+                              borderDark: 'rgba(168, 85, 247, 0.5)',
+                              textLight: '#7e22ce',
+                              textDark: '#c084fc',
+                            };
+                          case 'fullstack':
+                            return {
+                              label: lang === 'zh' ? '全端開發' : 'Fullstack Dev',
+                              Icon: Globe,
+                              bgLight: '#ecfdf5',
+                              bgDark: 'rgba(15, 23, 42, 0.92)',
+                              borderLight: '#a7f3d0',
+                              borderDark: 'rgba(16, 185, 129, 0.5)',
+                              textLight: '#047857',
+                              textDark: '#34d399',
+                            };
+                          case 'linebot':
+                            return {
+                              label: lang === 'zh' ? 'LINE Bot 開發' : 'LINE Bot Dev',
+                              Icon: Bot,
+                              bgLight: '#fffbeb',
+                              bgDark: 'rgba(15, 23, 42, 0.92)',
+                              borderLight: '#fcd34d',
+                              borderDark: 'rgba(245, 158, 11, 0.5)',
+                              textLight: '#b45309',
+                              textDark: '#fbbf24',
+                            };
+                          default:
+                            return {
+                              label: lang === 'zh' ? '互動應用開發' : 'Interactive App',
+                              Icon: Gamepad2,
+                              bgLight: '#f0f9ff',
+                              bgDark: 'rgba(15, 23, 42, 0.92)',
+                              borderLight: '#7dd3fc',
+                              borderDark: 'rgba(6, 182, 212, 0.5)',
+                              textLight: '#0284c7',
+                              textDark: '#22d3ee',
+                            };
+                        }
+                      })();
 
-                    {/* Date Badge */}
+                      return (
+                        <div
+                          className="absolute top-3 left-3 z-10 flex items-center gap-2 px-3.5 py-1.5 rounded-xl font-code text-xs sm:text-sm font-extrabold shadow-md border backdrop-blur-md"
+                          style={{
+                            backgroundColor: isLight ? catConfig.bgLight : catConfig.bgDark,
+                            borderColor: isLight ? catConfig.borderLight : catConfig.borderDark,
+                            color: isLight ? catConfig.textLight : catConfig.textDark,
+                          }}
+                        >
+                          <catConfig.Icon size={15} className="shrink-0" />
+                          <span>{catConfig.label}</span>
+                        </div>
+                      );
+                    })()}
+
+                    {/* Top-Right Overlay: Date Badge (Never Overlaps Top-Left Category Badge) */}
                     {project.date && (
                       <div
                         className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-bold shadow-md border backdrop-blur-md"
@@ -208,6 +272,22 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                       >
                         <Calendar size={12} className={isLight ? 'text-cyan-600' : 'text-cyan-400'} />
                         <span>{project.date}</span>
+                      </div>
+                    )}
+
+                    {/* Bottom-Left Overlay: AI-Assisted Development Badge */}
+                    {project.aiAssisted && (
+                      <div
+                        className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-extrabold shadow-lg border backdrop-blur-md"
+                        style={{
+                          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.9)',
+                          borderColor: isLight ? '#9333ea' : 'rgba(34, 211, 238, 0.6)',
+                          color: isLight ? '#581c87' : '#22d3ee',
+                          boxShadow: isLight ? '0 4px 14px rgba(147, 51, 234, 0.2)' : '0 4px 14px rgba(6, 182, 212, 0.25)',
+                        }}
+                      >
+                        <Sparkles size={13} className={isLight ? 'text-purple-600 fill-purple-600 animate-pulse' : 'text-cyan-300 fill-cyan-300 animate-pulse'} />
+                        <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
                       </div>
                     )}
                   </div>
@@ -305,8 +385,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                   <div className="space-y-3.5">
 
                     {/* Project Title & AI-Assisted Badge */}
-                    <div className="flex flex-wrap items-center gap-3">
-                      <h3 className="text-2xl sm:text-3xl font-extrabold group-hover:text-cyan-500 transition-colors tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                    <div className="flex flex-wrap items-center gap-3 pr-24 sm:pr-28">
+                      <h3 className="text-2xl sm:text-3xl font-extrabold group-hover:text-cyan-500 light:group-hover:text-sky-600 transition-colors tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                         {title}
                       </h3>
 
@@ -423,17 +503,19 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
           })}
         </div>
 
-        {/* Expand All Works Button */}
-        {filter === 'featured' && (
-          <div className="mt-12 text-center">
+        {/* Expand / Collapse All Projects Button */}
+        {filteredProjects.length > 3 && (
+          <div className="mt-10 text-center">
             <button
-              onClick={() => {
-                setFilter('all');
-              }}
-              className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 text-[var(--text-main)] font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20"
+              onClick={() => setShowAllProjects(!showAllProjects)}
+              className="h-12 px-8 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 light:hover:border-sky-500 hover:bg-slate-800 light:hover:bg-sky-50 font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20 light:hover:shadow-sky-500/20"
             >
-              <span>{lang === 'zh' ? '展開全部作品' : 'Expand All Projects'}</span>
-              <ChevronDown size={18} className="text-cyan-400" />
+              <span>
+                {showAllProjects
+                  ? (lang === 'zh' ? '收折專案作品清單' : 'Collapse Projects')
+                  : (lang === 'zh' ? '檢視更多專案作品' : 'View More Projects')}
+              </span>
+              <ChevronDown size={18} className={`text-cyan-400 light:text-sky-600 transition-transform duration-300 ${showAllProjects ? 'rotate-180' : ''}`} />
             </button>
           </div>
         )}

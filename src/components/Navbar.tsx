@@ -267,21 +267,24 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </button>
 
-            {/* 2. Language Toggle */}
+            {/* 2. Language Toggle Slider */}
             <button
               onClick={toggleLang}
-              className="w-16 h-8 rounded-full border p-1 relative flex items-center justify-between transition-all cursor-pointer font-code text-xs font-bold active:scale-95 hover:border-cyan-400"
-              style={{ backgroundColor: isLight ? '#f1f5f9' : '#0f172a', borderColor: isLight ? '#cbd5e1' : '#334155' }}
+              className="w-16 h-8 rounded-full border p-1 relative flex items-center justify-between transition-all cursor-pointer font-code text-xs font-bold active:scale-95 hover:border-cyan-400 light:hover:border-sky-400"
+              style={{
+                backgroundColor: isLight ? '#f0f9ff' : '#0f172a',
+                borderColor: isLight ? '#bae6fd' : '#334155',
+              }}
               aria-label="Switch Language"
               title="Switch Language"
             >
-              <span className="z-0 px-1.5" style={{ color: lang === 'en' ? 'transparent' : isLight ? '#64748b' : '#94a3b8' }}>EN</span>
-              <span className="z-0 px-1.5" style={{ color: lang === 'zh' ? 'transparent' : isLight ? '#64748b' : '#94a3b8' }}>中</span>
+              <span className="z-0 px-1.5" style={{ color: lang === 'en' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>EN</span>
+              <span className="z-0 px-1.5" style={{ color: lang === 'zh' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>中</span>
               <div
                 className="absolute top-1 left-1 w-7 h-6 rounded-full shadow-md flex items-center justify-center transition-transform duration-300 z-10"
                 style={{
                   transform: lang === 'zh' ? 'translateX(28px)' : 'translateX(0px)',
-                  backgroundColor: '#06b6d4',
+                  background: isLight ? 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)' : '#06b6d4',
                   color: '#ffffff',
                 }}
               >

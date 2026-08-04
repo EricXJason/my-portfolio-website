@@ -108,8 +108,8 @@ export const Certifications: React.FC = () => {
               <div key={gIdx} className="space-y-4 pt-4 first:pt-0 border-t first:border-0 border-slate-800/40">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl border" style={{ backgroundColor: isLight ? '#f1f5f9' : '#0f172a', borderColor: isLight ? '#cbd5e1' : '#1e293b' }}>
-                      <IconComp size={20} className={gIdx === 0 ? 'text-cyan-400' : 'text-purple-400'} />
+                    <div className="p-2.5 rounded-xl border" style={{ backgroundColor: isLight ? '#f0f9ff' : '#0f172a', borderColor: isLight ? '#bae6fd' : '#1e293b' }}>
+                      <IconComp size={20} className={gIdx === 0 ? (isLight ? 'text-sky-600' : 'text-cyan-400') : (isLight ? 'text-purple-600' : 'text-purple-400')} />
                     </div>
                     <h3 className="font-extrabold text-base sm:text-lg tracking-wide" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                       {group.group}
@@ -129,11 +129,11 @@ export const Certifications: React.FC = () => {
                         backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.6)',
                         borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = '#06b6d4'; }}
+                      onMouseEnter={e => { e.currentTarget.style.borderColor = isLight ? '#38bdf8' : '#06b6d4'; }}
                       onMouseLeave={e => { e.currentTarget.style.borderColor = isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)'; }}
                     >
                       <div className="flex items-center gap-3 min-w-0 pr-2">
-                        <CheckCircle2 size={18} className="text-cyan-500 shrink-0" />
+                        <CheckCircle2 size={18} className="text-cyan-500 light:text-sky-600 shrink-0" />
                         <div className="truncate">
                           <p className="text-sm font-bold truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                             {cert.name}
@@ -141,7 +141,7 @@ export const Certifications: React.FC = () => {
                           <p className="text-xs font-code font-normal truncate mt-0.5" style={{ color: isLight ? '#475569' : '#94a3b8' }}>{cert.org}</p>
                         </div>
                       </div>
-                      <ExternalLink size={15} className="text-slate-400 group-hover:text-cyan-400 shrink-0 transition-colors" />
+                      <ExternalLink size={15} className="text-slate-400 group-hover:text-cyan-500 light:group-hover:text-sky-600 shrink-0 transition-colors" />
                     </a>
                   ))}
                 </div>
@@ -150,14 +150,14 @@ export const Certifications: React.FC = () => {
                   <div className="pt-3 text-center">
                     <button
                       onClick={() => toggleGroup(gIdx)}
-                      className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 text-[var(--text-main)] font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20"
+                      className="h-12 px-8 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 light:hover:border-sky-500 hover:bg-slate-800 light:hover:bg-sky-50 font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20 light:hover:shadow-sky-500/20"
                     >
                       <span>
                         {isExpanded
                           ? (lang === 'zh' ? '收起證照' : 'Collapse Credentials')
                           : (lang === 'zh' ? '檢視更多證照' : 'View More Credentials')}
                       </span>
-                      {isExpanded ? <ChevronUp size={18} className="text-cyan-400" /> : <ChevronDown size={18} className="text-cyan-400" />}
+                      {isExpanded ? <ChevronUp size={18} className="text-cyan-400 light:text-sky-600" /> : <ChevronDown size={18} className="text-cyan-400 light:text-sky-600" />}
                     </button>
                   </div>
                 )}

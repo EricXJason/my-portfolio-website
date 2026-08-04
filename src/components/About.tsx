@@ -37,8 +37,8 @@ export const About: React.FC = () => {
   const currentData: AboutSectionData = dataMap[lang] ?? dataMap.zh;
   const driveLinks = dataMap.driveLinks;
 
-  const statIconBg = isLight ? '#f1f5f9' : 'rgba(15,23,42,0.8)';
-  const statIconBdr = isLight ? '#cbd5e1' : 'rgba(255,255,255,0.08)';
+  const statIconBg = isLight ? '#f0f9ff' : 'rgba(15,23,42,0.8)';
+  const statIconBdr = isLight ? '#bae6fd' : 'rgba(255,255,255,0.08)';
 
   return (
     <section id="about" className="py-16 sm:py-24 relative select-text">
@@ -87,6 +87,8 @@ export const About: React.FC = () => {
                     <img
                       src={getAssetUrl('/assets/images/personal.avif')}
                       alt="Che-Cheng Hsu Portrait"
+                      width="272"
+                      height="272"
                       className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                       decoding="async"
                       fetchPriority="high"
@@ -124,13 +126,13 @@ export const About: React.FC = () => {
                       <div className="space-y-1.5">
                         <div className="flex items-center gap-2.5">
                           <div className="p-1.5 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
-                            <IconComponent size={16} style={{ color: st.id === 'exp' ? '#22d3ee' : st.id === 'projects' ? '#c084fc' : '#fbbf24' }} />
+                            <IconComponent size={16} style={{ color: st.id === 'exp' ? (isLight ? '#0284c7' : '#22d3ee') : st.id === 'projects' ? (isLight ? '#7e22ce' : '#c084fc') : (isLight ? '#b45309' : '#fbbf24') }} />
                           </div>
                           <span className="font-bold text-sm sm:text-base" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                             {st.title}
                           </span>
                         </div>
-                        <p className="text-xs font-medium" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
+                        <p className="text-xs sm:text-sm font-semibold leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
                           {st.label}
                         </p>
                       </div>
@@ -141,7 +143,7 @@ export const About: React.FC = () => {
                             href={proofUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="w-full h-8 px-3 rounded-lg border text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer hover:scale-105"
+                            className="w-full h-8 px-3 rounded-lg border text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer hover:scale-105"
                             style={{
                               backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.12)',
                               borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)',

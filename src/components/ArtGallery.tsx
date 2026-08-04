@@ -3,7 +3,6 @@ import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import {
   X,
-  ZoomIn,
   ShieldAlert,
   Layers,
   Box,
@@ -16,7 +15,6 @@ import {
   ChevronRight,
   Download,
   Star,
-  ArrowRight,
 } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 import artGalleryDataJson from '../data/gallery-section.json';
@@ -148,8 +146,8 @@ export const ArtGallery: React.FC = () => {
               aria-selected={activeTab === tab.key}
               className={`h-11 sm:h-12 px-3 sm:px-4 md:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto shrink-0 sm:shrink-0 ${
                 activeTab === tab.key
-                  ? 'filter-btn-active bg-slate-900 text-white border-cyan-500 shadow-md shadow-cyan-500/20 scale-105'
-                  : 'filter-btn-inactive bg-slate-900/60 dark:bg-slate-900/60 light:bg-white text-[var(--text-sub)] border-slate-800 dark:border-slate-800 light:border-slate-300 hover:border-cyan-600'
+                  ? 'filter-btn-active scale-105'
+                  : 'filter-btn-inactive'
               }`}
             >
               {tab.icon}
@@ -196,10 +194,10 @@ export const ArtGallery: React.FC = () => {
                         setRouletteIndex(idx);
                       }
                     }}
-                    className={`absolute w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer border border-[var(--border-color)] hover:border-cyan-500/50 transition-all duration-700 ease-out shadow-2xl ${
+                    className={`absolute w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer border border-[var(--border-color)] hover:border-cyan-500/50 light:hover:border-sky-400 transition-all duration-700 ease-out shadow-2xl ${
                       isCenter
-                        ? 'shadow-cyan-500/25 border-cyan-500/40'
-                        : 'shadow-slate-950/60'
+                        ? 'shadow-cyan-500/25 light:shadow-sky-500/20 border-cyan-500/40 light:border-sky-400'
+                        : 'shadow-slate-950/60 light:shadow-slate-300/40'
                     }`}
                     style={{
                       transform: `translate3d(${translateX}px, 0, ${-absOffset * 100}px) rotateY(${rotateY}deg) scale(${scale})`,
@@ -214,11 +212,6 @@ export const ArtGallery: React.FC = () => {
                       className="w-full h-full object-cover select-none"
                       decoding="async"
                     />
-
-                    {/* Small top-right zoom icon */}
-                    <div className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-slate-950/70 text-cyan-400 border border-cyan-500/30 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs">
-                      <ZoomIn size={14} />
-                    </div>
                   </div>
                 );
               })}
@@ -248,7 +241,9 @@ export const ArtGallery: React.FC = () => {
                   key={idx}
                   onClick={() => setRouletteIndex(idx)}
                   className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                    rouletteIndex === idx ? 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50' : 'w-2.5 bg-slate-700 hover:bg-slate-500'
+                    rouletteIndex === idx
+                      ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
+                      : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
                   }`}
                   aria-label={`Go to slide ${idx + 1}`}
                 />
@@ -262,10 +257,10 @@ export const ArtGallery: React.FC = () => {
                   setActiveTab('all');
                   setIsExpanded(true);
                 }}
-                className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 text-[var(--text-main)] font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20"
+                className="h-12 px-8 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 light:hover:border-sky-500 hover:bg-slate-800 light:hover:bg-sky-50 font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20 light:hover:shadow-sky-500/20"
               >
                 <span>{lang === 'zh' ? '檢視更多美術作品' : 'View More Artworks'}</span>
-                <ChevronDown size={18} className="text-cyan-400" />
+                <ChevronDown size={18} className="text-cyan-400 light:text-sky-600" />
               </button>
             </div>
           </div>
@@ -277,7 +272,7 @@ export const ArtGallery: React.FC = () => {
                 <div
                   key={art.id}
                   onClick={() => setActiveImage(art)}
-                  className="group glass-card rounded-2xl overflow-hidden cursor-pointer relative aspect-square max-h-52 sm:max-h-none border border-[var(--border-color)] hover:border-cyan-500/50 transition-all duration-300 shadow-sm"
+                  className="group glass-card rounded-2xl overflow-hidden cursor-pointer relative aspect-square max-h-52 sm:max-h-none border border-[var(--border-color)] hover:border-cyan-500/50 light:hover:border-sky-400 transition-all duration-300 shadow-sm"
                 >
                   <img
                     src={getAssetUrl(art.img)}
@@ -286,10 +281,6 @@ export const ArtGallery: React.FC = () => {
                     loading="lazy"
                     decoding="async"
                   />
-                  {/* Small top-right zoom icon */}
-                  <div className="absolute top-2.5 right-2.5 p-1.5 rounded-lg bg-slate-950/70 text-cyan-400 border border-cyan-500/30 backdrop-blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs">
-                    <ZoomIn size={14} />
-                  </div>
                 </div>
               ))}
             </div>
@@ -299,14 +290,14 @@ export const ArtGallery: React.FC = () => {
               <div className="mt-10 text-center">
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="h-12 px-8 rounded-xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 text-[var(--text-main)] font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20"
+                  className="h-12 px-8 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 light:hover:border-sky-500 hover:bg-slate-800 light:hover:bg-sky-50 font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20 light:hover:shadow-sky-500/20"
                 >
                   <span>
                     {isExpanded
                       ? (lang === 'zh' ? '收起美術作品' : 'Collapse Artworks')
                       : (lang === 'zh' ? '檢視更多美術作品' : 'View More Artworks')}
                   </span>
-                  {isExpanded ? <ChevronUp size={18} className="text-cyan-400" /> : <ChevronDown size={18} className="text-cyan-400" />}
+                  {isExpanded ? <ChevronUp size={18} className="text-cyan-400 light:text-sky-600" /> : <ChevronDown size={18} className="text-cyan-400 light:text-sky-600" />}
                 </button>
               </div>
             )}

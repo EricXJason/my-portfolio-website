@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Globe2 } from 'lucide-react';
 
 export const LangSelectModal: React.FC = () => {
   const { setLangDirect } = useLang();
@@ -42,7 +42,7 @@ export const LangSelectModal: React.FC = () => {
     <div
       className="fixed inset-0 z-[9999] flex items-center justify-center px-6 py-4"
       style={{
-        backgroundColor: 'rgba(7,9,14,0.85)',
+        backgroundColor: isLight ? 'rgba(15,23,42,0.65)' : 'rgba(7,9,14,0.85)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         opacity: closing ? 0 : 1,
@@ -54,13 +54,13 @@ export const LangSelectModal: React.FC = () => {
       aria-label="Select Language"
     >
       <div
-        className="relative w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-2xl border p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6"
+        className="relative w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl border p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6"
         style={{
-          backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.96)',
-          borderColor: isLight ? '#cbd5e1' : 'rgba(6,182,212,0.35)',
+          backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.96)',
+          borderColor: isLight ? '#e2e8f0' : 'rgba(6, 182, 212, 0.35)',
           boxShadow: isLight
-            ? '0 20px 50px rgba(0,0,0,0.15)'
-            : '0 0 50px rgba(6,182,212,0.2), 0 25px 50px rgba(0,0,0,0.7)',
+            ? '0 20px 50px rgba(15, 23, 42, 0.15)'
+            : '0 0 50px rgba(6, 182, 212, 0.2), 0 25px 50px rgba(0, 0, 0, 0.75)',
         }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -94,7 +94,7 @@ export const LangSelectModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Theme Switcher Toggle Slider (Defaulting to Dark mode style when in Dark mode) */}
+          {/* Theme Switcher Toggle Slider */}
           <button
             onClick={toggleTheme}
             className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer shadow-inner active:scale-95 hover:border-cyan-400 shrink-0"
@@ -124,36 +124,76 @@ export const LangSelectModal: React.FC = () => {
         </div>
 
         {/* Clean Header Title */}
-        <div className="text-center">
-          <h2
-            className="text-lg sm:text-xl font-extrabold tracking-tight font-mono"
-            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-          >
-            選擇語言 / Select Language
-          </h2>
+        <div className="text-center space-y-1">
+          <div className="flex items-center justify-center gap-2" style={{ color: isLight ? '#0284c7' : '#22d3ee' }}>
+            <Globe2 size={18} />
+            <h2 className="text-base sm:text-lg font-extrabold tracking-tight font-mono">
+              選擇語言 / Select Language
+            </h2>
+          </div>
         </div>
 
-        {/* Low-Key Dark / Theme-adaptive Styled Buttons */}
-        <div className="grid grid-cols-2 gap-3.5 w-full">
+        {/* Dedicated Independent Color Buttons for Dark & Light Modes */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full">
+          {/* Traditional Chinese Button */}
           <button
             onClick={() => choose('zh')}
-            className="h-12 rounded-xl font-bold text-sm sm:text-base font-code transition-all cursor-pointer flex items-center justify-center gap-2 border-2 hover:border-cyan-500 shadow-md hover:shadow-cyan-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            className="h-13 rounded-2xl font-bold text-sm sm:text-base font-code transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 border-2 shadow-md hover:scale-[1.03] active:scale-[0.97]"
             style={{
-              backgroundColor: isLight ? '#f8fafc' : '#0f172a',
-              borderColor: isLight ? '#cbd5e1' : '#334155',
-              color: isLight ? '#0f172a' : '#ffffff',
+              backgroundColor: isLight ? '#f0f9ff' : 'rgba(14, 116, 144, 0.15)',
+              borderColor: isLight ? '#7dd3fc' : 'rgba(6, 182, 212, 0.45)',
+              color: isLight ? '#0369a1' : '#38bdf8',
+            }}
+            onMouseEnter={(e) => {
+              if (isLight) {
+                e.currentTarget.style.background = 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)';
+                e.currentTarget.style.borderColor = 'transparent';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(2, 132, 199, 0.35)';
+              } else {
+                e.currentTarget.style.backgroundColor = 'rgba(6, 182, 212, 0.28)';
+                e.currentTarget.style.borderColor = '#22d3ee';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(6, 182, 212, 0.4)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = isLight ? '#f0f9ff' : 'rgba(14, 116, 144, 0.15)';
+              e.currentTarget.style.borderColor = isLight ? '#7dd3fc' : 'rgba(6, 182, 212, 0.45)';
+              e.currentTarget.style.color = isLight ? '#0369a1' : '#38bdf8';
+              e.currentTarget.style.boxShadow = '';
             }}
           >
             <span>繁體中文</span>
           </button>
 
+          {/* English Button */}
           <button
             onClick={() => choose('en')}
-            className="h-12 rounded-xl font-bold text-sm sm:text-base font-code transition-all cursor-pointer flex items-center justify-center gap-2 border-2 hover:border-cyan-500 shadow-md hover:shadow-cyan-500/20 hover:scale-[1.02] active:scale-[0.98]"
+            className="h-13 rounded-2xl font-bold text-sm sm:text-base font-code transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 border-2 shadow-md hover:scale-[1.03] active:scale-[0.97]"
             style={{
-              backgroundColor: isLight ? '#f8fafc' : '#0f172a',
-              borderColor: isLight ? '#cbd5e1' : '#334155',
-              color: isLight ? '#0f172a' : '#ffffff',
+              backgroundColor: isLight ? '#faf5ff' : 'rgba(126, 34, 206, 0.15)',
+              borderColor: isLight ? '#e9d5ff' : 'rgba(168, 85, 247, 0.45)',
+              color: isLight ? '#7e22ce' : '#c084fc',
+            }}
+            onMouseEnter={(e) => {
+              if (isLight) {
+                e.currentTarget.style.background = 'linear-gradient(135deg, #9333ea 0%, #4f46e5 100%)';
+                e.currentTarget.style.borderColor = 'transparent';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(147, 51, 234, 0.35)';
+              } else {
+                e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.28)';
+                e.currentTarget.style.borderColor = '#c084fc';
+                e.currentTarget.style.color = '#ffffff';
+                e.currentTarget.style.boxShadow = '0 6px 20px rgba(168, 85, 247, 0.4)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = isLight ? '#faf5ff' : 'rgba(126, 34, 206, 0.15)';
+              e.currentTarget.style.borderColor = isLight ? '#e9d5ff' : 'rgba(168, 85, 247, 0.45)';
+              e.currentTarget.style.color = isLight ? '#7e22ce' : '#c084fc';
+              e.currentTarget.style.boxShadow = '';
             }}
           >
             <span>English</span>

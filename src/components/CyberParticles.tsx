@@ -9,6 +9,7 @@ interface Particle {
   x: number;
   y: number;
   radius: number;
+  baseRadius: number;
   vx: number;
   vy: number;
   pulsePhase: number;
@@ -16,6 +17,7 @@ interface Particle {
   baseAlpha: number;
   darkColor: string;
   lightColor: string;
+  shape: 'circle' | 'square' | 'ring';
 }
 
 export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlaying }) => {
@@ -24,7 +26,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     if (!ctx) return;
     let animationFrameId: number;
 
@@ -33,8 +35,8 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
       canvas.height = window.innerHeight;
     };
     resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    window.addEventListener('orientationchange', resizeCanvas);
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+    window.addEventListener('orientationchange', resizeCanvas, { passive: true });
 
     const mouse = { x: -1000, y: -1000, active: false };
     const handleMouseMove = (e: MouseEvent) => {
@@ -45,47 +47,57 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
     const handleMouseLeave = () => {
       mouse.active = false;
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
 
-    const darkPalette = ['#06b6d4', '#38bdf8', '#8b5cf6', '#c084fc', '#ec4899', '#10b981'];
-    const lightPalette = ['#0284c7', '#2563eb', '#7c3aed', '#d946ef', '#0891b2', '#1d4ed8'];
+    const darkPalette = ['#06b6d4', '#38bdf8', '#8b5cf6', '#c084fc', '#ec4899', '#10b981', '#6366f1'];
+    const lightPalette = ['#0284c7', '#2563eb', '#7c3aed', '#d946ef', '#0891b2', '#1d4ed8', '#4f46e5'];
 
-    const particleCount = 55;
+    // Adaptive particle count for 60FPS fluid experience on mobile vs desktop
+    const particleCount = window.innerWidth < 768 ? 36 : 68;
+
     const particles: Particle[] = Array.from({ length: particleCount }, () => {
       const darkColor = darkPalette[Math.floor(Math.random() * darkPalette.length)];
       const lightColor = lightPalette[Math.floor(Math.random() * lightPalette.length)];
+      const r = Math.random() * 2.2 + 1.2;
+      const shapes: ('circle' | 'square' | 'ring')[] = ['circle', 'circle', 'circle', 'ring', 'square'];
 
       return {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
-        radius: Math.random() * 2.2 + 1.2,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
+        radius: r,
+        baseRadius: r,
+        vx: (Math.random() - 0.5) * 0.55,
+        vy: (Math.random() - 0.5) * 0.55,
         pulsePhase: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.015 + Math.random() * 0.025,
+        pulseSpeed: 0.018 + Math.random() * 0.025,
         baseAlpha: Math.random() * 0.4 + 0.45,
         darkColor,
         lightColor,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
       };
     });
 
+    let frameCount = 0;
+
     const render = () => {
+      frameCount++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const isLight = theme === 'light' || document.documentElement.classList.contains('light');
 
       particles.forEach((p) => {
         p.pulsePhase += p.pulseSpeed;
-        const speedMult = soundPlaying ? 1.5 : 1.0;
+        const speedMult = soundPlaying ? 1.6 : 1.0;
 
+        // Interactive mouse magnetic force
         if (mouse.active) {
           const dx = mouse.x - p.x;
           const dy = mouse.y - p.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxDist = 160;
+          const maxDist = 180;
           if (dist < maxDist) {
-            const force = (1 - dist / maxDist) * 0.6;
+            const force = (1 - dist / maxDist) * 0.7;
             p.x -= (dx / dist) * force;
             p.y -= (dy / dist) * force;
           }
@@ -94,31 +106,45 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
         p.x += p.vx * speedMult;
         p.y += p.vy * speedMult;
 
+        // Wrap around boundaries smoothly
         if (p.x < -20) p.x = canvas.width + 20;
         if (p.x > canvas.width + 20) p.x = -20;
         if (p.y < -20) p.y = canvas.height + 20;
         if (p.y > canvas.height + 20) p.y = -20;
 
-        const pulseFactor = 0.75 + 0.25 * Math.sin(p.pulsePhase);
-        const currentAlpha = p.baseAlpha * pulseFactor;
+        const soundPulse = soundPlaying ? 0.3 * Math.sin(frameCount * 0.08 + p.pulsePhase) : 0;
+        const pulseFactor = 0.75 + 0.25 * Math.sin(p.pulsePhase) + soundPulse;
+        const currentAlpha = Math.min(1, Math.max(0.1, p.baseAlpha * pulseFactor));
         const particleColor = isLight ? p.lightColor : p.darkColor;
 
         ctx.save();
-        ctx.globalAlpha = isLight ? Math.min(1, currentAlpha * 0.95) : currentAlpha;
+        ctx.globalAlpha = isLight ? Math.min(1, currentAlpha * 0.9) : currentAlpha;
 
         if (p.radius > 2.0) {
           ctx.shadowColor = particleColor;
-          ctx.shadowBlur = isLight ? 10 : 14;
+          ctx.shadowBlur = isLight ? 8 : 12;
         }
 
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = particleColor;
-        ctx.fill();
+        ctx.strokeStyle = particleColor;
+
+        if (p.shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius * (soundPlaying ? 1.2 : 1.0), 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.shape === 'ring') {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius * 1.4, 0, Math.PI * 2);
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        } else {
+          ctx.fillRect(p.x - p.radius, p.y - p.radius, p.radius * 2, p.radius * 2);
+        }
         ctx.restore();
       });
 
-      const connectDist = 160;
+      // Draw constellation network lines
+      const connectDist = soundPlaying ? 180 : 150;
       for (let i = 0; i < particleCount; i++) {
         for (let j = i + 1; j < particleCount; j++) {
           const p1 = particles[i];
@@ -129,7 +155,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
 
           if (dist < connectDist) {
             const lineFactor = 1 - dist / connectDist;
-            const lineAlpha = lineFactor * (isLight ? 0.32 : 0.22);
+            const lineAlpha = lineFactor * (isLight ? 0.30 : 0.22);
             const lineStroke = isLight ? p1.lightColor : p1.darkColor;
 
             ctx.save();
@@ -138,7 +164,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = lineStroke;
-            ctx.lineWidth = lineFactor * 1.3;
+            ctx.lineWidth = lineFactor * 1.2;
             ctx.stroke();
             ctx.restore();
           }
@@ -190,3 +216,5 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
     </div>
   );
 };
+
+export default CyberParticles;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -15,6 +15,8 @@ import {
   Building2,
   Layers,
   Presentation,
+  ChevronDown,
+  ChevronUp,
   LucideIcon
 } from 'lucide-react';
 import eduData from '../data/experience-section.json';
@@ -96,8 +98,11 @@ export const Education: React.FC = () => {
   const currentData: SectionData = dataMap[lang] ?? dataMap.zh;
   const driveLinks = dataMap.driveLinks;
 
+  const [showAllWorkshops, setShowAllWorkshops] = useState(false);
+  const [showAllTheses, setShowAllTheses] = useState(false);
+
   const btnBg = isLight ? '#ffffff' : '#0f172a';
-  const btnBdr = isLight ? '#cbd5e1' : '#334155';
+  const btnBdr = isLight ? '#e2e8f0' : '#334155';
 
   const workshopPalette = [
     { text: isLight ? '#0284c7' : '#22d3ee', bg: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)', border: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)' },
@@ -319,7 +324,7 @@ export const Education: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-              {currentData.workshops.map((ws, wIdx) => {
+              {(showAllWorkshops ? currentData.workshops : currentData.workshops.slice(0, 2)).map((ws, wIdx) => {
                 const IconComponent = iconMap[ws.iconType] ?? Gamepad2;
                 const colorItem = workshopPalette[wIdx % workshopPalette.length];
 
@@ -381,6 +386,22 @@ export const Education: React.FC = () => {
                   </div>
                 );
               })}
+
+              {currentData.workshops.length > 2 && (
+                <div className="pt-2 text-center">
+                  <button
+                    onClick={() => setShowAllWorkshops(!showAllWorkshops)}
+                    className="h-11 px-6 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-emerald-500 light:hover:border-emerald-500 hover:bg-slate-800 light:hover:bg-emerald-50 font-bold text-xs font-code transition-all shadow-md inline-flex items-center justify-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                  >
+                    <span>
+                      {showAllWorkshops
+                        ? (lang === 'zh' ? '收折研習證明' : 'Collapse Workshops')
+                        : (lang === 'zh' ? '展開更多研習證明' : 'View More Workshops')}
+                    </span>
+                    <ChevronDown size={16} className={`text-emerald-400 light:text-emerald-600 transition-transform duration-300 ${showAllWorkshops ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -396,7 +417,7 @@ export const Education: React.FC = () => {
             </div>
 
             <div className="space-y-6">
-              {currentData.theses.map((thesis, tIdx) => {
+              {(showAllTheses ? currentData.theses : currentData.theses.slice(0, 2)).map((thesis, tIdx) => {
                 const isHonor = thesis.award && (thesis.award.includes('獎') || thesis.award.toLowerCase().includes('award'));
 
                 return (
@@ -476,6 +497,22 @@ export const Education: React.FC = () => {
                   </div>
                 );
               })}
+
+              {currentData.theses.length > 2 && (
+                <div className="pt-2 text-center">
+                  <button
+                    onClick={() => setShowAllTheses(!showAllTheses)}
+                    className="h-11 px-6 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-amber-500 light:hover:border-amber-500 hover:bg-slate-800 light:hover:bg-amber-50 font-bold text-xs font-code transition-all shadow-md inline-flex items-center justify-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                  >
+                    <span>
+                      {showAllTheses
+                        ? (lang === 'zh' ? '收折學術論文' : 'Collapse Publications')
+                        : (lang === 'zh' ? '展開更多學術論文' : 'View More Publications')}
+                    </span>
+                    <ChevronDown size={16} className={`text-amber-400 light:text-amber-600 transition-transform duration-300 ${showAllTheses ? 'rotate-180' : ''}`} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

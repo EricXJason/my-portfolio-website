@@ -1,0 +1,17 @@
+{
+  "name": "Portfolio",
+  "short_name": "Portfolio",
+  "description": "許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站 Portfolio",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07090e",
+  "theme_color": "#07090e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
