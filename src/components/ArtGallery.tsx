@@ -182,8 +182,8 @@ export const ArtGallery: React.FC = () => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Category Tabs — Perfect RWD: 2-col equal grid on mobile, wrapped flex on iPad/tablet, single-row flex on PC */}
-        <div className="grid grid-cols-2 max-w-[340px] xs:max-w-[360px] sm:max-w-xl md:max-w-3xl lg:max-w-full sm:flex sm:flex-wrap lg:flex-nowrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto px-2 sm:px-4 overflow-x-auto sm:overflow-visible py-1" role="tablist">
+        {/* Category Tabs — Centered, compact inline-flex with balanced min-width */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto max-w-4xl px-2 sm:px-4 py-1" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -193,7 +193,7 @@ export const ArtGallery: React.FC = () => {
               }}
               role="tab"
               aria-selected={activeTab === tab.key}
-              className={`h-11 sm:h-12 px-3 sm:px-4 md:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto shrink-0 sm:shrink-0 ${
+              className={`h-10 sm:h-12 px-4 sm:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 min-w-[110px] xs:min-w-[125px] sm:min-w-[140px] ${
                 activeTab === tab.key
                   ? 'filter-btn-active scale-105'
                   : 'filter-btn-inactive'
@@ -287,24 +287,19 @@ export const ArtGallery: React.FC = () => {
             </div>
 
             {/* Dots indicator with cyan active highlight & Mobile Touch Swipe Hint */}
-            <div className="flex flex-col items-center gap-2 mt-6 mb-8">
-              <div className="flex items-center gap-2">
-                {displayFeatured.map((_, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => setRouletteIndex(idx)}
-                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                      rouletteIndex === idx
-                        ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
-                        : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
-                    }`}
-                    aria-label={`Go to slide ${idx + 1}`}
-                  />
-                ))}
-              </div>
-              <span className="sm:hidden text-xs font-code text-[var(--text-sub)] opacity-80 pt-0.5">
-                {lang === 'zh' ? '← 左右手勢滑動切換 3D 作品 →' : '← Swipe left/right for 3D renders →'}
-              </span>
+            <div className="flex items-center justify-center gap-2 mt-6 mb-8">
+              {displayFeatured.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setRouletteIndex(idx)}
+                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                    rouletteIndex === idx
+                      ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
+                      : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
+                  }`}
+                  aria-label={`Go to slide ${idx + 1}`}
+                />
+              ))}
             </div>
 
             {/* More Works Button (Switch to All Works Grid and Auto-Expand All) */}

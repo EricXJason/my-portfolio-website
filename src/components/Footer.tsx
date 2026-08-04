@@ -4,17 +4,34 @@ import { getAssetUrl } from '../utils/assetPath';
 
 interface TechBadge {
   name: string;
-  icon: string;
+  icon?: string;
+  svg?: React.ReactNode;
 }
 
+const HtmlIcon: React.FC = () => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 124 141.532" fill="none">
+    <path d="M10.383 126.894L0 0l124 .255-10.979 126.639-50.553 14.638z" fill="#e34f26"/>
+    <path d="M62.468 129.277V12.085l51.064.17-9.106 104.851z" fill="#ef652a"/>
+    <path d="M99.49 41.362l1.446-15.49H22.383l4.34 47.49h54.213L78.81 93.617l-17.362 4.68-17.617-5.106-.936-12.085H27.319l2.128 24.681 32 8.936 32.255-8.936 4.34-48.17H41.107L39.49 41.362z" fill="#fff"/>
+  </svg>
+);
+
+const CssIcon: React.FC = () => (
+  <svg className="w-4 h-4 shrink-0" viewBox="0 0 124 141.53" fill="none">
+    <path d="M10.383 126.892L0 0l124 .255-10.979 126.637-50.553 14.638z" fill="#1b73ba"/>
+    <path d="M62.468 129.275V12.085l51.064.17-9.106 104.85z" fill="#1c88c7"/>
+    <path d="M100.851 27.064H22.298l2.128 15.318h37.276l-36.68 15.745 2.127 14.808h54.043l-1.958 20.68-18.298 3.575-16.595-4.255-1.277-11.745H27.83l2.042 24.426 32.681 9.106 31.32-9.957 4-47.745H64.765l36.085-14.978z" fill="#fff"/>
+  </svg>
+);
+
 const techBadges: TechBadge[] = [
-  { name: 'HTML',           icon: getAssetUrl('/assets/logos/html5.avif') },
-  { name: 'CSS',            icon: getAssetUrl('/assets/logos/css3.avif') },
+  { name: 'HTML',           svg: <HtmlIcon /> },
+  { name: 'CSS',            svg: <CssIcon /> },
   { name: 'Tailwind CSS',   icon: getAssetUrl('/assets/logos/tailwind.avif') },
   { name: 'TypeScript',     icon: getAssetUrl('/assets/logos/typescript.avif') },
   { name: 'React',          icon: getAssetUrl('/assets/logos/react.avif') },
   { name: 'Vite',           icon: getAssetUrl('/assets/logos/vite.avif') },
-  { name: 'GitHub Actions', icon: getAssetUrl('/assets/logos/github-actions.avif') },
+  { name: 'GitHub Actions (CI/CD)', icon: getAssetUrl('/assets/logos/github-actions.avif') },
 ];
 
 interface FooterProps {
@@ -51,15 +68,19 @@ export const Footer: React.FC<FooterProps> = ({ lastUpdated }) => {
               key={idx}
               className="px-3.5 py-1.5 rounded-xl bg-slate-900/60 dark:bg-slate-900/60 light:bg-white border border-slate-800 dark:border-slate-800 light:border-slate-300 flex items-center gap-2 text-xs font-code font-bold text-[var(--text-main)] shadow-xs hover:border-cyan-400 transition-colors"
             >
-              <img
-                src={tech.icon}
-                alt={`${tech.name} logo`}
-                width={16}
-                height={16}
-                className="w-4 h-4 object-contain shrink-0"
-                loading="lazy"
-                decoding="async"
-              />
+              {tech.svg ? (
+                tech.svg
+              ) : (
+                <img
+                  src={tech.icon}
+                  alt={`${tech.name} logo`}
+                  width={16}
+                  height={16}
+                  className="w-4 h-4 object-contain shrink-0"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
               <span>{tech.name}</span>
             </div>
           ))}

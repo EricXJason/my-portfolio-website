@@ -133,7 +133,7 @@ export const Skills: React.FC = () => {
                 {/* Skill Rows Sub-Grid */}
                 <div className={`p-4 sm:p-6 ${isCoreFocus ? 'grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4' : 'flex flex-col gap-3.5'}`}>
                   {cat.items.map((item, iIdx) => {
-                    const tokens = item.content.split('/').map((s) => s.trim()).filter(Boolean);
+                    const tokens = item.content.split(/\s*\/\s*(?![^(]*\))/).map((s) => s.trim()).filter(Boolean);
 
                     return (
                       <div

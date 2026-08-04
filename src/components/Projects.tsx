@@ -86,15 +86,15 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
           <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Category Filter Buttons — Perfect RWD: 2-col equal grid on mobile, wrapped flex on iPad/tablet, single-row flex on PC */}
-        <div className="grid grid-cols-2 max-w-[340px] xs:max-w-[360px] sm:max-w-xl md:max-w-3xl lg:max-w-full sm:flex sm:flex-wrap lg:flex-nowrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto px-2 sm:px-4 overflow-x-auto sm:overflow-visible py-1" role="tablist">
+        {/* Category Filter Buttons — Centered, compact inline-flex with balanced min-width */}
+        <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto max-w-4xl px-2 sm:px-4 py-1" role="tablist">
           {filters.map((f) => (
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
               role="tab"
               aria-selected={filter === f.key}
-              className={`h-11 sm:h-12 px-3 sm:px-4 md:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto shrink-0 sm:shrink-0 ${
+              className={`h-10 sm:h-12 px-4 sm:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all inline-flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 min-w-[110px] xs:min-w-[125px] sm:min-w-[140px] ${
                 filter === f.key
                   ? 'filter-btn-active scale-105'
                   : 'filter-btn-inactive'
@@ -130,8 +130,6 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
             const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
             const honorsList = lang === 'zh' ? project.honors : (project.honors_en || project.honors);
             const contribs = lang === 'zh' ? project.contributions : (project.contributions_en || project.contributions);
-
-            const actionButtonsCount = (project.websiteUrl ? 1 : 0) + (project.ytId ? 1 : 0) + (project.githubUrl ? 1 : 0);
 
             // Styling Tokens for Theme-Aware Action Buttons
             const webBtnStyle = {
@@ -292,14 +290,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     )}
                   </div>
 
-                  {/* Direct Action Link Buttons — centered, side-by-side on mobile */}
-                  <div className="flex flex-wrap justify-center gap-2.5">
+                  {/* Direct Action Link Buttons — Compact inline-flex with minimum width */}
+                  <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 pt-1">
                     {project.websiteUrl && (
                       <a
                         href={project.websiteUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap"
+                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-code text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-[130px] sm:min-w-[155px]"
                         style={{
                           backgroundColor: webBtnStyle.bg,
                           borderColor: webBtnStyle.border,
@@ -327,7 +325,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={`https://www.youtube.com/watch?v=${project.ytId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap"
+                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-code text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-[130px] sm:min-w-[155px]"
                         style={{
                           backgroundColor: ytBtnStyle.bg,
                           borderColor: ytBtnStyle.border,
@@ -355,7 +353,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={project.githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap"
+                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl font-code text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-[130px] sm:min-w-[155px]"
                         style={{
                           backgroundColor: ghBtnStyle.bg,
                           borderColor: ghBtnStyle.border,

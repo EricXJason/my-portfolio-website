@@ -177,15 +177,15 @@ export const Education: React.FC = () => {
                   {deg.desc}
                 </p>
 
-                {/* Proof Action Buttons — centered, natural width, wrap only if needed */}
-                <div className="flex flex-wrap justify-center gap-2.5 pt-2">
+                {/* Proof Action Buttons — Compact, natural inline-flex with comfortable min-width */}
+                <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 pt-2">
                   {deg.buttons.map((btn, bIdx) => (
                     <a
                       key={bIdx}
                       href={driveLinks[btn.linkKey]}
                       target="_blank"
                       rel="noreferrer"
-                      className="h-11 px-4 rounded-xl border text-xs font-bold transition-all flex items-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap"
+                      className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl border text-xs sm:text-sm font-bold transition-all inline-flex items-center justify-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap min-w-[110px] sm:min-w-[130px]"
                       style={{
                         backgroundColor: btnBg,
                         borderColor: btnBdr,
@@ -471,13 +471,13 @@ export const Education: React.FC = () => {
 
                     <p className="text-sm sm:text-base leading-relaxed font-normal" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>{thesis.desc}</p>
 
-                    {/* Thesis Buttons — centered, side by side */}
-                    <div className="pt-2 flex flex-wrap justify-center gap-2.5">
+                    {/* Thesis Buttons — Compact, natural inline-flex with comfortable min-width */}
+                    <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
                       <a
                         href={driveLinks[thesis.driveLinkKey]}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-2 h-11 px-4 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap"
+                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl border text-xs sm:text-sm font-bold transition-all inline-flex items-center justify-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap min-w-[120px] sm:min-w-[140px]"
                         style={{ backgroundColor: btnBg, borderColor: btnBdr, color: isLight ? '#0f172a' : '#ffffff' }}
                       >
                         <ExternalLink size={14} className={`shrink-0 ${tIdx === 0 ? 'text-cyan-400' : 'text-purple-400'}`} />
@@ -489,7 +489,7 @@ export const Education: React.FC = () => {
                           href={driveLinks[thesis.slidesDriveLinkKey]}
                           target="_blank"
                           rel="noreferrer"
-                          className="inline-flex items-center gap-2 h-11 px-4 rounded-xl border text-xs font-bold transition-all shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap"
+                          className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl border text-xs sm:text-sm font-bold transition-all inline-flex items-center justify-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap min-w-[120px] sm:min-w-[140px]"
                           style={{
                             backgroundColor: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)',
                             borderColor: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)',

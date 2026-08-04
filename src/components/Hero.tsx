@@ -222,8 +222,8 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0095e0'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#13ACFE'; }}
             >
-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="#ffffff">
-                <path d="M0 17.723l2.027 3.51a1.815 1.815 0 001.57.907h16.806a1.815 1.815 0 001.57-.907l2.027-3.51H0zm23.518-2.673l-7.79-13.49A1.815 1.815 0 0014.158.653H9.842a1.815 1.815 0 00-1.57.907L.482 15.05h6.634l3.197-5.537h3.374l3.197 5.537h6.634zM12 7.747l-1.95 3.377h3.9L12 7.747z"/>
+              <svg className="w-4 h-4 shrink-0" viewBox="0.09 0.31 799.44 700.63" fill="#ffffff">
+                <path d="M.09 540.65l67.25 115.89c13.6 26.34 40.8 44.4 71.78 44.4H587.2l-92.18-160.29zm799.44.75c0-15.81-4.54-30.86-12.85-43.65L523.73 43.21C510.13 17.62 483.68.31 452.7.31H313.67l405.76 699.88 64.23-110.63c12.09-21.07 15.87-30.1 15.87-48.16zM428.52 426.26L247.18 113.95 65.83 426.26z" />
               </svg>
               <span>{lang === 'zh' ? 'ArtStation 作品集' : 'ArtStation Portfolio'}</span>
               <ExternalLink size={13} style={{ color: 'rgba(255,255,255,0.85)', flexShrink: 0 }} />
