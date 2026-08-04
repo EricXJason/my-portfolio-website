@@ -276,7 +276,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     {/* Bottom-Left Overlay: AI-Assisted Development Badge */}
                     {project.aiAssisted && (
                       <div
-                        className="absolute bottom-3 left-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-extrabold shadow-lg border backdrop-blur-md"
+                        className="absolute bottom-3 left-3 z-10 flex items-center px-3 py-1.5 rounded-xl font-code text-xs font-extrabold shadow-lg border backdrop-blur-md"
                         style={{
                           backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(15, 23, 42, 0.9)',
                           borderColor: isLight ? '#9333ea' : 'rgba(34, 211, 238, 0.6)',
@@ -284,20 +284,19 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                           boxShadow: isLight ? '0 4px 14px rgba(147, 51, 234, 0.2)' : '0 4px 14px rgba(6, 182, 212, 0.25)',
                         }}
                       >
-                        <Sparkles size={14} className={isLight ? 'text-purple-600 shrink-0' : 'text-cyan-400 shrink-0'} />
                         <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
                       </div>
                     )}
                   </div>
 
-                  {/* Direct Action Link Buttons — Horizontal Equal Width Row */}
-                  <div className="flex flex-row items-center justify-center gap-2 sm:gap-3 w-full pt-1">
+                  {/* Direct Action Link Buttons — Stacked on small mobile (<380px), Horizontal Equal Width on xs/desktop */}
+                  <div className="grid grid-cols-1 xs:flex xs:flex-row items-center justify-center gap-2 sm:gap-3 w-full pt-1">
                     {project.websiteUrl && (
                       <a
                         href={project.websiteUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 h-11 px-2 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
+                        className="w-full xs:flex-1 h-11 px-3 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
                         style={{
                           backgroundColor: webBtnStyle.bg,
                           borderColor: webBtnStyle.border,
@@ -307,14 +306,16 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                           e.currentTarget.style.backgroundColor = '#0284c7';
                           e.currentTarget.style.borderColor = '#0284c7';
                           e.currentTarget.style.color = '#ffffff';
+                          e.currentTarget.style.boxShadow = '0 4px 14px rgba(2, 132, 199, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = webBtnStyle.bg;
                           e.currentTarget.style.borderColor = webBtnStyle.border;
                           e.currentTarget.style.color = webBtnStyle.color;
+                          e.currentTarget.style.boxShadow = 'none';
                         }}
                       >
-                        <Globe size={16} className="shrink-0" />
+                        <Globe size={15} className="shrink-0" />
                         <span>{lang === 'zh' ? '前往網站頁面' : 'Visit Website'}</span>
                         <ExternalLink size={13} className="opacity-75 shrink-0" />
                       </a>
@@ -325,7 +326,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={`https://www.youtube.com/watch?v=${project.ytId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 h-11 px-2 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
+                        className="w-full xs:flex-1 h-11 px-3 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
                         style={{
                           backgroundColor: ytBtnStyle.bg,
                           borderColor: ytBtnStyle.border,
@@ -335,14 +336,16 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                           e.currentTarget.style.backgroundColor = '#dc2626';
                           e.currentTarget.style.borderColor = '#dc2626';
                           e.currentTarget.style.color = '#ffffff';
+                          e.currentTarget.style.boxShadow = '0 4px 14px rgba(220, 38, 38, 0.4)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = ytBtnStyle.bg;
                           e.currentTarget.style.borderColor = ytBtnStyle.border;
                           e.currentTarget.style.color = ytBtnStyle.color;
+                          e.currentTarget.style.boxShadow = 'none';
                         }}
                       >
-                        <Video size={16} className="shrink-0" />
+                        <Video size={15} className="shrink-0" />
                         <span>{lang === 'zh' ? 'YouTube 播放展示' : 'Watch on YouTube'}</span>
                         <ExternalLink size={13} className="opacity-75 shrink-0" />
                       </a>
@@ -353,7 +356,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={project.githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="flex-1 h-11 px-2 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
+                        className="w-full xs:flex-1 h-11 px-3 sm:px-4 rounded-xl font-code text-xs sm:text-sm md:text-base font-bold flex items-center justify-center gap-1.5 sm:gap-2 border shadow-xs transition-all duration-300 cursor-pointer whitespace-nowrap min-w-0"
                         style={{
                           backgroundColor: ghBtnStyle.bg,
                           borderColor: ghBtnStyle.border,
@@ -361,13 +364,17 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = isLight ? '#0f172a' : '#1e293b';
-                          e.currentTarget.style.borderColor = isLight ? '#0f172a' : '#475569';
+                          e.currentTarget.style.borderColor = isLight ? '#0f172a' : '#38bdf8';
                           e.currentTarget.style.color = '#ffffff';
+                          e.currentTarget.style.boxShadow = isLight
+                            ? '0 4px 14px rgba(15, 23, 42, 0.4)'
+                            : '0 4px 16px rgba(56, 189, 248, 0.45)';
                         }}
                         onMouseLeave={(e) => {
                           e.currentTarget.style.backgroundColor = ghBtnStyle.bg;
                           e.currentTarget.style.borderColor = ghBtnStyle.border;
                           e.currentTarget.style.color = ghBtnStyle.color;
+                          e.currentTarget.style.boxShadow = 'none';
                         }}
                       >
                         <GithubIcon className="w-4 h-4 shrink-0" />
