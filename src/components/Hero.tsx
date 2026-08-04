@@ -112,25 +112,11 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="flex flex-col items-center text-center gap-7 sm:gap-8 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
 
-          {/* Specialization Badge */}
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-code font-bold max-w-full backdrop-blur-md shadow-xs transition-transform hover:scale-105"
-            style={{
-              backgroundColor: isLight ? '#f0f9ff' : 'rgba(15, 23, 42, 0.8)',
-              borderColor: isLight ? '#bae6fd' : 'rgba(6, 182, 212, 0.35)',
-              color: isLight ? '#0369a1' : '#22d3ee',
-              boxShadow: isLight ? '0 2px 10px rgba(2, 132, 199, 0.1)' : '0 2px 12px rgba(6, 182, 212, 0.15)',
-            }}
-          >
-            <Sparkles size={13} className="animate-pulse shrink-0" style={{ color: isLight ? '#0284c7' : '#22d3ee' }} />
-            <span className="truncate">{currentData.badge}</span>
-          </div>
-
-          {/* Hero Title Container & Brand Avatar */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6">
+          {/* Hero Title Container & Brand Avatar (Horizontal Alignment on Mobile & Desktop) */}
+          <div className="flex flex-row items-center justify-center gap-3.5 sm:gap-6 flex-wrap sm:flex-nowrap">
 
             {/* Circular Logo Badge */}
-            <div className="w-14 h-14 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center">
+            <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center">
               {soundPlaying && (
                 <div
                   className="absolute -inset-1.5 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 animate-audio-ring blur-md pointer-events-none z-0 opacity-70"
@@ -139,7 +125,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
               )}
 
               <div
-                className="relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2.5px] shadow-xl animate-logo-glow flex items-center justify-center transition-transform hover:scale-105 cursor-pointer"
+                className="relative z-10 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2.5px] shadow-xl animate-logo-glow flex items-center justify-center transition-transform hover:scale-105 cursor-pointer"
                 title={soundPlaying ? 'BGM Active' : 'JasonProduction Logo'}
               >
                 <div
@@ -156,7 +142,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
 
             {/* Main Name Title */}
             <h1
-              className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight cursor-default leading-tight"
+              className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight cursor-default leading-tight"
               style={{ color: isLight ? '#0f172a' : '#ffffff' }}
             >
               <span className="inline-block hover:scale-105 transition-transform duration-300">
@@ -179,21 +165,35 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </p>
           </div>
 
+          {/* Specialization Status Badge (AI & Emerging Tech Status Capsule) */}
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-code font-extrabold max-w-full backdrop-blur-md shadow-xs transition-transform hover:scale-105"
+            style={{
+              backgroundColor: isLight ? '#f0f9ff' : 'rgba(15, 23, 42, 0.8)',
+              borderColor: isLight ? '#bae6fd' : 'rgba(6, 182, 212, 0.35)',
+              color: isLight ? '#0369a1' : '#22d3ee',
+              boxShadow: isLight ? '0 2px 10px rgba(2, 132, 199, 0.1)' : '0 2px 12px rgba(6, 182, 212, 0.15)',
+            }}
+          >
+            <Sparkles size={13} className="animate-pulse shrink-0" style={{ color: isLight ? '#0284c7' : '#22d3ee' }} />
+            <span className="truncate">{currentData.badge}</span>
+          </div>
+
           {/* Bio Overview Text */}
           <p
-            className="text-base sm:text-lg max-w-2xl xl:max-w-3xl leading-relaxed font-normal"
+            className="text-sm sm:text-base lg:text-lg max-w-2xl xl:max-w-3xl leading-relaxed font-normal"
             style={{ color: isLight ? '#475569' : '#cbd5e1' }}
           >
             {currentData.description}
           </p>
 
-          {/* Equal Sized CTA External Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-md sm:max-w-none pt-1">
+          {/* Equal Sized CTA External Buttons — 2-Column Grid on Mobile */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-md sm:max-w-none pt-1">
             <a
               href={links.github}
               target="_blank"
               rel="noreferrer"
-              className="w-full sm:w-60 h-12 sm:h-13 rounded-2xl font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-3 cursor-pointer shadow-md"
+              className="w-full sm:w-60 h-12 sm:h-13 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer shadow-md"
               style={{
                 backgroundColor: isLight ? '#0f172a' : '#0f172a',
                 border: `2px solid ${isLight ? '#0f172a' : '#475569'}`,
@@ -217,7 +217,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
               href={links.artstation}
               target="_blank"
               rel="noreferrer"
-              className="w-full sm:w-60 h-12 sm:h-13 rounded-2xl font-bold text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-3 cursor-pointer shadow-md"
+              className="w-full sm:w-60 h-12 sm:h-13 rounded-2xl font-bold text-xs sm:text-sm transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer shadow-md"
               style={{ backgroundColor: '#13ACFE', border: '1px solid #0ea5e9', color: '#ffffff' }}
               onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#0095e0'; }}
               onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#13ACFE'; }}
