@@ -292,14 +292,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     )}
                   </div>
 
-                  {/* Direct Action Link Buttons — Responsive Grid on Mobile */}
-                  <div className={actionButtonsCount > 1 ? "grid grid-cols-1 sm:grid-cols-2 gap-2.5" : "flex flex-col gap-2.5"}>
+                  {/* Direct Action Link Buttons — Wrap horizontally on all viewports */}
+                  <div className="flex flex-wrap gap-2.5">
                     {project.websiteUrl && (
                       <a
                         href={project.websiteUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
                         style={{
                           backgroundColor: webBtnStyle.bg,
                           borderColor: webBtnStyle.border,
@@ -327,7 +327,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={`https://www.youtube.com/watch?v=${project.ytId}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
                         style={{
                           backgroundColor: ytBtnStyle.bg,
                           borderColor: ytBtnStyle.border,
@@ -355,7 +355,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                         href={project.githubUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="w-full h-11 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
+                        className="h-11 px-4 rounded-xl font-code text-xs sm:text-sm font-bold flex items-center justify-center gap-2 border shadow-xs transition-all duration-300 cursor-pointer"
                         style={{
                           backgroundColor: ghBtnStyle.bg,
                           borderColor: ghBtnStyle.border,
