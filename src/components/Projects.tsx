@@ -260,10 +260,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                       );
                     })()}
 
-                    {/* Top-Right Overlay: Date Badge (Never Overlaps Top-Left Category Badge) */}
+                    {/* Bottom-Right Overlay: Date Badge (Guaranteed 0% overlap with Top-Left Category Badge) */}
                     {project.date && (
                       <div
-                        className="absolute top-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-bold shadow-md border backdrop-blur-md"
+                        className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-code text-xs font-bold shadow-md border backdrop-blur-md"
                         style={{
                           backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(15,23,42,0.9)',
                           borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
@@ -292,8 +292,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     )}
                   </div>
 
-                  {/* Direct Action Link Buttons */}
-                  <div className={actionButtonsCount > 1 ? "grid grid-cols-1 sm:grid-cols-2 gap-2" : "flex flex-col gap-2"}>
+                  {/* Direct Action Link Buttons — Responsive Grid on Mobile */}
+                  <div className={actionButtonsCount > 1 ? "grid grid-cols-1 sm:grid-cols-2 gap-2.5" : "flex flex-col gap-2.5"}>
                     {project.websiteUrl && (
                       <a
                         href={project.websiteUrl}

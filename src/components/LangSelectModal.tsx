@@ -133,8 +133,8 @@ export const LangSelectModal: React.FC = () => {
           </div>
         </div>
 
-        {/* Dedicated Independent Color Buttons for Dark & Light Modes */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 w-full">
+        {/* Dedicated Independent Color Buttons for Dark & Light Modes — Horizontal 2-Column Grid on Mobile */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full">
           {/* Traditional Chinese Button */}
           <button
             onClick={() => choose('zh')}
