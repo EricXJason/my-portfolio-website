@@ -292,8 +292,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     )}
                   </div>
 
-                  {/* Direct Action Link Buttons — Wrap horizontally on all viewports */}
-                  <div className="flex flex-wrap gap-2.5">
+                  {/* Direct Action Link Buttons — Centered, wrap horizontally on all viewports */}
+                  <div className="flex flex-wrap justify-center gap-2.5">
                     {project.websiteUrl && (
                       <a
                         href={project.websiteUrl}
