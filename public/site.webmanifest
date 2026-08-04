@@ -2,20 +2,20 @@
   "name": "Portfolio",
   "short_name": "Portfolio",
   "description": "許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站 Portfolio",
-  "start_url": "/my-portfolio-website/",
-  "scope": "/my-portfolio-website/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#07090e",
   "theme_color": "#07090e",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
