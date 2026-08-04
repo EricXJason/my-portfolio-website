@@ -112,6 +112,20 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="flex flex-col items-center text-center gap-7 sm:gap-8 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
 
+          {/* Top Accent Status Pill: AI & Emerging Tech */}
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-code font-extrabold max-w-full backdrop-blur-md shadow-xs transition-transform hover:scale-105"
+            style={{
+              backgroundColor: isLight ? '#f0f9ff' : 'rgba(15, 23, 42, 0.8)',
+              borderColor: isLight ? '#bae6fd' : 'rgba(6, 182, 212, 0.35)',
+              color: isLight ? '#0369a1' : '#22d3ee',
+              boxShadow: isLight ? '0 2px 10px rgba(2, 132, 199, 0.1)' : '0 2px 12px rgba(6, 182, 212, 0.15)',
+            }}
+          >
+            <Sparkles size={13} className="animate-pulse shrink-0" style={{ color: isLight ? '#0284c7' : '#22d3ee' }} />
+            <span className="truncate">{currentData.badge}</span>
+          </div>
+
           {/* Hero Title Container & Brand Avatar (Horizontal Alignment on Mobile & Desktop) */}
           <div className="flex flex-row items-center justify-center gap-3.5 sm:gap-6 flex-wrap sm:flex-nowrap">
 
@@ -163,20 +177,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             <p className="text-sm sm:text-xl lg:text-2xl font-bold font-code tracking-wide bg-gradient-to-r from-cyan-500 via-purple-500 to-pink-500 light:from-sky-600 light:via-indigo-600 light:to-purple-600 bg-clip-text text-transparent animate-shimmer-text sm:whitespace-nowrap whitespace-normal text-center break-words leading-relaxed">
               {currentData.subtitle}
             </p>
-          </div>
-
-          {/* Specialization Status Badge (AI & Emerging Tech Status Capsule) */}
-          <div
-            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-code font-extrabold max-w-full backdrop-blur-md shadow-xs transition-transform hover:scale-105"
-            style={{
-              backgroundColor: isLight ? '#f0f9ff' : 'rgba(15, 23, 42, 0.8)',
-              borderColor: isLight ? '#bae6fd' : 'rgba(6, 182, 212, 0.35)',
-              color: isLight ? '#0369a1' : '#22d3ee',
-              boxShadow: isLight ? '0 2px 10px rgba(2, 132, 199, 0.1)' : '0 2px 12px rgba(6, 182, 212, 0.15)',
-            }}
-          >
-            <Sparkles size={13} className="animate-pulse shrink-0" style={{ color: isLight ? '#0284c7' : '#22d3ee' }} />
-            <span className="truncate">{currentData.badge}</span>
           </div>
 
           {/* Bio Overview Text */}

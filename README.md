@@ -6,9 +6,8 @@
 
 ---
 
-## 1. 專案簡介 (Project Overview)
+## 1. 專案簡介與核心特色 (Project Overview & Key Features)
 
-### 設計概念 (Design Concept)
 本專案為 **許哲誠 (HSU, CHE-CHENG)** 之個人官方作品集網站（**Portfolio**）。本網站設計概念以 **「將 3D 空間美學與現代 Web 前端技術深度融合」** 為核心主軸，結合 **Web Audio API 幾何音脈衝**、**HTML5 Canvas 動態粒子拓動演算法** 與 **微光玻璃卡片浮雕**，打造兼具未來科技感、沉浸式互動與極致資訊質感的展演平台。
 
 Official personal portfolio web application designed for **HSU, CHE-CHENG**. Built upon the core design vision of **seamlessly integrating 3D spatial interactive aesthetics with modern web architecture**, featuring ambient frequency audio pulse, dynamic particle canvas algorithms, and refined glassmorphism UI.
@@ -17,14 +16,9 @@ Official personal portfolio web application designed for **HSU, CHE-CHENG**. Bui
 - **線上展示 (Live Demo)**: [https://ericxjason.github.io/my-portfolio-website/](https://ericxjason.github.io/my-portfolio-website/)
 
 ### 核心特色與 UI/UX 體驗重點 (Key Features & UI/UX Design Focus)
-1. 🌐 **中英雙語無縫切換 (Bilingual Seamless Toggle)**：
-   - 完整支援 繁體中文 與 English 雙語切換，並於行動端與桌面端提供 2 欄水平對齊之語言選擇面板與 Navbar 即時語系滑塊。
-2. 🌓 **雙色主題獨立美學 (Independent Dual-Theme UI System)**：
-   - 獨立規劃深色（Cyber Neon Black）與淺色（Luminous Blue）雙主題，非簡易顏色反轉，包含獨立的卡片外框微光、按鈕 Hover 漸層、Icon 對比度與獨立 Custom Scrollbars 捲軸。
-3. 🎨 **UI/UX 視覺與體驗設計重點 (UI/UX Visual & Experience Focus)**：
-   - **音脈衝與幾何粒子**：整合 Web Audio API 聲波合成與 HTML5 Canvas 響應式粒子引力拓動。
-   - **排版長度優化與動態折疊 (Collapsible Layout)**：Projects 專案、Education 研習與論文、Certifications 證照均支援預設精簡與一鍵展開/收折 controls。
-   - **雙平台滿分與無障礙可讀性 (100/100 Lighthouse & WCAG AAA)**：全站組件針對 Mobile、Tablet 與 Desktop 調整最佳字體級階、44px 觸控範圍與無障礙標籤。
+1. 🌐 **中英雙語無縫切換 (Bilingual Seamless Toggle)**：完整支援 繁體中文 與 English 雙語即時切換，於行動端與桌面端提供 2 欄水平對齊之語言選擇面板與 Navbar 即時語系滑塊。
+2. 🌓 **雙色主題獨立美學 (Independent Dual-Theme UI System)**：獨立規劃深色（Cyber Neon Black）與淺色（Luminous Blue）雙主題，包含獨立卡片外框微光、按鈕 Hover 漸層、Icon 對比度與獨立 Custom Scrollbars 捲軸。
+3. 🎨 **UI/UX 視覺與體驗設計重點 (UI/UX Visual & Experience Focus)**：自訂音脈衝互動、響應式 Canvas API 粒子引力拓動、排版長度動態折疊 controls 與 100/100 Lighthouse / WCAG AAA 無障礙閱讀體驗。
 
 ---
 
