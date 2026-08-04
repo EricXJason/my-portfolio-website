@@ -51,7 +51,8 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
     window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
 
     const darkPalette = ['#06b6d4', '#38bdf8', '#8b5cf6', '#c084fc', '#ec4899', '#10b981', '#6366f1'];
-    const lightPalette = ['#0284c7', '#2563eb', '#7c3aed', '#d946ef', '#0891b2', '#1d4ed8', '#4f46e5'];
+    // Independent Luminous Light Mode Palette: Soft Azure, Sky Blue, Indigo, and Soft Teal
+    const lightPalette = ['#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#06b6d4', '#14b8a6'];
 
     // Adaptive particle count for 60FPS fluid experience on mobile vs desktop
     const particleCount = window.innerWidth < 768 ? 36 : 68;
@@ -118,11 +119,12 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
         const particleColor = isLight ? p.lightColor : p.darkColor;
 
         ctx.save();
-        ctx.globalAlpha = isLight ? Math.min(1, currentAlpha * 0.9) : currentAlpha;
+        // In light mode, render soft translucent ambient particles so they blend gracefully into bright backgrounds
+        ctx.globalAlpha = isLight ? Math.min(0.4, currentAlpha * 0.45) : currentAlpha;
 
         if (p.radius > 2.0) {
           ctx.shadowColor = particleColor;
-          ctx.shadowBlur = isLight ? 8 : 12;
+          ctx.shadowBlur = isLight ? 4 : 12;
         }
 
         ctx.fillStyle = particleColor;
@@ -155,7 +157,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
 
           if (dist < connectDist) {
             const lineFactor = 1 - dist / connectDist;
-            const lineAlpha = lineFactor * (isLight ? 0.30 : 0.22);
+            const lineAlpha = lineFactor * (isLight ? 0.12 : 0.22);
             const lineStroke = isLight ? p1.lightColor : p1.darkColor;
 
             ctx.save();
@@ -164,7 +166,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = lineStroke;
-            ctx.lineWidth = lineFactor * 1.2;
+            ctx.lineWidth = lineFactor * 1.0;
             ctx.stroke();
             ctx.restore();
           }
