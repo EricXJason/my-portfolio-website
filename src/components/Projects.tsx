@@ -389,27 +389,11 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                 <div className="w-full lg:w-7/12 space-y-4 flex flex-col justify-between">
                   <div className="space-y-3.5">
 
-                    {/* Project Title & AI-Assisted Badge */}
+                    {/* Project Title */}
                     <div className="flex flex-wrap items-center gap-3 pr-24 sm:pr-28">
                       <h3 className="text-2xl sm:text-3xl font-extrabold group-hover:text-cyan-500 light:group-hover:text-sky-600 transition-colors tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                         {title}
                       </h3>
-
-                      {/* Prominent AI-Assisted Development Badge */}
-                      {project.aiAssisted && (
-                        <span
-                          className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-code font-extrabold shadow-sm backdrop-blur-md transition-all border"
-                          style={{
-                            backgroundColor: isLight ? 'rgba(124, 58, 237, 0.08)' : 'rgba(6, 182, 212, 0.15)',
-                            borderColor: isLight ? '#a855f7' : 'rgba(34, 211, 238, 0.6)',
-                            color: isLight ? '#6b21a8' : '#22d3ee',
-                            boxShadow: isLight ? '0 2px 10px rgba(168, 85, 247, 0.15)' : '0 2px 10px rgba(34, 211, 238, 0.2)',
-                          }}
-                        >
-                          <Sparkles size={14} className={isLight ? 'text-purple-600 fill-purple-600 animate-pulse' : 'text-cyan-300 fill-cyan-300 animate-pulse'} />
-                          <span>{lang === 'zh' ? '⚡ AI 輔助開發' : '⚡ AI-Assisted Dev'}</span>
-                        </span>
-                      )}
                     </div>
 
                     {/* Overview Bio */}

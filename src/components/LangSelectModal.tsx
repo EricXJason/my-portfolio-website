@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Sun, Moon, Globe2 } from 'lucide-react';
@@ -9,6 +9,17 @@ export const LangSelectModal: React.FC = () => {
   const isLight = theme === 'light';
   const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
+
+  const choose = useCallback((l: Language) => {
+    setLangDirect(l);
+    setClosing(true);
+
+    // Re-enable page scrolling immediately upon language selection
+    document.body.style.overflow = '';
+    document.documentElement.style.overflow = '';
+
+    setTimeout(() => setVisible(false), 350);
+  }, [setLangDirect]);
 
   useEffect(() => {
     // Always show modal on page refresh / initial load
@@ -25,16 +36,20 @@ export const LangSelectModal: React.FC = () => {
     };
   }, []);
 
-  const choose = (l: Language) => {
-    setLangDirect(l);
-    setClosing(true);
+  useEffect(() => {
+    if (!visible || closing) return;
 
-    // Re-enable page scrolling immediately upon language selection
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.code === 'Escape') {
+        choose('zh');
+      }
+    };
 
-    setTimeout(() => setVisible(false), 350);
-  };
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [visible, closing, choose]);
 
   if (!visible) return null;
 

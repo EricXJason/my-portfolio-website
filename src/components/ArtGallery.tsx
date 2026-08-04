@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import {
@@ -121,10 +121,10 @@ export const ArtGallery: React.FC = () => {
     setTouchEndX(null);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = useCallback(() => {
     document.body.classList.remove('hide-custom-cursor');
     setActiveImage(null);
-  };
+  }, []);
 
   // Roulette auto-rotation effect
   useEffect(() => {
@@ -146,16 +146,16 @@ export const ArtGallery: React.FC = () => {
         if (currentList.length === 0) return;
         const nextIdx = (activeIndex + 1) % currentList.length;
         setActiveImage(currentList[nextIdx]);
-      } else if (e.key === 'Escape') {
+      } else if (e.key === 'Escape' || e.code === 'Escape') {
         handleCloseModal();
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keydown', handleKeyDown, true);
       document.body.classList.remove('hide-custom-cursor');
     };
-  }, [activeImage, activeIndex, currentList]);
+  }, [activeImage, activeIndex, currentList, handleCloseModal]);
 
   // Tab buttons configuration matching Projects component styling
   const tabs = [

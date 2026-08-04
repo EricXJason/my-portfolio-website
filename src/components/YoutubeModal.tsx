@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { X } from 'lucide-react';
 
@@ -12,23 +12,40 @@ interface YoutubeModalProps {
 export const YoutubeModal: React.FC<YoutubeModalProps> = ({ isOpen, onClose, videoId, title }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const modalRef = React.useRef<HTMLDivElement>(null);
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     document.body.classList.remove('hide-custom-cursor');
     onClose();
-  };
+  }, [onClose]);
 
   useEffect(() => {
+    if (!isOpen) return;
+
+    if (modalRef.current) {
+      modalRef.current.focus();
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.code === 'Escape') {
+        handleClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
     return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
       document.body.classList.remove('hide-custom-cursor');
     };
-  }, []);
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md"
+      ref={modalRef}
+      tabIndex={-1}
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md outline-hidden"
       style={{
         backgroundColor: isLight ? 'rgba(15,23,42,0.65)' : 'rgba(3,7,18,0.85)',
         animation: 'fadeIn 0.25s ease',
