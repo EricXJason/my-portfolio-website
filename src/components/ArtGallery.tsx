@@ -41,6 +41,11 @@ export const ArtGallery: React.FC = () => {
   const [rouletteIndex, setRouletteIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
 
+  // Touch Swipe Gesture State
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const minSwipeDistance = 40;
+
   // Featured artworks restricted strictly to 3D Scene and 3D Prop categories
   const displayFeatured = artGalleryData.filter(
     (item) => item.cat === '3d-scene' || item.cat === '3d-prop'
@@ -70,6 +75,50 @@ export const ArtGallery: React.FC = () => {
     if (currentList.length === 0) return;
     const nextIdx = (activeIndex + 1) % currentList.length;
     setActiveImage(currentList[nextIdx]);
+  };
+
+  const handleRouletteTouchStart = (e: React.TouchEvent) => {
+    setIsAutoPlay(false);
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchEndX(null);
+  };
+
+  const handleRouletteTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleRouletteTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+    const distance = touchStartX - touchEndX;
+    if (distance > minSwipeDistance) {
+      setRouletteIndex((prev) => (prev + 1) % displayFeatured.length);
+    } else if (distance < -minSwipeDistance) {
+      setRouletteIndex((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length);
+    }
+    setTouchStartX(null);
+    setTouchEndX(null);
+    setIsAutoPlay(true);
+  };
+
+  const handleModalTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchEndX(null);
+  };
+
+  const handleModalTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleModalTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+    const distance = touchStartX - touchEndX;
+    if (distance > minSwipeDistance) {
+      handleNextImage();
+    } else if (distance < -minSwipeDistance) {
+      handlePrevImage();
+    }
+    setTouchStartX(null);
+    setTouchEndX(null);
   };
 
   const handleCloseModal = () => {
@@ -160,11 +209,14 @@ export const ArtGallery: React.FC = () => {
         {activeTab === 'featured' ? (
           <div className="relative w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto flex flex-col items-center py-4 sm:py-6">
 
-            {/* 3D Roulette Stage */}
+            {/* 3D Roulette Stage (With Native Touch Swipe Support) */}
             <div
-              className="relative w-full h-[280px] sm:h-[380px] md:h-[420px] flex items-center justify-center perspective-1000 overflow-hidden"
+              className="relative w-full h-[280px] sm:h-[380px] md:h-[420px] flex items-center justify-center perspective-1000 overflow-hidden touch-pan-y"
               onMouseEnter={() => setIsAutoPlay(false)}
               onMouseLeave={() => setIsAutoPlay(true)}
+              onTouchStart={handleRouletteTouchStart}
+              onTouchMove={handleRouletteTouchMove}
+              onTouchEnd={handleRouletteTouchEnd}
             >
               {displayFeatured.map((art, idx) => {
                 const total = displayFeatured.length;
@@ -216,38 +268,43 @@ export const ArtGallery: React.FC = () => {
                 );
               })}
 
-              {/* Roulette Prev / Next Controls */}
+              {/* Roulette Prev / Next Controls — Enlarged Touch Target Area for Mobile */}
               <button
                 onClick={() => setRouletteIndex((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length)}
-                className="absolute left-2 sm:left-6 z-40 p-3 rounded-full bg-slate-900/80 dark:bg-slate-900/80 light:bg-white border border-slate-700 light:border-slate-300 text-[var(--text-main)] shadow-xl transition-transform hover:scale-110 cursor-pointer"
+                className="absolute left-2 sm:left-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900/80 dark:bg-slate-900/80 light:bg-white border border-slate-700 light:border-slate-300 text-[var(--text-main)] shadow-xl transition-transform hover:scale-110 active:scale-95 flex items-center justify-center cursor-pointer"
                 aria-label="Previous Featured Artwork"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={24} />
               </button>
 
               <button
                 onClick={() => setRouletteIndex((prev) => (prev + 1) % displayFeatured.length)}
-                className="absolute right-2 sm:right-6 z-40 p-3 rounded-full bg-slate-900/80 dark:bg-slate-900/80 light:bg-white border border-slate-700 light:border-slate-300 text-[var(--text-main)] shadow-xl transition-transform hover:scale-110 cursor-pointer"
+                className="absolute right-2 sm:right-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900/80 dark:bg-slate-900/80 light:bg-white border border-slate-700 light:border-slate-300 text-[var(--text-main)] shadow-xl transition-transform hover:scale-110 active:scale-95 flex items-center justify-center cursor-pointer"
                 aria-label="Next Featured Artwork"
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={24} />
               </button>
             </div>
 
-            {/* Dots indicator with cyan active highlight */}
-            <div className="flex items-center gap-2 mt-6 mb-8">
-              {displayFeatured.map((_, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setRouletteIndex(idx)}
-                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                    rouletteIndex === idx
-                      ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
-                      : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
-                  }`}
-                  aria-label={`Go to slide ${idx + 1}`}
-                />
-              ))}
+            {/* Dots indicator with cyan active highlight & Mobile Touch Swipe Hint */}
+            <div className="flex flex-col items-center gap-2 mt-6 mb-8">
+              <div className="flex items-center gap-2">
+                {displayFeatured.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setRouletteIndex(idx)}
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                      rouletteIndex === idx
+                        ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
+                        : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
+                    }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
+              <span className="sm:hidden text-xs font-code text-[var(--text-sub)] opacity-80 pt-0.5">
+                {lang === 'zh' ? '← 左右手勢滑動切換 3D 作品 →' : '← Swipe left/right for 3D renders →'}
+              </span>
             </div>
 
             {/* More Works Button (Switch to All Works Grid and Auto-Expand All) */}
@@ -387,15 +444,20 @@ export const ArtGallery: React.FC = () => {
               </div>
             </div>
 
-            {/* Main Content Area */}
-            <div className="relative w-full flex items-center justify-center">
+            {/* Main Content Area (With Touch Swipe Support) */}
+            <div
+              className="relative w-full flex items-center justify-center touch-pan-y"
+              onTouchStart={handleModalTouchStart}
+              onTouchMove={handleModalTouchMove}
+              onTouchEnd={handleModalTouchEnd}
+            >
               {currentList.length > 1 && (
                 <button
                   onClick={handlePrevImage}
-                  className="absolute left-2 sm:left-4 z-20 p-2.5 sm:p-3 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border"
+                  className="absolute left-1 sm:left-4 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border active:scale-95 shrink-0"
                   style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)',
+                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)',
                     color: isLight ? '#0f172a' : '#ffffff',
                     boxShadow: isLight ? '0 10px 25px -5px rgba(0, 0, 0, 0.2)' : '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
                   }}
@@ -405,14 +467,14 @@ export const ArtGallery: React.FC = () => {
                     e.currentTarget.style.color = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)';
-                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)';
+                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)';
                     e.currentTarget.style.color = isLight ? '#0f172a' : '#ffffff';
                   }}
                   aria-label="Previous Image"
                   title={lang === 'zh' ? '上一張 (← 鍵盤左鍵)' : 'Previous (← Arrow)'}
                 >
-                  <ChevronLeft size={22} className="group-hover:-translate-x-0.5 transition-transform" />
+                  <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
                 </button>
               )}
 
@@ -441,10 +503,10 @@ export const ArtGallery: React.FC = () => {
               {currentList.length > 1 && (
                 <button
                   onClick={handleNextImage}
-                  className="absolute right-2 sm:right-4 z-20 p-2.5 sm:p-3 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border"
+                  className="absolute right-1 sm:right-4 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border active:scale-95 shrink-0"
                   style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)',
+                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)',
                     color: isLight ? '#0f172a' : '#ffffff',
                     boxShadow: isLight ? '0 10px 25px -5px rgba(0, 0, 0, 0.2)' : '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
                   }}
@@ -454,14 +516,14 @@ export const ArtGallery: React.FC = () => {
                     e.currentTarget.style.color = '#ffffff';
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.85)';
-                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)';
+                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)';
+                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)';
                     e.currentTarget.style.color = isLight ? '#0f172a' : '#ffffff';
                   }}
                   aria-label="Next Image"
                   title={lang === 'zh' ? '下一張 (→ 鍵盤右鍵)' : 'Next (→ Arrow)'}
                 >
-                  <ChevronRight size={22} className="group-hover:translate-x-0.5 transition-transform" />
+                  <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
                 </button>
               )}
             </div>

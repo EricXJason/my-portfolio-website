@@ -481,17 +481,12 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube }) => {
                     )}
                   </div>
 
-                  {/* Specialized Tools Tags (WCAG AAA Compliant Contrast) */}
+                  {/* Specialized Tools Tags (Unified Low-Saturation Palette) */}
                   <div className="pt-4 flex flex-wrap gap-2 border-t" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.07)' }}>
                     {project.tags.map((tag, idx) => (
                       <span
                         key={idx}
                         className="tech-tag text-xs font-code px-3 py-1 rounded-lg font-bold border transition-transform hover:scale-105 shadow-xs"
-                        style={{
-                          backgroundColor: isLight ? '#e0f2fe' : 'rgba(15,23,42,0.9)',
-                          borderColor: isLight ? '#7dd3fc' : 'rgba(6,182,212,0.35)',
-                          color: isLight ? '#0c4a6e' : '#38bdf8'
-                        }}
                       >
                         {tag}
                       </span>

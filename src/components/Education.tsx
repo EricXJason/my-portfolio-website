@@ -101,6 +101,18 @@ export const Education: React.FC = () => {
   const [showAllWorkshops, setShowAllWorkshops] = useState(false);
   const [showAllTheses, setShowAllTheses] = useState(false);
 
+  // Mobile Sub-section Accordion state
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
+    degrees: true,
+    work: true,
+    workshops: true,
+    theses: true,
+  });
+
+  const toggleSection = (key: string) => {
+    setOpenSections((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
   const btnBg = isLight ? '#ffffff' : '#0f172a';
   const btnBdr = isLight ? '#e2e8f0' : '#334155';
 
@@ -132,16 +144,26 @@ export const Education: React.FC = () => {
 
           {/* ── Sub-section 1: 學歷 ── */}
           <div id="education-degrees" className="space-y-6 scroll-mt-32">
-            <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
-              <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                <GraduationCap size={22} />
+            <div
+              onClick={() => toggleSection('degrees')}
+              className="flex items-center justify-between border-b pb-4 cursor-pointer md:cursor-default"
+              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  <GraduationCap size={22} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                  {t('degree_section_title')}
+                </h3>
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                {t('degree_section_title')}
-              </h3>
+
+              <div className="md:hidden p-1.5 rounded-lg border bg-slate-800/40 light:bg-slate-100 text-[var(--text-sub)]">
+                {openSections.degrees ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </div>
             </div>
 
-            <div className="space-y-6">
+            <div className={`space-y-6 ${openSections.degrees ? 'block' : 'hidden md:block'}`}>
               {currentData.degrees.map((deg) => (
                 <div
                   key={deg.id}
@@ -204,16 +226,26 @@ export const Education: React.FC = () => {
 
           {/* ── Sub-section 2: 工作經歷 ── */}
           <div id="work-experience" className="space-y-6 scroll-mt-32">
-            <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
-              <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                <Briefcase size={22} />
+            <div
+              onClick={() => toggleSection('work')}
+              className="flex items-center justify-between border-b pb-4 cursor-pointer md:cursor-default"
+              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
+                  <Briefcase size={22} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                  {t('work_section_title')}
+                </h3>
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                {t('work_section_title')}
-              </h3>
+
+              <div className="md:hidden p-1.5 rounded-lg border bg-slate-800/40 light:bg-slate-100 text-[var(--text-sub)]">
+                {openSections.work ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </div>
             </div>
 
-            <div className="space-y-6">
+            <div className={`space-y-6 ${openSections.work ? 'block' : 'hidden md:block'}`}>
               {currentData.workExperiences && currentData.workExperiences.map((job, jIdx) => (
                 <div
                   key={jIdx}
@@ -295,12 +327,7 @@ export const Education: React.FC = () => {
                     {job.tags.map((tag, tIdx) => (
                       <span
                         key={tIdx}
-                        className="text-xs font-code px-3 py-1 rounded-lg font-bold border transition-transform hover:scale-105"
-                        style={{
-                          backgroundColor: isLight ? '#fdf4ff' : 'rgba(168,85,247,0.12)',
-                          borderColor: isLight ? '#f5d0fe' : 'rgba(168,85,247,0.3)',
-                          color: isLight ? '#9333ea' : '#c084fc',
-                        }}
+                        className="tech-tag text-xs font-code px-3 py-1 rounded-lg font-bold border transition-transform hover:scale-105"
                       >
                         {tag}
                       </span>
@@ -314,16 +341,26 @@ export const Education: React.FC = () => {
 
           {/* ── Sub-section 3: 研習歷程 ── */}
           <div id="workshops" className="space-y-6 scroll-mt-32">
-            <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <Layers size={22} />
+            <div
+              onClick={() => toggleSection('workshops')}
+              className="flex items-center justify-between border-b pb-4 cursor-pointer md:cursor-default"
+              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  <Layers size={22} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                  {t('workshop_section_title')}
+                </h3>
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                {t('workshop_section_title')}
-              </h3>
+
+              <div className="md:hidden p-1.5 rounded-lg border bg-slate-800/40 light:bg-slate-100 text-[var(--text-sub)]">
+                {openSections.workshops ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </div>
             </div>
 
-            <div className="space-y-6">
+            <div className={`space-y-6 ${openSections.workshops ? 'block' : 'hidden md:block'}`}>
               {(showAllWorkshops ? currentData.workshops : currentData.workshops.slice(0, 2)).map((ws, wIdx) => {
                 const IconComponent = iconMap[ws.iconType] ?? Gamepad2;
                 const colorItem = workshopPalette[wIdx % workshopPalette.length];
@@ -407,16 +444,26 @@ export const Education: React.FC = () => {
 
           {/* ── Sub-section 4: 論文與期刊 ── */}
           <div id="publications" className="space-y-6 scroll-mt-32">
-            <div className="flex items-center gap-3 border-b pb-4" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}>
-              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <FileText size={22} />
+            <div
+              onClick={() => toggleSection('theses')}
+              className="flex items-center justify-between border-b pb-4 cursor-pointer md:cursor-default"
+              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                  <FileText size={22} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                  {t('thesis_section_title')}
+                </h3>
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                {t('thesis_section_title')}
-              </h3>
+
+              <div className="md:hidden p-1.5 rounded-lg border bg-slate-800/40 light:bg-slate-100 text-[var(--text-sub)]">
+                {openSections.theses ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </div>
             </div>
 
-            <div className="space-y-6">
+            <div className={`space-y-6 ${openSections.theses ? 'block' : 'hidden md:block'}`}>
               {(showAllTheses ? currentData.theses : currentData.theses.slice(0, 2)).map((thesis, tIdx) => {
                 const isHonor = thesis.award && (thesis.award.includes('獎') || thesis.award.toLowerCase().includes('award'));
 

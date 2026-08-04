@@ -220,13 +220,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ════════════════════════════════════════════════════════════
-   TECH TAGS (project technology labels)
+   TECH TAGS (Unified Low-Saturation Palette)
    ════════════════════════════════════════════════════════════ */
+.tech-tag {
+  background-color: rgba(15, 23, 42, 0.75) !important;
+  border-color: rgba(255, 255, 255, 0.10) !important;
+  color: #cbd5e1 !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+.tech-tag:hover {
+  border-color: rgba(56, 189, 248, 0.45) !important;
+  color: #38bdf8 !important;
+}
 :root.light .tech-tag {
-  background-color: #f0f9ff !important;  /* sky-50 */
-  border-color: #bae6fd !important;      /* sky-200 */
-  color: #0369a1 !important;             /* sky-700 */
-  font-weight: 700 !important;
+  background-color: #f1f5f9 !important;  /* slate-100 neutral */
+  border-color: #cbd5e1 !important;      /* slate-300 hairline */
+  color: #334155 !important;             /* slate-700 readable */
+  font-weight: 600 !important;
+}
+:root.light .tech-tag:hover {
+  background-color: #e2e8f0 !important;  /* slate-200 hover */
+  border-color: #94a3b8 !important;      /* slate-400 */
+  color: #0284c7 !important;             /* sky-600 */
 }
 
 /* ════════════════════════════════════════════════════════════

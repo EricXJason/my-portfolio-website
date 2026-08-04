@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, FileText, Film, Box, LucideIcon } from 'lucide-react';
+import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, FileText, Film, Box, ChevronDown, ChevronUp, LucideIcon } from 'lucide-react';
 import skillsData from '../data/skills-section.json';
 
 interface SkillItem {
@@ -53,6 +53,17 @@ export const Skills: React.FC = () => {
   const dataMap = skillsData as unknown as Record<Language, SkillCategory[]>;
   const currentSkills: SkillCategory[] = dataMap[lang] ?? dataMap.zh;
 
+  // Mobile Accordion state: all categories default to expanded
+  const [openCategories, setOpenCategories] = useState<Record<number, boolean>>({});
+
+  const toggleCategory = (idx: number) => {
+    setOpenCategories((prev) => ({
+      ...prev,
+      // Default is open (true), so toggle: if not yet set (undefined), first click closes it
+      [idx]: !(prev[idx] ?? true),
+    }));
+  };
+
   return (
     <section id="skills" className="py-16 sm:py-24 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -77,6 +88,8 @@ export const Skills: React.FC = () => {
               : cat.catColor;
 
             const isCoreFocus = cat.catType === 'game';
+            // All categories default to open; user can collapse individually on mobile
+            const isOpen = openCategories[idx] ?? true;
 
             return (
               <div
@@ -85,9 +98,10 @@ export const Skills: React.FC = () => {
                   isCoreFocus ? 'lg:col-span-2' : 'lg:col-span-1'
                 }`}
               >
-                {/* Category Header */}
+                {/* Category Header (Clickable Accordion Toggle on Mobile) */}
                 <div
-                  className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 border-b border-[var(--border-color)]"
+                  onClick={() => toggleCategory(idx)}
+                  className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 border-b border-[var(--border-color)] cursor-pointer lg:cursor-default"
                   style={{ borderLeftWidth: '4px', borderLeftColor: activeCatColor }}
                 >
                   <div className="flex items-center gap-3">
@@ -99,34 +113,41 @@ export const Skills: React.FC = () => {
                     </h3>
                   </div>
 
-                  <span
-                    className="px-3.5 py-1 rounded-full text-xs font-code font-bold uppercase tracking-wider border shadow-xs"
-                    style={{
-                      backgroundColor: cat.catType === 'game'
-                        ? (isLight ? '#f0f9ff' : 'rgba(6,182,212,0.15)')
-                        : cat.catType === 'web'
-                        ? (isLight ? '#faf5ff' : 'rgba(192,132,252,0.15)')
-                        : (isLight ? '#ecfdf5' : 'rgba(52,211,153,0.15)'),
-                      borderColor: cat.catType === 'game'
-                        ? (isLight ? '#bae6fd' : 'rgba(6,182,212,0.4)')
-                        : cat.catType === 'web'
-                        ? (isLight ? '#e9d5ff' : 'rgba(192,132,252,0.4)')
-                        : (isLight ? '#a7f3d0' : 'rgba(52,211,153,0.4)'),
-                      color: cat.catType === 'game'
-                        ? (isLight ? '#0369a1' : '#22d3ee')
-                        : cat.catType === 'web'
-                        ? (isLight ? '#7e22ce' : '#c084fc')
-                        : (isLight ? '#047857' : '#34d399'),
-                    }}
-                  >
-                    {cat.catType === 'game'
-                      ? (lang === 'zh' ? '★ 核心主修' : '★ Core Focus')
-                      : (lang === 'zh' ? '◆ 跨領域專長' : '◆ Cross-Domain')}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="px-3.5 py-1 rounded-full text-xs font-code font-bold uppercase tracking-wider border shadow-xs"
+                      style={{
+                        backgroundColor: cat.catType === 'game'
+                          ? (isLight ? '#f0f9ff' : 'rgba(6,182,212,0.15)')
+                          : cat.catType === 'web'
+                          ? (isLight ? '#faf5ff' : 'rgba(192,132,252,0.15)')
+                          : (isLight ? '#ecfdf5' : 'rgba(52,211,153,0.15)'),
+                        borderColor: cat.catType === 'game'
+                          ? (isLight ? '#bae6fd' : 'rgba(6,182,212,0.4)')
+                          : cat.catType === 'web'
+                          ? (isLight ? '#e9d5ff' : 'rgba(192,132,252,0.4)')
+                          : (isLight ? '#a7f3d0' : 'rgba(52,211,153,0.4)'),
+                        color: cat.catType === 'game'
+                          ? (isLight ? '#0369a1' : '#22d3ee')
+                          : cat.catType === 'web'
+                          ? (isLight ? '#7e22ce' : '#c084fc')
+                          : (isLight ? '#047857' : '#34d399'),
+                      }}
+                    >
+                      {cat.catType === 'game'
+                        ? (lang === 'zh' ? '★ 核心主修' : '★ Core Focus')
+                        : (lang === 'zh' ? '◆ 跨領域專長' : '◆ Cross-Domain')}
+                    </span>
+
+                    {/* Mobile Accordion Expand/Collapse Indicator Arrow */}
+                    <div className="lg:hidden p-1.5 rounded-lg border bg-slate-800/40 light:bg-slate-100 text-[var(--text-sub)]">
+                      {isOpen ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                    </div>
+                  </div>
                 </div>
 
-                {/* Skill Rows Sub-Grid */}
-                <div className={`p-4 sm:p-6 ${isCoreFocus ? 'grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4' : 'flex flex-col gap-3.5'}`}>
+                {/* Skill Rows Sub-Grid (Always visible on lg:, Accordion toggleable on mobile) */}
+                <div className={`p-4 sm:p-6 ${isOpen ? 'block' : 'hidden lg:block'} ${isCoreFocus ? 'grid grid-cols-1 md:grid-cols-2 gap-3.5 sm:gap-4' : 'flex flex-col gap-3.5'}`}>
                   {cat.items.map((item, iIdx) => {
                     const tokens = item.content.split('/').map((s) => s.trim()).filter(Boolean);
 
