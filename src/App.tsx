@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { LangProvider } from './context/LangContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
@@ -6,20 +6,21 @@ import { Hero } from './components/Hero';
 import { About } from './components/About';
 import { Skills } from './components/Skills';
 import { Projects } from './components/Projects';
-import { Certifications } from './components/Certifications';
-import { Education } from './components/Education';
-import { ArtGallery } from './components/ArtGallery';
 import { Footer } from './components/Footer';
 import { CustomCursor } from './components/CustomCursor';
 import { BackToTop } from './components/BackToTop';
 import { SideNav } from './components/SideNav';
 import { ScrollProgress } from './components/ScrollProgress';
 import { CyberParticles } from './components/CyberParticles';
-import { YoutubeModal } from './components/YoutubeModal';
 import { LangSelectModal } from './components/LangSelectModal';
 import { LoadingScreen } from './components/LoadingScreen';
 import { SeoSchema } from './components/SeoSchema';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
+
+const Certifications = lazy(() => import('./components/Certifications').then(m => ({ default: m.Certifications })));
+const Education = lazy(() => import('./components/Education').then(m => ({ default: m.Education })));
+const ArtGallery = lazy(() => import('./components/ArtGallery').then(m => ({ default: m.ArtGallery })));
+const YoutubeModal = lazy(() => import('./components/YoutubeModal').then(m => ({ default: m.YoutubeModal })));
 
 interface YtModalState {
   open: boolean;
@@ -88,20 +89,24 @@ function AppContent() {
         <About />
         <Skills />
         <Projects onOpenYoutube={handleOpenYoutube} />
-        <Certifications />
-        <Education />
-        <ArtGallery />
+        <Suspense fallback={null}>
+          <Certifications />
+          <Education />
+          <ArtGallery />
+        </Suspense>
       </main>
 
       <Footer lastUpdated={currentLocalDate} />
       <BackToTop />
 
-      <YoutubeModal
-        isOpen={ytModal.open}
-        onClose={handleCloseYoutube}
-        videoId={ytModal.videoId}
-        title={ytModal.title}
-      />
+      <Suspense fallback={null}>
+        <YoutubeModal
+          isOpen={ytModal.open}
+          onClose={handleCloseYoutube}
+          videoId={ytModal.videoId}
+          title={ytModal.title}
+        />
+      </Suspense>
     </div>
   );
 }

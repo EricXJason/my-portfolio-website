@@ -54,8 +54,9 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
     // Independent Luminous Light Mode Palette: Soft Azure, Sky Blue, Indigo, and Soft Teal
     const lightPalette = ['#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#06b6d4', '#14b8a6'];
 
+    const isMobile = window.innerWidth < 768;
     // Adaptive particle count for 60FPS fluid experience on mobile vs desktop
-    const particleCount = window.innerWidth < 768 ? 36 : 68;
+    const particleCount = isMobile ? 24 : 68;
 
     const particles: Particle[] = Array.from({ length: particleCount }, () => {
       const darkColor = darkPalette[Math.floor(Math.random() * darkPalette.length)];
@@ -122,9 +123,9 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
         // In light mode, render soft translucent ambient particles so they blend gracefully into bright backgrounds
         ctx.globalAlpha = isLight ? Math.min(0.4, currentAlpha * 0.45) : currentAlpha;
 
-        if (p.radius > 2.0) {
+        if (p.radius > 2.0 && !isMobile) {
           ctx.shadowColor = particleColor;
-          ctx.shadowBlur = isLight ? 4 : 12;
+          ctx.shadowBlur = isLight ? 4 : 10;
         }
 
         ctx.fillStyle = particleColor;

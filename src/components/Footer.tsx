@@ -56,7 +56,7 @@ export const Footer: React.FC<FooterProps> = ({ lastUpdated }) => {
           <span className="text-[var(--text-main)] font-bold">
             {lang === 'zh' ? '許哲誠 版權所有' : 'HSU, CHE-CHENG All Rights Reserved'}
           </span>
-          <span className="px-2.5 py-1 rounded-md bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 dark:text-cyan-300 font-code text-xs font-bold">
+          <span className="px-2.5 py-1 rounded-md bg-slate-200 dark:bg-cyan-500/10 border border-slate-300 dark:border-cyan-500/30 text-slate-900 dark:text-cyan-300 font-code text-xs font-bold">
             {displayDate}
           </span>
         </div>

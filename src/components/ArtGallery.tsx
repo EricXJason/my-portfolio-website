@@ -286,19 +286,22 @@ export const ArtGallery: React.FC = () => {
               </button>
             </div>
 
-            {/* Dots indicator with cyan active highlight & Mobile Touch Swipe Hint */}
-            <div className="flex items-center justify-center gap-2 mt-6 mb-8">
+            <div className="flex items-center justify-center gap-1 mt-6 mb-8">
               {displayFeatured.map((_, idx) => (
                 <button
                   key={idx}
                   onClick={() => setRouletteIndex(idx)}
-                  className={`h-2.5 rounded-full transition-all cursor-pointer ${
-                    rouletteIndex === idx
-                      ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
-                      : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
-                  }`}
+                  className="p-2 min-w-[28px] min-h-[28px] flex items-center justify-center cursor-pointer"
                   aria-label={`Go to slide ${idx + 1}`}
-                />
+                >
+                  <span
+                    className={`h-2.5 rounded-full transition-all ${
+                      rouletteIndex === idx
+                        ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
+                        : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
+                    }`}
+                  />
+                </button>
               ))}
             </div>
 

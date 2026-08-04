@@ -32,8 +32,6 @@
   --border-color: rgba(255, 255, 255, 0.08);
 
   /* Utility token vars */
-  --skill-row-bg:     rgba(13, 17, 23, 0.45);
-  --skill-row-border: rgba(255, 255, 255, 0.06);
   --cat-icon-bg:      rgba(13, 17, 23, 0.80);
   --cat-icon-border:  rgba(255, 255, 255, 0.10);
 }
@@ -48,9 +46,7 @@
   --card-bg:      #ffffff;
   --border-color: #e2e8f0;      /* slate-200 hairline border */
 
-  /* Skill & Category tokens */
-  --skill-row-bg:     #f1f5f9;  /* slate-100 row background */
-  --skill-row-border: #e2e8f0;
+  /* Category icon tokens */
   --cat-icon-bg:      #f0f9ff;  /* sky-50 for category icons */
   --cat-icon-border:  #bae6fd;  /* sky-200 */
 }
@@ -171,10 +167,6 @@ h1, h2, h3, h4, h5, h6 {
 /* ════════════════════════════════════════════════════════════
    CSS UTILITY CLASSES using var() tokens
    ════════════════════════════════════════════════════════════ */
-.skill-row-bg {
-  background-color: var(--skill-row-bg) !important;
-  border-color: var(--skill-row-border) !important;
-}
 .cat-icon-bg {
   background-color: var(--cat-icon-bg) !important;
   border-color: var(--cat-icon-border) !important;
@@ -252,19 +244,12 @@ h1, h2, h3, h4, h5, h6 {
    ════════════════════════════════════════════════════════════ */
 :root.light .border-slate-800,
 :root.light .border-slate-700,
-:root.light .border-slate-800\/80,
-:root.light .border-slate-800\/60 {
+:root.light .border-slate-800\/80 {
   border-color: #e5e7eb !important;      /* gray-200 */
 }
-:root.light .bg-slate-900\/40,
 :root.light .bg-slate-900\/60,
 :root.light .bg-slate-900\/80 {
   background-color: rgba(249,250,251,0.9) !important;  /* gray-50 */
-}
-:root.light .bg-slate-950,
-:root.light .bg-slate-950\/70,
-:root.light .bg-slate-950\/80 {
-  background-color: #f9fafb !important;  /* gray-50 */
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -316,31 +301,9 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 /* ════════════════════════════════════════════════════════════
    KEYFRAME ANIMATIONS
    ════════════════════════════════════════════════════════════ */
-@keyframes float-slow {
-  0%, 100% { transform: translateY(0px) translateX(0px) scale(1); }
-  33%       { transform: translateY(-28px) translateX(18px) scale(1.04); }
-  66%       { transform: translateY(14px) translateX(-12px) scale(0.97); }
-}
-@keyframes hero-sweep {
-  0%, 100% { opacity: 0.4; transform: scaleY(1); }
-  50%       { opacity: 1.0; transform: scaleY(1.08); }
-}
-.animate-hero-sweep { animation: hero-sweep 8s ease-in-out infinite; }
-
-@keyframes hero-title {
-  0%   { opacity: 0; letter-spacing: 0.2em; filter: blur(4px); }
-  100% { opacity: 1; letter-spacing: normal; filter: blur(0); }
-}
-.animate-hero-title { animation: hero-title 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
-
 @keyframes fadeIn {
   from { opacity: 0; }
   to   { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes logo-glow-pulse {
@@ -386,13 +349,3 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 .animate-cyber-scan {
   animation: cyber-scan 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
-
-/* Slow Continuous Orbit Rotation */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-.animate-spin-slow {
-  animation: spin-slow 24s linear infinite;
-}
-

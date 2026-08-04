@@ -119,7 +119,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               setMobileOpen(false);
             }}
             className="flex items-center gap-3 group shrink-0"
-            aria-label="JasonProduction Home"
+            aria-label="<JP/> JasonProduction 首頁 Home"
           >
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[1.5px] group-hover:scale-105 active:scale-95 transition-transform">
               <div
@@ -275,7 +275,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 backgroundColor: isLight ? '#f0f9ff' : '#0f172a',
                 borderColor: isLight ? '#bae6fd' : '#334155',
               }}
-              aria-label="Switch Language"
               title="Switch Language"
             >
               <span className="z-0 px-1.5" style={{ color: lang === 'en' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>EN</span>
