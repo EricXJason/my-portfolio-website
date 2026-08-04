@@ -1,0 +1,33 @@
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "許哲誠",
+  "alternateName": "HSU, CHE-CHENG",
+  "jobTitle": "Interactive Application Developer & Fullstack Software Engineer",
+  "alumniOf": [
+    {
+      "@type": "EducationalOrganization",
+      "name": "National Taiwan University of Arts",
+      "sameAs": "國立臺灣藝術大學"
+    },
+    {
+      "@type": "EducationalOrganization",
+      "name": "National Formosa University",
+      "sameAs": "國立虎尾科技大學"
+    }
+  ],
+  "url": "https://ericxjason.github.io/my-portfolio-website/",
+  "sameAs": [
+    "https://github.com/ericxjason",
+    "https://www.artstation.com/ericxjason"
+  ],
+  "knowsAbout": [
+    "Interactive Application Development",
+    "Fullstack Web Engineering",
+    "Unity C#",
+    "Unreal Engine 5",
+    "React",
+    "Spring Boot",
+    "Multimedia Design"
+  ]
+}
