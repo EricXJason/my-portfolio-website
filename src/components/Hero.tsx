@@ -218,9 +218,32 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
               target="_blank"
               rel="noreferrer"
               className="w-full sm:w-60 h-12 sm:h-13 px-4 sm:px-6 rounded-2xl font-bold text-sm sm:text-base transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-3 cursor-pointer shadow-md whitespace-nowrap"
-              style={{ backgroundColor: '#0369a1', border: '1px solid #075985', color: '#ffffff' }}
-              onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = '#075985'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = '#0369a1'; }}
+              style={{
+                background: isLight
+                  ? 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)'
+                  : 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+                border: isLight ? '1px solid #0284c7' : '1px solid rgba(56, 189, 248, 0.45)',
+                color: '#ffffff',
+                boxShadow: isLight
+                  ? '0 4px 14px rgba(2, 132, 199, 0.35)'
+                  : '0 4px 16px -2px rgba(14, 165, 233, 0.4)',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = isLight
+                  ? 'linear-gradient(135deg, #0ea5e9 0%, #1d4ed8 100%)'
+                  : 'linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%)';
+                e.currentTarget.style.boxShadow = isLight
+                  ? '0 8px 22px rgba(2, 132, 199, 0.5)'
+                  : '0 8px 24px -2px rgba(14, 165, 233, 0.6)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = isLight
+                  ? 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)'
+                  : 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)';
+                e.currentTarget.style.boxShadow = isLight
+                  ? '0 4px 14px rgba(2, 132, 199, 0.35)'
+                  : '0 4px 16px -2px rgba(14, 165, 233, 0.4)';
+              }}
             >
               <svg className="w-4.5 h-4.5 shrink-0" viewBox="0.09 0.31 799.44 700.63" fill="#ffffff">
                 <path d="M.09 540.65l67.25 115.89c13.6 26.34 40.8 44.4 71.78 44.4H587.2l-92.18-160.29zm799.44.75c0-15.81-4.54-30.86-12.85-43.65L523.73 43.21C510.13 17.62 483.68.31 452.7.31H313.67l405.76 699.88 64.23-110.63c12.09-21.07 15.87-30.1 15.87-48.16zM428.52 426.26L247.18 113.95 65.83 426.26z" />
