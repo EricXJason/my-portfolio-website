@@ -112,32 +112,32 @@ export const LangSelectModal: React.FC = () => {
           {/* Theme Switcher Toggle Slider */}
           <button
             onClick={toggleTheme}
-            className="w-14 h-8 rounded-full p-1 relative flex items-center transition-all cursor-pointer active:scale-95 shrink-0"
+            className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer active:scale-95 shrink-0 hover:border-cyan-400"
             style={{
-              backgroundColor: isLight ? '#e0f2fe' : '#0f172a',
+              backgroundColor: isLight ? '#f0f9ff' : '#0f172a',
+              borderColor: isLight ? '#bae6fd' : '#334155',
             }}
             aria-label="Toggle Theme"
             title={isLight ? '切換暗色主題 / Switch Dark' : '切換亮色主題 / Switch Light'}
           >
             <div className="absolute inset-0 px-1.5 flex items-center justify-between pointer-events-none text-xs">
-              <Sun size={12} className={isLight ? "opacity-30 text-amber-500" : "text-amber-400/80"} />
-              <Moon size={12} className={isLight ? "text-sky-600/80" : "opacity-30 text-cyan-300"} />
+              <Sun size={12} className={isLight ? "text-amber-400" : "text-amber-400/70"} />
+              <Moon size={12} className={isLight ? "text-sky-500/60" : "text-cyan-400/60"} />
             </div>
             <div
               className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 z-10"
               style={{
                 transform: isLight ? 'translateX(0px)' : 'translateX(24px)',
                 background: isLight
-                  ? 'linear-gradient(135deg, #ffffff 0%, #fef3c7 100%)'
+                  ? 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)'
                   : 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-                border: isLight ? '1px solid #fcd34d' : '1px solid #38bdf8',
                 boxShadow: isLight
-                  ? '0 2px 8px rgba(245, 158, 11, 0.45)'
-                  : '0 0 14px rgba(34, 211, 238, 0.9), 0 2px 6px rgba(0,0,0,0.5)',
-                color: isLight ? '#f59e0b' : '#ffffff',
+                  ? '0 2px 8px rgba(245, 158, 11, 0.5)'
+                  : '0 2px 8px rgba(6, 182, 212, 0.5)',
+                color: '#ffffff',
               }}
             >
-              {isLight ? <Sun size={13} className="fill-amber-400/30" /> : <Moon size={13} className="fill-white/30" />}
+              {isLight ? <Sun size={13} /> : <Moon size={13} />}
             </div>
           </button>
         </div>
