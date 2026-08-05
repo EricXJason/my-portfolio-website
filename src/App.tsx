@@ -57,16 +57,12 @@ function AppContent() {
   return (
     <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] relative transition-colors duration-300">
 
-      {/* Dynamic Modular SEO JSON-LD Schema */}
       <SeoSchema />
 
-      {/* Text-free Loading Screen with Percentage */}
       <LoadingScreen />
 
-      {/* Language Select Modal — renders on first visit */}
       <LangSelectModal />
 
-      {/* Fixed ambient mesh + particles */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 light-aurora-bg" />
         <CyberParticles theme={theme} soundPlaying={soundPlaying} />

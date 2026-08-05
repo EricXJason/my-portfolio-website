@@ -99,7 +99,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       id="home"
       className="min-h-screen pt-28 pb-20 flex items-center justify-center relative overflow-hidden select-text"
     >
-      {/* Background Ambient Glow Orbs */}
       <div
         className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full blur-3xl pointer-events-none transition-opacity duration-700"
         style={{ background: isLight ? 'rgba(14, 165, 233, 0.12)' : 'rgba(6, 182, 212, 0.12)' }}
@@ -112,7 +111,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         <div className="flex flex-col items-center text-center gap-7 sm:gap-8 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
 
-          {/* Top Accent Status Pill: AI & Emerging Tech */}
           <div
             className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border text-xs font-code font-extrabold max-w-full backdrop-blur-md shadow-xs transition-transform hover:scale-105"
             style={{
@@ -126,10 +124,8 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             <span className="truncate">{currentData.badge}</span>
           </div>
 
-          {/* Hero Title Container & Brand Avatar (Horizontal Alignment on Mobile & Desktop) */}
           <div className="flex flex-row items-center justify-center gap-3.5 sm:gap-6 flex-wrap sm:flex-nowrap">
 
-            {/* Circular Logo Badge */}
             <div className="w-12 h-12 sm:w-16 sm:h-16 shrink-0 relative flex items-center justify-center">
               {soundPlaying && (
                 <div
@@ -154,7 +150,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
               </div>
             </div>
 
-            {/* Main Name Title */}
             <h1
               className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight cursor-default leading-tight"
               style={{ color: isLight ? '#0f172a' : '#ffffff' }}
@@ -165,7 +160,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </h1>
           </div>
 
-          {/* Specialty Subtitle Pill */}
           <div
             className="px-5 sm:px-8 py-3 sm:py-3.5 rounded-2xl border max-w-full text-center flex items-center justify-center shadow-sm backdrop-blur-md transition-all hover:scale-[1.01]"
             style={{
@@ -179,7 +173,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </p>
           </div>
 
-          {/* Bio Overview Text */}
           <p
             className="text-sm sm:text-base lg:text-lg max-w-2xl xl:max-w-3xl leading-relaxed font-normal"
             style={{ color: isLight ? '#475569' : '#cbd5e1' }}
@@ -187,7 +180,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             {currentData.description}
           </p>
 
-          {/* Equal Sized CTA External Buttons — Vertical on Mobile, Horizontal on PC */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-xs sm:max-w-none pt-1">
             <a
               href={links.github}
@@ -253,7 +245,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </a>
           </div>
 
-          {/* 3 Contact Info Cards Grid */}
           <div className="w-full max-w-4xl xl:max-w-5xl mt-3">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 w-full">
               {contactList.map((item) => {

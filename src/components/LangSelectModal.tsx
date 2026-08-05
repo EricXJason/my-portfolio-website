@@ -79,7 +79,6 @@ export const LangSelectModal: React.FC = () => {
         }}
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Top Header Row with Logo and Theme Switcher */}
         <div className="w-full flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-md">
@@ -109,7 +108,6 @@ export const LangSelectModal: React.FC = () => {
             </div>
           </div>
 
-          {/* Theme Switcher Toggle Slider */}
           <button
             onClick={toggleTheme}
             className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer active:scale-95 shrink-0 hover:border-cyan-400"
@@ -142,7 +140,6 @@ export const LangSelectModal: React.FC = () => {
           </button>
         </div>
 
-        {/* Clean Header Title */}
         <div className="text-center space-y-1">
           <div className="flex items-center justify-center gap-2" style={{ color: isLight ? '#0284c7' : '#22d3ee' }}>
             <Globe2 size={18} />
@@ -152,9 +149,7 @@ export const LangSelectModal: React.FC = () => {
           </div>
         </div>
 
-        {/* Dedicated Independent Color Buttons for Dark & Light Modes — Horizontal 2-Column Grid on Mobile */}
         <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full">
-          {/* Traditional Chinese Button */}
           <button
             onClick={() => choose('zh')}
             className="h-13 rounded-2xl font-bold text-sm sm:text-base font-code transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 border-2 shadow-md hover:scale-[1.03] active:scale-[0.97]"
@@ -186,7 +181,6 @@ export const LangSelectModal: React.FC = () => {
             <span>繁體中文</span>
           </button>
 
-          {/* English Button */}
           <button
             onClick={() => choose('en')}
             className="h-13 rounded-2xl font-bold text-sm sm:text-base font-code transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 border-2 shadow-md hover:scale-[1.03] active:scale-[0.97]"

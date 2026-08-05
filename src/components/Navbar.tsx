@@ -111,7 +111,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       >
         <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
 
-          {/* Brand Logo */}
           <a
             href="#home"
             onClick={(e) => {
@@ -145,7 +144,6 @@ export const Navbar: React.FC<NavbarProps> = ({
             </div>
           </a>
 
-          {/* Desktop Nav Pill */}
           <nav
             className="hidden lg:flex items-center gap-0.5 p-1.5 rounded-full border"
             style={{
@@ -178,7 +176,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                       />
                     </a>
 
-                    {/* Desktop Submenu Dropdown Panel */}
                     {desktopExpHover && (
                       <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 z-50">
                         <div
@@ -240,10 +237,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             })}
           </nav>
 
-          {/* Right Controls Container */}
           <div className="flex items-center gap-3">
 
-            {/* 1. Theme Toggle */}
             <button
               onClick={toggleTheme}
               className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer active:scale-95 hover:border-cyan-400"
@@ -275,7 +270,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </button>
 
-            {/* 2. Language Toggle Slider */}
             <button
               onClick={toggleLang}
               className="w-16 h-8 rounded-full border p-1 relative flex items-center justify-between transition-all cursor-pointer font-code text-xs font-bold active:scale-95 hover:border-cyan-400 light:hover:border-sky-400"
@@ -299,7 +293,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </div>
             </button>
 
-            {/* 3. BGM Sound Button */}
             <div className="relative" ref={volumeRef}>
               <button
                 onClick={() => {
@@ -322,7 +315,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }
               </button>
 
-              {/* Minimalist Volume Popup Panel */}
               {showVolumePopup && (
                 <div className="absolute top-full right-0 mt-2 z-50">
                   <div
@@ -364,7 +356,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               )}
             </div>
 
-            {/* Mobile Hamburger */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="lg:hidden p-2.5 rounded-xl border transition-all cursor-pointer active:scale-95 hover:border-cyan-400"
@@ -380,7 +371,6 @@ export const Navbar: React.FC<NavbarProps> = ({
           </div>
         </div>
 
-        {/* Mobile Drawer with Hover / Active Interactivity */}
         {mobileOpen && (
           <div
             className="lg:hidden border-t px-6 py-6 space-y-2 max-h-[85vh] overflow-y-auto"
@@ -405,7 +395,6 @@ export const Navbar: React.FC<NavbarProps> = ({
                       />
                     </button>
 
-                    {/* Mobile Accordion Submenu Panel */}
                     {mobileExpOpen && (
                       <div className="pl-4 space-y-1.5 border-l-2 border-cyan-500/30 ml-4 py-2">
                         {expSubItems.map((sub) => (
@@ -448,7 +437,6 @@ export const Navbar: React.FC<NavbarProps> = ({
         )}
       </header>
 
-      {/* Mobile Drawer Backdrop */}
       {mobileOpen && (
         <div
           className="lg:hidden fixed inset-0 z-40 bg-slate-950/40 backdrop-blur-sm"
