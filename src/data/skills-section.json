@@ -34,9 +34,9 @@
       "catType": "media",
       "items": [
         { "label": "視覺設計與 UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
-        { "label": "AI 內容創作", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
-        { "label": "流程圖設計與文書", "rowType": "tech", "content": "draw.io / Mermaid / Notion / Word / Excel / PowerPoint" },
         { "label": "影片剪輯與後製", "rowType": "tech", "content": "Premiere / DaVinci" },
+        { "label": "流程圖設計與文書", "rowType": "tech", "content": "draw.io / Mermaid / Notion / Word / Excel / PowerPoint" },
+        { "label": "AI 內容創作", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
         { "label": "3D 建模與材質", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3ds Max / RizomUV / Zbrush / Substance Painter / Marmoset Toolbag" }
       ]
     }
@@ -76,9 +76,9 @@
       "catType": "media",
       "items": [
         { "label": "Visual Design & UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
-        { "label": "AI Creation", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
-        { "label": "Flowcharts & Docs", "rowType": "tech", "content": "draw.io / Mermaid / Notion / Word / Excel / PowerPoint" },
         { "label": "Video Editing", "rowType": "tech", "content": "Premiere / DaVinci" },
+        { "label": "Flowcharts & Docs", "rowType": "tech", "content": "draw.io / Mermaid / Notion / Word / Excel / PowerPoint" },
+        { "label": "AI Creation", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
         { "label": "3D Modeling & Materials", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3ds Max / RizomUV / Zbrush / Substance Painter / Marmoset Toolbag" }
       ]
     }

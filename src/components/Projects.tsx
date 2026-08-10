@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronUp, ChevronDown } from 'lucide-react';
+import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronUp, ChevronDown, MessageSquare } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
 
@@ -142,13 +142,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const isFeaturedSideBySideView = filter === 'featured' && !showAllProjects;
 
-  // Swapped Filter Order: Featured -> All -> Interactive -> Frontend -> Fullstack
+  // Category Filters Order: Featured -> All -> Interactive -> Frontend -> Fullstack -> LINE Bot
   const filters = [
     { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
     { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
     { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
     { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={15} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
+    { key: 'linebot', label: t('cat_linebot'), icon: <MessageSquare size={15} /> },
   ];
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
@@ -522,6 +523,27 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 </article>
               );
             })}
+          </div>
+        )}
+
+        {/* EMPTY STATE CARD (For empty categories like LINE Bot) */}
+        {visibleProjects.length === 0 && (
+          <div
+            className="max-w-3xl mx-auto p-10 sm:p-12 text-center border cyber-cut-corner backdrop-blur-xl space-y-4 my-8 shadow-lg"
+            style={{
+              backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
+              borderColor: borderCol,
+            }}
+          >
+            <div className="flex justify-center text-slate-500">
+              <MessageSquare size={42} style={{ color: cyanCol }} />
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold font-hud uppercase tracking-wider" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+              {lang === 'zh' ? '目前尚無 LINE Bot 專案' : 'No LINE Bot Projects Yet'}
+            </h3>
+            <p className="text-xs sm:text-sm font-tech text-slate-400">
+              {lang === 'zh' ? '專案準備中，敬請期待最新開發作品！' : 'Projects in development, stay tuned for upcoming releases!'}
+            </p>
           </div>
         )}
 
