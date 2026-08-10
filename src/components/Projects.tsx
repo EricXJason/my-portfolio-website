@@ -306,7 +306,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           }}
                         >
                           <TechIcon name="youtube" size={16} className="text-rose-500 shrink-0 fill-current" />
-                          <span>{lang === 'zh' ? '展示影片' : 'VIDEO'}</span>
+                          <span>{lang === 'zh' ? '觀看展示影片' : 'WATCH VIDEO'}</span>
                         </button>
                       )}
 
@@ -706,7 +706,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                     }}
                   >
                     <TechIcon name="youtube" size={16} className="text-rose-500 shrink-0 fill-current" />
-                    <span>{lang === 'zh' ? '觀看 YouTube 展示影片' : 'WATCH YOUTUBE VIDEO'}</span>
+                    <span>{lang === 'zh' ? '觀看展示影片' : 'WATCH VIDEO'}</span>
                   </button>
                 )}
 

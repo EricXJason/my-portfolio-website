@@ -160,6 +160,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-11T00:09:00+08:00 | [style] | Upgrade Hero subtitle typography with smooth, gradual 16s rightward gradient streaming (background-size: 300% 100%, 16s linear cycle): seamlessly flows Cyber Cyan -> Sky Blue -> Electric Violet from left to right at an ultra-silky, perfectly paced speed | src/components/Hero.tsx, src/index.css, docs/check-list.md, docs/change-log.md
 - 2026-08-11T00:10:00+08:00 | [style] | Re-architect Hero subtitle gradient keyframes with exact 200% background-position offset and matching 0% / 100% color stops (Cyan -> Sky Blue -> Violet -> Cyan) for a 100% seamless head-to-tail infinite loop | src/components/Hero.tsx, src/index.css, docs/check-list.md, docs/change-log.md
 - 2026-08-11T00:11:00+08:00 | [style] | Correct Hero subtitle gradient keyframe movement (0% to -200%) to ensure visual color wave streams naturally from left to right across text characters while maintaining 100% seamless head-to-tail infinite loop | src/index.css, docs/check-list.md, docs/change-log.md
+- 2026-08-11T00:27:00+08:00 | [style] | Unify all YouTube video buttons across cards and modal popups to "觀看展示影片" (EN: "WATCH VIDEO"); remove ExternalLink (↗) icons next to GitHub Profile and ArtStation Portfolio buttons in Hero section | src/components/Projects.tsx, src/components/Hero.tsx, docs/check-list.md, docs/change-log.md
 
 
 

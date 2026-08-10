@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Mail, Phone, MessageSquare, Copy, Check, ExternalLink } from 'lucide-react';
+import { Mail, Phone, MessageSquare, Copy, Check } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { SciFiRobotAvatar } from './SciFiRobotAvatar';
 import heroData from '../data/hero-section.json';
@@ -146,7 +146,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             >
               <TechIcon name="github" size={16} className="shrink-0 fill-current" color={isLight ? '#0f172a' : '#ffffff'} />
               <span className="whitespace-nowrap">{lang === 'zh' ? 'GitHub 專頁' : 'GitHub Profile'}</span>
-              <ExternalLink size={14} className="opacity-60 group-hover:translate-x-0.5 transition-transform shrink-0" />
             </a>
 
             {/* ArtStation Portfolio Button (Balanced Dark Tactical Base with Sky Blue Accent) */}
@@ -163,7 +162,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             >
               <TechIcon name="artstation" size={16} className="shrink-0 fill-current" color="#13ACFE" />
               <span className="font-extrabold whitespace-nowrap">{lang === 'zh' ? 'ArtStation 作品集' : 'ArtStation Portfolio'}</span>
-              <ExternalLink size={14} className="opacity-80 group-hover:translate-x-0.5 transition-transform shrink-0" />
             </a>
           </div>
 
