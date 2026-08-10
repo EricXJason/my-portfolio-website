@@ -111,17 +111,6 @@ export const Education: React.FC = () => {
 
         {/* Section Title Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div
-            className="inline-flex items-center gap-2 font-tech text-xs sm:text-sm font-bold uppercase tracking-wider px-4 py-1.5 border cyber-cut-sm shadow-sm"
-            style={{
-              backgroundColor: isLight ? '#ffffff' : '#080e1a',
-              borderColor: borderCol,
-              color: cyanCol,
-            }}
-          >
-            <Briefcase size={15} />
-            <span>{lang === 'zh' ? '學歷與職涯經歷' : 'EXPERIENCE & EDUCATION'}</span>
-          </div>
 
           <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
             <Briefcase size={34} className="text-cyan-400 shrink-0" />
@@ -393,7 +382,7 @@ export const Education: React.FC = () => {
                   <span>
                     {showAllWorkshops
                       ? (lang === 'zh' ? '收起研習證明' : 'COLLAPSE WORKSHOPS')
-                      : (lang === 'zh' ? '檢視更多研習證明' : 'VIEW MORE WORKSHOPS')}
+                      : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
                   </span>
                   {showAllWorkshops ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                 </button>
@@ -528,7 +517,7 @@ export const Education: React.FC = () => {
                     <span>
                       {showAllTheses
                         ? (lang === 'zh' ? '收起論文發表' : 'COLLAPSE PUBLICATIONS')
-                        : (lang === 'zh' ? '檢視更多論文發表' : 'VIEW MORE PUBLICATIONS')}
+                        : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
                     </span>
                     {showAllTheses ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                   </button>

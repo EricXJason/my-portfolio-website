@@ -46,17 +46,6 @@ export const About: React.FC = () => {
 
         {/* Header */}
         <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
-          <div
-            className="inline-flex items-center gap-2 font-tech text-xs font-bold uppercase tracking-wider px-3.5 py-1 border cyber-cut-sm shadow-sm"
-            style={{
-              backgroundColor: isLight ? '#ffffff' : '#080e1a',
-              borderColor: borderCol,
-              color: cyanCol,
-            }}
-          >
-            <UserCheck size={14} />
-            <span>{lang === 'zh' ? '關於作者 & 核心經歷' : 'ABOUT ME'}</span>
-          </div>
 
           <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
             <UserCheck size={32} style={{ color: cyanCol }} className="shrink-0" />

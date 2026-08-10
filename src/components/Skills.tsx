@@ -69,17 +69,6 @@ export const Skills: React.FC = () => {
 
         {/* Section Title Header */}
         <div className="text-center max-w-3xl mx-auto space-y-3">
-          <div
-            className="inline-flex items-center gap-2 font-tech text-xs sm:text-sm font-bold uppercase tracking-wider px-4 py-1.5 border cyber-cut-sm shadow-sm"
-            style={{
-              backgroundColor: isLight ? '#ffffff' : '#080e1a',
-              borderColor: borderCol,
-              color: primaryColor,
-            }}
-          >
-            <Cpu size={15} />
-            <span>{lang === 'zh' ? '專業核心技能矩陣' : 'TECHNICAL MATRIX'}</span>
-          </div>
 
           <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
             <Cpu size={34} style={{ color: primaryColor }} className="shrink-0" />

@@ -464,12 +464,6 @@ body::-webkit-scrollbar-track {
   position: relative;
 }
 
-.arcade-badge::before {
-  content: '▶ ';
-  color: var(--neon-cyan);
-  font-size: 0.8em;
-}
-
 /* ════════════════════════════════════════════════════════════
    DYNAMIC BREATHING MOTION SYSTEM
    ════════════════════════════════════════════════════════════ */

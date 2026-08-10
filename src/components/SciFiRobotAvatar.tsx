@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Sparkles } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 import { useLang } from '../context/LangContext';
 
@@ -248,7 +249,16 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
           color: cyanCol,
         }}
       >
-        <span className="w-2 h-2 rounded-none rotate-45 bg-emerald-400 animate-pulse shrink-0" />
+        <Sparkles
+          size={16}
+          className="animate-pulse shrink-0"
+          style={{
+            color: isLight ? '#0284c7' : '#00f0ff',
+            filter: isLight
+              ? 'drop-shadow(0 1px 3px rgba(2, 132, 199, 0.4))'
+              : 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.85))',
+          }}
+        />
         <span className="arcade-badge cyber-gradient-text animate-shimmer-text whitespace-nowrap">{lang === 'zh' ? 'AI 前沿技術跟進中' : 'AI ADVANCEMENT TRACKING'}</span>
       </div>
     </div>

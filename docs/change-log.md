@@ -129,6 +129,20 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-10T10:16:00+08:00 | [perf] | Convert Google Fonts stylesheet link to async non-render-blocking load, prune font weight variants, and add dns-prefetch for zero FCP/LCP network latency | index.html, docs/check-list.md, docs/change-log.md
 - 2026-08-10T10:21:00+08:00 | [perf] | Mobile Performance Overhaul: lazy load below-the-fold components in App.tsx with React.lazy & Suspense, skip mounting CodeStream DOM nodes on mobile (<1024px) in FullStackCodeStreamBackground.tsx, reduce mobile canvas particle count from 32 to 8 in CyberParticles.tsx, split vendor chunks in vite.config.js to cut main-thread latency from 4.8s down to <0.3s | src/App.tsx, src/components/FullStackCodeStreamBackground.tsx, src/components/CyberParticles.tsx, vite.config.js, docs/check-list.md, docs/change-log.md
 - 2026-08-10T10:22:00+08:00 | [perf] | Remove unused LoadingScreen.tsx component file, execute Strict Project Optimization audit, verify 0 warnings/0 errors oxlint & tsc build, and push to remote repository | src/components/LoadingScreen.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-10T10:40:00+08:00 | [style] | Standardize all View More button labels to '檢視更多' / 'VIEW MORE' and change expand arrows to point downwards (ChevronDown) | src/components/ArtGallery.tsx, src/components/Certifications.tsx, src/components/Education.tsx, src/components/Projects.tsx, docs/change-log.md
+- 2026-08-10T10:42:00+08:00 | [style] | Update AI status badge: replace green diamond with pulsing Sparkles AI icon and remove right arrow (▶) prefix | src/components/SciFiRobotAvatar.tsx, src/index.css, docs/change-log.md
+- 2026-08-10T10:43:00+08:00 | [style] | Configure theme-specific AI icon colors: deep sky blue (#0284c7) with subtle shadow in Light mode, electric cyan (#00f0ff) with neon glow in Dark mode | src/components/SciFiRobotAvatar.tsx, docs/change-log.md
+- 2026-08-10T10:44:00+08:00 | [style] | Set margin-bottom: 140px on webkit-scrollbar-track and bottom-[140px] on tactical border laser frame to cleanly terminate above the Footer bar | src/index.css, src/App.tsx, docs/change-log.md
+- 2026-08-10T10:45:00+08:00 | [style] | Revert scrollbar track and tactical border laser line back to original native full-height layout | src/index.css, src/App.tsx, docs/change-log.md
+- 2026-08-10T10:46:00+08:00 | [style] | Update featured Art Gallery coverflow center image border to clean white (border-2 border-white shadow-lg) in Light mode | src/components/ArtGallery.tsx, docs/change-log.md
+- 2026-08-10T10:47:00+08:00 | [style] | Remove all section header category badge tags across About, Skills, Projects, Certifications, Education, and ArtGallery components | src/components/About.tsx, src/components/Skills.tsx, src/components/Projects.tsx, src/components/Certifications.tsx, src/components/Education.tsx, src/components/ArtGallery.tsx, docs/change-log.md
+
+
+
+
+
+
+
 
 
 

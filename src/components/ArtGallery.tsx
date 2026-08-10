@@ -14,7 +14,6 @@ import {
   ChevronDown,
   Download,
   Star,
-  Camera,
   Palette
 } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
@@ -155,17 +154,6 @@ export const ArtGallery: React.FC = () => {
 
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
-          <div
-            className="inline-flex items-center gap-2 font-tech text-xs font-bold uppercase tracking-wider px-3.5 py-1 border cyber-cut-sm shadow-sm"
-            style={{
-              backgroundColor: isLight ? '#ffffff' : '#080e1a',
-              borderColor: borderCol,
-              color: cyanCol,
-            }}
-          >
-            <Camera size={14} />
-            <span>{lang === 'zh' ? '美術畫廊與 3D 視覺展覽' : 'ART & 3D GALLERY'}</span>
-          </div>
 
           <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
             <Palette size={32} className="text-cyan-400 shrink-0" />
@@ -263,10 +251,10 @@ export const ArtGallery: React.FC = () => {
                         setRouletteIndex(idx);
                       }
                     }}
-                    className={`absolute aspect-square overflow-hidden cursor-pointer transition-all duration-500 ease-out group border ${
+                    className={`absolute aspect-square overflow-hidden cursor-pointer transition-all duration-500 ease-out group ${
                       isCenter
                         ? isLight
-                          ? 'border border-sky-500/80 shadow-[0_0_10px_rgba(2,132,199,0.15)]'
+                          ? 'border-2 border-white shadow-[0_4px_20px_rgba(0,0,0,0.15)]'
                           : 'border border-cyan-400/80 shadow-[0_0_12px_rgba(0,240,255,0.18)]'
                         : isLight
                         ? 'border border-slate-300 hover:border-sky-400'
@@ -365,7 +353,7 @@ export const ArtGallery: React.FC = () => {
                 <span>
                   {lang === 'zh' ? '檢視更多' : 'VIEW MORE'}
                 </span>
-                <ChevronRight size={16} className="stroke-[2.5]" />
+                <ChevronDown size={16} className="stroke-[2.5]" />
               </button>
             </div>
 

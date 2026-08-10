@@ -175,17 +175,6 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
-          <div
-            className="inline-flex items-center gap-2 font-tech text-xs sm:text-sm font-bold uppercase tracking-wider px-4 py-1.5 border cyber-cut-sm shadow-sm"
-            style={{
-              backgroundColor: isLight ? '#ffffff' : '#080e1a',
-              borderColor: borderCol,
-              color: cyanCol,
-            }}
-          >
-            <FolderGit2 size={15} />
-            <span>{lang === 'zh' ? '專案成果與代表作品' : 'PROJECT ARCHIVE'}</span>
-          </div>
 
           <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
             <FolderGit2 size={34} style={{ color: cyanCol }} className="shrink-0" />
@@ -558,10 +547,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             >
               <span>
                 {filter === 'featured'
-                  ? (lang === 'zh' ? '檢視全部作品' : 'VIEW ALL PROJECTS')
+                  ? (lang === 'zh' ? '檢視更多' : 'VIEW MORE')
                   : showAllProjects
                   ? (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')
-                  : (lang === 'zh' ? '展開全部作品' : 'EXPAND ALL PROJECTS')}
+                  : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
               </span>
               {filter === 'featured' ? (
                 <ChevronDown size={16} />
