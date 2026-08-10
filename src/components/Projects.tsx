@@ -185,29 +185,34 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </p>
         </div>
 
-        {/* Filter Bar - Flexible Wrap with Zero Text Truncation */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
-          {filters.map((f) => (
-            <button
-              key={f.key}
-              onClick={() => {
-                setFilter(f.key);
-                setShowAllProjects(false);
-              }}
-              role="tab"
-              aria-selected={filter === f.key}
-              className={`h-11 px-5 sm:px-6 border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap shrink-0 ${
-                filter === f.key
-                  ? 'filter-btn-active scale-105 shadow-md'
-                  : 'filter-btn-inactive'
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2 whitespace-nowrap">
-                {f.icon}
-                <span className="whitespace-nowrap">{f.label}</span>
-              </div>
-            </button>
-          ))}
+        {/* Filter Bar - Mobile 2-Column Equal-Width Grid / Desktop Flex Wrap */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
+          {filters.map((f, idx) => {
+            const isLastOdd = idx === filters.length - 1 && filters.length % 2 !== 0;
+            return (
+              <button
+                key={f.key}
+                onClick={() => {
+                  setFilter(f.key);
+                  setShowAllProjects(false);
+                }}
+                role="tab"
+                aria-selected={filter === f.key}
+                className={`h-11 px-3 sm:px-6 w-full sm:w-auto border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap ${
+                  isLastOdd ? 'col-span-2 sm:col-span-1' : ''
+                } ${
+                  filter === f.key
+                    ? 'filter-btn-active scale-[1.02] sm:scale-105 shadow-md'
+                    : 'filter-btn-inactive'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+                  {f.icon}
+                  <span className="whitespace-nowrap">{f.label}</span>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {/* FEATURED MODE: 3 EQUAL CORE REPRESENTATIVE PROJECTS SIDE-BY-SIDE GRID */}

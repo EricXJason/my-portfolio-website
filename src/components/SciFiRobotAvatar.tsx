@@ -122,85 +122,136 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
         ))}
       </div>
 
-      {/* Outer Holographic Data Ring (Rotating 360deg) */}
+      {/* Outer Holographic Data Ring (Rotating 360deg with Cardinal Ticks) */}
       <div
-        className="absolute inset-0 rounded-full border border-dashed animate-[spin_16s_linear_infinite] pointer-events-none opacity-60 group-hover:opacity-100 transition-opacity"
+        className="absolute inset-0 rounded-full border border-dashed animate-[spin_16s_linear_infinite] pointer-events-none opacity-70 group-hover:opacity-100 transition-opacity"
         style={{
           borderColor: isLight ? '#0284c7' : '#00f0ff',
           boxShadow: soundPlaying
-            ? '0 0 25px rgba(0,240,255,0.4)'
-            : '0 0 10px rgba(0,240,255,0.15)',
+            ? '0 0 30px rgba(0,240,255,0.45)'
+            : '0 0 14px rgba(0,240,255,0.2)',
         }}
-      />
+      >
+        {/* Holographic Cardinal Notches */}
+        <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_#00f0ff]" />
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-purple-400 rounded-full shadow-[0_0_8px_#c084fc]" />
+        <div className="absolute top-1/2 -left-1 -translate-y-1/2 w-2 h-2 bg-cyan-400 rounded-full shadow-[0_0_8px_#00f0ff]" />
+        <div className="absolute top-1/2 -right-1 -translate-y-1/2 w-2 h-2 bg-purple-400 rounded-full shadow-[0_0_8px_#c084fc]" />
+      </div>
 
-      {/* Inner Reverse Rotating Ring */}
+      {/* Middle Reverse Rotating Hexagon Tech Ring */}
       <div
-        className="absolute inset-3 rounded-full border-2 border-dotted animate-[spin_24s_linear_infinite_reverse] pointer-events-none opacity-40"
+        className="absolute inset-2.5 rounded-full border-2 border-dotted animate-[spin_24s_linear_infinite_reverse] pointer-events-none opacity-50"
         style={{ borderColor: isLight ? '#38bdf8' : '#a855f7' }}
       />
 
+      {/* Orbiting Quantum Energy Orb */}
+      <div className="absolute inset-0 animate-[spin_10s_linear_infinite] pointer-events-none">
+        <div className="w-3 h-3 bg-cyan-400 rounded-full shadow-[0_0_12px_#00f0ff] -top-1.5 left-1/2 -translate-x-1/2 absolute" />
+      </div>
+
       {/* Pulsing Energy Sound Aura when BGM active */}
       {soundPlaying && (
-        <div className="absolute inset-0 rounded-full bg-cyan-400/10 blur-xl animate-pulse pointer-events-none" />
+        <div className="absolute inset-0 rounded-full bg-cyan-400/15 blur-2xl animate-pulse pointer-events-none" />
       )}
 
       {/* Mecha Robot Head SVG Illustration */}
       <div className="relative z-10 w-36 h-36 sm:w-44 sm:h-44 lg:w-48 lg:h-48 flex items-center justify-center">
         <svg
-          className="w-full h-full drop-shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-transform duration-300 group-hover:scale-105"
+          className="w-full h-full drop-shadow-[0_0_20px_rgba(0,240,255,0.35)] transition-transform duration-500 group-hover:scale-105"
           viewBox="0 0 200 200"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
             <linearGradient id="helmetGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor={isLight ? '#ffffff' : '#080e1a'} />
-              <stop offset="100%" stopColor={isLight ? '#e0f2fe' : '#040810'} />
+              <stop offset="0%" stopColor={isLight ? '#ffffff' : '#0b1326'} />
+              <stop offset="50%" stopColor={isLight ? '#f0f9ff' : '#060c18'} />
+              <stop offset="100%" stopColor={isLight ? '#e0f2fe' : '#030712'} />
             </linearGradient>
+
+            <linearGradient id="armorAccentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor={isLight ? '#0284c7' : '#00f0ff'} />
+              <stop offset="50%" stopColor={isLight ? '#2563eb' : '#3b82f6'} />
+              <stop offset="100%" stopColor={isLight ? '#7c3aed' : '#a855f7'} />
+            </linearGradient>
+
             <linearGradient id="visorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor={isLight ? '#0284c7' : '#00f0ff'} />
               <stop offset="50%" stopColor={isLight ? '#38bdf8' : '#3b82f6'} />
-              <stop offset="100%" stopColor={isLight ? '#7c3aed' : '#a855f7'} />
+              <stop offset="100%" stopColor={isLight ? '#7c3aed' : '#c084fc'} />
             </linearGradient>
-            <filter id="cyanGlow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="3" result="blur" />
+
+            <filter id="cyanGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+
+            <filter id="purpleGlow" x="-30%" y="-30%" width="160%" height="160%">
+              <feGaussianBlur stdDeviation="4" result="blur" />
               <feComposite in="SourceGraphic" in2="blur" operator="over" />
             </filter>
           </defs>
 
-          {/* Outer Mecha Chassis & Antenna Horns */}
+          {/* Outer Mecha Antenna Horns & Side Winglets (Unified Chamfered Geometry) */}
           <path
-            d="M50 80 L30 50 L55 65 L70 45 L100 35 L130 45 L145 65 L170 50 L150 80 L165 120 L140 165 L100 180 L60 165 L35 120 Z"
+            d="M45 80 L25 45 L52 60 L70 38 L100 28 L130 38 L148 60 L175 45 L155 80 L165 120 L140 162 L100 178 L60 162 L35 120 Z"
             fill="url(#helmetGrad)"
             stroke={cyanCol}
-            strokeWidth="3"
+            strokeWidth="2.5"
             strokeLinejoin="round"
           />
 
-          {/* Side Armor Ears */}
-          <rect x="22" y="90" width="12" height="30" rx="3" fill={isLight ? '#0284c7' : '#00f0ff'} fillOpacity="0.8" />
-          <rect x="166" y="90" width="12" height="30" rx="3" fill={isLight ? '#0284c7' : '#00f0ff'} fillOpacity="0.8" />
-
-          {/* Forehead Core Gem Matrix */}
-          <polygon points="100,45 110,55 100,65 90,55" fill={isLight ? '#0284c7' : '#00f0ff'} filter="url(#cyanGlow)" className="animate-pulse" />
-
-          {/* Visor Screen Mask */}
+          {/* Inner Armor Panel Lines & Accent Contour */}
           <path
-            d="M45 82 C45 82, 100 70, 155 82 C160 115, 145 135, 100 140 C55 135, 40 115, 45 82 Z"
-            fill={isLight ? '#0f172a' : '#030712'}
+            d="M56 82 L70 48 L100 38 L130 48 L144 82 L152 118 L134 156 L100 168 L66 156 L48 118 Z"
+            fill="none"
+            stroke="url(#armorAccentGrad)"
+            strokeWidth="1.5"
+            strokeDasharray="4 2"
+            opacity="0.8"
+          />
+
+          {/* Side Armor Thruster Ears (Unified Polygon Chamfers matching Cheek Angles) */}
+          <g>
+            <polygon points="20,86 32,82 32,118 20,114" fill="url(#armorAccentGrad)" stroke={cyanCol} strokeWidth="1.5" strokeLinejoin="round" />
+            <line x1="23" y1="94" x2="29" y2="94" stroke="#ffffff" strokeWidth="1.5" opacity="0.85" />
+            <line x1="23" y1="100" x2="29" y2="100" stroke="#ffffff" strokeWidth="1.5" opacity="0.85" />
+            <line x1="23" y1="106" x2="29" y2="106" stroke="#ffffff" strokeWidth="1.5" opacity="0.85" />
+
+            <polygon points="180,86 168,82 168,118 180,114" fill="url(#armorAccentGrad)" stroke={cyanCol} strokeWidth="1.5" strokeLinejoin="round" />
+            <line x1="171" y1="94" x2="177" y2="94" stroke="#ffffff" strokeWidth="1.5" opacity="0.85" />
+            <line x1="171" y1="100" x2="177" y2="100" stroke="#ffffff" strokeWidth="1.5" opacity="0.85" />
+            <line x1="171" y1="106" x2="177" y2="106" stroke="#ffffff" strokeWidth="1.5" opacity="0.85" />
+          </g>
+
+          {/* Forehead Quantum Crystal Core Matrix */}
+          <polygon
+            points="100,36 112,48 100,60 88,48"
+            fill="url(#armorAccentGrad)"
+            filter="url(#cyanGlow)"
+            className="animate-pulse"
+          />
+          <polygon points="100,41 106,48 100,55 94,48" fill="#ffffff" opacity="0.95" />
+
+          {/* Visor Glass Screen Mask */}
+          <path
+            d="M44 80 C44 80, 100 68, 156 80 C162 114, 146 136, 100 142 C54 136, 38 114, 44 80 Z"
+            fill={isLight ? '#0b1326' : '#020610'}
             stroke={cyanCol}
             strokeWidth="2"
           />
 
-          {/* Scanning Visor Grid Lines */}
-          <line x1="50" y1="95" x2="150" y2="95" stroke={cyanCol} strokeWidth="0.5" strokeDasharray="3 3" opacity="0.4" />
-          <line x1="55" y1="110" x2="145" y2="110" stroke={cyanCol} strokeWidth="0.5" strokeDasharray="3 3" opacity="0.4" />
+          {/* HUD Visor Target Reticle Crosshair & Scanner Grid Lines */}
+          <line x1="100" y1="74" x2="100" y2="138" stroke={cyanCol} strokeWidth="0.5" strokeDasharray="4 4" opacity="0.35" />
+          <line x1="48" y1="98" x2="152" y2="98" stroke={cyanCol} strokeWidth="0.5" strokeDasharray="4 4" opacity="0.35" />
+          <circle cx="100" cy="98" r="40" stroke={cyanCol} strokeWidth="0.5" strokeDasharray="2 4" opacity="0.3" />
 
           {/* Interactive Mechanical Eye Left */}
-          <g transform="translate(72, 98)">
-            {/* Eye Outer Socket */}
-            <circle cx="0" cy="0" r="14" fill="#000" stroke={cyanCol} strokeWidth="1.5" />
-            <circle cx="0" cy="0" r="10" fill="url(#visorGrad)" opacity="0.3" />
+          <g transform="translate(70, 98)">
+            <circle cx="0" cy="0" r="14" fill="#000000" stroke={cyanCol} strokeWidth="1.5" />
+            <circle cx="0" cy="0" r="10" fill="url(#visorGrad)" opacity="0.4" />
+            <circle cx="0" cy="0" r="7.5" stroke="url(#armorAccentGrad)" strokeWidth="1" strokeDasharray="3 2" />
 
             {/* Eye Pupil (Tracks Mouse Movement & Blinks) */}
             <g transform={`translate(${eyeOffset.x}, ${eyeOffset.y}) scale(1, ${isBlinking ? 0.05 : 1})`}>
@@ -210,10 +261,10 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
           </g>
 
           {/* Interactive Mechanical Eye Right */}
-          <g transform="translate(128, 98)">
-            {/* Eye Outer Socket */}
-            <circle cx="0" cy="0" r="14" fill="#000" stroke={cyanCol} strokeWidth="1.5" />
-            <circle cx="0" cy="0" r="10" fill="url(#visorGrad)" opacity="0.3" />
+          <g transform="translate(130, 98)">
+            <circle cx="0" cy="0" r="14" fill="#000000" stroke={cyanCol} strokeWidth="1.5" />
+            <circle cx="0" cy="0" r="10" fill="url(#visorGrad)" opacity="0.4" />
+            <circle cx="0" cy="0" r="7.5" stroke="url(#armorAccentGrad)" strokeWidth="1" strokeDasharray="3 2" />
 
             {/* Eye Pupil (Tracks Mouse Movement & Blinks) */}
             <g transform={`translate(${eyeOffset.x}, ${eyeOffset.y}) scale(1, ${isBlinking ? 0.05 : 1})`}>
@@ -222,19 +273,20 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
             </g>
           </g>
 
-          {/* Mouth Speaker Grill / Respirator Vents */}
-          <path d="M85 148 L115 148" stroke={cyanCol} strokeWidth="2" strokeLinecap="round" />
-          <path d="M88 153 L112 153" stroke={cyanCol} strokeWidth="1.5" strokeLinecap="round" opacity="0.7" />
-          <path d="M92 158 L108 158" stroke={cyanCol} strokeWidth="1" strokeLinecap="round" opacity="0.5" />
+          {/* Mouth Respirator Vents & Laser Speaker Gills (Matching Ear Slits) */}
+          <path d="M84 146 L116 146" stroke={cyanCol} strokeWidth="2" strokeLinecap="round" />
+          <path d="M88 151 L112 151" stroke="url(#armorAccentGrad)" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M92 156 L108 156" stroke={cyanCol} strokeWidth="1" strokeLinecap="round" opacity="0.75" />
 
-          {/* Chin Armor Plate */}
-          <polygon points="100,165 115,158 100,175 85,158" fill={cyanCol} opacity="0.6" />
+          {/* Chin Armor Collar Plate (Unified Chamfer Polygon) */}
+          <polygon points="100,164 116,156 100,175 84,156" fill="url(#armorAccentGrad)" opacity="0.85" stroke={cyanCol} strokeWidth="1" />
         </svg>
 
         {/* Laser Scan Beam overlay when clicked */}
         {isScanning && (
-          <div className="absolute inset-0 pointer-events-none flex flex-col justify-between overflow-hidden rounded-full animate-pulse">
-            <div className="w-full h-1 bg-cyan-400 shadow-[0_0_15px_#00f0ff] animate-[bounce_1s_infinite]" />
+          <div className="absolute inset-0 pointer-events-none flex flex-col justify-between overflow-hidden rounded-full animate-pulse z-30">
+            <div className="w-full h-1.5 bg-cyan-400 shadow-[0_0_20px_#00f0ff] animate-[bounce_0.8s_infinite]" />
+            <div className="w-full h-1 bg-purple-400 shadow-[0_0_20px_#c084fc] animate-[bounce_1.2s_infinite_reverse]" />
           </div>
         )}
       </div>

@@ -122,9 +122,18 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </h1>
           </div>
 
-          {/* Subtitle Matrix — Clean Dynamic Gradient Typography */}
+          {/* Subtitle Matrix — Smooth Rightward Flowing Cyber Gradient Typography (Harmonized HUD Palette) */}
           <div className="max-w-full text-center flex items-center justify-center -mt-1 sm:-mt-2">
-            <p className="text-sm sm:text-xl lg:text-2xl font-bold font-tech tracking-wide bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent animate-shimmer-text uppercase select-text">
+            <p
+              className="text-sm sm:text-xl lg:text-2xl font-bold font-tech tracking-wider uppercase select-text animate-gradient-flow-right drop-shadow-xs"
+              style={{
+                backgroundImage: isLight
+                  ? 'linear-gradient(90deg, #0284c7 0%, #2563eb 33%, #7c3aed 66%, #0284c7 100%)'
+                  : 'linear-gradient(90deg, #00f0ff 0%, #38bdf8 33%, #c084fc 66%, #00f0ff 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+              }}
+            >
               {currentData.subtitle}
             </p>
           </div>

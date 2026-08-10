@@ -164,8 +164,8 @@ export const ArtGallery: React.FC = () => {
           </p>
         </div>
 
-        {/* Category Filter Bar — Flexible Wrap with Zero Text Truncation */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
+        {/* Category Filter Bar — Mobile 2-Column Equal-Width Grid / Desktop Flex Wrap */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -175,9 +175,9 @@ export const ArtGallery: React.FC = () => {
               }}
               role="tab"
               aria-selected={activeTab === tab.key}
-              className={`h-11 px-5 sm:px-6 border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap shrink-0 ${
+              className={`h-11 px-3 sm:px-6 w-full sm:w-auto border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap ${
                 activeTab === tab.key
-                  ? 'filter-btn-active scale-105 shadow-md'
+                  ? 'filter-btn-active scale-[1.02] sm:scale-105 shadow-md'
                   : 'filter-btn-inactive'
               }`}
             >

@@ -63,20 +63,21 @@ export const About: React.FC = () => {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-            {/* Portrait — Sleek, High-End Minimalist Cyber HUD Frame */}
+            {/* Portrait — High-End Cyber HUD Frame with Theme-Specific Lighting Calibration */}
             <div className="lg:col-span-5 flex justify-center">
               <div className="relative group w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 select-none">
                 <div
                   className="relative w-full h-full border cyber-cut-corner p-2 shadow-xl hud-corner-brackets flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:scale-[1.02]"
                   style={{
-                    backgroundColor: isLight ? '#f8fafc' : '#080e1a',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)',
+                    backgroundColor: isLight ? '#ffffff' : '#060c18',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.45)',
                     boxShadow: isLight
-                      ? '0 4px 20px rgba(0, 0, 0, 0.05), 0 0 12px rgba(2, 132, 199, 0.12)'
-                      : '0 8px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.18)',
+                      ? '0 10px 30px rgba(2, 132, 199, 0.15), 0 0 0 2px #ffffff'
+                      : '0 10px 35px rgba(0, 0, 0, 0.65), 0 0 25px rgba(0, 240, 255, 0.28)',
                   }}
                 >
                   <div className="relative w-full h-full overflow-hidden cyber-cut-sm">
+                    {/* Real Portrait Photo with Dedicated Light / Dark Filters */}
                     <img
                       src={getAssetUrl('/assets/images/personal.avif')}
                       alt="許哲誠 (Che-Cheng Hsu) Portrait"
@@ -84,11 +85,35 @@ export const About: React.FC = () => {
                       height="288"
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                      className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-105"
+                      style={{
+                        filter: isLight
+                          ? 'brightness(1.01) contrast(1.02) saturate(1.02)'
+                          : 'brightness(1.03) contrast(1.04) saturate(1.04)',
+                      }}
+                    />
+
+                    {/* Dedicated Cyber Rim Lighting & Inner Glow Overlay per Theme */}
+                    <div
+                      className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+                      style={{
+                        background: isLight
+                          ? 'radial-gradient(circle at center, transparent 65%, rgba(2, 132, 199, 0.08) 100%)'
+                          : 'radial-gradient(circle at center, transparent 60%, rgba(0, 240, 255, 0.16) 100%)',
+                        boxShadow: isLight
+                          ? 'inset 0 0 12px rgba(2, 132, 199, 0.12)'
+                          : 'inset 0 0 16px rgba(0, 240, 255, 0.22)',
+                      }}
                     />
 
                     {/* Subtle Cyber Scanline Overlay Texture */}
                     <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.12)_50%)] bg-[length:100%_4px] pointer-events-none opacity-20" />
+
+                    {/* Tactical Corner Accent Brackets per Theme */}
+                    <div className={`absolute top-1 left-1 w-2.5 h-2.5 border-t-2 border-l-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
+                    <div className={`absolute top-1 right-1 w-2.5 h-2.5 border-t-2 border-r-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
+                    <div className={`absolute bottom-1 left-1 w-2.5 h-2.5 border-b-2 border-l-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
+                    <div className={`absolute bottom-1 right-1 w-2.5 h-2.5 border-b-2 border-r-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
                   </div>
                 </div>
               </div>

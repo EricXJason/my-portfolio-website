@@ -407,14 +407,17 @@ body::-webkit-scrollbar-track {
   animation: logo-glow-pulse 3.2s ease-in-out infinite;
 }
 
-@keyframes shimmer-text {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+@keyframes gradient-flow-right {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: -200% 50%;
+  }
 }
-.animate-shimmer-text {
-  background-size: 200% auto !important;
-  animation: shimmer-text 4s linear infinite !important;
+.animate-gradient-flow-right {
+  background-size: 200% 100% !important;
+  animation: gradient-flow-right 8s linear infinite !important;
 }
 
 /* ════════════════════════════════════════════════════════════

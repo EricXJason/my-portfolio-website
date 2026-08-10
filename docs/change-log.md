@@ -136,6 +136,24 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-10T10:45:00+08:00 | [style] | Revert scrollbar track and tactical border laser line back to original native full-height layout | src/index.css, src/App.tsx, docs/change-log.md
 - 2026-08-10T10:46:00+08:00 | [style] | Update featured Art Gallery coverflow center image border to clean white (border-2 border-white shadow-lg) in Light mode | src/components/ArtGallery.tsx, docs/change-log.md
 - 2026-08-10T10:47:00+08:00 | [style] | Remove all section header category badge tags across About, Skills, Projects, Certifications, Education, and ArtGallery components | src/components/About.tsx, src/components/Skills.tsx, src/components/Projects.tsx, src/components/Certifications.tsx, src/components/Education.tsx, src/components/ArtGallery.tsx, docs/change-log.md
+- 2026-08-10T12:10:00+08:00 | [style] | Calibrate separate Light and Dark mode portrait lighting filters (brightness/contrast/saturate), rim glow overlays, and HUD corner brackets in About section | src/components/About.tsx, docs/change-log.md
+- 2026-08-10T12:12:00+08:00 | [style] | Set Hero subtitle gradient to smooth Cyber Cyan (#00f0ff/#0284c7) -> Electric Blue (#38bdf8/#2563eb) -> Violet Purple (#c084fc/#7c3aed) transition; soften portrait photo filter intensity and inner glow for natural lighting | src/components/Hero.tsx, src/components/About.tsx, docs/change-log.md
+- 2026-08-10T12:13:00+08:00 | [style] | Boost Hero subtitle text gradient contrast with high-saturation vivid transition: Electric Neon Cyan (#00f0ff/#0284c7) -> Bright Royal Blue (#3b82f6/#1d4ed8) -> Glowing Magenta Violet (#e081f9/#9333ea) | src/components/Hero.tsx, docs/change-log.md
+- 2026-08-10T12:14:00+08:00 | [style] | Fix Hero subtitle gradient direction statically from Left to Right: 100% Cyan on "互動應用開發" -> Royal Blue on "全端開發" -> Magenta Violet on "多媒體設計" with background-size: 100% 100% | src/components/Hero.tsx, docs/change-log.md
+- 2026-08-10T12:15:00+08:00 | [style] | Add smooth rightward-flowing Cyber gradient animation (.animate-gradient-flow-right, 6s linear infinite, 0% to -200%) to Hero subtitle for silky rightward wave motion | src/index.css, src/components/Hero.tsx, docs/change-log.md
+- 2026-08-10T12:17:00+08:00 | [style] | Align mobile category filter buttons in clean 2-column grid (grid grid-cols-2 sm:flex) with 100% equal width and col-span-2 odd-item alignment in Projects and ArtGallery components | src/components/Projects.tsx, src/components/ArtGallery.tsx, docs/change-log.md
+- 2026-08-10T12:19:00+08:00 | [feat] | Upgrade SciFiRobotAvatar with ornate Mecha AI design: multi-layer holographic data rings with cardinal ticks, orbiting quantum energy particle, 3D faceted crystal core, metallic armor contours, side thruster pods, and HUD crosshairs | src/components/SciFiRobotAvatar.tsx, docs/change-log.md
+- 2026-08-10T12:20:00+08:00 | [style] | Harmonize and unify SciFiRobotAvatar geometry, chamfered 45-degree polygon cuts, stroke weights, side thruster ears, respirator gills, and chin collar plate into a 100% cohesive Mecha Android visual design system | src/components/SciFiRobotAvatar.tsx, docs/change-log.md
+- 2026-08-10T12:22:00+08:00 | [style] | Harmonize Hero subtitle gradient color tokens with site-wide Cyberpunk HUD palette (#00f0ff/#0284c7 -> #38bdf8/#2563eb -> #c084fc/#7c3aed) and tune rightward flow speed to 8s linear infinite for elegant visual rhythm | src/index.css, src/components/Hero.tsx, docs/change-log.md
+
+
+
+
+
+
+
+
+
 
 
 
