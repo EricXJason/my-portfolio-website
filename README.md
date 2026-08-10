@@ -55,6 +55,7 @@ my-portfolio-website/
 │   │   ├── Experience.tsx
 │   │   ├── Footer.tsx
 │   │   ├── FullStackCodeStreamBackground.tsx
+│   │   ├── GlobalAmbientNeon.tsx
 │   │   ├── Hero.tsx
 │   │   ├── Navbar.tsx
 │   │   ├── Projects.tsx

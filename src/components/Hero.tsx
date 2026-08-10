@@ -85,21 +85,20 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       id="home"
       className="min-h-screen pt-24 pb-16 flex items-center justify-center relative overflow-hidden select-text"
     >
-      {/* Left Cyan Ambient Glow Orb */}
+      {/* Hero Focal Accent Glow - Left Cyan (Soft & Symmetrical) */}
       <div
-        className="absolute top-1/4 -left-32 w-80 h-80 sm:w-[500px] sm:h-[500px] rounded-full blur-[130px] pointer-events-none transition-opacity duration-1000 animate-pulse"
+        className="absolute top-1/3 -left-32 w-72 h-72 sm:w-[450px] sm:h-[450px] rounded-full blur-[140px] pointer-events-none transition-opacity duration-1000 animate-ambient-left opacity-60"
         style={{
-          backgroundColor: isLight ? 'rgba(56, 189, 248, 0.25)' : 'rgba(0, 240, 255, 0.2)',
+          backgroundColor: isLight ? 'rgba(56, 189, 248, 0.12)' : 'rgba(0, 240, 255, 0.09)',
         }}
         aria-hidden="true"
       />
 
-      {/* Right Purple Ambient Glow Orb */}
+      {/* Hero Focal Accent Glow - Right Purple (Soft & Symmetrical) */}
       <div
-        className="absolute bottom-1/4 -right-32 w-80 h-80 sm:w-[500px] sm:h-[500px] rounded-full blur-[130px] pointer-events-none transition-opacity duration-1000 animate-pulse"
+        className="absolute top-1/3 -right-32 w-72 h-72 sm:w-[450px] sm:h-[450px] rounded-full blur-[140px] pointer-events-none transition-opacity duration-1000 animate-ambient-right opacity-60"
         style={{
-          backgroundColor: isLight ? 'rgba(168, 85, 247, 0.25)' : 'rgba(168, 85, 247, 0.2)',
-          animationDelay: '1.5s',
+          backgroundColor: isLight ? 'rgba(192, 132, 252, 0.12)' : 'rgba(168, 85, 247, 0.09)',
         }}
         aria-hidden="true"
       />

@@ -9,6 +9,7 @@ import { SideNav } from './components/SideNav';
 import { ScrollProgress } from './components/ScrollProgress';
 import { CyberParticles } from './components/CyberParticles';
 import { FullStackCodeStreamBackground } from './components/FullStackCodeStreamBackground';
+import { GlobalAmbientNeon } from './components/GlobalAmbientNeon';
 import { LangSelectModal } from './components/LangSelectModal';
 import { SeoSchema } from './components/SeoSchema';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
@@ -62,6 +63,7 @@ function AppContent() {
       <LangSelectModal />
 
       <div className="fixed inset-0 pointer-events-none z-0">
+        <GlobalAmbientNeon />
         <div className="absolute inset-0 light-aurora-bg" />
         <div className="absolute inset-0 tactical-grid-bg opacity-40" />
         <div className="absolute inset-0 crt-scanlines opacity-25" />

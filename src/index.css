@@ -501,6 +501,47 @@ body::-webkit-scrollbar-track {
 }
 
 /* ════════════════════════════════════════════════════════════
+   GLOBAL SIDE AMBIENT NEON GLOW ANIMATIONS (SLOW DEEP BREATHING)
+   ════════════════════════════════════════════════════════════ */
+@keyframes ambient-slow-deep-breathe {
+  0%, 100% {
+    opacity: 0.50;
+    transform: scale(1) translateY(0px);
+  }
+  50% {
+    opacity: 0.22;
+    transform: scale(1.10) translateY(18px);
+  }
+}
+
+/* Symmetrical Dynamic Core Pulse */
+@keyframes ambient-core-pulse-subtle {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.22;
+    transform: scale(0.85);
+  }
+}
+
+.animate-ambient-left {
+  animation: ambient-slow-deep-breathe 11s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-ambient-right {
+  animation: ambient-slow-deep-breathe 11s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  will-change: transform, opacity;
+}
+
+.animate-ambient-core-pulse {
+  animation: ambient-core-pulse-subtle 8s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+  will-change: transform, opacity;
+}
+
+/* ════════════════════════════════════════════════════════════
    TACTICAL HUD SCANNER LINES & LASER BEAM ANIMATIONS
    ════════════════════════════════════════════════════════════ */
 @keyframes laser-sweep-top {
