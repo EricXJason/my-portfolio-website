@@ -385,19 +385,27 @@ body::-webkit-scrollbar-track {
    ════════════════════════════════════════════════════════════ */
 @keyframes code-stream-scroll {
   0% {
-    transform: translateY(0%);
+    transform: translate3d(0, 0%, 0);
   }
   100% {
-    transform: translateY(-50%);
+    transform: translate3d(0, -50%, 0);
   }
 }
 
 .animate-code-stream {
   animation: code-stream-scroll 36s linear infinite;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 
 .animate-code-stream-reverse {
   animation: code-stream-scroll 42s linear infinite reverse;
+  will-change: transform;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
 }
 @keyframes logo-glow-pulse {
   0%, 100% { opacity: 0.85; transform: scale(1.0); }

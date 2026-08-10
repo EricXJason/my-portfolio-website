@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
-export const FullStackCodeStreamBackground: React.FC = () => {
+export const FullStackCodeStreamBackground: React.FC = React.memo(() => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
@@ -301,4 +301,4 @@ export const FullStackCodeStreamBackground: React.FC = () => {
       </div>
     </div>
   );
-};
+});

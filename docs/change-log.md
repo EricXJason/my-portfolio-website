@@ -168,6 +168,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-11T00:48:00+08:00 | [style] | Redesign InitialPreloader brand logo to 100% match the site Navbar <JP/> tactical logo badge (<JP/> JasonProduction / 許哲誠 HSU, CHE-CHENG) | src/components/InitialPreloader.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-11T00:51:00+08:00 | [fix] | Eliminate CSS width transition lag in InitialPreloader progress fill bar to ensure 100% frame-perfect synchronization with percentage counter across all mobile and desktop viewports | src/components/InitialPreloader.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-11T02:05:00+08:00 | [feat] | Swap item display order of "AI 內容創作" and "影片剪輯與後製" in Multimedia Design skills category; add new "LINE Bot" category filter tab and empty state card in Projects section | src/data/skills-section.json, src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-11T02:11:00+08:00 | [perf] | Re-architect FullStackCodeStreamBackground with 3D GPU hardware acceleration (translate3d, will-change: transform) and wrap in React.memo for 100% butter-smooth, jitter-free background streaming on both sides | src/index.css, src/components/FullStackCodeStreamBackground.tsx, docs/check-list.md, docs/change-log.md
 
 
 
