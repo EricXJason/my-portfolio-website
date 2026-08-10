@@ -14,6 +14,8 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   base: "/my-portfolio-website/",
   build: {
+    cssMinify: true,
+    target: "es2020",
     cssCodeSplit: true,
     chunkSizeWarningLimit: 600,
     rollupOptions: {
@@ -23,10 +25,15 @@ export default defineConfig({
             if (id.includes("react") || id.includes("react-dom")) {
               return "vendor-react";
             }
+            if (id.includes("lucide-react")) {
+              return "vendor-lucide";
+            }
             return "vendor";
           }
         },
       },
     },
   },
+
+
 });

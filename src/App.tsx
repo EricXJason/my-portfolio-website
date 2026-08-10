@@ -3,10 +3,6 @@ import { LangProvider } from './context/LangContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
-import { About } from './components/About';
-import { Skills } from './components/Skills';
-import { Projects } from './components/Projects';
-import { Footer } from './components/Footer';
 import { CustomCursor } from './components/CustomCursor';
 import { BackToTop } from './components/BackToTop';
 import { SideNav } from './components/SideNav';
@@ -17,6 +13,10 @@ import { LangSelectModal } from './components/LangSelectModal';
 import { SeoSchema } from './components/SeoSchema';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
 
+const About = lazy(() => import('./components/About').then(m => ({ default: m.About })));
+const Skills = lazy(() => import('./components/Skills').then(m => ({ default: m.Skills })));
+const Projects = lazy(() => import('./components/Projects').then(m => ({ default: m.Projects })));
+const Footer = lazy(() => import('./components/Footer').then(m => ({ default: m.Footer })));
 const Certifications = lazy(() => import('./components/Certifications').then(m => ({ default: m.Certifications })));
 const Education = lazy(() => import('./components/Education').then(m => ({ default: m.Education })));
 const ArtGallery = lazy(() => import('./components/ArtGallery').then(m => ({ default: m.ArtGallery })));
@@ -61,7 +61,6 @@ function AppContent() {
 
       <LangSelectModal />
 
-
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 light-aurora-bg" />
         <div className="absolute inset-0 tactical-grid-bg opacity-40" />
@@ -95,17 +94,19 @@ function AppContent() {
 
       <main className="relative">
         <Hero soundPlaying={soundPlaying} />
-        <About />
-        <Skills />
-        <Projects onOpenYoutube={handleOpenYoutube} />
         <Suspense fallback={null}>
+          <About />
+          <Skills />
+          <Projects onOpenYoutube={handleOpenYoutube} />
           <Certifications />
           <Education />
           <ArtGallery />
         </Suspense>
       </main>
 
-      <Footer lastUpdated={currentLocalDate} />
+      <Suspense fallback={null}>
+        <Footer lastUpdated={currentLocalDate} />
+      </Suspense>
       <BackToTop />
 
       <Suspense fallback={null}>
@@ -119,6 +120,7 @@ function AppContent() {
     </div>
   );
 }
+
 
 export function App() {
   return (

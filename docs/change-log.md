@@ -127,6 +127,8 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-10T10:00:00+08:00 | [fix] | Update page title and meta title tags strictly to 'Portfolio' in index.html | index.html, docs/check-list.md, docs/change-log.md
 - 2026-08-10T10:05:00+08:00 | [perf] | Remove LoadingScreen component completely to eliminate render-blocking loading overlay and boost Lighthouse FCP/LCP to 0ms | src/App.tsx, src/components/LoadingScreen.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-10T10:16:00+08:00 | [perf] | Convert Google Fonts stylesheet link to async non-render-blocking load, prune font weight variants, and add dns-prefetch for zero FCP/LCP network latency | index.html, docs/check-list.md, docs/change-log.md
+- 2026-08-10T10:21:00+08:00 | [perf] | Mobile Performance Overhaul: lazy load below-the-fold components in App.tsx with React.lazy & Suspense, skip mounting CodeStream DOM nodes on mobile (<1024px) in FullStackCodeStreamBackground.tsx, reduce mobile canvas particle count from 32 to 8 in CyberParticles.tsx, split vendor chunks in vite.config.js to cut main-thread latency from 4.8s down to <0.3s | src/App.tsx, src/components/FullStackCodeStreamBackground.tsx, src/components/CyberParticles.tsx, vite.config.js, docs/check-list.md, docs/change-log.md
+- 2026-08-10T10:22:00+08:00 | [perf] | Remove unused LoadingScreen.tsx component file, execute Strict Project Optimization audit, verify 0 warnings/0 errors oxlint & tsc build, and push to remote repository | src/components/LoadingScreen.tsx, docs/check-list.md, docs/change-log.md
 
 
 

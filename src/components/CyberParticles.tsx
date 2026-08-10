@@ -53,7 +53,8 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
     const lightPalette = ['#0284c7', '#2563eb', '#059669', '#d97706', '#7c3aed'];
 
     const isMobile = window.innerWidth < 768;
-    const particleCount = isMobile ? 32 : 70;
+    const particleCount = isMobile ? 8 : 65;
+
 
     const particles: Particle[] = Array.from({ length: particleCount }, () => {
       const darkColor = darkPalette[Math.floor(Math.random() * darkPalette.length)];

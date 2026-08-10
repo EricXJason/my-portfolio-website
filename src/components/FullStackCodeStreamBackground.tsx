@@ -1,9 +1,20 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
 export const FullStackCodeStreamBackground: React.FC = () => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 1024);
+    };
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (!isDesktop) return null;
 
   return (
     <div
@@ -11,6 +22,7 @@ export const FullStackCodeStreamBackground: React.FC = () => {
       style={{ userSelect: 'none', WebkitUserSelect: 'none' }}
       aria-hidden="true"
     >
+
       {/* ── Left Side: Frontend React 19 + TypeScript + WebGL Streaming Column ── */}
       <div className="hidden lg:flex flex-col w-[310px] xl:w-[410px] 2xl:w-[480px] opacity-20 dark:opacity-25 light:opacity-20 pointer-events-none select-none animate-code-stream font-mono text-[11px] leading-relaxed">
         {/* Block 1 */}
