@@ -161,6 +161,8 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-11T00:10:00+08:00 | [style] | Re-architect Hero subtitle gradient keyframes with exact 200% background-position offset and matching 0% / 100% color stops (Cyan -> Sky Blue -> Violet -> Cyan) for a 100% seamless head-to-tail infinite loop | src/components/Hero.tsx, src/index.css, docs/check-list.md, docs/change-log.md
 - 2026-08-11T00:11:00+08:00 | [style] | Correct Hero subtitle gradient keyframe movement (0% to -200%) to ensure visual color wave streams naturally from left to right across text characters while maintaining 100% seamless head-to-tail infinite loop | src/index.css, docs/check-list.md, docs/change-log.md
 - 2026-08-11T00:27:00+08:00 | [style] | Unify all YouTube video buttons across cards and modal popups to "觀看展示影片" (EN: "WATCH VIDEO"); remove ExternalLink (↗) icons next to GitHub Profile and ArtStation Portfolio buttons in Hero section | src/components/Projects.tsx, src/components/Hero.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-11T00:31:00+08:00 | [style] | Revert Hero subtitle typography gradient (互動應用開發／全端開發／多媒體設計) to static 3-stop Cyber gradient (Cyan #00f0ff -> Sky Blue #38bdf8 -> Electric Violet #c084fc) for maximum sharpness, crystal-clear legibility, and zero motion noise | src/components/Hero.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-11T00:32:00+08:00 | [fix] | Default CustomCursor component to opacity-0 on initial render until first mousemove event captures true cursor coordinates, completely eliminating top-left corner (0,0) cursor ghosting on page load | src/components/CustomCursor.tsx, docs/check-list.md, docs/change-log.md
 
 
 

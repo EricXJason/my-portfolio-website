@@ -103,14 +103,14 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </h1>
           </div>
 
-          {/* Subtitle Matrix — 100% Perfect Seamless Loop Rightward Flowing Cyber Gradient Typography */}
+          {/* Subtitle Matrix — High-Contrast Precision 3-Stop Static Cyber Gradient Typography */}
           <div className="max-w-full text-center flex items-center justify-center -mt-1 sm:-mt-2">
             <p
-              className="text-sm sm:text-xl lg:text-2xl font-bold font-tech tracking-wider uppercase select-text animate-gradient-flow-right"
+              className="text-sm sm:text-xl lg:text-2xl font-bold font-tech tracking-wider uppercase select-text"
               style={{
                 backgroundImage: isLight
-                  ? 'linear-gradient(90deg, #0284c7 0%, #2563eb 33.33%, #7c3aed 66.66%, #0284c7 100%)'
-                  : 'linear-gradient(90deg, #00f0ff 0%, #38bdf8 33.33%, #c084fc 66.66%, #00f0ff 100%)',
+                  ? 'linear-gradient(90deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%)'
+                  : 'linear-gradient(90deg, #00f0ff 0%, #38bdf8 50%, #c084fc 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
                 filter: isLight

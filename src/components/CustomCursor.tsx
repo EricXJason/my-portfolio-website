@@ -7,9 +7,10 @@ export const CustomCursor: React.FC = () => {
 
   const pointerRef = useRef<HTMLDivElement | null>(null);
   const [enabled, setEnabled] = useState(false);
+  const [hasMoved, setHasMoved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
+  const [isHidden, setIsHidden] = useState(true);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches) {
@@ -60,6 +61,12 @@ export const CustomCursor: React.FC = () => {
     const handleMouseMove = (e: MouseEvent) => {
       const target = e.target as HTMLElement | null;
 
+      const x = e.clientX;
+      const y = e.clientY;
+
+      pointer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      setHasMoved(true);
+
       if (
         document.body.classList.contains('hide-custom-cursor') ||
         (target &&
@@ -73,11 +80,6 @@ export const CustomCursor: React.FC = () => {
       } else {
         setIsHidden(false);
       }
-
-      const x = e.clientX;
-      const y = e.clientY;
-
-      pointer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
 
       if (
         target &&
@@ -120,7 +122,7 @@ export const CustomCursor: React.FC = () => {
       ref={pointerRef}
       aria-hidden="true"
       className={`pointer-events-none fixed top-0 left-0 z-[999999] transition-opacity duration-150 ${
-        isHidden ? 'opacity-0' : 'opacity-100'
+        !hasMoved || isHidden ? 'opacity-0' : 'opacity-100'
       }`}
     >
       <div
