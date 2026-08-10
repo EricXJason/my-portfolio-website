@@ -85,24 +85,6 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       id="home"
       className="min-h-screen pt-24 pb-16 flex items-center justify-center relative overflow-hidden select-text"
     >
-      {/* Hero Focal Accent Glow - Left Cyan (Soft & Symmetrical) */}
-      <div
-        className="absolute top-1/3 -left-32 w-72 h-72 sm:w-[450px] sm:h-[450px] rounded-full blur-[140px] pointer-events-none transition-opacity duration-1000 animate-ambient-left opacity-60"
-        style={{
-          backgroundColor: isLight ? 'rgba(56, 189, 248, 0.12)' : 'rgba(0, 240, 255, 0.09)',
-        }}
-        aria-hidden="true"
-      />
-
-      {/* Hero Focal Accent Glow - Right Purple (Soft & Symmetrical) */}
-      <div
-        className="absolute top-1/3 -right-32 w-72 h-72 sm:w-[450px] sm:h-[450px] rounded-full blur-[140px] pointer-events-none transition-opacity duration-1000 animate-ambient-right opacity-60"
-        style={{
-          backgroundColor: isLight ? 'rgba(192, 132, 252, 0.12)' : 'rgba(168, 85, 247, 0.09)',
-        }}
-        aria-hidden="true"
-      />
-
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16 relative z-10 w-full select-text">
         <div className="flex flex-col items-center text-center gap-3 sm:gap-6 max-w-5xl mx-auto select-text">
 
@@ -121,16 +103,19 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </h1>
           </div>
 
-          {/* Subtitle Matrix — Smooth Rightward Flowing Cyber Gradient Typography (Harmonized HUD Palette) */}
+          {/* Subtitle Matrix — 100% Perfect Seamless Loop Rightward Flowing Cyber Gradient Typography */}
           <div className="max-w-full text-center flex items-center justify-center -mt-1 sm:-mt-2">
             <p
-              className="text-sm sm:text-xl lg:text-2xl font-bold font-tech tracking-wider uppercase select-text animate-gradient-flow-right drop-shadow-xs"
+              className="text-sm sm:text-xl lg:text-2xl font-bold font-tech tracking-wider uppercase select-text animate-gradient-flow-right"
               style={{
                 backgroundImage: isLight
-                  ? 'linear-gradient(90deg, #0284c7 0%, #2563eb 33%, #7c3aed 66%, #0284c7 100%)'
-                  : 'linear-gradient(90deg, #00f0ff 0%, #38bdf8 33%, #c084fc 66%, #00f0ff 100%)',
+                  ? 'linear-gradient(90deg, #0284c7 0%, #2563eb 33.33%, #7c3aed 66.66%, #0284c7 100%)'
+                  : 'linear-gradient(90deg, #00f0ff 0%, #38bdf8 33.33%, #c084fc 66.66%, #00f0ff 100%)',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
+                filter: isLight
+                  ? 'drop-shadow(0 1px 4px rgba(2, 132, 199, 0.15))'
+                  : 'drop-shadow(0 0 12px rgba(0, 240, 255, 0.35))',
               }}
             >
               {currentData.subtitle}
