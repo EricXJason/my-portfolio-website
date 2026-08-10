@@ -126,6 +126,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-10T09:59:00+08:00 | [feat] | Automatically hide BackToTop button with smooth transition when mobile navigation menu is expanded | src/components/Navbar.tsx, src/components/BackToTop.tsx, src/index.css, docs/check-list.md, docs/change-log.md
 - 2026-08-10T10:00:00+08:00 | [fix] | Update page title and meta title tags strictly to 'Portfolio' in index.html | index.html, docs/check-list.md, docs/change-log.md
 - 2026-08-10T10:05:00+08:00 | [perf] | Remove LoadingScreen component completely to eliminate render-blocking loading overlay and boost Lighthouse FCP/LCP to 0ms | src/App.tsx, src/components/LoadingScreen.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-10T10:16:00+08:00 | [perf] | Convert Google Fonts stylesheet link to async non-render-blocking load, prune font weight variants, and add dns-prefetch for zero FCP/LCP network latency | index.html, docs/check-list.md, docs/change-log.md
 
 
 
