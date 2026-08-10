@@ -166,6 +166,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-11T00:45:00+08:00 | [feat] | Implement smooth 3-step site onboarding sequence: 0% to 100% Tactical HUD preloader animation (InitialPreloader) -> Seamless transition to Language Select Modal (LangSelectModal) -> Smooth site reveal after language selection, completely eliminating initial content flashing | src/components/InitialPreloader.tsx, src/components/LangSelectModal.tsx, src/App.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-11T00:47:00+08:00 | [fix] | Streamline InitialPreloader to display Logo, progress bar, and percentage counter only; strictly lock document scrollbars until official site entry; relocate CustomCursor to top AppContent level with z-[9999999] for 100% reliable cursor visibility | src/components/InitialPreloader.tsx, src/components/CustomCursor.tsx, src/App.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-11T00:48:00+08:00 | [style] | Redesign InitialPreloader brand logo to 100% match the site Navbar <JP/> tactical logo badge (<JP/> JasonProduction / 許哲誠 HSU, CHE-CHENG) | src/components/InitialPreloader.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-11T00:51:00+08:00 | [fix] | Eliminate CSS width transition lag in InitialPreloader progress fill bar to ensure 100% frame-perfect synchronization with percentage counter across all mobile and desktop viewports | src/components/InitialPreloader.tsx, docs/check-list.md, docs/change-log.md
 
 
 

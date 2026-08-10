@@ -83,7 +83,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           </div>
         </div>
 
-        {/* Minimal Progress Track & Percentage Only */}
+        {/* Minimal Progress Track & Percentage Only (100% Synchronized Frame-Perfect) */}
         <div className="w-full flex flex-col items-center gap-2.5">
           {/* Progress Bar Container */}
           <div
@@ -93,11 +93,12 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
               borderColor: borderCol,
             }}
           >
-            {/* Fill Bar */}
+            {/* Fill Bar — Instant 100% Sync with Progress Percentage */}
             <div
-              className="h-full transition-all duration-75 ease-out rounded-none shadow-[0_0_12px_rgba(0,240,255,0.75)]"
+              className="h-full rounded-none shadow-[0_0_12px_rgba(0,240,255,0.75)]"
               style={{
                 width: `${progress}%`,
+                willChange: 'width',
                 background: isLight
                   ? 'linear-gradient(90deg, #0284c7 0%, #38bdf8 100%)'
                   : 'linear-gradient(90deg, #00f0ff 0%, #38bdf8 100%)',
