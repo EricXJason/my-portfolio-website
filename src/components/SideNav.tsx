@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
+import { useTheme } from '../context/ThemeContext';
 
 interface SectionItem {
   id: string;
@@ -18,6 +19,8 @@ const SECTIONS: SectionItem[] = [
 
 export const SideNav: React.FC = () => {
   const { t } = useLang();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
   const [activeSection, setActiveSection] = useState('home');
 
   useEffect(() => {
@@ -38,11 +41,9 @@ export const SideNav: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     window.addEventListener('resize', handleScroll, { passive: true });
-    window.addEventListener('orientationchange', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
       window.removeEventListener('resize', handleScroll);
-      window.removeEventListener('orientationchange', handleScroll);
     };
   }, []);
 
@@ -58,16 +59,16 @@ export const SideNav: React.FC = () => {
         behavior: 'smooth',
       });
     }
-    if (window.history.pushState) {
-      window.history.pushState(null, '', `#${id}`);
-    }
   };
+
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
 
   return (
     <div
-      className="fixed right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-center gap-4 select-none"
+      className="fixed right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-end gap-3 select-none"
       role="navigation"
-      aria-label="Section Position Indicator"
+      aria-label="快速導覽 Quick Nav"
     >
       {SECTIONS.map((section) => {
         const isActive = activeSection === section.id;
@@ -77,20 +78,35 @@ export const SideNav: React.FC = () => {
             href={`#${section.id}`}
             onClick={(e) => handleNavClick(e, section.id)}
             aria-label={t(section.labelKey)}
-            className="group relative flex items-center justify-center p-2.5 min-w-[44px] min-h-[44px] cursor-pointer"
+            className="group relative flex items-center justify-end gap-2.5 cursor-pointer py-1"
           >
-            {/* Tooltip Label on Hover */}
-            <span className="absolute right-7 px-2.5 py-1 rounded-md bg-slate-900 light:bg-white text-cyan-400 light:text-sky-700 font-code text-xs font-extrabold border border-slate-700 light:border-slate-300 opacity-0 group-hover:opacity-100 pointer-events-none transition-all duration-200 whitespace-nowrap shadow-lg">
+            {/* Tooltip Label */}
+            <span
+              className={`px-3 py-1 border cyber-cut-sm font-tech text-xs font-bold uppercase transition-all duration-200 shadow-md ${
+                isActive
+                  ? 'opacity-100 shadow-sm'
+                  : 'opacity-0 group-hover:opacity-100'
+              }`}
+              style={{
+                backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                borderColor: isActive ? cyanCol : borderCol,
+                color: isActive ? cyanCol : isLight ? '#334155' : '#cbd5e1',
+              }}
+            >
               {t(section.labelKey)}
             </span>
 
-            {/* Dot Indicator */}
+            {/* Tactical Marker Dot */}
             <div
-              className={`transition-all duration-300 rounded-full ${
+              className={`transition-all duration-300 ${
                 isActive
-                  ? 'w-3.5 h-3.5 bg-cyan-400 light:bg-sky-600 shadow-lg shadow-cyan-400/50 light:shadow-sky-500/50 scale-125'
-                  : 'w-2 h-2 bg-slate-600 light:bg-slate-300 hover:bg-cyan-300 light:hover:bg-sky-400 hover:scale-110'
+                  ? 'w-3 h-3 rotate-45 border shadow-md'
+                  : 'w-2 h-2 rotate-45 rounded-none hover:scale-125'
               }`}
+              style={{
+                backgroundColor: isActive ? cyanCol : isLight ? '#cbd5e1' : '#475569',
+                borderColor: isActive ? cyanCol : 'transparent',
+              }}
             />
           </a>
         );
@@ -98,3 +114,5 @@ export const SideNav: React.FC = () => {
     </div>
   );
 };
+
+export default SideNav;

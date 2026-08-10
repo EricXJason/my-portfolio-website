@@ -1,59 +1,71 @@
 @import "tailwindcss";
 
-/* ════════════════════════════════════════════════════════════
-   TAILWIND v4 — Custom class-based theme variants
-   Registers `.light` and `.dark` class selectors as variants
-   so that `light:bg-white` and `dark:bg-slate-900` work in JSX
-   ════════════════════════════════════════════════════════════ */
 @custom-variant dark (&:where(.dark, .dark *));
 @custom-variant light (&:where(.light, .light *));
 
 /* ════════════════════════════════════════════════════════════
-   DESIGN TOKENS — CSS Custom Properties
-   
-   Light Mode Philosophy:
-   ─ Background: warm off-white (#f8f9fc) not pure white, avoids harshness
-   ─ Cards: pure white with subtle shadow, defined boundaries
-   ─ Text primary: near-black #0d1117 (GitHub style), highest contrast
-   ─ Text secondary: #4b5563 neutral-gray, readable but visually receded
-   ─ Borders: #e5e7eb (Tailwind gray-200), clean hairline definition
-   ─ Accent: sky-600 #0284c7 for interactive affordance
-   ─ Icon bg: very light tint of the icon color (5-10% opacity)
-   ─ Skill rows: #f3f4f6 (Tailwind gray-100) for subtle alternation
+   DESIGN TOKENS — Sci-Fi Cyberpunk & Independent Light Mode
    ════════════════════════════════════════════════════════════ */
 :root {
-  /* ── Dark mode tokens ── */
-  --bg:           #07090e;
-  --bg-dark:      #07090e;
-  --header-bg:    rgba(7, 9, 14, 0.90);
-  --text-main:    #f0f6fc;
-  --text-sub:     #8b949e;
-  --card-bg:      rgba(13, 17, 23, 0.70);
-  --border-color: rgba(255, 255, 255, 0.08);
+  /* ── Dark Mode (Deep Void Abyss & Neon Accents) ── */
+  --bg:           #030712;
+  --bg-dark:      #030712;
+  --header-bg:    rgba(3, 7, 18, 0.94);
+  --text-main:    #f8fafc;      /* High contrast AAA white */
+  --text-sub:     #cbd5e1;      /* Slate-300 readable secondary */
+  --card-bg:      rgba(8, 14, 26, 0.96);
+  --card-inner:   rgba(3, 7, 18, 0.90);
+  --border-color: rgba(0, 240, 255, 0.22);
 
-  /* Utility token vars */
-  --cat-icon-bg:      rgba(13, 17, 23, 0.80);
-  --cat-icon-border:  rgba(255, 255, 255, 0.10);
+  /* Cyber Neon Accents */
+  --neon-cyan:    #00f0ff;
+  --neon-pink:    #ff0055;
+  --neon-amber:   #f59e0b;
+  --neon-green:   #10b981;
+  --neon-purple:  #a855f7;
+
+  --cat-icon-bg:      rgba(0, 240, 255, 0.10);
+  --cat-icon-border:  rgba(0, 240, 255, 0.30);
 }
 
 :root.light {
-  /* ── Light mode tokens (Independent Luminous Theme) ── */
-  --bg:           #f8fafc;      /* warm luminous slate-50 base */
+  /* ── Light Mode (100% Independent High-Tech Operations Lab) ── */
+  --bg:           #f8fafc;      /* Slate-50 base */
   --bg-dark:      #f8fafc;
-  --header-bg:    rgba(255, 255, 255, 0.94);
-  --text-main:    #0f172a;      /* slate-900 for ultra-high contrast AAA legibility */
-  --text-sub:     #475569;      /* slate-600 secondary text */
+  --header-bg:    rgba(255, 255, 255, 0.96);
+  --text-main:    #0f172a;      /* Slate-900 AAA contrast */
+  --text-sub:     #334155;      /* Slate-700 readable secondary */
   --card-bg:      #ffffff;
-  --border-color: #e2e8f0;      /* slate-200 hairline border */
+  --card-inner:   #f1f5f9;      /* Slate-100 */
+  --border-color: #cbd5e1;      /* Slate-300 hairline border */
 
-  /* Category icon tokens */
-  --cat-icon-bg:      #f0f9ff;  /* sky-50 for category icons */
-  --cat-icon-border:  #bae6fd;  /* sky-200 */
+  /* Luminous Light Accents */
+  --neon-cyan:    #0284c7;      /* Sky-600 */
+  --neon-pink:    #e11d48;      /* Rose-600 */
+  --neon-amber:   #d97706;      /* Amber-600 */
+  --neon-green:   #059669;      /* Emerald-600 */
+  --neon-purple:  #7c3aed;      /* Violet-600 */
+
+  --cat-icon-bg:      #e0f2fe;
+  --cat-icon-border:  #38bdf8;
 }
 
 /* ════════════════════════════════════════════════════════════
-   GLOBAL BODY & HTML OVERFLOW SAFETY & SMOOTH SCROLL
+   GLOBAL FONTS & BASE BEHAVIOR
    ════════════════════════════════════════════════════════════ */
+.font-hud {
+  font-family: 'Orbitron', 'Chakra Petch', 'Noto Sans TC', sans-serif !important;
+}
+.font-tech {
+  font-family: 'Chakra Petch', 'Rajdhani', 'Noto Sans TC', sans-serif !important;
+}
+.font-body {
+  font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, sans-serif !important;
+}
+.font-mono-data {
+  font-family: 'Share Tech Mono', 'Fira Code', monospace !important;
+}
+
 html {
   scroll-behavior: smooth !important;
   width: 100%;
@@ -65,15 +77,24 @@ html, body {
   width: 100%;
   max-width: 100vw;
   overflow-x: hidden;
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+
+/* Enable text selection & copy everywhere */
+html, body, #root, main, section, article, div, p, span, h1, h2, h3, h4, h5, h6, li, td, th, label, strong, em, b, i, code, pre {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
 }
 
 [id] {
   scroll-margin-top: 116px;
 }
 
-/* ════════════════════════════════════════════════════════════
-   CUSTOM CURSOR — Hide native cursor on fine-pointer desktop devices
-   ════════════════════════════════════════════════════════════ */
 @media (pointer: fine) {
   *, *::before, *::after, html, body, a, button, input,
   select, textarea, [role="button"] {
@@ -82,253 +103,310 @@ html, body {
 }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans TC', sans-serif;
+  font-family: 'Inter', 'Noto Sans TC', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 16px;
-  line-height: 1.75;
-  letter-spacing: -0.01em;
+  line-height: 1.8;
+  letter-spacing: 0.012em;
   background-color: var(--bg-dark);
   color: var(--text-main);
   scroll-behavior: smooth !important;
   transition: background-color 0.3s ease, color 0.3s ease;
   user-select: text !important;
   -webkit-user-select: text !important;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 /* ════════════════════════════════════════════════════════════
-   LAYOUT — container side padding & breathing room
+   AAA SCI-FI TACTICAL HUD CHASSIS & FRAME SYSTEM
+   (Complete Redesign: 100% Continuous Native Borders & HUD Reticles)
    ════════════════════════════════════════════════════════════ */
-.max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
-  padding-left: 1.5rem !important;
-  padding-right: 1.5rem !important;
+
+/* Standard Sleek 1px Border Badges & Tag Chips (Zero Missing Border Lines) */
+.cyber-cut-sm, .tech-tag {
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0px !important;
+  clip-path: none !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.25s ease;
 }
-@media (min-width: 640px) {
-  .max-w-7xl, .max-w-6xl, .max-w-5xl, .max-w-4xl, .max-w-3xl {
-    padding-left: 2.25rem !important;
-    padding-right: 2.25rem !important;
-  }
+
+.cyber-cut-sm:hover:not(:has(a:hover, button:hover, [role="button"]:hover)),
+.tech-tag:hover:not(:has(a:hover, button:hover, [role="button"]:hover)) {
+  border-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
+}
+
+/* Strict Right-Angle Corner Chassis (Zero Chamfer / 100% Rectangular 90° Corners) */
+.cyber-cut-corner {
+  position: relative;
+  border-style: solid;
+  border-width: 1px;
+  clip-path: none !important;
+  border-radius: 0px !important;
 }
 
 /* ════════════════════════════════════════════════════════════
-   HEADINGS — follow --text-main token & tight tracking
+   TACTICAL CYBER CARD CHASSIS — 4-Corner Reticle Brackets
    ════════════════════════════════════════════════════════════ */
-h1, h2, h3, h4, h5, h6 {
-  color: var(--text-main) !important;
-  letter-spacing: -0.02em;
-  transition: color 0.3s ease;
+.glass-card, .cyber-card {
+  position: relative;
+  background-color: var(--card-bg);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0px !important;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.35s ease,
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Top-Left Corner HUD Targeting Bracket */
+.glass-card::before, .cyber-card::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: -1px;
+  width: 14px;
+  height: 14px;
+  border-top: 2px solid var(--neon-cyan);
+  border-left: 2px solid var(--neon-cyan);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+/* Bottom-Right Corner HUD Targeting Bracket */
+.glass-card::after, .cyber-card::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  right: -1px;
+  width: 14px;
+  height: 14px;
+  border-bottom: 2px solid var(--neon-cyan);
+  border-right: 2px solid var(--neon-cyan);
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.85;
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)),
+.cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)) {
+  border-color: var(--neon-cyan) !important;
+  box-shadow: 0 0 15px rgba(0, 240, 255, 0.16), 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::before,
+.cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::before {
+  opacity: 1;
+}
+
+.glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::after,
+.cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::after {
+  opacity: 1;
+}
+
+/* ── Light Mode Independent Styling ── */
+:root.light .glass-card, :root.light .cyber-card {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
+}
+
+:root.light .glass-card::before, :root.light .cyber-card::before {
+  border-color: #0284c7 !important;
+}
+
+:root.light .glass-card::after, :root.light .cyber-card::after {
+  border-color: #0284c7 !important;
+}
+
+:root.light .glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)),
+:root.light .cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)) {
+  border-color: #0284c7 !important;
+  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.14) !important;
 }
 
 /* ════════════════════════════════════════════════════════════
-   LIGHT MODE BACKGROUND AURORA MESH
+   HUD CORNER BRACKETS
    ════════════════════════════════════════════════════════════ */
-:root.light .light-aurora-bg {
-  opacity: 1 !important;
-  background-color: #f8fafc;
-  background-image:
-    radial-gradient(ellipse at 10% 10%, rgba(186,230,255,0.55) 0%, transparent 45%),
-    radial-gradient(ellipse at 90% 15%, rgba(199,210,254,0.40) 0%, transparent 45%),
-    radial-gradient(ellipse at 50% 85%, rgba(167,243,208,0.30) 0%, transparent 55%),
-    radial-gradient(#cbd5e1 1px, transparent 1px);
-  background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
+.hud-corner-brackets {
+  position: relative;
+}
+.hud-corner-brackets::before,
+.hud-corner-brackets::after {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-color: var(--hud-bracket-color, var(--neon-cyan));
+  pointer-events: none;
+  z-index: 10;
+}
+.hud-corner-brackets::before {
+  top: -2px;
+  left: -2px;
+  border-top: 2px solid var(--hud-bracket-color, var(--neon-cyan));
+  border-left: 2px solid var(--hud-bracket-color, var(--neon-cyan));
+}
+.hud-corner-brackets::after {
+  bottom: -2px;
+  right: -2px;
+  border-bottom: 2px solid var(--hud-bracket-color, var(--neon-cyan));
+  border-right: 2px solid var(--hud-bracket-color, var(--neon-cyan));
 }
 
 /* ════════════════════════════════════════════════════════════
-   GLASS CARD — World-class elevation & breathing borders
+   FILTER BUTTONS — Refined Subtle Hover & Active Styling
    ════════════════════════════════════════════════════════════ */
-.glass-card {
-  background: var(--card-bg);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid var(--border-color);
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
-}
-
-.glass-card:hover {
-  border-color: rgba(6, 182, 212, 0.35);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 30px -10px rgba(6, 182, 212, 0.15);
-}
-
-:root.light .glass-card {
-  background: #ffffff !important;
-  border-color: #e2e8f0 !important;
-  box-shadow:
-    0 2px 4px rgba(15, 23, 42, 0.02),
-    0 10px 24px -4px rgba(15, 23, 42, 0.05),
-    0 0 1px rgba(15, 23, 42, 0.1) !important;
-}
-
-:root.light .glass-card:hover {
-  border-color: #7dd3fc !important;
-  box-shadow:
-    0 14px 36px -6px rgba(2, 132, 199, 0.15),
-    0 4px 12px rgba(15, 23, 42, 0.03) !important;
-}
-
-/* ════════════════════════════════════════════════════════════
-   CSS UTILITY CLASSES using var() tokens
-   ════════════════════════════════════════════════════════════ */
-.cat-icon-bg {
-  background-color: var(--cat-icon-bg) !important;
-  border-color: var(--cat-icon-border) !important;
-}
-
-/* ════════════════════════════════════════════════════════════
-   FILTER BUTTONS (Projects & Gallery) — Independent Light/Dark
-   ════════════════════════════════════════════════════════════ */
-/* Dark mode base */
 .filter-btn-active {
-  background-color: rgba(2, 132, 199, 0.15);
-  color: #38bdf8;
-  border-color: #0284c7;
+  background: rgba(0, 240, 255, 0.15);
+  color: #00f0ff;
+  border: 1px solid #00f0ff;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.22);
 }
 .filter-btn-inactive {
-  background-color: rgba(15, 23, 42, 0.50);
-  color: var(--text-sub);
-  border-color: rgba(255,255,255,0.08);
+  background-color: rgba(8, 14, 26, 0.80);
+  border: 1px solid rgba(255,255,255,0.1);
 }
 .filter-btn-inactive:hover {
-  background-color: rgba(15, 23, 42, 0.80);
-  color: #f0f6fc;
-  border-color: rgba(56, 189, 248, 0.35);
+  background-color: #00f0ff !important;
+  color: #030712 !important;
+  border-color: #00f0ff !important;
+  box-shadow: 0 0 18px rgba(0, 240, 255, 0.45) !important;
 }
 
-/* Light mode — Completely independent vibrant cyan-blue active & crisp white inactive */
 :root.light .filter-btn-active {
-  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%) !important;
+  background: #0369a1 !important;
   color: #ffffff !important;
-  border-color: transparent !important;
-  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.32) !important;
+  border-color: #0369a1 !important;
+  box-shadow: 0 4px 14px rgba(3, 105, 161, 0.35) !important;
 }
 :root.light .filter-btn-inactive {
   background-color: #ffffff !important;
-  color: #334155 !important;             /* slate-700 */
-  border-color: #cbd5e1 !important;      /* slate-300 */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
 }
 :root.light .filter-btn-inactive:hover {
-  background-color: #f0f9ff !important;  /* sky-50 */
-  color: #0284c7 !important;             /* sky-600 */
-  border-color: #7dd3fc !important;      /* sky-300 */
+  background-color: #0369a1 !important;
+  color: #ffffff !important;
+  border-color: #0369a1 !important;
+  box-shadow: 0 4px 14px rgba(3, 105, 161, 0.35) !important;
 }
 
 /* ════════════════════════════════════════════════════════════
-   TECH TAGS (Unified Low-Saturation Palette)
+   TECH TAGS — Hierarchy Palette
    ════════════════════════════════════════════════════════════ */
 .tech-tag {
-  background-color: rgba(15, 23, 42, 0.75) !important;
-  border-color: rgba(255, 255, 255, 0.10) !important;
-  color: #cbd5e1 !important;
-  font-weight: 600 !important;
+  background-color: rgba(3, 10, 24, 0.85) !important;
+  border: 1px solid rgba(0, 240, 255, 0.25) !important;
+  color: #a5f3fc !important;
+  font-family: 'Share Tech Mono', monospace !important;
+  font-size: 0.75rem !important;
   transition: all 0.2s ease !important;
 }
 .tech-tag:hover {
-  border-color: rgba(56, 189, 248, 0.45) !important;
-  color: #38bdf8 !important;
+  border-color: #00f0ff !important;
+  color: #ffffff !important;
 }
 :root.light .tech-tag {
-  background-color: #f1f5f9 !important;  /* slate-100 neutral */
-  border-color: #cbd5e1 !important;      /* slate-300 hairline */
-  color: #334155 !important;             /* slate-700 readable */
-  font-weight: 600 !important;
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
 }
 :root.light .tech-tag:hover {
-  background-color: #e2e8f0 !important;  /* slate-200 hover */
-  border-color: #94a3b8 !important;      /* slate-400 */
-  color: #0284c7 !important;             /* sky-600 */
+  background-color: #e0f2fe !important;
+  border-color: #0284c7 !important;
+  color: #0284c7 !important;
 }
 
 /* ════════════════════════════════════════════════════════════
-   DARK TAILWIND UTILITIES → LIGHT EQUIVALENTS
-   Override Tailwind slate-700/800/900/950 classes in light mode
-   to prevent dark backgrounds from bleeding through
+   SCROLLBAR
    ════════════════════════════════════════════════════════════ */
-:root.light .border-slate-800,
-:root.light .border-slate-700,
-:root.light .border-slate-800\/80 {
-  border-color: #e5e7eb !important;      /* gray-200 */
-}
-:root.light .bg-slate-900\/60,
-:root.light .bg-slate-900\/80 {
-  background-color: rgba(249,250,251,0.9) !important;  /* gray-50 */
+::-webkit-scrollbar {
+  width: 6px;
 }
 
-/* ════════════════════════════════════════════════════════════
-   SCROLLBAR — Independent High-End Dark & Light Mode Scrollbars
-   ════════════════════════════════════════════════════════════ */
-::-webkit-scrollbar { width: 12px; }
+/* Default Container / Modal Scrollbar Track (Starts at very top) */
 ::-webkit-scrollbar-track {
-  background: #07090e;
+  background: rgba(8, 14, 26, 0.4);
+  margin-top: 0px;
+}
+
+/* Main Page Window Scrollbar Track (Starts below 80px Navbar) */
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: rgba(8, 14, 26, 0.4);
   margin-top: 80px;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #06b6d4 0%, #a855f7 100%);
-  border-radius: 9999px;
-  border: 2px solid #07090e;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #38ef7d 0%, #06b6d4 100%);
+  background: #00f0ff;
+  border-radius: 0px;
+  box-shadow: 0 0 6px rgba(0, 240, 255, 0.6);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Light mode scrollbar — High-End Sky/Royal Blue Gradient */
+::-webkit-scrollbar-thumb:hover {
+  background: #38bdf8;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.9);
+}
+
 :root.light ::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: rgba(241, 245, 249, 0.6);
+  margin-top: 0px;
+}
+
+:root.light html::-webkit-scrollbar-track,
+:root.light body::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.6);
   margin-top: 80px;
 }
+
 :root.light ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #0284c7 0%, #2563eb 100%);
-  border-radius: 9999px;
-  border: 2.5px solid #f1f5f9;
+  background: #0284c7;
+  border-radius: 0px;
+  box-shadow: 0 0 6px rgba(2, 132, 199, 0.4);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
+
 :root.light ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #1d4ed8 0%, #6366f1 100%);
-}
-
-@media (max-width: 1024px) {
-  ::-webkit-scrollbar { width: 10px; }
-}
-@media (max-width: 639px) {
-  ::-webkit-scrollbar { display: none !important; width: 0 !important; }
+  background: #0369a1;
+  box-shadow: 0 0 10px rgba(2, 132, 199, 0.7);
 }
 
 /* ════════════════════════════════════════════════════════════
-   FOCUS RING
+   DYNAMIC STREAMING CODE ANIMATION (IDE BACKGROUND)
    ════════════════════════════════════════════════════════════ */
-a:focus-visible, button:focus-visible, input:focus-visible {
-  outline: 2px solid #0284c7 !important;
-  outline-offset: 2px !important;
+@keyframes code-stream-scroll {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
 }
 
-/* ════════════════════════════════════════════════════════════
-   KEYFRAME ANIMATIONS
-   ════════════════════════════════════════════════════════════ */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+.animate-code-stream {
+  animation: code-stream-scroll 36s linear infinite;
 }
 
+.animate-code-stream-reverse {
+  animation: code-stream-scroll 42s linear infinite reverse;
+}
 @keyframes logo-glow-pulse {
-  0%, 100% {
-    opacity: 0.8;
-    transform: scale(1.0);
-  }
-  50% {
-    opacity: 1.0;
-    transform: scale(1.04);
-  }
+  0%, 100% { opacity: 0.85; transform: scale(1.0); }
+  50% { opacity: 1.0; transform: scale(1.04); }
 }
 .animate-logo-glow {
   animation: logo-glow-pulse 3.2s ease-in-out infinite;
 }
 
-@keyframes audio-ring-pulse {
-  0%, 100% { transform: scale(1.0); opacity: 0.25; }
-  50%       { transform: scale(1.08); opacity: 0.65; }
-}
-.animate-audio-ring {
-  animation: audio-ring-pulse 2.2s ease-in-out infinite;
-}
-
-/* Shimmering Metallic / Neon Text Gradient */
 @keyframes shimmer-text {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
@@ -336,16 +414,397 @@ a:focus-visible, button:focus-visible, input:focus-visible {
 }
 .animate-shimmer-text {
   background-size: 200% auto !important;
-  animation: shimmer-text 5s ease infinite !important;
+  animation: shimmer-text 4s linear infinite !important;
 }
 
-/* Futuristic Cyber Laser Scanline Beam */
-@keyframes cyber-scan {
-  0%   { transform: translateY(-100px); opacity: 0; }
-  15%  { opacity: 0.8; }
-  85%  { opacity: 0.8; }
-  100% { transform: translateY(105vh); opacity: 0; }
+/* ════════════════════════════════════════════════════════════
+   MAIN VISUAL HARMONIZED GRADIENT TEXT SYSTEM
+   ════════════════════════════════════════════════════════════ */
+.cyber-gradient-text {
+  background: linear-gradient(135deg, #00f0ff 0%, #38bdf8 50%, #a855f7 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
 }
-.animate-cyber-scan {
-  animation: cyber-scan 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+:root.light .cyber-gradient-text {
+  background: linear-gradient(135deg, #0284c7 0%, #2563eb 50%, #7c3aed 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
 }
+
+/* ════════════════════════════════════════════════════════════
+   RETRO ARCADE GAMING AESTHETICS & CRT SCANLINE EFFECTS
+   ════════════════════════════════════════════════════════════ */
+.crt-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%,
+    rgba(0, 0, 0, 0.22) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+}
+
+@keyframes arcade-pulse {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 6px var(--neon-cyan)); }
+  50% { opacity: 0.6; filter: drop-shadow(0 0 15px var(--neon-cyan)); }
+}
+
+.animate-arcade-pulse {
+  animation: arcade-pulse 1.8s ease-in-out infinite;
+}
+
+.arcade-badge {
+  font-family: 'Orbitron', 'Chakra Petch', sans-serif;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  position: relative;
+}
+
+.arcade-badge::before {
+  content: '▶ ';
+  color: var(--neon-cyan);
+  font-size: 0.8em;
+}
+
+/* ════════════════════════════════════════════════════════════
+   DYNAMIC BREATHING MOTION SYSTEM
+   ════════════════════════════════════════════════════════════ */
+@keyframes cyber-breathe-cyan {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.15), inset 0 0 8px rgba(0, 240, 255, 0.05);
+    border-color: rgba(0, 240, 255, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(0, 240, 255, 0.38), inset 0 0 18px rgba(0, 240, 255, 0.15);
+    border-color: rgba(0, 240, 255, 0.65);
+  }
+}
+
+.animate-breathe-cyan {
+  animation: cyber-breathe-cyan 3.5s ease-in-out infinite;
+}
+
+@keyframes cyber-breathe-purple {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.15);
+    border-color: rgba(168, 85, 247, 0.25);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(168, 85, 247, 0.38);
+    border-color: rgba(168, 85, 247, 0.65);
+  }
+}
+
+.animate-breathe-purple {
+  animation: cyber-breathe-purple 4s ease-in-out infinite;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TACTICAL HUD SCANNER LINES & LASER BEAM ANIMATIONS
+   ════════════════════════════════════════════════════════════ */
+@keyframes laser-sweep-top {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0.2;
+  }
+}
+
+.animate-laser-top {
+  animation: laser-sweep-top 4.5s linear infinite;
+}
+
+@keyframes laser-sweep-vertical {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(100%);
+    opacity: 0.2;
+  }
+}
+
+.animate-laser-vert {
+  animation: laser-sweep-vertical 6s ease-in-out infinite;
+}
+
+/* Tactical Scanner Hairline Beam (Strictly Tuned for Key Visual Harmony) */
+.tactical-scanline-laser {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 240, 255, 0.15) 20%,
+    var(--neon-cyan) 50%,
+    rgba(0, 240, 255, 0.15) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px var(--neon-cyan), 0 0 2px var(--neon-cyan);
+  opacity: 0.65;
+}
+
+:root.light .tactical-scanline-laser {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(2, 132, 199, 0.1) 20%,
+    #0284c7 50%,
+    rgba(2, 132, 199, 0.1) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 4px rgba(2, 132, 199, 0.4);
+  opacity: 0.4;
+}
+
+/* Localized Component Laser Scanner (Bounded inside thumbnail/card containers) */
+@keyframes card-laser-sweep {
+  0% {
+    top: -5%;
+    opacity: 0.2;
+  }
+  50% {
+    opacity: 0.95;
+  }
+  100% {
+    top: 105%;
+    opacity: 0.2;
+  }
+}
+
+.card-scanline-laser {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.5px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--neon-cyan) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px var(--neon-cyan);
+  animation: card-laser-sweep 4.5s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+@keyframes hacker-scanline-primary {
+  0% {
+    top: -5%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  28% {
+    opacity: 0.4;
+    transform: scaleY(1);
+  }
+  30% {
+    opacity: 0.95;
+    transform: scaleY(1.6);
+  }
+  32% {
+    opacity: 0.3;
+    transform: scaleY(1);
+  }
+  65% {
+    opacity: 0.8;
+  }
+  88% {
+    opacity: 0.9;
+  }
+  100% {
+    top: 105%;
+    opacity: 0;
+  }
+}
+
+@keyframes hacker-glitch-pulse {
+  0%, 100% {
+    opacity: 0;
+    transform: translateY(0) scaleX(0.8);
+  }
+  12% {
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.9;
+    transform: translateY(22vh) scaleX(1);
+  }
+  16% {
+    opacity: 0;
+  }
+  45% {
+    opacity: 0;
+  }
+  47% {
+    opacity: 0.85;
+    transform: translateY(68vh) scaleX(1.1);
+  }
+  49% {
+    opacity: 0;
+  }
+  78% {
+    opacity: 0;
+  }
+  80% {
+    opacity: 0.95;
+    transform: translateY(41vh) scaleX(0.9);
+  }
+  82% {
+    opacity: 0;
+  }
+}
+
+.animate-hacker-scanline-1 {
+  animation: hacker-scanline-primary 7.5s cubic-bezier(0.25, 1, 0.5, 1) infinite;
+}
+
+.animate-hacker-scanline-2 {
+  animation: hacker-scanline-primary 11.2s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+  animation-delay: 3.6s;
+}
+
+.animate-hacker-glitch {
+  animation: hacker-glitch-pulse 5.8s ease-in-out infinite;
+}
+
+@keyframes cyber-scan-v {
+  0% {
+    left: -2%;
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    left: 102%;
+    opacity: 0.1;
+  }
+}
+.animate-cyber-scan-v {
+  animation: cyber-scan-v 14s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TACTICAL HUD GRID OVERLAY & CORNER RETICLES
+   ════════════════════════════════════════════════════════════ */
+.tactical-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(0, 240, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 240, 255, 0.04) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+:root.light .tactical-grid-bg {
+  background-image: 
+    linear-gradient(to right, rgba(2, 132, 199, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(2, 132, 199, 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.cyber-cut-bento {
+  clip-path: none !important;
+  border-radius: 0px !important;
+}
+
+.cyber-cut-hero-bento {
+  clip-path: none !important;
+  border-radius: 0px !important;
+}
+
+/* ════════════════════════════════════════════════════════════
+   CONSOLE METRICS & HIGH-CONTRAST TELEMETRY CHIPS
+   ════════════════════════════════════════════════════════════ */
+.hud-metric-chip {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  padding: 0.2rem 0.6rem;
+  border-radius: 0px !important;
+  background: rgba(3, 10, 24, 0.85);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  color: #a5f3fc;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  box-shadow: inset 0 0 6px rgba(0, 240, 255, 0.1);
+}
+
+:root.light .hud-metric-chip {
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #0f172a;
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.05);
+}
+
+.hud-console-card {
+  background: rgba(4, 9, 20, 0.92);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  box-shadow: inset 0 0 15px rgba(0, 240, 255, 0.05);
+  position: relative;
+}
+
+:root.light .hud-console-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+}
+
+.hud-reticle-tl {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--neon-cyan);
+  border-left: 2px solid var(--neon-cyan);
+  pointer-events: none;
+}
+.hud-reticle-tr {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 10px;
+  height: 10px;
+  border-top: 2px solid var(--neon-cyan);
+  border-right: 2px solid var(--neon-cyan);
+  pointer-events: none;
+}
+.hud-reticle-bl {
+  position: absolute;
+  bottom: 4px;
+  left: 4px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid var(--neon-cyan);
+  border-left: 2px solid var(--neon-cyan);
+  pointer-events: none;
+}
+.hud-reticle-br {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 10px;
+  height: 10px;
+  border-bottom: 2px solid var(--neon-cyan);
+  border-right: 2px solid var(--neon-cyan);
+  pointer-events: none;
+}
+
+
+

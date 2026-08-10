@@ -24,5 +24,6 @@ dist-ssr
 *.sw?
 
 # Dynamic Documentation & Checklist Git Isolation
-docs/
+docs/check-list.md
+docs/check-lists/
 

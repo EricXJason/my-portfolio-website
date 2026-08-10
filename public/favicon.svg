@@ -1,35 +1,34 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <defs>
-    <linearGradient id="fav-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#00f2fe" />
-      <stop offset="50%" stop-color="#0077ff" />
-      <stop offset="100%" stop-color="#a855f7" />
-    </linearGradient>
-    <linearGradient id="fav-glow" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#38ef7d" />
-      <stop offset="100%" stop-color="#00f2fe" />
-    </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="12" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-  </defs>
+  <!-- Background -->
+  <rect width="512" height="512" fill="#070b15" rx="32" />
+  
+  <!-- Cyber Bevel Cut Frame -->
+  <path 
+    d="M 64,48 L 400,48 L 464,112 L 464,464 L 112,464 L 48,400 L 48,64 Z" 
+    fill="none" 
+    stroke="#00f0ff" 
+    stroke-width="12" 
+    stroke-linejoin="miter" 
+  />
+  
+  <!-- Subtle Outer Frame Glow -->
+  <path 
+    d="M 64,48 L 400,48 L 464,112 L 464,464 L 112,464 L 48,400 L 48,64 Z" 
+    fill="none" 
+    stroke="#00f0ff" 
+    stroke-width="4" 
+    opacity="0.5" 
+  />
 
-  <!-- Outer Rounded Square Background -->
-  <rect x="24" y="24" width="464" height="464" rx="112" fill="#07090e" stroke="url(#fav-gradient)" stroke-width="16" />
-
-  <!-- Inner Tech Ring -->
-  <rect x="48" y="48" width="416" height="416" rx="88" fill="none" stroke="url(#fav-gradient)" stroke-width="4" stroke-dasharray="24 16" opacity="0.4" />
-
-  <!-- Futuristic Geometric Symbol (Hexagonal Prism Core + Interlocking Diamond Polygon) -->
-  <g filter="url(#glow)">
-    <!-- Central Prism Diamond -->
-    <polygon points="256,96 384,176 384,336 256,416 128,336 128,176" fill="none" stroke="url(#fav-gradient)" stroke-width="28" stroke-linejoin="round" />
-    <!-- Inner Converging Chevron Facets -->
-    <polygon points="256,152 336,204 336,308 256,360 176,308 176,204" fill="url(#fav-gradient)" opacity="0.25" />
-    <!-- Core Bright Cyber Core -->
-    <polygon points="256,180 310,218 310,294 256,332 202,294 202,218" fill="none" stroke="url(#fav-glow)" stroke-width="18" stroke-linejoin="round" />
-    <!-- Center Radiant Node -->
-    <circle cx="256" cy="256" r="28" fill="url(#fav-glow)" />
-  </g>
+  <!-- Center <JP/> Tech Tag Symbol -->
+  <text 
+    x="256" 
+    y="300" 
+    font-family="Chakra Petch, Orbitron, Rajdhani, Share Tech Mono, system-ui, sans-serif" 
+    font-weight="900" 
+    font-size="160" 
+    fill="#00f0ff" 
+    text-anchor="middle" 
+    letter-spacing="-2"
+  >&lt;JP/&gt;</text>
 </svg>

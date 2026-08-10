@@ -26,14 +26,15 @@
     "about_p1": "許哲誠，24歲，畢業於國立臺灣藝術大學新媒體藝術碩士班。主修 VR/AR 互動應用開發、全端網頁架構與多媒體美學設計。具備創新思維、跨領域溝通協調與專案企劃能力，擅長自我管理，對新技術與挑戰充滿熱忱。",
     "stat_exp": "臺藝大碩士",
     "stat_exp_label": "新媒體藝術碩士畢業",
-    "stat_projects": "7 核心專案",
-    "stat_projects_label": "包含全國競賽第一名與國科會計畫案",
+    "stat_projects": "多種核心專案",
+    "stat_projects_label": "涵蓋多項不同類型專案與榮譽獎項",
     "stat_toeic": "TOEIC 755",
     "stat_toeic_label": "英文多益檢定成績",
     "btn_toeic_proof": "多益成績證明",
 
     "skills_title": "專業技能",
     "skills_intro": "涵蓋互動應用開發、全端架構與多媒體美學設計，展現跨領域全方位開發實力。",
+    "skills_subtitle": "涵蓋互動應用開發、全端架構與多媒體美學設計，展現跨領域全方位開發實力。",
 
     "projects_title": "專案作品",
     "projects_note": "所有專案均包含真實展示畫面與相關連結，可點擊查看影片展示、線上網站或 GitHub 專頁。",
@@ -122,6 +123,7 @@
 
     "skills_title": "Skills",
     "skills_intro": "Covering interactive application dev, fullstack architecture, and multimedia design aesthetics.",
+    "skills_subtitle": "Covering interactive application dev, fullstack architecture, and multimedia design aesthetics.",
 
     "projects_title": "Projects",
     "projects_note": "All projects feature authentic previews and interactive links to explore video demos, live sites, or GitHub repositories.",

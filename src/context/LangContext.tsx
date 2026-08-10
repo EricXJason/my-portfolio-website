@@ -1,3 +1,4 @@
+/* oxlint-disable react/only-export-components */
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import i18n from '../data/site-translations.json';
 

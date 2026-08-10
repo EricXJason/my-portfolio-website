@@ -1,31 +1,42 @@
 import React, { useState, useEffect } from 'react';
 
+const BOOT_LOGS_ZH = [
+  '正在初始化系統核心協定...',
+  '正在載入個人經歷與專案資料...',
+  '正在配置高解析視覺與畫廊陣列...',
+  '正在校準互動介面與全息圖層...',
+  '載入完成，即將進入網站...',
+];
+
 export const LoadingScreen: React.FC = () => {
   const [progress, setProgress] = useState(0);
   const [isDone, setIsDone] = useState(false);
   const [isFadingOut, setIsFadingOut] = useState(false);
+  const [logIndex, setLogIndex] = useState(0);
 
   useEffect(() => {
-    // Increment progress dynamically
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        // Random increment for realistic loading feel
-        const diff = Math.floor(Math.random() * 15) + 5;
-        return Math.min(100, prev + diff);
+        const diff = Math.floor(Math.random() * 18) + 8;
+        const next = Math.min(100, prev + diff);
+        const logStep = Math.floor((next / 100) * (BOOT_LOGS_ZH.length - 1));
+        setLogIndex(logStep);
+        return next;
       });
-    }, 120);
+    }, 100);
 
-    // Track window load state
     const handleLoad = () => {
       setProgress(100);
+      setLogIndex(BOOT_LOGS_ZH.length - 1);
     };
 
     if (document.readyState === 'complete') {
       setProgress(100);
+      setLogIndex(BOOT_LOGS_ZH.length - 1);
     } else {
       window.addEventListener('load', handleLoad);
     }
@@ -50,37 +61,46 @@ export const LoadingScreen: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#030712] select-none transition-opacity duration-400 ease-out"
+      className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#030712] select-none transition-opacity duration-400 ease-out p-4"
       style={{ opacity: isFadingOut ? 0 : 1, pointerEvents: isFadingOut ? 'none' : 'auto' }}
       aria-hidden="true"
     >
-      {/* Outer Cyber Rings */}
-      <div className="relative w-36 h-36 sm:w-44 sm:h-44 flex items-center justify-center mb-6">
-        <div className="absolute inset-0 rounded-full border-2 border-transparent border-t-cyan-400 border-r-cyan-500 animate-spin" style={{ animationDuration: '1.4s' }} />
-        <div className="absolute inset-2 rounded-full border-2 border-transparent border-b-purple-500 border-l-pink-500 animate-spin" style={{ animationDuration: '2.2s', animationDirection: 'reverse' }} />
-        <div className="absolute inset-5 rounded-full bg-gradient-to-tr from-cyan-500/20 via-purple-600/20 to-pink-500/20 blur-md animate-pulse" />
-
-        {/* Center Animated Logo Icon */}
-        <div className="relative z-10 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-2xl animate-pulse">
-          <div className="w-full h-full rounded-[14px] bg-[#030712] flex items-center justify-center font-mono font-extrabold text-cyan-400 text-lg sm:text-xl tracking-wider">
+      <div className="relative p-8 border border-cyan-500/30 bg-[#080e1a]/95 backdrop-blur-xl max-w-md w-full cyber-cut-corner hud-corner-brackets shadow-2xl flex flex-col items-center text-center">
+        {/* Outer Rotating Sci-Fi Rings */}
+        <div className="relative w-28 h-28 flex items-center justify-center mb-6">
+          <div className="absolute inset-0 rounded-none border-2 border-transparent border-t-cyan-400 border-r-pink-500 animate-spin" style={{ animationDuration: '1.2s' }} />
+          <div className="absolute inset-2 rounded-none border border-dashed border-cyan-500/40 animate-spin" style={{ animationDuration: '3s', animationDirection: 'reverse' }} />
+          
+          <div className="relative z-10 font-hud font-black text-cyan-400 text-xl tracking-widest">
             &lt;JP/&gt;
           </div>
         </div>
-      </div>
 
-      {/* Numerical Percentage Display — NO TEXT (Numbers & % ONLY) */}
-      <div className="flex items-baseline gap-1 font-mono font-extrabold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400">
-        <span className="text-4xl sm:text-5xl">{progress}</span>
-        <span className="text-2xl sm:text-3xl">%</span>
-      </div>
+        {/* Title */}
+        <div className="font-tech font-bold text-xs uppercase tracking-widest text-cyan-400/90 mb-1">
+          許哲誠 個人官方網站
+        </div>
 
-      {/* Bottom Sleek Progress Bar */}
-      <div className="w-48 sm:w-64 h-1.5 bg-slate-900 rounded-full overflow-hidden mt-6 border border-slate-800/80 shadow-inner">
-        <div
-          className="h-full bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 transition-all duration-200 ease-out rounded-full shadow-[0_0_12px_rgba(6,182,212,0.8)]"
-          style={{ width: `${progress}%` }}
-        />
+        {/* Status stream */}
+        <div className="font-tech text-xs text-slate-300 h-6 truncate mb-4 w-full">
+          {BOOT_LOGS_ZH[logIndex]}
+        </div>
+
+        {/* Percentage Display */}
+        <div className="font-hud font-black text-4xl text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-pink-500 to-amber-400 tracking-tighter mb-4">
+          {progress}<span className="text-xl">%</span>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="w-full h-2 bg-slate-900 border border-cyan-500/30 p-[1px] relative overflow-hidden">
+          <div
+            className="h-full bg-gradient-to-r from-cyan-400 via-pink-500 to-amber-400 transition-all duration-150 ease-out shadow-sm"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
       </div>
     </div>
   );
 };
+
+export default LoadingScreen;

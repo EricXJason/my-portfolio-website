@@ -1,3 +1,4 @@
+/* oxlint-disable react/only-export-components */
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 export type ThemeMode = 'dark' | 'light';

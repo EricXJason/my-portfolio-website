@@ -24,14 +24,12 @@ export const CustomCursor: React.FC = () => {
       setIsHidden(document.body.classList.contains('hide-custom-cursor'));
     };
 
-    // Initial check
     checkClass();
 
     const observer = new MutationObserver(checkClass);
     observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
 
     const handleMouseLeave = (e: MouseEvent) => {
-      // Hide custom cursor when mouse leaves window or enters iframe
       if (!e.relatedTarget || (e.relatedTarget as HTMLElement).tagName === 'IFRAME') {
         setIsHidden(true);
       }
@@ -59,24 +57,28 @@ export const CustomCursor: React.FC = () => {
     const pointer = pointerRef.current;
     if (!pointer) return;
 
-    let mouseX = -100;
-    let mouseY = -100;
-
     const handleMouseMove = (e: MouseEvent) => {
-      if (document.body.classList.contains('hide-custom-cursor')) {
+      const target = e.target as HTMLElement | null;
+
+      if (
+        document.body.classList.contains('hide-custom-cursor') ||
+        (target &&
+          (target.tagName === 'IFRAME' ||
+            target.closest('iframe') ||
+            target.closest('.iframe-container') ||
+            target.closest('.modal-iframe-area')))
+      ) {
         setIsHidden(true);
         return;
       } else {
         setIsHidden(false);
       }
 
-      mouseX = e.clientX;
-      mouseY = e.clientY;
-      
-      const scale = isMouseDown ? 0.88 : isHovered ? 1.18 : 1.0;
-      pointer.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0) scale(${scale})`;
+      const x = e.clientX;
+      const y = e.clientY;
 
-      const target = e.target as HTMLElement | null;
+      pointer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+
       if (
         target &&
         (target.tagName === 'BUTTON' ||
@@ -105,35 +107,43 @@ export const CustomCursor: React.FC = () => {
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [enabled, isHovered, isMouseDown]);
+  }, [enabled]);
 
   if (!enabled) return null;
+
+  const cyanColor = isLight ? '#0284c7' : '#00f0ff';
+  // On hover over clickable elements, fill the cursor interior with full cyan blue (no red)
+  const currentFill = isHovered ? cyanColor : (isLight ? '#ffffff' : '#070d19');
 
   return (
     <div
       ref={pointerRef}
       aria-hidden="true"
-      className={`pointer-events-none fixed top-0 left-0 z-[9999] transition-opacity duration-200 ease-out ${
+      className={`pointer-events-none fixed top-0 left-0 z-[999999] transition-opacity duration-150 ${
         isHidden ? 'opacity-0' : 'opacity-100'
       }`}
-      style={{
-        filter: isLight
-          ? 'drop-shadow(0 2px 6px rgba(15, 23, 42, 0.35)) drop-shadow(0 0 2px rgba(255, 255, 255, 0.95))'
-          : 'drop-shadow(0 0 8px rgba(6, 182, 212, 0.95)) drop-shadow(0 0 2px rgba(0, 0, 0, 0.9))',
-      }}
     >
-      <svg
-        className="w-6 h-6"
-        viewBox="0 0 24 24"
+      <div
+        className={`relative flex items-center justify-center transition-transform duration-150 ${
+          isMouseDown ? 'scale-90' : isHovered ? 'scale-110' : 'scale-100'
+        }`}
       >
-        <path
-          d="M3 3l7 18 3-7 7-3L3 3z"
-          fill={isLight ? '#000000' : 'rgba(6, 182, 212, 0.45)'}
-          stroke={isLight ? '#000000' : '#22d3ee'}
-          strokeWidth={isLight ? '2.2' : '2'}
-          strokeLinejoin="round"
-        />
-      </svg>
+        {/* Standard Arrow Pointer with Cyan Laser Glow & Blue Fill on Hover */}
+        <svg
+          className="w-6 h-6 filter drop-shadow-[0_0_8px_rgba(0,240,255,0.75)] transition-colors duration-150"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M3 3l7 18 3-7 7-3L3 3z"
+            fill={currentFill}
+            stroke={cyanColor}
+            strokeWidth="2.2"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </div>
     </div>
   );
 };
+
+export default CustomCursor;

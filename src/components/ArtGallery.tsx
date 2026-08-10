@@ -3,18 +3,19 @@ import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import {
   X,
-  ShieldAlert,
   Layers,
   Box,
   Component,
   PenTool,
   Paintbrush,
-  ChevronDown,
-  ChevronUp,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
   Download,
   Star,
+  Camera,
+  Palette
 } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 import artGalleryDataJson from '../data/gallery-section.json';
@@ -37,16 +38,21 @@ export const ArtGallery: React.FC = () => {
   const [activeImage, setActiveImage] = useState<Artwork | null>(null);
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // Roulette State
   const [rouletteIndex, setRouletteIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
 
-  // Touch Swipe Gesture State
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
   const minSwipeDistance = 40;
 
-  // Featured artworks restricted strictly to 3D Scene and 3D Prop categories
+  // Featured artworks strictly for 3D Scene and 3D Prop categories
   const displayFeatured = artGalleryData.filter(
     (item) => item.cat === '3d-scene' || item.cat === '3d-prop'
   );
@@ -63,19 +69,24 @@ export const ArtGallery: React.FC = () => {
 
   const currentList = activeTab === 'featured' ? displayFeatured : filteredArt;
 
-  const handlePrevImage = (e?: React.MouseEvent) => {
+  const handlePrevImage = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (currentList.length === 0) return;
     const prevIdx = (activeIndex - 1 + currentList.length) % currentList.length;
     setActiveImage(currentList[prevIdx]);
-  };
+  }, [activeIndex, currentList]);
 
-  const handleNextImage = (e?: React.MouseEvent) => {
+  const handleNextImage = useCallback((e?: React.MouseEvent) => {
     if (e) e.stopPropagation();
     if (currentList.length === 0) return;
     const nextIdx = (activeIndex + 1) % currentList.length;
     setActiveImage(currentList[nextIdx]);
-  };
+  }, [activeIndex, currentList]);
+
+  const handleCloseModal = useCallback(() => {
+    document.body.classList.remove('hide-custom-cursor');
+    setActiveImage(null);
+  }, []);
 
   const handleRouletteTouchStart = (e: React.TouchEvent) => {
     setIsAutoPlay(false);
@@ -100,33 +111,6 @@ export const ArtGallery: React.FC = () => {
     setIsAutoPlay(true);
   };
 
-  const handleModalTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.targetTouches[0].clientX);
-    setTouchEndX(null);
-  };
-
-  const handleModalTouchMove = (e: React.TouchEvent) => {
-    setTouchEndX(e.targetTouches[0].clientX);
-  };
-
-  const handleModalTouchEnd = () => {
-    if (touchStartX === null || touchEndX === null) return;
-    const distance = touchStartX - touchEndX;
-    if (distance > minSwipeDistance) {
-      handleNextImage();
-    } else if (distance < -minSwipeDistance) {
-      handlePrevImage();
-    }
-    setTouchStartX(null);
-    setTouchEndX(null);
-  };
-
-  const handleCloseModal = useCallback(() => {
-    document.body.classList.remove('hide-custom-cursor');
-    setActiveImage(null);
-  }, []);
-
-  // Roulette auto-rotation effect
   useEffect(() => {
     if (activeTab !== 'featured' || !isAutoPlay || activeImage) return;
     const interval = setInterval(() => {
@@ -139,13 +123,9 @@ export const ArtGallery: React.FC = () => {
     if (!activeImage) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
-        if (currentList.length === 0) return;
-        const prevIdx = (activeIndex - 1 + currentList.length) % currentList.length;
-        setActiveImage(currentList[prevIdx]);
+        handlePrevImage();
       } else if (e.key === 'ArrowRight') {
-        if (currentList.length === 0) return;
-        const nextIdx = (activeIndex + 1) % currentList.length;
-        setActiveImage(currentList[nextIdx]);
+        handleNextImage();
       } else if (e.key === 'Escape' || e.code === 'Escape') {
         handleCloseModal();
       }
@@ -155,35 +135,49 @@ export const ArtGallery: React.FC = () => {
       window.removeEventListener('keydown', handleKeyDown, true);
       document.body.classList.remove('hide-custom-cursor');
     };
-  }, [activeImage, activeIndex, currentList, handleCloseModal]);
+  }, [activeImage, handlePrevImage, handleNextImage, handleCloseModal]);
 
-  // Tab buttons configuration matching Projects component styling
   const tabs = [
-    { key: 'featured', label: lang === 'zh' ? '精選作品' : 'Featured Works', icon: <Star size={16} className="text-amber-400 fill-amber-400" /> },
-    { key: 'all', label: lang === 'zh' ? '全部作品' : 'All Works', icon: <Layers size={16} /> },
-    { key: '3d-scene', label: lang === 'zh' ? '3D 場景' : '3D Environments', icon: <Box size={16} /> },
-    { key: '3d-prop', label: lang === 'zh' ? '3D 物件' : '3D Assets & Props', icon: <Component size={16} /> },
-    { key: 'sketch', label: lang === 'zh' ? '2D 素描' : '2D Sketches', icon: <PenTool size={16} /> },
-    { key: 'marker', label: lang === 'zh' ? '2D 麥克筆' : '2D Marker Art', icon: <Paintbrush size={16} /> },
+    { key: 'featured', label: lang === 'zh' ? '精選作品' : 'Featured Works', icon: <Star size={14} className="text-amber-400 fill-amber-400" /> },
+    { key: 'all', label: lang === 'zh' ? '全部作品' : 'All Works', icon: <Layers size={14} /> },
+    { key: '3d-scene', label: lang === 'zh' ? '3D 場景' : '3D Environments', icon: <Box size={14} /> },
+    { key: '3d-prop', label: lang === 'zh' ? '3D 物件' : '3D Assets & Props', icon: <Component size={14} /> },
+    { key: 'sketch', label: lang === 'zh' ? '2D 素描' : '2D Sketches', icon: <PenTool size={14} /> },
+    { key: 'marker', label: lang === 'zh' ? '2D 麥克筆' : '2D Marker Art', icon: <Paintbrush size={14} /> },
   ];
 
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+
   return (
-    <section id="gallery" className="py-16 sm:py-24 relative select-text">
-      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="gallery" className="py-20 relative select-text">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-12 space-y-2">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[var(--text-main)]">
-            {t('gallery_title')}
+        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+          <div
+            className="inline-flex items-center gap-2 font-tech text-xs font-bold uppercase tracking-wider px-3.5 py-1 border cyber-cut-sm shadow-sm"
+            style={{
+              backgroundColor: isLight ? '#ffffff' : '#080e1a',
+              borderColor: borderCol,
+              color: cyanCol,
+            }}
+          >
+            <Camera size={14} />
+            <span>{lang === 'zh' ? '美術畫廊與 3D 視覺展覽' : 'ART & 3D GALLERY'}</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+            <Palette size={32} className="text-cyan-400 shrink-0" />
+            <span>{t('gallery_title')}</span>
           </h2>
-          <p className="text-sm sm:text-base text-[var(--text-sub)] font-normal leading-relaxed">
+          <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
             {t('gallery_note')}
           </p>
-          <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-blue-500 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Category Tabs — 2-Column Equal Grid on Mobile, Compact Flex on PC */}
-        <div className="grid grid-cols-2 max-w-[360px] xs:max-w-[400px] sm:max-w-none sm:flex sm:flex-wrap items-center justify-center gap-2 sm:gap-2.5 md:gap-3 mb-10 sm:mb-12 mx-auto px-2 sm:px-4 py-1" role="tablist">
+        {/* Category Filter Bar — Flexible Wrap with Zero Text Truncation */}
+        <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -193,31 +187,48 @@ export const ArtGallery: React.FC = () => {
               }}
               role="tab"
               aria-selected={activeTab === tab.key}
-              className={`h-10 sm:h-12 px-3 sm:px-5 rounded-xl text-xs sm:text-sm font-code font-bold transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm border-2 w-full sm:w-auto min-w-0 sm:min-w-[135px] ${
+              className={`h-11 px-5 sm:px-6 border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap shrink-0 ${
                 activeTab === tab.key
-                  ? 'filter-btn-active scale-105'
+                  ? 'filter-btn-active scale-105 shadow-md'
                   : 'filter-btn-inactive'
               }`}
             >
-              {tab.icon}
-              <span className="whitespace-nowrap">{tab.label}</span>
+              <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+                {tab.icon}
+                <span className="whitespace-nowrap">{tab.label}</span>
+              </div>
             </button>
           ))}
         </div>
 
-        {/* FEATURED ROULETTE CAROUSEL VIEW */}
+        {/* FEATURED 3D COVER-FLOW CAROUSEL (SQUARE SCI-FI TACTICAL FRAME & BUTTONS) */}
         {activeTab === 'featured' ? (
-          <div className="relative w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto flex flex-col items-center py-4 sm:py-6">
+          <div className="relative w-full max-w-6xl mx-auto flex flex-col items-center py-6 select-none">
 
-            {/* 3D Roulette Stage (With Native Touch Swipe Support) */}
+            {/* Carousel Outer Track Window */}
             <div
-              className="relative w-full h-[280px] sm:h-[380px] md:h-[420px] flex items-center justify-center perspective-1000 overflow-hidden touch-pan-y"
+              className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] flex items-center justify-center overflow-hidden touch-pan-y"
               onMouseEnter={() => setIsAutoPlay(false)}
               onMouseLeave={() => setIsAutoPlay(true)}
               onTouchStart={handleRouletteTouchStart}
               onTouchMove={handleRouletteTouchMove}
               onTouchEnd={handleRouletteTouchEnd}
             >
+              {/* Square Sci-Fi Left Arrow Button (Closer to center on PC viewports) */}
+              <button
+                onClick={() => setRouletteIndex((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length)}
+                className="absolute left-2 sm:left-4 md:left-8 lg:left-16 xl:left-24 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-11 sm:h-11 border cyber-cut-sm rounded-none flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 shadow-2xl backdrop-blur-md"
+                style={{
+                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(11,19,41,0.90)',
+                  borderColor: isLight ? '#cbd5e1' : 'rgba(51,65,85,0.8)',
+                  color: isLight ? '#0f172a' : '#38bdf8',
+                }}
+                aria-label="Previous Artwork"
+              >
+                <ChevronLeft size={22} />
+              </button>
+
+              {/* 5-Card CoverFlow Depth Stack (100% Square 90° Corners) */}
               {displayFeatured.map((art, idx) => {
                 const total = displayFeatured.length;
                 let offset = idx - rouletteIndex;
@@ -227,14 +238,17 @@ export const ArtGallery: React.FC = () => {
                 const isCenter = offset === 0;
                 const absOffset = Math.abs(offset);
 
-                // Calculate 3D transforms for card roulette
-                const translateX = offset * (window.innerWidth < 640 ? 110 : 220);
-                const scale = Math.max(0.65, 1 - absOffset * 0.16);
-                const rotateY = offset * -18;
-                const opacity = Math.max(0, 1 - absOffset * 0.35);
-                const zIndex = 30 - absOffset * 5;
+                // Render strictly 5 cards (Center, Left-1, Left-2, Right-1, Right-2)
+                if (absOffset > 2) return null;
 
-                if (absOffset > 2) return null; // Hide far off cards
+                // Responsive Card Dimensions & Spacing (1:1 Perfect Squares)
+                const cardSize = windowWidth < 640 ? 210 : windowWidth < 1024 ? 280 : 350;
+                const spacing = windowWidth < 640 ? 85 : windowWidth < 1024 ? 115 : 145;
+
+                const translateX = offset * spacing;
+                const scale = isCenter ? 1.0 : absOffset === 1 ? 0.85 : 0.70;
+                const opacity = isCenter ? 1.0 : absOffset === 1 ? 0.92 : 0.80;
+                const zIndex = 30 - absOffset * 10;
 
                 return (
                   <div
@@ -246,93 +260,106 @@ export const ArtGallery: React.FC = () => {
                         setRouletteIndex(idx);
                       }
                     }}
-                    className={`absolute w-52 h-52 sm:w-80 sm:h-80 md:w-96 md:h-96 rounded-2xl sm:rounded-3xl overflow-hidden cursor-pointer border border-[var(--border-color)] hover:border-cyan-500/50 light:hover:border-sky-400 transition-all duration-700 ease-out shadow-2xl ${
+                    className={`absolute aspect-square overflow-hidden cursor-pointer transition-all duration-500 ease-out group border ${
                       isCenter
-                        ? 'shadow-cyan-500/25 light:shadow-sky-500/20 border-cyan-500/40 light:border-sky-400'
-                        : 'shadow-slate-950/60 light:shadow-slate-300/40'
+                        ? isLight
+                          ? 'border border-sky-500/80 shadow-[0_0_10px_rgba(2,132,199,0.15)]'
+                          : 'border border-cyan-400/80 shadow-[0_0_12px_rgba(0,240,255,0.18)]'
+                        : isLight
+                        ? 'border border-slate-300 hover:border-sky-400'
+                        : 'border border-slate-800 hover:border-slate-700'
                     }`}
                     style={{
-                      transform: `translate3d(${translateX}px, 0, ${-absOffset * 100}px) rotateY(${rotateY}deg) scale(${scale})`,
+                      width: `${cardSize}px`,
+                      height: `${cardSize}px`,
+                      minWidth: `${cardSize}px`,
+                      minHeight: `${cardSize}px`,
+                      maxWidth: `${cardSize}px`,
+                      maxHeight: `${cardSize}px`,
+                      aspectRatio: '1 / 1',
+                      borderRadius: '0px',
+                      transform: `translateX(${translateX}px) scale(${scale})`,
                       opacity,
                       zIndex,
-                      backgroundColor: isLight ? '#ffffff' : '#0f172a',
+                      backgroundColor: isLight ? '#ffffff' : '#080e1a',
                     }}
                   >
                     <img
                       src={getAssetUrl(art.img)}
-                      alt="Featured Artwork"
-                      className="w-full h-full object-cover select-none"
+                      alt={`許哲誠美術作品 - ${art.cat} (${art.id})`}
+                      loading="lazy"
                       decoding="async"
+                      className="w-full h-full aspect-square object-cover rounded-none transition-transform duration-700 group-hover:scale-105"
+                      style={{ width: '100%', height: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '0px' }}
                     />
+
+                    {/* Subtle Dimming Overlay for Background Side Cards (Clear & Vivid, fades out on hover) */}
+                    {!isCenter && (
+                      <div
+                        className="absolute inset-0 transition-opacity duration-300 pointer-events-none rounded-none group-hover:opacity-0"
+                        style={{
+                          backgroundColor: absOffset === 1 ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.25)',
+                          borderRadius: '0px',
+                        }}
+                      />
+                    )}
+
                   </div>
                 );
               })}
 
-              {/* Roulette Prev / Next Controls — Enlarged Touch Target Area for Mobile */}
-              <button
-                onClick={() => setRouletteIndex((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length)}
-                className="absolute left-2 sm:left-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900/80 dark:bg-slate-900/80 light:bg-white border border-slate-700 light:border-slate-300 text-[var(--text-main)] shadow-xl transition-transform hover:scale-110 active:scale-95 flex items-center justify-center cursor-pointer"
-                aria-label="Previous Featured Artwork"
-              >
-                <ChevronLeft size={24} />
-              </button>
-
+              {/* Square Sci-Fi Right Arrow Button (Closer to center on PC viewports) */}
               <button
                 onClick={() => setRouletteIndex((prev) => (prev + 1) % displayFeatured.length)}
-                className="absolute right-2 sm:right-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-slate-900/80 dark:bg-slate-900/80 light:bg-white border border-slate-700 light:border-slate-300 text-[var(--text-main)] shadow-xl transition-transform hover:scale-110 active:scale-95 flex items-center justify-center cursor-pointer"
-                aria-label="Next Featured Artwork"
+                className="absolute right-2 sm:right-4 md:right-8 lg:right-16 xl:right-24 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-11 sm:h-11 border cyber-cut-sm rounded-none flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 shadow-2xl backdrop-blur-md"
+                style={{
+                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(11,19,41,0.90)',
+                  borderColor: isLight ? '#cbd5e1' : 'rgba(51,65,85,0.8)',
+                  color: isLight ? '#0f172a' : '#38bdf8',
+                }}
+                aria-label="Next Artwork"
               >
-                <ChevronRight size={24} />
+                <ChevronRight size={22} />
               </button>
             </div>
 
-            <div className="flex items-center justify-center gap-1 mt-6 mb-8">
-              {displayFeatured.map((_, idx) => (
+            {/* Indicator Dots */}
+            <div className="flex items-center gap-2 mt-6">
+              {displayFeatured.map((_, dotIdx) => (
                 <button
-                  key={idx}
-                  onClick={() => setRouletteIndex(idx)}
-                  className="p-2 min-w-[28px] min-h-[28px] flex items-center justify-center cursor-pointer"
-                  aria-label={`Go to slide ${idx + 1}`}
-                >
-                  <span
-                    className={`h-2.5 rounded-full transition-all ${
-                      rouletteIndex === idx
-                        ? (isLight ? 'w-8 bg-sky-600 shadow-xs shadow-sky-500/50' : 'w-8 bg-cyan-400 shadow-xs shadow-cyan-400/50')
-                        : (isLight ? 'w-2.5 bg-slate-300 hover:bg-slate-400' : 'w-2.5 bg-slate-700 hover:bg-slate-500')
-                    }`}
-                  />
-                </button>
+                  key={dotIdx}
+                  onClick={() => setRouletteIndex(dotIdx)}
+                  className={`h-1.5 transition-all cursor-pointer ${
+                    dotIdx === rouletteIndex
+                      ? 'w-8 bg-cyan-400 shadow-[0_0_8px_rgba(0,240,255,0.6)] rounded-none'
+                      : 'w-2.5 bg-slate-600 hover:bg-slate-400 rounded-none'
+                  }`}
+                  aria-label={`Go to slide ${dotIdx + 1}`}
+                />
               ))}
             </div>
 
-            {/* More Works Button (Switch to All Works Grid and Auto-Expand All) */}
-            <div className="text-center pt-2">
-              <button
-                onClick={() => {
-                  setActiveTab('all');
-                  setIsExpanded(true);
-                }}
-                className="h-12 px-8 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 light:hover:border-sky-500 hover:bg-slate-800 light:hover:bg-sky-50 font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20 light:hover:shadow-sky-500/20"
-              >
-                <span>{lang === 'zh' ? '檢視更多美術作品' : 'View More Artworks'}</span>
-                <ChevronDown size={18} className="text-cyan-400 light:text-sky-600" />
-              </button>
-            </div>
           </div>
         ) : (
-          /* TRADITIONAL GRID VIEW FOR OTHER TABS */
-          <>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3.5 sm:gap-6 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
+          /* STANDARD GRID VIEW — CLEAN NO OVERLAY ZOOM BUTTONS */
+          <div
+            className="cyber-card p-6 border cyber-cut-corner max-w-6xl mx-auto space-y-6 shadow-xl"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)', borderColor: borderCol }}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {displayedArt.map((art) => (
                 <div
                   key={art.id}
                   onClick={() => setActiveImage(art)}
-                  className="group glass-card rounded-2xl overflow-hidden cursor-pointer relative aspect-square max-h-52 sm:max-h-none border border-[var(--border-color)] hover:border-cyan-500/50 light:hover:border-sky-400 transition-all duration-300 shadow-sm"
+                  className="group relative overflow-hidden cyber-cut-sm border cursor-pointer aspect-square w-full shadow-md transition-all hover:-translate-y-1 hover:border-cyan-400"
+                  style={{
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)',
+                  }}
                 >
                   <img
                     src={getAssetUrl(art.img)}
-                    alt="Artwork Preview"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    alt={`許哲誠美術作品縮圖 (${art.id})`}
+                    className="w-full h-full aspect-square object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
                     decoding="async"
                   />
@@ -340,194 +367,144 @@ export const ArtGallery: React.FC = () => {
               ))}
             </div>
 
-            {/* Expand / Collapse Button */}
             {filteredArt.length > 8 && (
-              <div className="mt-10 text-center">
+              <div className="text-center pt-2">
                 <button
                   onClick={() => setIsExpanded(!isExpanded)}
-                  className="h-12 px-8 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 light:hover:border-sky-500 hover:bg-slate-800 light:hover:bg-sky-50 font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20 light:hover:shadow-sky-500/20"
+                  className="px-6 py-2.5 border font-tech text-xs font-bold uppercase cyber-cut-sm cursor-pointer transition-all hover:scale-105 shadow-sm inline-flex items-center gap-2"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                    borderColor: cyanCol,
+                    color: cyanCol,
+                  }}
                 >
                   <span>
                     {isExpanded
-                      ? (lang === 'zh' ? '收起美術作品' : 'Collapse Artworks')
-                      : (lang === 'zh' ? '檢視更多美術作品' : 'View More Artworks')}
+                      ? (lang === 'zh' ? '收起畫廊' : 'COLLAPSE GALLERY')
+                      : (lang === 'zh' ? '查看全系列美術作品' : 'VIEW ALL ARTWORKS')}
                   </span>
-                  {isExpanded ? <ChevronUp size={18} className="text-cyan-400 light:text-sky-600" /> : <ChevronDown size={18} className="text-cyan-400 light:text-sky-600" />}
+                  {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                 </button>
               </div>
             )}
-          </>
-        )}
-
-        {/* Human Authenticity Disclaimer Badge — Sleek Glassmorphic Pill */}
-        <div className="mt-8 sm:mt-10 text-center">
-          <div
-            className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full border text-xs sm:text-sm font-code font-semibold tracking-wide shadow-sm transition-all hover:scale-105"
-            style={{
-              backgroundColor: isLight ? 'rgba(255,255,255,0.9)' : 'rgba(15,23,42,0.7)',
-              borderColor: isLight ? '#cbd5e1' : 'rgba(6,182,212,0.3)',
-              boxShadow: isLight
-                ? '0 4px 15px rgba(0,0,0,0.04)'
-                : '0 4px 20px rgba(6,182,212,0.12)',
-            }}
-          >
-            <ShieldAlert size={16} className="shrink-0" style={{ color: isLight ? '#0284c7' : '#22d3ee' }} />
-            <span style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
-              {lang === 'zh'
-                ? '美術作品無任何 AI 參與'
-                : 'Handcrafted artworks with NO AI involvement.'}
-            </span>
           </div>
-        </div>
+        )}
 
       </div>
 
-      {/* Lightbox Modal — Snug fit with proper mobile scaling */}
+      {/* Lightbox Preview Modal — 3D iFrame Viewer if embedUrl exists */}
       {activeImage && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-slate-950/90 backdrop-blur-md animate-fade-in"
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 select-none"
+          style={{
+            backgroundColor: isLight ? 'rgba(15,23,42,0.85)' : 'rgba(3,7,18,0.92)',
+            backdropFilter: 'blur(20px)',
+          }}
           onClick={handleCloseModal}
-          role="dialog"
-          aria-modal="true"
         >
           <div
-            className={`relative w-full border rounded-2xl overflow-hidden shadow-2xl p-3 sm:p-4 flex flex-col items-center justify-center transition-all ${
-              activeImage.embedUrl ? 'max-w-6xl' : 'max-w-5xl'
-            }`}
+            className="relative max-w-5xl w-full border cyber-cut-corner p-4 space-y-4 shadow-2xl hud-corner-brackets"
             style={{
-              backgroundColor: isLight ? '#ffffff' : '#0f172a',
-              borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
-              boxShadow: isLight
-                ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-                : '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
+              backgroundColor: isLight ? '#ffffff' : '#080e1a',
+              borderColor: borderCol,
             }}
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Top Toolbar */}
-            <div
-              className="w-full flex items-center justify-end pb-2.5 border-b mb-3"
-              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}
-            >
-              <div className="flex items-center gap-2.5">
-                <a
-                  href={getAssetUrl(activeImage.img)}
-                  download={`artwork-${activeImage.id}.avif`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="h-9 px-3.5 rounded-xl border text-xs font-bold font-code transition-all flex items-center gap-1.5 cursor-pointer shadow-xs hover:scale-105"
-                  style={{
-                    backgroundColor: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)',
-                    borderColor: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)',
-                    color: isLight ? '#0369a1' : '#22d3ee',
-                  }}
-                  title={lang === 'zh' ? '下載作品原圖' : 'Download Image'}
-                >
-                  <Download size={14} />
-                  <span>{lang === 'zh' ? '下載圖片' : 'Download'}</span>
-                </a>
+            {/* Modal Top Bar */}
+            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.2)' }}>
+              <div className="flex items-center gap-2" />
 
-                <button
-                  onClick={handleCloseModal}
-                  className="p-2 rounded-xl border transition-colors cursor-pointer hover:scale-105"
-                  style={{
-                    backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.08)',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
-                    color: isLight ? '#0f172a' : '#f8fafc',
-                  }}
-                  aria-label="Close Lightbox"
-                  title="Close (Esc)"
-                >
-                  <X size={18} />
-                </button>
-              </div>
+              <button
+                onClick={handleCloseModal}
+                className="p-1.5 border cyber-cut-sm flex items-center justify-center transition-all cursor-pointer hover:scale-105"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.05)',
+                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.2)',
+                  color: isLight ? '#0f172a' : '#ffffff',
+                }}
+                aria-label="關閉視窗 (Close Lightbox Modal)"
+              >
+                <X size={18} />
+              </button>
             </div>
 
-            {/* Main Content Area (With Touch Swipe Support) */}
+            {/* Display 3D iFrame Viewer if embedUrl exists, else High Res Image */}
             <div
-              className="relative w-full flex items-center justify-center touch-pan-y"
-              onTouchStart={handleModalTouchStart}
-              onTouchMove={handleModalTouchMove}
-              onTouchEnd={handleModalTouchEnd}
+              className={`relative flex items-center justify-center overflow-hidden border bg-slate-950 ${
+                activeImage.embedUrl ? 'w-full aspect-video shadow-2xl' : 'max-h-[72vh] min-h-[300px] sm:min-h-[480px]'
+              }`}
+              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}
             >
-              {currentList.length > 1 && (
-                <button
-                  onClick={handlePrevImage}
-                  className="absolute left-1 sm:left-4 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border active:scale-95 shrink-0"
-                  style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)',
-                    color: isLight ? '#0f172a' : '#ffffff',
-                    boxShadow: isLight ? '0 10px 25px -5px rgba(0, 0, 0, 0.2)' : '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#06b6d4';
-                    e.currentTarget.style.borderColor = '#22d3ee';
-                    e.currentTarget.style.color = '#ffffff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)';
-                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)';
-                    e.currentTarget.style.color = isLight ? '#0f172a' : '#ffffff';
-                  }}
-                  aria-label="Previous Image"
-                  title={lang === 'zh' ? '上一張 (← 鍵盤左鍵)' : 'Previous (← Arrow)'}
-                >
-                  <ChevronLeft size={24} className="group-hover:-translate-x-0.5 transition-transform" />
-                </button>
-              )}
-
               {activeImage.embedUrl ? (
-                <div
-                  className="w-full aspect-video rounded-xl overflow-hidden border border-slate-800/80 shadow-2xl"
-                  onMouseEnter={() => document.body.classList.add('hide-custom-cursor')}
-                  onMouseLeave={() => document.body.classList.remove('hide-custom-cursor')}
-                >
-                  <iframe
-                    src={activeImage.embedUrl}
-                    title={`ArtStation 3D View ${activeImage.id}`}
-                    className="w-full h-full border-0"
-                    allowFullScreen
-                  />
-                </div>
+                <iframe
+                  src={activeImage.embedUrl}
+                  title={`3D Model Viewer (${activeImage.id})`}
+                  className="w-full h-full border-0 absolute inset-0"
+                  allow="autoplay; fullscreen; xr-spatial-tracking"
+                  loading="lazy"
+                />
               ) : (
                 <img
                   src={getAssetUrl(activeImage.img)}
-                  alt="Artwork View"
-                  className="max-h-[65vh] sm:max-h-[78vh] w-auto max-w-full object-contain rounded-lg shadow-lg select-none"
+                  alt={`許哲誠美術作品預覽 (${activeImage.id})`}
+                  loading="lazy"
                   decoding="async"
+                  className="max-h-[72vh] w-auto object-contain"
                 />
               )}
-
-              {currentList.length > 1 && (
-                <button
-                  onClick={handleNextImage}
-                  className="absolute right-1 sm:right-4 z-20 w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-2xl transition-all cursor-pointer group flex items-center justify-center border active:scale-95 shrink-0"
-                  style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)',
-                    color: isLight ? '#0f172a' : '#ffffff',
-                    boxShadow: isLight ? '0 10px 25px -5px rgba(0, 0, 0, 0.2)' : '0 10px 25px -5px rgba(0, 0, 0, 0.5)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#06b6d4';
-                    e.currentTarget.style.borderColor = '#22d3ee';
-                    e.currentTarget.style.color = '#ffffff';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.90)';
-                    e.currentTarget.style.borderColor = isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.25)';
-                    e.currentTarget.style.color = isLight ? '#0f172a' : '#ffffff';
-                  }}
-                  aria-label="Next Image"
-                  title={lang === 'zh' ? '下一張 (→ 鍵盤右鍵)' : 'Next (→ Arrow)'}
-                >
-                  <ChevronRight size={24} className="group-hover:translate-x-0.5 transition-transform" />
-                </button>
-              )}
             </div>
+
+            {/* Modal Bottom Controls */}
+            <div className="flex items-center justify-between font-tech text-xs font-bold pt-1">
+              <button
+                onClick={handlePrevImage}
+                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(30, 41, 59, 0.8)',
+                  borderColor: borderCol,
+                  color: cyanCol,
+                }}
+              >
+                <ChevronLeft size={16} />
+                <span>{lang === 'zh' ? '上一張' : 'PREV'}</span>
+              </button>
+
+              <a
+                href={getAssetUrl(activeImage.img)}
+                download
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 px-4 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shadow-xs"
+                style={{
+                  backgroundColor: isLight ? '#fffbeb' : 'rgba(245, 158, 11, 0.15)',
+                  borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.4)',
+                  color: isLight ? '#b45309' : '#fbbf24',
+                }}
+              >
+                <Download size={14} />
+                <span>{lang === 'zh' ? '下載' : 'DOWNLOAD'}</span>
+              </a>
+
+              <button
+                onClick={handleNextImage}
+                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(30, 41, 59, 0.8)',
+                  borderColor: borderCol,
+                  color: cyanCol,
+                }}
+              >
+                <span>{lang === 'zh' ? '下一張' : 'NEXT'}</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+
           </div>
         </div>
       )}
+
     </section>
   );
 };
+
+export default ArtGallery;

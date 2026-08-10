@@ -4,19 +4,16 @@ import { useTheme } from '../context/ThemeContext';
 import {
   GraduationCap,
   ExternalLink,
-  FileText,
-  CheckCircle2,
-  Gamepad2,
-  Video,
-  Box,
-  Code,
-  Trophy,
   Briefcase,
   Building2,
-  Layers,
-  Presentation,
+  Award,
+  BookOpen,
   ChevronDown,
-  LucideIcon
+  ChevronUp,
+  FileText,
+  School,
+  FolderGit2,
+  CheckCircle2,
 } from 'lucide-react';
 import eduData from '../data/experience-section.json';
 
@@ -81,13 +78,6 @@ interface SectionData {
   theses: ThesisItem[];
 }
 
-const iconMap: Record<string, LucideIcon> = {
-  game: Gamepad2,
-  video: Video,
-  box: Box,
-  code: Code,
-};
-
 export const Education: React.FC = () => {
   const { t, lang } = useLang();
   const { theme } = useTheme();
@@ -100,431 +90,458 @@ export const Education: React.FC = () => {
   const [showAllWorkshops, setShowAllWorkshops] = useState(false);
   const [showAllTheses, setShowAllTheses] = useState(false);
 
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
 
-  const btnBg = isLight ? '#ffffff' : '#0f172a';
-  const btnBdr = isLight ? '#e2e8f0' : '#334155';
-
-  const workshopPalette = [
-    { text: isLight ? '#0284c7' : '#22d3ee', bg: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)', border: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)' },
-    { text: isLight ? '#7e22ce' : '#c084fc', bg: isLight ? '#faf5ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#e9d5ff' : 'rgba(168,85,247,0.3)' },
-    { text: isLight ? '#047857' : '#34d399', bg: isLight ? '#ecfdf5' : 'rgba(16,185,129,0.12)', border: isLight ? '#a7f3d0' : 'rgba(16,185,129,0.3)' },
-    { text: isLight ? '#b45309' : '#fbbf24', bg: isLight ? '#fffbeb' : 'rgba(245,158,11,0.12)', border: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)' },
-    { text: isLight ? '#be185d' : '#f472b6', bg: isLight ? '#fdf2f8' : 'rgba(236,72,153,0.12)', border: isLight ? '#fbcfe8' : 'rgba(236,72,153,0.3)' },
+  // Strict Sequential Palette Accent Loop for item ordering distinction: 藍 -> 紫 -> 綠 -> 黃
+  const sequenceAccents = [
+    // 1: 藍 (Blue / Cyan)
+    { main: isLight ? '#0284c7' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.12)', border: isLight ? '#38bdf8' : '#00f0ff' },
+    // 2: 紫 (Purple / Violet)
+    { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.12)', border: isLight ? '#c084fc' : '#a855f7' },
+    // 3: 綠 (Green / Emerald)
+    { main: isLight ? '#059669' : '#34d399', bg: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)', border: isLight ? '#34d399' : '#10b981' },
+    // 4: 黃 (Yellow / Amber Gold)
+    { main: isLight ? '#b45309' : '#fbbf24', bg: isLight ? '#fffbeb' : 'rgba(245, 158, 11, 0.12)', border: isLight ? '#fcd34d' : '#f59e0b' },
   ];
 
   return (
-    <section id="experience" className="py-16 sm:py-24 relative select-text">
-      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 space-y-24">
+    <section id="experience" className="py-20 relative select-text">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 space-y-16">
 
-        {/* Master Section Header: 經歷 */}
-        <div className="text-center max-w-3xl xl:max-w-4xl mx-auto space-y-2">
-          <h2 className="text-3xl sm:text-4xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-            {t('exp_title')}
+        {/* Section Title Header */}
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div
+            className="inline-flex items-center gap-2 font-tech text-xs sm:text-sm font-bold uppercase tracking-wider px-4 py-1.5 border cyber-cut-sm shadow-sm"
+            style={{
+              backgroundColor: isLight ? '#ffffff' : '#080e1a',
+              borderColor: borderCol,
+              color: cyanCol,
+            }}
+          >
+            <Briefcase size={15} />
+            <span>{lang === 'zh' ? '學歷與職涯經歷' : 'EXPERIENCE & EDUCATION'}</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+            <Briefcase size={34} className="text-cyan-400 shrink-0" />
+            <span>{t('exp_title')}</span>
           </h2>
-          <p className="text-sm sm:text-base font-normal leading-relaxed text-[var(--text-sub)]">
+          <p className="text-base sm:text-lg font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('exp_intro')}
           </p>
-          <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Master Content Card — 100% matched to About & Certifications container width */}
-        <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-12">
+        {/* Master Experience Container */}
+        <div className="max-w-6xl mx-auto space-y-12">
 
-          {/* ── Sub-section 1: 學歷 ── */}
-          <div id="education-degrees" className="space-y-6 scroll-mt-32">
-            <div
-              className="flex items-center gap-3 border-b pb-4"
-              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="p-2.5 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+          {/* Sub-section 1: Degrees (教育學歷 - 藍 / 紫 順序) */}
+          <div
+            id="education-degrees"
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+          >
+            <div className="flex items-center gap-3 border-b border-slate-700/40 pb-4">
+              <div
+                className="p-3 border cyber-cut-sm shrink-0"
+                style={{
+                  backgroundColor: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)',
+                  borderColor: isLight ? '#38bdf8' : 'rgba(0,240,255,0.35)',
+                  color: cyanCol,
+                }}
+              >
                 <GraduationCap size={22} />
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+              <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                 {t('degree_section_title')}
               </h3>
             </div>
 
             <div className="space-y-6">
-              {currentData.degrees.map((deg) => (
-                <div
-                  key={deg.id}
-                  className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] space-y-4 shadow-sm"
-                  style={{
-                    backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
-                  }}
-                >
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/40 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`p-3 rounded-xl ${
-                        deg.type === 'master' ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20' : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                      }`}
-                    >
-                      <GraduationCap size={24} />
+              {currentData.degrees.map((deg, dIdx) => {
+                const accent = sequenceAccents[dIdx % sequenceAccents.length];
+
+                return (
+                  <div
+                    key={deg.id}
+                    className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                    style={{
+                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                      borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                    }}
+                  >
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                      <div>
+                        <h4 className="text-lg sm:text-xl font-black font-hud uppercase flex items-center gap-2.5" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                          <School size={20} className="shrink-0" style={{ color: accent.main }} />
+                          <span>{deg.school}</span>
+                        </h4>
+                        <p className="text-xs font-tech font-bold pl-7 font-mono" style={{ color: accent.main }}>
+                          {deg.period}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                        {deg.school}
-                      </h4>
-                      <p className="text-xs sm:text-sm font-code font-semibold mt-0.5" style={{ color: isLight ? '#475569' : '#94a3b8' }}>
-                        {deg.period}
-                      </p>
+
+                    <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                      {deg.desc}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-2.5 pt-2">
+                      {deg.buttons.map((btn, bIdx) => (
+                        <a
+                          key={bIdx}
+                          href={driveLinks[btn.linkKey]}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-5 sm:px-6 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                          style={{
+                            backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+                            borderColor: cyanCol,
+                            color: isLight ? '#0369a1' : '#00f0ff',
+                          }}
+                        >
+                          <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                          <span>{btn.label}</span>
+                        </a>
+                      ))}
                     </div>
                   </div>
-                </div>
-
-                <p className="text-sm sm:text-base leading-relaxed font-normal" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
-                  {deg.desc}
-                </p>
-
-                {/* Proof Action Buttons — Compact, natural inline-flex with comfortable min-width */}
-                <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 pt-2">
-                  {deg.buttons.map((btn, bIdx) => (
-                    <a
-                      key={bIdx}
-                      href={driveLinks[btn.linkKey]}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl border text-xs sm:text-sm font-bold transition-all inline-flex items-center justify-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap min-w-[110px] sm:min-w-[130px]"
-                      style={{
-                        backgroundColor: btnBg,
-                        borderColor: btnBdr,
-                        color: isLight ? '#0f172a' : '#ffffff',
-                      }}
-                    >
-                      <ExternalLink
-                        size={14}
-                        className={`shrink-0 ${deg.type === 'master' ? 'text-cyan-400' : 'text-purple-400'}`}
-                      />
-                      <span>{btn.label}</span>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
-        </div>
 
-          {/* ── Sub-section 2: 工作經歷 ── */}
-          <div id="work-experience" className="space-y-6 scroll-mt-32">
-            <div
-              className="flex items-center gap-3 border-b pb-4"
-              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 border border-purple-500/20">
-                <Briefcase size={22} />
+          {/* Sub-section 2: Work Experience (工作經歷 - 藍 / 紫 / 綠 / 黃 順序) */}
+          <div
+            id="work-experience"
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+          >
+            <div className="flex items-center gap-3 border-b border-slate-700/40 pb-4">
+              <div
+                className="p-3 border cyber-cut-sm shrink-0"
+                style={{
+                  backgroundColor: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)',
+                  borderColor: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)',
+                  color: isLight ? '#7c3aed' : '#a855f7',
+                }}
+              >
+                <Building2 size={22} />
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+              <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                 {t('work_section_title')}
               </h3>
             </div>
 
             <div className="space-y-6">
-              {currentData.workExperiences && currentData.workExperiences.map((job, jIdx) => (
-                <div
-                  key={jIdx}
-                  className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] space-y-5 shadow-sm"
-                  style={{
-                    backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
-                  }}
-                >
-                {/* Job Header: Company & Role Side-by-Side with Left Icon Badge */}
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-slate-800/40 pb-4">
-                  <div className="flex items-center gap-3.5">
-                    <div
-                      className={`p-3 rounded-xl shrink-0 ${
-                        jIdx === 0
-                          ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                          : 'bg-purple-500/10 text-purple-400 border border-purple-500/20'
-                      }`}
-                    >
-                      {jIdx === 0 ? <Building2 size={24} /> : <Gamepad2 size={24} />}
-                    </div>
-                    <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-                      <h4 className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                        {lang === 'zh' ? job.company : (job.company_en || job.company)}
-                      </h4>
-                      <span className="hidden sm:inline text-slate-500 font-bold">•</span>
-                      <span className="text-xl sm:text-2xl font-extrabold" style={{ color: jIdx === 0 ? '#06b6d4' : '#a855f7' }}>
-                        {lang === 'zh' ? job.role : (job.role_en || job.role)}
-                      </span>
-                    </div>
-                  </div>
+              {currentData.workExperiences.map((job, jIdx) => {
+                const accent = sequenceAccents[jIdx % sequenceAccents.length];
 
+                return (
                   <div
-                    className="px-3.5 py-1.5 rounded-xl font-code text-xs font-bold border shrink-0"
+                    key={jIdx}
+                    className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
                     style={{
-                      backgroundColor: isLight ? '#f0f9ff' : 'rgba(15,23,42,0.8)',
-                      borderColor: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)',
-                      color: isLight ? '#0369a1' : '#22d3ee',
+                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                      borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
                     }}
                   >
-                    {job.period}
-                  </div>
-                </div>
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                      <div>
+                        <h4 className="text-lg sm:text-xl font-black font-hud uppercase flex items-center gap-2.5" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                          <Building2 size={20} className="shrink-0" style={{ color: accent.main }} />
+                          <span>{lang === 'zh' ? job.company : (job.company_en || job.company)} • {lang === 'zh' ? job.role : (job.role_en || job.role)}</span>
+                        </h4>
+                        <p className="text-xs font-tech font-bold pl-7 font-mono" style={{ color: accent.main }}>
+                          {job.period}
+                        </p>
+                      </div>
+                    </div>
 
-                {/* Job Summary */}
-                <p className="text-sm sm:text-base leading-relaxed font-normal" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
-                  {lang === 'zh' ? job.summary : (job.summary_en || job.summary)}
-                </p>
+                    <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                      {lang === 'zh' ? job.summary : (job.summary_en || job.summary)}
+                    </p>
 
-                {/* Projects List */}
-                {job.projects && job.projects.length > 0 && (
-                  <div className="space-y-2 pt-1">
-                    <span className="text-xs font-code font-bold text-cyan-600 dark:text-cyan-400 uppercase tracking-wider block">
-                      {lang === 'zh' ? job.projectsHeader : (job.projectsHeader_en || job.projectsHeader)}
-                    </span>
-                    <ul
-                      className="space-y-2.5 p-4 rounded-xl border font-normal text-xs sm:text-sm"
-                      style={{
-                        backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.7)',
-                        borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.06)',
-                        color: isLight ? '#1e293b' : '#e2e8f0'
-                      }}
-                    >
-                      {(lang === 'zh' ? job.projects : (job.projects_en || job.projects)).map((projItem, pIdx) => (
-                        <li key={pIdx} className="flex items-start gap-2.5">
-                          <CheckCircle2 size={16} className="text-cyan-500 shrink-0 mt-0.5" />
-                          <span className="leading-relaxed">{projItem}</span>
-                        </li>
+                    {/* Key Contributions / Projects Header & List */}
+                    {job.projects && (
+                      <div className="space-y-2 pt-1">
+                        <p className="font-tech text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
+                          <FolderGit2 size={16} className="shrink-0" />
+                          <span>{lang === 'zh' ? job.projectsHeader : (job.projectsHeader_en || job.projectsHeader)}：</span>
+                        </p>
+                        <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1.5 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                          {(lang === 'zh' ? job.projects : (job.projects_en || job.projects)).map((proj, pIdx) => (
+                            <li key={pIdx} className="leading-relaxed">{proj}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Skills tags */}
+                    <div className="flex flex-wrap items-center gap-2 pt-2">
+                      {job.tags.map((tg, tIdx) => (
+                        <span key={tIdx} className="tech-tag px-3 py-1 border text-xs sm:text-sm font-semibold">
+                          {tg}
+                        </span>
                       ))}
-                    </ul>
+                    </div>
                   </div>
-                )}
-
-                {/* Tech Scope Tags */}
-                {job.tags && job.tags.length > 0 && (
-                  <div className="pt-2 flex flex-wrap gap-2 items-center">
-                    <span className="text-xs font-code font-bold mr-1" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
-                      {lang === 'zh' ? job.skillsHeader : (job.skillsHeader_en || job.skillsHeader)}
-                    </span>
-                    {job.tags.map((tag, tIdx) => (
-                      <span
-                        key={tIdx}
-                        className="tech-tag text-xs font-code px-3 py-1 rounded-lg font-bold border transition-transform hover:scale-105"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
           </div>
 
-          {/* ── Sub-section 3: 研習歷程 ── */}
-          <div id="workshops" className="space-y-6 scroll-mt-32">
-            <div
-              className="flex items-center gap-3 border-b pb-4"
-              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <Layers size={22} />
+          {/* Sub-section 3: Workshops & Training (研習與受訓歷程 - 藍 / 紫 / 綠 / 黃 順序) */}
+          <div
+            id="workshops"
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+          >
+            <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className="p-3 border cyber-cut-sm shrink-0"
+                  style={{
+                    backgroundColor: isLight ? '#d1fae5' : 'rgba(16,185,129,0.12)',
+                    borderColor: isLight ? '#34d399' : 'rgba(16,185,129,0.35)',
+                    color: isLight ? '#059669' : '#10b981',
+                  }}
+                >
+                  <Award size={22} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                  {t('workshop_section_title')}
+                </h3>
               </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                {t('workshop_section_title')}
-              </h3>
             </div>
 
             <div className="space-y-6">
               {(showAllWorkshops ? currentData.workshops : currentData.workshops.slice(0, 2)).map((ws, wIdx) => {
-                const IconComponent = iconMap[ws.iconType] ?? Gamepad2;
-                const colorItem = workshopPalette[wIdx % workshopPalette.length];
+                const accent = sequenceAccents[wIdx % sequenceAccents.length];
 
                 return (
                   <div
                     key={wIdx}
-                    className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] space-y-4 shadow-sm"
+                    className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
                     style={{
-                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
+                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                      borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
                     }}
                   >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="p-2.5 rounded-xl border shrink-0 transition-transform group-hover:scale-105"
-                          style={{
-                            backgroundColor: colorItem.bg,
-                            borderColor: colorItem.border,
-                            color: colorItem.text,
-                          }}
-                        >
-                          <IconComponent size={20} />
-                        </div>
-                        <div>
-                          <h4 className="font-extrabold text-lg sm:text-xl" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                            {ws.title}
-                          </h4>
-                          <p className="text-xs sm:text-sm font-code text-cyan-600 dark:text-cyan-400 font-bold mt-1">
-                            {ws.org} ({ws.date})
-                          </p>
-                        </div>
-                      </div>
-
-                      <a
-                        href={driveLinks[ws.driveLinkKey]}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="h-10 px-4 rounded-xl border text-xs sm:text-sm font-bold transition-colors inline-flex items-center gap-2 shadow-xs shrink-0 cursor-pointer hover:scale-105 self-end sm:self-auto"
-                        style={{ backgroundColor: btnBg, borderColor: btnBdr, color: isLight ? '#0f172a' : '#ffffff' }}
-                      >
-                        <ExternalLink size={14} className="text-cyan-400" />
-                        <span>{ws.btnText}</span>
-                      </a>
-                    </div>
-
-                    <div className="space-y-2">
-                      <span className="text-xs font-code font-bold uppercase tracking-wider block" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
-                        {ws.skillsHeader}
-                      </span>
-                      <ul className="space-y-2 pl-1 font-normal text-xs sm:text-sm" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
-                        {ws.skills.map((skill, sIdx) => (
-                          <li key={sIdx} className="flex items-start gap-2.5 leading-relaxed">
-                            <CheckCircle2 size={16} className="text-cyan-500 shrink-0 mt-0.5" />
-                            <span>{skill}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                );
-              })}
-
-              {currentData.workshops.length > 2 && (
-                <div className="pt-2 text-center">
-                  <button
-                    onClick={() => setShowAllWorkshops(!showAllWorkshops)}
-                    className="h-11 px-6 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-emerald-500 light:hover:border-emerald-500 hover:bg-slate-800 light:hover:bg-emerald-50 font-bold text-xs font-code transition-all shadow-md inline-flex items-center justify-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
-                  >
-                    <span>
-                      {showAllWorkshops
-                        ? (lang === 'zh' ? '收折研習證明' : 'Collapse Workshops')
-                        : (lang === 'zh' ? '展開更多研習證明' : 'View More Workshops')}
-                    </span>
-                    <ChevronDown size={16} className={`text-emerald-400 light:text-emerald-600 transition-transform duration-300 ${showAllWorkshops ? 'rotate-180' : ''}`} />
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* ── Sub-section 4: 論文與期刊 ── */}
-          <div id="publications" className="space-y-6 scroll-mt-32">
-            <div
-              className="flex items-center gap-3 border-b pb-4"
-              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)' }}
-            >
-              <div className="p-2.5 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                <FileText size={22} />
-              </div>
-              <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                {t('thesis_section_title')}
-              </h3>
-            </div>
-
-            <div className="space-y-6">
-              {(showAllTheses ? currentData.theses : currentData.theses.slice(0, 2)).map((thesis, tIdx) => {
-                const isHonor = thesis.award && (thesis.award.includes('獎') || thesis.award.toLowerCase().includes('award'));
-
-                return (
-                  <div
-                    key={tIdx}
-                    className="p-4 sm:p-6 rounded-xl border border-[var(--border-color)] space-y-4 shadow-sm"
-                    style={{
-                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.5)',
-                    }}
-                  >
-                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-800/40 pb-3">
-                      <div className="flex items-center gap-2.5">
-                        <FileText size={22} className={tIdx === 0 ? 'text-cyan-400 shrink-0' : 'text-purple-400 shrink-0'} />
-                        <h4 className="font-extrabold text-lg sm:text-xl" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                          {thesis.title}
+                    {/* Header — Title on Left, Action Button on Right in PC mode, Below Title in Mobile mode */}
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-base sm:text-lg font-hud font-bold uppercase flex items-start sm:items-center gap-2 leading-snug" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                          <BookOpen size={18} className="shrink-0 mt-0.5 sm:mt-0" style={{ color: accent.main }} />
+                          <span>{ws.title}</span>
                         </h4>
+                        <p className="text-xs font-tech font-bold pl-6 font-mono" style={{ color: accent.main }}>
+                          {ws.date} • {ws.org}
+                        </p>
                       </div>
 
-                      {!isHonor && thesis.award && (
-                        <span
-                          className="px-3 py-1 rounded-lg font-code text-xs font-bold shrink-0 border bg-cyan-500/10 border-cyan-500/30 text-cyan-600 dark:text-cyan-300"
-                        >
-                          {thesis.award}
-                        </span>
+                      {ws.driveLinkKey && (
+                        <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 md:pt-0">
+                          <a
+                            href={driveLinks[ws.driveLinkKey]}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-1.5 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                            style={{
+                              backgroundColor: accent.bg,
+                              borderColor: accent.border,
+                              color: accent.main,
+                            }}
+                          >
+                            <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                            <span>{ws.btnText}</span>
+                          </a>
+                        </div>
                       )}
                     </div>
 
-                    <p className="text-xs sm:text-sm font-code font-semibold" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>{thesis.venue}</p>
-
-                    {/* Honor Highlight Box */}
-                    {isHonor && (
-                      <div
-                        className="px-4 py-2 rounded-xl border inline-flex items-center gap-2.5 text-xs sm:text-sm font-bold shadow-xs max-w-fit"
-                        style={{
-                          backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.1)',
-                          borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)',
-                          color: isLight ? '#b45309' : '#fbbf24',
-                        }}
-                      >
-                        <Trophy size={16} className="text-amber-500 shrink-0" />
-                        <span>{thesis.award}</span>
+                    {/* Workshop detailed skills bullet list */}
+                    {ws.skills && ws.skills.length > 0 && (
+                      <div className="space-y-1.5">
+                        <p className="font-tech text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
+                          <CheckCircle2 size={15} className="shrink-0" />
+                          <span>{ws.skillsHeader || (lang === 'zh' ? '專業內容與技能學習：' : 'SKILLS & KEY LEARNINGS:')}</span>
+                        </p>
+                        <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                          {ws.skills.map((sk, skIdx) => (
+                            <li key={skIdx} className="leading-relaxed">{sk}</li>
+                          ))}
+                        </ul>
                       </div>
                     )}
-
-                    <p className="text-sm sm:text-base leading-relaxed font-normal" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>{thesis.desc}</p>
-
-                    {/* Thesis Buttons — Compact, natural inline-flex with comfortable min-width */}
-                    <div className="pt-2 flex flex-wrap items-center justify-center gap-2.5 sm:gap-3">
-                      <a
-                        href={driveLinks[thesis.driveLinkKey]}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl border text-xs sm:text-sm font-bold transition-all inline-flex items-center justify-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap min-w-[120px] sm:min-w-[140px]"
-                        style={{ backgroundColor: btnBg, borderColor: btnBdr, color: isLight ? '#0f172a' : '#ffffff' }}
-                      >
-                        <ExternalLink size={14} className={`shrink-0 ${tIdx === 0 ? 'text-cyan-400' : 'text-purple-400'}`} />
-                        <span>{thesis.btnText}</span>
-                      </a>
-
-                      {thesis.slidesDriveLinkKey && (
-                        <a
-                          href={driveLinks[thesis.slidesDriveLinkKey]}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="h-10 sm:h-11 px-4 sm:px-5 rounded-xl border text-xs sm:text-sm font-bold transition-all inline-flex items-center justify-center gap-2 shadow-xs cursor-pointer hover:scale-105 whitespace-nowrap min-w-[120px] sm:min-w-[140px]"
-                          style={{
-                            backgroundColor: isLight ? '#f0f9ff' : 'rgba(6,182,212,0.12)',
-                            borderColor: isLight ? '#bae6fd' : 'rgba(6,182,212,0.3)',
-                            color: isLight ? '#0369a1' : '#22d3ee',
-                          }}
-                        >
-                          <Presentation size={15} className="shrink-0 text-cyan-500" />
-                          <span>{thesis.slidesBtnText}</span>
-                        </a>
-                      )}
-                    </div>
                   </div>
                 );
               })}
+            </div>
 
-              {currentData.theses.length > 2 && (
-                <div className="pt-2 text-center">
+            {currentData.workshops.length > 2 && (
+              <div className="text-center pt-2">
+                <button
+                  onClick={() => setShowAllWorkshops(!showAllWorkshops)}
+                  className="px-5 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm cursor-pointer hover:scale-105 transition-all shadow-sm inline-flex items-center gap-2"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                    borderColor: cyanCol,
+                    color: cyanCol,
+                  }}
+                >
+                  <span>
+                    {showAllWorkshops
+                      ? (lang === 'zh' ? '收起研習證明' : 'COLLAPSE WORKSHOPS')
+                      : (lang === 'zh' ? '檢視更多研習證明' : 'VIEW MORE WORKSHOPS')}
+                  </span>
+                  {showAllWorkshops ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Sub-section 4: Academic Theses & Publications (學術論文與發表 - 藍 / 紫 / 綠 / 黃 順序) */}
+          {currentData.theses && currentData.theses.length > 0 && (
+            <div
+              id="publications"
+              className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+              style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+            >
+              <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="p-3 border cyber-cut-sm shrink-0"
+                    style={{
+                      backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.12)',
+                      borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.35)',
+                      color: isLight ? '#b45309' : '#fbbf24',
+                    }}
+                  >
+                    <BookOpen size={22} />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                    {lang === 'zh' ? '學術論文與發表' : 'THESES & PUBLICATIONS'}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {(showAllTheses ? currentData.theses : currentData.theses.slice(0, 3)).map((th, thIdx) => {
+                  const accent = sequenceAccents[thIdx % sequenceAccents.length];
+
+                  return (
+                    <div
+                      key={thIdx}
+                      className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                      style={{
+                        backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                        borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                      }}
+                    >
+                      {/* Header — Title on Left, Action Buttons on Right in PC mode, Below Title in Mobile mode */}
+                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-base sm:text-lg md:text-xl font-hud font-bold uppercase flex items-start gap-2.5 leading-snug" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                            <FileText size={20} className="shrink-0 mt-0.5" style={{ color: accent.main }} />
+                            <span>{th.title}</span>
+                          </h4>
+                          <p className="text-xs sm:text-sm font-tech font-bold pl-7 font-mono" style={{ color: accent.main }}>
+                            {th.venue}
+                          </p>
+                        </div>
+
+                        {/* Action Buttons — Right on PC, Below Title on Mobile */}
+                        <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 md:pt-0">
+                          {/* 「檢視論文全文」 */}
+                          {th.driveLinkKey && (
+                            <a
+                              href={driveLinks[th.driveLinkKey]}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-1.5 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                              style={{
+                                backgroundColor: isLight ? '#fffbeb' : 'rgba(245, 158, 11, 0.15)',
+                                borderColor: isLight ? '#fcd34d' : '#f59e0b',
+                                color: isLight ? '#b45309' : '#fbbf24',
+                              }}
+                            >
+                              <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                              <span>{th.btnText}</span>
+                            </a>
+                          )}
+
+                          {/* 「檢視論文簡報」 */}
+                          {th.slidesDriveLinkKey && (
+                            <a
+                              href={driveLinks[th.slidesDriveLinkKey]}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-1.5 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                              style={{
+                                backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+                                borderColor: isLight ? '#38bdf8' : '#00f0ff',
+                                color: isLight ? '#0369a1' : '#00f0ff',
+                              }}
+                            >
+                              <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                              <span>{th.slidesBtnText}</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                        {th.desc}
+                      </p>
+
+                      {th.award && (
+                        <div
+                          className="p-3.5 border font-tech text-xs sm:text-sm font-bold flex items-center gap-2 cyber-cut-sm"
+                          style={{
+                            backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.15)',
+                            borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.35)',
+                            color: isLight ? '#b45309' : '#fbbf24',
+                          }}
+                        >
+                          <Award size={16} className="shrink-0" />
+                          <span>{th.award}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {currentData.theses.length > 3 && (
+                <div className="text-center pt-2">
                   <button
                     onClick={() => setShowAllTheses(!showAllTheses)}
-                    className="h-11 px-6 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-amber-500 light:hover:border-amber-500 hover:bg-slate-800 light:hover:bg-amber-50 font-bold text-xs font-code transition-all shadow-md inline-flex items-center justify-center gap-2 cursor-pointer hover:scale-105 active:scale-95"
+                    className="px-5 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm cursor-pointer hover:scale-105 transition-all shadow-sm inline-flex items-center gap-2"
+                    style={{
+                      backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                      borderColor: cyanCol,
+                      color: cyanCol,
+                    }}
                   >
                     <span>
                       {showAllTheses
-                        ? (lang === 'zh' ? '收折學術論文' : 'Collapse Publications')
-                        : (lang === 'zh' ? '展開更多學術論文' : 'View More Publications')}
+                        ? (lang === 'zh' ? '收起論文發表' : 'COLLAPSE PUBLICATIONS')
+                        : (lang === 'zh' ? '檢視更多論文發表' : 'VIEW MORE PUBLICATIONS')}
                     </span>
-                    <ChevronDown size={16} className={`text-amber-400 light:text-amber-600 transition-transform duration-300 ${showAllTheses ? 'rotate-180' : ''}`} />
+                    {showAllTheses ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                   </button>
                 </div>
               )}
             </div>
-          </div>
+          )}
 
         </div>
+
       </div>
     </section>
   );
 };
+
+export default Education;

@@ -15,13 +15,13 @@
     "desc": "基於皮亞傑認知發展理論設計之 VR 哲學解謎遊戲。體驗者化身虛擬生命體 12T06，於去文本化環境中透過手部控制器操作與物理回饋，經歷感知探索、符號表徵、具體運算至抽象推理之意識覺醒歷程。",
     "desc_en": "VR philosophy puzzle game designed around Piaget's cognitive development theory. Players embody artificial lifeform 12T06 navigating textless environments towards consciousness awakening.",
     "contributions": [
-      "事件驅動架構：建構全域 Event Bus，整合 Singleton、Observer 與 Registry 模式，實作 UI、音訊、動畫與物理機關組件之結構性解耦。",
+      "事件驅動架構：採用 EDA (Event-Driven Architecture) 與 Event 事件委派機制，整合 Singleton、Observer 與 Registry 模式，實作 UI、音訊、動畫與物理機關組件之結構性解耦。",
       "VR 物理互動與關卡邏輯：基於 XR Interaction Toolkit 實作手部抓取與機關觸發；獨立編寫音階觸發序列、代數算式驗證與迷宮路徑重置邏輯。",
       "渲染管線與自訂著色器：採用 URP 與 UV 頂點對齊色票技術，編寫 Hard Edge Outline 拓撲線條著色器插件，實現極簡賽博龐克視覺風格。",
       "多媒體控制與 AIGC 整合：運用 Timeline 控管非線性過場；整合 DeepVoice Pro 語音合成與 Suno AI 聲場演算。"
     ],
     "contributions_en": [
-      "Event-Driven Architecture: Built global Event Bus integrating Singleton, Observer & Registry patterns for structural component decoupling.",
+      "Event-Driven Architecture: Employed EDA with Event Delegation mechanism, integrating Singleton, Observer & Registry patterns for structural component decoupling.",
       "VR Physics & Level Logic: XR Interaction Toolkit hand grabbing & mechanics; programmed musical pitch triggers, algebraic validation & maze resets.",
       "Render Pipeline & Custom Shaders: URP & UV vertex alignment color palette tech; custom Hard Edge Outline topology line shader for minimalist cyberpunk visuals.",
       "Multimedia & AIGC Integration: Timeline non-linear cutscenes; integrated DeepVoice Pro voice synthesis & Suno AI soundscape calculation."

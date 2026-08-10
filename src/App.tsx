@@ -12,6 +12,7 @@ import { BackToTop } from './components/BackToTop';
 import { SideNav } from './components/SideNav';
 import { ScrollProgress } from './components/ScrollProgress';
 import { CyberParticles } from './components/CyberParticles';
+import { FullStackCodeStreamBackground } from './components/FullStackCodeStreamBackground';
 import { LangSelectModal } from './components/LangSelectModal';
 import { LoadingScreen } from './components/LoadingScreen';
 import { SeoSchema } from './components/SeoSchema';
@@ -65,7 +66,21 @@ function AppContent() {
 
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 light-aurora-bg" />
+        <div className="absolute inset-0 tactical-grid-bg opacity-40" />
+        <div className="absolute inset-0 crt-scanlines opacity-25" />
+        <FullStackCodeStreamBackground />
         <CyberParticles theme={theme} soundPlaying={soundPlaying} />
+      </div>
+
+      {/* Global Tactical Laser Scanner Beams */}
+      <div className="fixed top-0 left-0 right-0 h-[1px] z-50 pointer-events-none overflow-hidden opacity-60">
+        <div className="w-full h-full bg-gradient-to-r from-transparent via-[var(--neon-cyan)] to-transparent animate-laser-top shadow-[0_0_6px_var(--neon-cyan)]" />
+      </div>
+      <div className="fixed top-0 bottom-0 left-0 w-[1px] z-50 pointer-events-none overflow-hidden hidden md:block opacity-40">
+        <div className="w-full h-48 bg-gradient-to-b from-transparent via-[var(--neon-cyan)] to-transparent animate-laser-vert shadow-[0_0_4px_var(--neon-cyan)]" />
+      </div>
+      <div className="fixed top-0 bottom-0 right-0 w-[1px] z-50 pointer-events-none overflow-hidden hidden md:block opacity-40">
+        <div className="w-full h-48 bg-gradient-to-b from-transparent via-[var(--neon-cyan)] to-transparent animate-laser-vert shadow-[0_0_4px_var(--neon-cyan)]" style={{ animationDelay: '3s' }} />
       </div>
 
       <ScrollProgress />

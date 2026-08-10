@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Languages, Box, CheckCircle2, ExternalLink, Trophy, Award, ChevronDown, ChevronUp, LucideIcon } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Trophy, Award, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 import certData from '../data/certifications-section.json';
 
 interface CertItem {
@@ -16,11 +16,6 @@ interface CertGroup {
   iconType: string;
   items: CertItem[];
 }
-
-const groupIconMap: Record<string, LucideIcon> = {
-  languages: Languages,
-  box: Box,
-};
 
 export const Certifications: React.FC = () => {
   const { t, lang } = useLang();
@@ -37,59 +32,105 @@ export const Certifications: React.FC = () => {
   const [expandedGroups, setExpandedGroups] = useState<Record<number, boolean>>({});
 
   const toggleGroup = (gIdx: number) => {
-    setExpandedGroups(prev => ({ ...prev, [gIdx]: !prev[gIdx] }));
+    setExpandedGroups((prev) => ({ ...prev, [gIdx]: !prev[gIdx] }));
   };
 
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+
+  // Distinct color palettes for certification groups to highlight structural hierarchy & order
+  const groupAccents = [
+    {
+      main: isLight ? '#0284c7' : '#00f0ff',
+      bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.12)',
+      border: isLight ? '#38bdf8' : 'rgba(0, 240, 255, 0.35)',
+      itemBorder: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)',
+      badge: lang === 'zh' ? '國家級技能檢定' : 'NATIONAL LICENSES',
+      Icon: ShieldCheck,
+    },
+    {
+      main: isLight ? '#7c3aed' : '#c084fc',
+      bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.12)',
+      border: isLight ? '#c084fc' : 'rgba(168, 85, 247, 0.35)',
+      itemBorder: isLight ? '#e9d5ff' : 'rgba(168, 85, 247, 0.25)',
+      badge: lang === 'zh' ? '原廠國際認證' : 'INTL CERTIFICATIONS',
+      Icon: Award,
+    },
+  ];
+
   return (
-    <section id="awards" className="py-16 sm:py-24 relative select-text">
-      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="awards" className="py-20 relative select-text">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-16 space-y-2">
-          <h2 className="text-3xl sm:text-4xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-            {t('awards_title')}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <div
+            className="inline-flex items-center gap-2 font-tech text-xs sm:text-sm font-bold uppercase tracking-wider px-4 py-1.5 border cyber-cut-sm shadow-sm"
+            style={{
+              backgroundColor: isLight ? '#ffffff' : '#080e1a',
+              borderColor: borderCol,
+              color: cyanCol,
+            }}
+          >
+            <ShieldCheck size={15} />
+            <span>{lang === 'zh' ? '專業證照與榮譽檢定' : 'CREDENTIALS & AWARDS'}</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+            <Award size={34} style={{ color: cyanCol }} className="shrink-0" />
+            <span>{t('awards_title')}</span>
           </h2>
-          <p className="text-sm sm:text-base font-normal leading-relaxed text-[var(--text-sub)]">
+          <p className="text-base sm:text-lg font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('awards_intro')}
           </p>
-          <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        <div className="glass-card rounded-2xl p-4 sm:p-8 border border-[var(--border-color)] shadow-xl max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto space-y-8">
+        <div className="max-w-6xl mx-auto space-y-10">
 
-          {/* TOEIC 755 Card */}
+          {/* High-Contrast Amber Gold TOEIC 755 Card */}
           <div
-            className="p-5 rounded-2xl border-2 flex flex-col sm:flex-row sm:items-center gap-4 justify-between shadow-xs"
+            className="p-6 sm:p-7 border cyber-cut-corner flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl backdrop-blur-xl"
             style={{
-              backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.06)',
-              borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)',
+              backgroundColor: isLight ? '#fffbeb' : '#091328',
+              borderColor: isLight ? '#fcd34d' : '#f59e0b',
+              boxShadow: isLight ? '0 4px 20px rgba(245,158,11,0.12)' : '0 0 25px rgba(245,158,11,0.25)',
             }}
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 rounded-xl bg-amber-500/15 border border-amber-400/30 shrink-0">
-                <Trophy size={24} className="text-amber-400" />
+              <div
+                className="p-3.5 border cyber-cut-sm shrink-0 flex items-center justify-center"
+                style={{
+                  backgroundColor: isLight ? '#fef3c7' : 'rgba(245,158,11,0.2)',
+                  borderColor: isLight ? '#fcd34d' : '#f59e0b',
+                  color: isLight ? '#b45309' : '#fbbf24',
+                }}
+              >
+                <Trophy size={28} />
               </div>
-              <div>
-                <p className="text-xs sm:text-sm font-code font-bold tracking-widest uppercase mb-0.5" style={{ color: isLight ? '#b45309' : '#f59e0b' }}>
-                  {lang === 'zh' ? '英文能力檢定' : 'English Proficiency'}
-                </p>
-                <h3 className="text-xl sm:text-2xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-tech text-xs sm:text-sm font-bold uppercase" style={{ color: isLight ? '#b45309' : '#fbbf24' }}>
+                    {lang === 'zh' ? '外語能力檢定證明' : 'ENGLISH PROFICIENCY'}
+                  </span>
+                </div>
+                <h3 className="text-2xl sm:text-3xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                   TOEIC 755
                 </h3>
-                <p className="text-xs sm:text-sm font-code font-medium mt-0.5" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
-                  {lang === 'zh' ? 'ETS 多益英語測驗成績' : 'ETS Test of English for International Communication'}
+                <p className="text-xs sm:text-sm font-tech font-bold" style={{ color: isLight ? '#334155' : '#e2e8f0' }}>
+                  {lang === 'zh' ? 'ETS 多益英語測驗成績證明' : 'ETS Test of English for International Communication'}
                 </p>
               </div>
             </div>
+
             <a
               href={dataMap.toeic.driveUrl}
               target="_blank"
               rel="noreferrer"
-              className="shrink-0 inline-flex items-center gap-2 h-11 px-6 rounded-xl font-code text-sm font-bold transition-all border-2 hover:scale-105"
+              className="px-6 sm:px-7 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all hover:scale-105 cursor-pointer shadow-md"
               style={{
-                borderColor: isLight ? '#f59e0b' : 'rgba(245,158,11,0.5)',
+                backgroundColor: isLight ? '#fef3c7' : 'rgba(245,158,11,0.25)',
+                borderColor: isLight ? '#fcd34d' : '#f59e0b',
                 color: isLight ? '#b45309' : '#fbbf24',
-                backgroundColor: isLight ? '#ffffff' : 'transparent',
               }}
             >
               <ExternalLink size={15} />
@@ -97,24 +138,50 @@ export const Certifications: React.FC = () => {
             </a>
           </div>
 
-          {/* Certification Groups */}
+          {/* Certification Groups — Distinct Accent Colors per Group */}
           {groups.map((group, gIdx) => {
-            const IconComp = groupIconMap[group.iconType] ?? Award;
             const isExpanded = !!expandedGroups[gIdx];
             const displayedItems = isExpanded ? group.items : group.items.slice(0, 3);
             const hasMore = group.items.length > 3;
+            const accent = groupAccents[gIdx % groupAccents.length];
+            const GroupIcon = accent.Icon;
 
             return (
-              <div key={gIdx} className="space-y-4 pt-4 first:pt-0 border-t first:border-0 border-slate-800/40">
-                <div className="flex items-center justify-between gap-3">
+              <div
+                key={gIdx}
+                className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+                style={{
+                  backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
+                  borderColor: isLight ? accent.border : borderCol,
+                }}
+              >
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700/40 pb-4">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl border" style={{ backgroundColor: isLight ? '#f0f9ff' : '#0f172a', borderColor: isLight ? '#bae6fd' : '#1e293b' }}>
-                      <IconComp size={20} className={gIdx === 0 ? (isLight ? 'text-sky-600' : 'text-cyan-400') : (isLight ? 'text-purple-600' : 'text-purple-400')} />
+                    <div
+                      className="p-3 border cyber-cut-sm shrink-0"
+                      style={{
+                        backgroundColor: accent.bg,
+                        borderColor: accent.border,
+                        color: accent.main,
+                      }}
+                    >
+                      <GroupIcon size={22} />
                     </div>
-                    <h3 className="font-extrabold text-base sm:text-lg tracking-wide" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                    <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                       {group.group}
                     </h3>
                   </div>
+
+                  <span
+                    className="px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shadow-xs"
+                    style={{
+                      backgroundColor: accent.bg,
+                      borderColor: accent.border,
+                      color: accent.main,
+                    }}
+                  >
+                    {accent.badge}
+                  </span>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -124,40 +191,45 @@ export const Certifications: React.FC = () => {
                       href={(cert.linkKey && dataMap.driveLinks?.[cert.linkKey]) || cert.driveUrl || dataMap.driveFolderUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-4 rounded-xl border transition-all flex items-center justify-between group shadow-xs hover:scale-[1.02]"
+                      className="p-4 border cyber-cut-sm flex items-center justify-between group transition-all duration-300 hover:-translate-y-1 cursor-pointer shadow-xs"
                       style={{
-                        backgroundColor: isLight ? '#ffffff' : 'rgba(15,23,42,0.6)',
-                        borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)',
+                        backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                        borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
                       }}
-                      onMouseEnter={e => { e.currentTarget.style.borderColor = isLight ? '#38bdf8' : '#06b6d4'; }}
-                      onMouseLeave={e => { e.currentTarget.style.borderColor = isLight ? '#e2e8f0' : 'rgba(255,255,255,0.08)'; }}
                     >
                       <div className="flex items-center gap-3 min-w-0 pr-2">
-                        <CheckCircle2 size={18} className="text-cyan-500 light:text-sky-600 shrink-0" />
+                        <CheckCircle2 size={18} className="shrink-0" style={{ color: accent.main }} />
                         <div className="truncate">
-                          <p className="text-sm font-bold truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                          <p className="text-xs sm:text-sm font-bold font-hud uppercase truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                             {cert.name}
                           </p>
-                          <p className="text-xs font-code font-normal truncate mt-0.5" style={{ color: isLight ? '#475569' : '#94a3b8' }}>{cert.org}</p>
+                          <p className="text-xs font-tech font-semibold truncate" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                            {cert.org}
+                          </p>
                         </div>
                       </div>
-                      <ExternalLink size={15} className="text-slate-400 group-hover:text-cyan-500 light:group-hover:text-sky-600 shrink-0 transition-colors" />
+                      <ExternalLink size={15} className="group-hover:scale-110 transition-transform shrink-0" style={{ color: accent.main }} />
                     </a>
                   ))}
                 </div>
 
                 {hasMore && (
-                  <div className="pt-3 text-center">
+                  <div className="text-center pt-2">
                     <button
                       onClick={() => toggleGroup(gIdx)}
-                      className="h-12 px-8 rounded-xl bg-slate-900 light:bg-white text-white light:text-slate-800 border-2 border-slate-700 light:border-slate-300 hover:border-cyan-500 light:hover:border-sky-500 hover:bg-slate-800 light:hover:bg-sky-50 font-bold text-sm font-code transition-all shadow-md inline-flex items-center justify-center gap-2.5 cursor-pointer hover:scale-105 active:scale-95 hover:shadow-cyan-500/20 light:hover:shadow-sky-500/20"
+                      className="px-6 sm:px-7 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm cursor-pointer hover:scale-105 transition-all flex items-center gap-2 mx-auto shadow-xs"
+                      style={{
+                        backgroundColor: accent.bg,
+                        borderColor: accent.border,
+                        color: accent.main,
+                      }}
                     >
                       <span>
                         {isExpanded
-                          ? (lang === 'zh' ? '收起證照' : 'Collapse Credentials')
-                          : (lang === 'zh' ? '檢視更多證照' : 'View More Credentials')}
+                          ? (lang === 'zh' ? '收起證照' : 'COLLAPSE CREDENTIALS')
+                          : (lang === 'zh' ? '檢視更多證照' : 'VIEW MORE CREDENTIALS')}
                       </span>
-                      {isExpanded ? <ChevronUp size={18} className="text-cyan-400 light:text-sky-600" /> : <ChevronDown size={18} className="text-cyan-400 light:text-sky-600" />}
+                      {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
                     </button>
                   </div>
                 )}
@@ -170,3 +242,5 @@ export const Certifications: React.FC = () => {
     </section>
   );
 };
+
+export default Certifications;

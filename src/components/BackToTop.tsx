@@ -1,20 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronUp } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
 export const BackToTop: React.FC = () => {
-  const [isVisible, setIsVisible] = useState(false);
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const toggleVisibility = () => {
-      if (window.scrollY > 400) {
-        setIsVisible(true);
-      } else {
-        setIsVisible(false);
-      }
+    const handleScroll = () => {
+      const scrollY = window.scrollY || document.documentElement.scrollTop;
+      setIsVisible(scrollY > 150);
     };
 
-    window.addEventListener('scroll', toggleVisibility, { passive: true });
-    return () => window.removeEventListener('scroll', toggleVisibility);
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const scrollToTop = () => {
@@ -24,16 +25,26 @@ export const BackToTop: React.FC = () => {
     });
   };
 
-  if (!isVisible) return null;
-
   return (
     <button
       onClick={scrollToTop}
-      className="fixed bottom-8 right-8 z-40 p-3.5 rounded-2xl bg-slate-900 dark:bg-slate-900 light:bg-white border-2 border-slate-700 dark:border-slate-700 light:border-slate-300 text-cyan-400 dark:text-cyan-400 light:text-slate-900 shadow-2xl hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer group backdrop-blur-md"
-      aria-label="Back to Top of Page"
-      title="Back to Top"
+      className={`!fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[9999] p-3 sm:p-3.5 cyber-cut-sm border transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer group backdrop-blur-md shadow-md flex items-center justify-center ${
+        isVisible ? 'opacity-100 pointer-events-auto translate-y-0' : 'opacity-0 pointer-events-none translate-y-4'
+      }`}
+      style={{
+        position: 'fixed',
+        backgroundColor: isLight ? 'rgba(255, 255, 255, 0.85)' : 'rgba(8, 14, 26, 0.85)',
+        borderColor: isLight ? '#94a3b8' : 'rgba(0, 240, 255, 0.35)',
+        color: isLight ? '#0284c7' : '#00f0ff',
+        boxShadow: isLight
+          ? '0 2px 10px rgba(0, 0, 0, 0.08)'
+          : '0 4px 14px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 240, 255, 0.15)',
+      }}
+      aria-label="一鍵往上 (Back to Top)"
+      title="一鍵往上 (Back to Top)"
     >
-      <ChevronUp size={22} className="group-hover:-translate-y-1 transition-transform text-cyan-400 dark:text-cyan-400 light:text-slate-900 font-bold" />
+      <ChevronUp size={22} className="group-hover:-translate-y-0.5 transition-transform stroke-[2.5]" />
     </button>
   );
 };
+

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
-import { Award, GraduationCap, Briefcase, ExternalLink, LucideIcon } from 'lucide-react';
+import { Award, GraduationCap, Briefcase, ExternalLink, LucideIcon, UserCheck } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 import aboutData from '../data/about-section.json';
 
@@ -37,123 +37,135 @@ export const About: React.FC = () => {
   const currentData: AboutSectionData = dataMap[lang] ?? dataMap.zh;
   const driveLinks = dataMap.driveLinks;
 
-  const statIconBg = isLight ? '#f0f9ff' : 'rgba(15,23,42,0.8)';
-  const statIconBdr = isLight ? '#bae6fd' : 'rgba(255,255,255,0.08)';
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
 
   return (
-    <section id="about" className="py-16 sm:py-24 relative select-text">
-      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" className="py-20 relative select-text">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12">
 
-        {/* Section Header */}
-        <div className="text-center max-w-3xl xl:max-w-4xl mx-auto mb-16 space-y-2">
-          <h2 className="text-3xl sm:text-4xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-            {currentData.title}
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+          <div
+            className="inline-flex items-center gap-2 font-tech text-xs font-bold uppercase tracking-wider px-3.5 py-1 border cyber-cut-sm shadow-sm"
+            style={{
+              backgroundColor: isLight ? '#ffffff' : '#080e1a',
+              borderColor: borderCol,
+              color: cyanCol,
+            }}
+          >
+            <UserCheck size={14} />
+            <span>{lang === 'zh' ? '關於作者 & 核心經歷' : 'ABOUT ME'}</span>
+          </div>
+
+          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+            <UserCheck size={32} style={{ color: cyanCol }} className="shrink-0" />
+            <span>{currentData.title}</span>
           </h2>
-          <p className="text-sm sm:text-base font-normal leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+          <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
             {currentData.intro}
           </p>
-          <div className="w-16 h-1 bg-gradient-to-r from-cyan-500 to-purple-600 mx-auto mt-4 rounded-full" aria-hidden="true" />
         </div>
 
-        {/* Master Content Container — Borderless & Clean Layout */}
-        <div className="rounded-2xl p-2 sm:p-6 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        {/* Master Container */}
+        <div
+          className="cyber-card p-6 sm:p-10 cyber-cut-corner max-w-6xl mx-auto border shadow-xl"
+          style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)', borderColor: borderCol }}
+        >
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-            {/* High-End Portrait Avatar */}
+            {/* Portrait */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative group w-52 h-52 sm:w-60 sm:h-60 xl:w-68 xl:h-68">
-
+              <div className="relative group w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72">
                 <div
-                  className="absolute inset-0 rounded-full blur-2xl transition-all duration-700 pointer-events-none group-hover:scale-105"
+                  className="absolute inset-0 border cyber-cut-corner p-2 shadow-lg hud-corner-brackets"
                   style={{
-                    background: isLight
-                      ? 'radial-gradient(circle, rgba(14,165,233,0.18) 0%, rgba(168,85,247,0.1) 70%, transparent 100%)'
-                      : 'radial-gradient(circle, rgba(6,182,212,0.28) 0%, rgba(168,85,247,0.2) 70%, transparent 100%)',
-                  }}
-                  aria-hidden="true"
-                />
-
-                <div
-                  className="relative w-full h-full rounded-full p-1.5 transition-all duration-500 group-hover:scale-[1.03]"
-                  style={{
-                    backgroundColor: isLight ? '#ffffff' : '#0b0f19',
-                    border: `1.5px solid ${isLight ? '#cbd5e1' : 'rgba(6,182,212,0.35)'}`,
-                    boxShadow: isLight
-                      ? '0 20px 40px -10px rgba(14, 165, 233, 0.18), 0 4px 12px rgba(15, 23, 42, 0.08)'
-                      : '0 20px 45px -10px rgba(6, 182, 212, 0.3), 0 0 30px rgba(168, 85, 247, 0.18)',
+                    backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.4)',
                   }}
                 >
-                  <div className="w-full h-full rounded-full overflow-hidden shadow-inner">
+                  <div className="relative w-full h-full overflow-hidden">
                     <img
                       src={getAssetUrl('/assets/images/personal.avif')}
-                      alt="Che-Cheng Hsu Portrait"
-                      width="272"
-                      height="272"
-                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                      alt="許哲誠 (Che-Cheng Hsu) Portrait"
+                      width="288"
+                      height="288"
+                      loading="lazy"
                       decoding="async"
-                      fetchPriority="high"
+                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
                     />
                   </div>
                 </div>
-
               </div>
             </div>
 
-            {/* Bio + Achievement Stats */}
-            <div className="lg:col-span-7 space-y-6 sm:space-y-8 w-full text-left">
-
-              <div className="space-y-3 sm:space-y-4 w-full">
-                <h3 className="text-xl sm:text-3xl font-extrabold" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+            {/* Bio & Stat Gauges */}
+            <div className="lg:col-span-7 space-y-6 text-left">
+              <div className="space-y-3">
+                <h3 className="text-2xl sm:text-3xl font-black font-hud leading-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                   {currentData.heading}
                 </h3>
 
-                <p className="text-sm sm:text-lg leading-relaxed font-normal" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
+                <p className="text-sm sm:text-base leading-relaxed font-tech" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
                   {currentData.p1}
                 </p>
               </div>
 
-              {/* Achievement Stats Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 sm:gap-4 pt-1 sm:pt-2 w-full">
-                {currentData.stats.map((st) => {
+              {/* Stat Cards with Distinct Color Hierarchy */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                {currentData.stats.map((st, idx) => {
                   const IconComponent = iconMap[st.icon] ?? Award;
                   const proofUrl = st.proofKey ? driveLinks[st.proofKey] : null;
+
+                  // Distinct color hierarchy by sequence/importance
+                  const cardAccents = [
+                    { border: isLight ? '#0284c7' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.1)', text: isLight ? '#0369a1' : '#00f0ff' },
+                    { border: isLight ? '#7c3aed' : '#a855f7', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.1)', text: isLight ? '#6b21a8' : '#c084fc' },
+                    { border: isLight ? '#d97706' : '#f59e0b', bg: isLight ? '#fef3c7' : 'rgba(245,158,11,0.1)', text: isLight ? '#92400e' : '#fbbf24' },
+                  ];
+                  const accent = cardAccents[idx % cardAccents.length];
 
                   return (
                     <div
                       key={st.id}
-                      className="glass-card p-4 rounded-xl space-y-2 border border-[var(--border-color)] hover:-translate-y-1 transition-transform flex flex-col justify-between"
+                      className="p-4 border cyber-cut-sm flex flex-col justify-between gap-3 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-sm"
+                      style={{
+                        backgroundColor: isLight ? '#ffffff' : 'rgba(3,7,18,0.8)',
+                        borderColor: isLight ? accent.border : borderCol,
+                      }}
                     >
-                      <div className="space-y-1.5">
-                        <div className="flex items-center gap-2.5">
-                          <div className="p-1.5 rounded-lg border" style={{ backgroundColor: statIconBg, borderColor: statIconBdr }}>
-                            <IconComponent size={16} style={{ color: st.id === 'exp' ? (isLight ? '#0284c7' : '#22d3ee') : st.id === 'projects' ? (isLight ? '#7e22ce' : '#c084fc') : (isLight ? '#b45309' : '#fbbf24') }} />
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="p-1.5 border cyber-cut-sm"
+                            style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.text }}
+                          >
+                            <IconComponent size={16} />
                           </div>
-                          <span className="font-bold text-sm sm:text-base" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                          <span className="font-hud font-bold text-xs uppercase tracking-wider" style={{ color: accent.text }}>
                             {st.title}
                           </span>
                         </div>
-                        <p className="text-xs sm:text-sm font-semibold leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                        <p className="text-xs font-tech font-bold leading-tight" style={{ color: isLight ? '#0f172a' : '#cbd5e1' }}>
                           {st.label}
                         </p>
                       </div>
 
                       {proofUrl && (
-                        <div className="pt-2">
-                          <a
-                            href={proofUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="w-full h-8 px-3 rounded-lg border text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs cursor-pointer hover:scale-105"
-                            style={{
-                              backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.12)',
-                              borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.3)',
-                              color: isLight ? '#b45309' : '#fbbf24',
-                            }}
-                          >
-                            <ExternalLink size={12} />
-                            <span>{st.btnLabel}</span>
-                          </a>
-                        </div>
+                        <a
+                          href={proofUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="w-full py-1.5 px-2 border font-tech text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:scale-105"
+                          style={{
+                            backgroundColor: accent.bg,
+                            borderColor: accent.border,
+                            color: accent.text,
+                          }}
+                        >
+                          <ExternalLink size={12} />
+                          <span>{st.btnLabel}</span>
+                        </a>
                       )}
                     </div>
                   );
@@ -163,7 +175,10 @@ export const About: React.FC = () => {
             </div>
           </div>
         </div>
+
       </div>
     </section>
   );
 };
+
+export default About;

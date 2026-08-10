@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
-import { X } from 'lucide-react';
+import { X, Video } from 'lucide-react';
 
 interface YoutubeModalProps {
   isOpen: boolean;
@@ -41,66 +41,67 @@ export const YoutubeModal: React.FC<YoutubeModalProps> = ({ isOpen, onClose, vid
 
   if (!isOpen) return null;
 
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
+
   return (
     <div
       ref={modalRef}
       tabIndex={-1}
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-md outline-hidden"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 backdrop-blur-xl outline-hidden select-none"
       style={{
-        backgroundColor: isLight ? 'rgba(15,23,42,0.65)' : 'rgba(3,7,18,0.85)',
-        animation: 'fadeIn 0.25s ease',
+        backgroundColor: isLight ? 'rgba(15,23,42,0.75)' : 'rgba(3,7,18,0.92)',
       }}
       onClick={handleClose}
       role="dialog"
       aria-modal="true"
-      aria-label={title || 'YouTube Video Player'}
+      aria-label={title || '專案展示影片'}
     >
       <div
-        className="relative w-full max-w-4xl border rounded-2xl overflow-hidden shadow-2xl space-y-4 p-4 sm:p-6"
+        className="relative w-full max-w-4xl border cyber-cut-corner space-y-4 p-4 sm:p-6 shadow-2xl hud-corner-brackets"
         style={{
-          backgroundColor: isLight ? '#ffffff' : '#0f172a',
-          borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
-          boxShadow: isLight
-            ? '0 25px 50px -12px rgba(0, 0, 0, 0.25)'
-            : '0 25px 50px -12px rgba(0, 0, 0, 0.75)',
+          backgroundColor: isLight ? '#ffffff' : '#080e1a',
+          borderColor: borderCol,
         }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div
           className="flex items-center justify-between border-b pb-3"
-          style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}
+          style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(0,240,255,0.2)' }}
         >
-          <h3
-            className="text-base sm:text-lg font-bold truncate pr-4"
-            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-          >
-            {title || 'Project Demo Video'}
-          </h3>
+          <div className="flex items-center gap-2 pr-4 min-w-0">
+            <Video size={18} className="text-rose-500 shrink-0" />
+            <h3
+              className="text-base sm:text-lg font-hud font-bold uppercase truncate"
+              style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+            >
+              {title || '專案展示影片'}
+            </h3>
+          </div>
+
           <button
             onClick={handleClose}
-            className="p-2 rounded-xl border transition-colors cursor-pointer shrink-0"
+            className="p-1.5 border cyber-cut-sm flex items-center justify-center transition-all cursor-pointer hover:scale-105 shrink-0"
             style={{
               backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.08)',
-              borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
+              borderColor: borderCol,
               color: isLight ? '#0f172a' : '#f8fafc',
             }}
-            aria-label="Close Video Player"
-            title="Close"
+            aria-label="關閉影片視窗"
+            title="關閉"
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
-        {/* 16:9 Iframe */}
+        {/* 16:9 Iframe Container */}
         <div
-          className="relative aspect-video w-full rounded-xl overflow-hidden bg-slate-950"
-          onMouseEnter={() => document.body.classList.add('hide-custom-cursor')}
-          onMouseLeave={() => document.body.classList.remove('hide-custom-cursor')}
+          className="relative aspect-video w-full border cyber-cut-sm overflow-hidden bg-slate-950"
+          style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.1)' }}
         >
           <iframe
             src={`https://www.youtube.com/embed/${videoId}?autoplay=1`}
-            title={title || 'YouTube Video Player'}
+            title={title || '專案展示影片'}
             className="w-full h-full border-0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             referrerPolicy="strict-origin-when-cross-origin"
@@ -113,3 +114,4 @@ export const YoutubeModal: React.FC<YoutubeModalProps> = ({ isOpen, onClose, vid
   );
 };
 
+export default YoutubeModal;

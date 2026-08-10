@@ -32,7 +32,7 @@
       "group": "多媒體與軟體原廠國際認證",
       "iconType": "box",
       "items": [
-        { "name": "3dsMax ACU 國際認證", "org": "Autodesk", "linkKey": "acu3dsMax" },
+        { "name": "3ds Max ACU 國際認證", "org": "Autodesk", "linkKey": "acu3dsMax" },
         { "name": "AutoCAD ACU 國際認證", "org": "Autodesk", "linkKey": "acuAutoCAD" },
         { "name": "ACA Photoshop 國際認證", "org": "Adobe", "linkKey": "acaPhotoshop" },
         { "name": "ACP Dreamweaver 國際認證", "org": "Adobe", "linkKey": "acpDreamweaver" },
@@ -58,7 +58,7 @@
       "group": "Software Int'l Certifications",
       "iconType": "box",
       "items": [
-        { "name": "Autodesk 3dsMax ACU", "org": "Autodesk", "linkKey": "acu3dsMax" },
+        { "name": "Autodesk 3ds Max ACU", "org": "Autodesk", "linkKey": "acu3dsMax" },
         { "name": "Autodesk AutoCAD ACU", "org": "Autodesk", "linkKey": "acuAutoCAD" },
         { "name": "ACA Photoshop", "org": "Adobe", "linkKey": "acaPhotoshop" },
         { "name": "ACA Dreamweaver", "org": "Adobe", "linkKey": "acpDreamweaver" },

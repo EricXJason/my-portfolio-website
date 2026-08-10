@@ -17,8 +17,9 @@ export const ScrollProgress: React.FC = () => {
   }, []);
 
   return (
+    /* Top Horizontal Reading Progress Line — Positioned strictly below Navbar (top-[80px]) */
     <div
-      className="fixed top-0 left-0 h-1 bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 z-[60] transition-all duration-150"
+      className="fixed top-[80px] left-0 h-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 z-40 transition-all duration-150 shadow-[0_2px_8px_rgba(0,240,255,0.5)]"
       style={{ width: `${scrollWidth}%` }}
       role="progressbar"
       aria-valuenow={Math.round(scrollWidth)}

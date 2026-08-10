@@ -4,7 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Sun, Moon, Globe2 } from 'lucide-react';
 
 export const LangSelectModal: React.FC = () => {
-  const { setLangDirect } = useLang();
+  const { lang, setLangDirect } = useLang();
   const { theme, toggleTheme } = useTheme();
   const isLight = theme === 'light';
   const [visible, setVisible] = useState(false);
@@ -14,7 +14,6 @@ export const LangSelectModal: React.FC = () => {
     setLangDirect(l);
     setClosing(true);
 
-    // Re-enable page scrolling immediately upon language selection
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
 
@@ -22,15 +21,12 @@ export const LangSelectModal: React.FC = () => {
   }, [setLangDirect]);
 
   useEffect(() => {
-    // Always show modal on page refresh / initial load
     setVisible(true);
 
-    // Disable background page scrolling when modal is open
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
 
     return () => {
-      // Re-enable scrolling on unmount
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
     };
@@ -53,56 +49,52 @@ export const LangSelectModal: React.FC = () => {
 
   if (!visible) return null;
 
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)';
+  const bracketCol = isLight ? '#0284c7' : '#00f0ff';
+
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center px-6 py-4"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-6 sm:p-8 select-none"
       style={{
-        backgroundColor: isLight ? 'rgba(15,23,42,0.65)' : 'rgba(7,9,14,0.85)',
-        backdropFilter: 'blur(12px)',
-        WebkitBackdropFilter: 'blur(12px)',
+        backgroundColor: isLight ? 'rgba(15,23,42,0.70)' : 'rgba(3,7,18,0.90)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
         opacity: closing ? 0 : 1,
         transition: 'opacity 0.35s ease',
       }}
       onClick={() => choose('zh')}
       role="dialog"
       aria-modal="true"
-      aria-label="Select Language"
+      aria-label="選擇語言 / Select Language"
     >
       <div
-        className="relative w-full max-w-sm sm:max-w-md max-h-[90vh] overflow-y-auto rounded-3xl border p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6"
+        className="relative w-full max-w-[calc(100%-2rem)] sm:max-w-md border cyber-cut-corner p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6 hud-corner-brackets"
         style={{
-          backgroundColor: isLight ? '#ffffff' : 'rgba(15, 23, 42, 0.96)',
-          borderColor: isLight ? '#e2e8f0' : 'rgba(6, 182, 212, 0.35)',
-          boxShadow: isLight
-            ? '0 20px 50px rgba(15, 23, 42, 0.15)'
-            : '0 0 50px rgba(6, 182, 212, 0.2), 0 25px 50px rgba(0, 0, 0, 0.75)',
-        }}
+          backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.96)',
+          borderColor: borderCol,
+          '--hud-bracket-color': bracketCol,
+        } as React.CSSProperties}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="w-full flex items-center justify-between">
+        <div className="w-full flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-tr from-cyan-500 via-blue-600 to-purple-600 p-[2px] shadow-md">
-              <div
-                className="w-full h-full rounded-[10px] sm:rounded-[14px] flex items-center justify-center font-mono font-extrabold text-xs sm:text-sm"
-                style={{
-                  backgroundColor: isLight ? '#ffffff' : '#030712',
-                  color: isLight ? '#0369a1' : '#22d3ee',
-                }}
-              >
+            <div
+              className="w-10 h-10 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0"
+              style={{
+                borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.4)',
+                backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
+              }}
+            >
+              <div className="font-hud font-black text-xs" style={{ color: cyanCol }}>
                 &lt;JP/&gt;
               </div>
             </div>
-            <div className="flex flex-col text-left leading-tight">
-              <span
-                className="text-sm sm:text-base font-extrabold tracking-wide font-mono"
-                style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-              >
+            <div className="flex flex-col text-left leading-tight min-w-0">
+              <span className="font-mono text-sm sm:text-base font-extrabold tracking-wide truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                 JasonProduction
               </span>
-              <span
-                className="text-xs sm:text-sm font-code tracking-widest uppercase font-bold"
-                style={{ color: isLight ? '#0369a1' : '#22d3ee' }}
-              >
+              <span className="font-tech text-xs sm:text-sm font-bold tracking-wider truncate" style={{ color: cyanCol }}>
                 許哲誠 HSU, CHE-CHENG
               </span>
             </div>
@@ -110,72 +102,48 @@ export const LangSelectModal: React.FC = () => {
 
           <button
             onClick={toggleTheme}
-            className="w-14 h-8 rounded-full border p-1 relative flex items-center transition-all cursor-pointer active:scale-95 shrink-0 hover:border-cyan-400"
+            className="w-13 sm:w-16 h-8 sm:h-9 cyber-cut-sm border p-0.5 sm:p-1 relative flex items-center transition-all cursor-pointer active:scale-95 shrink-0 hover:border-cyan-400"
             style={{
-              backgroundColor: isLight ? '#f0f9ff' : '#0f172a',
-              borderColor: isLight ? '#bae6fd' : '#334155',
+              backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
+              borderColor: borderCol,
             }}
-            aria-label="Toggle Theme"
-            title={isLight ? '切換暗色主題 / Switch Dark' : '切換亮色主題 / Switch Light'}
+            aria-label={isLight ? (lang === 'zh' ? '目前模式：淺色模式' : 'Current Mode: Light Mode') : (lang === 'zh' ? '目前模式：深色模式' : 'Current Mode: Dark Mode')}
+            title={isLight ? (lang === 'zh' ? '淺色模式' : 'Light Mode') : (lang === 'zh' ? '深色模式' : 'Dark Mode')}
           >
-            <div className="absolute inset-0 px-1.5 flex items-center justify-between pointer-events-none text-xs">
-              <Sun size={12} className={isLight ? "text-amber-400" : "text-amber-400/70"} />
-              <Moon size={12} className={isLight ? "text-sky-500/60" : "text-cyan-400/60"} />
+            <div className="absolute inset-0 px-2 flex items-center justify-between pointer-events-none text-xs">
+              <Sun size={13} className="text-amber-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
+              <Moon size={13} className="text-cyan-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(0,240,255,0.8)]" />
             </div>
             <div
-              className="w-6 h-6 rounded-full flex items-center justify-center transition-all duration-300 z-10"
+              className="w-6 h-6 sm:w-7 sm:h-7 rounded-none flex items-center justify-center transition-all duration-300 z-10 text-xs shadow-md"
               style={{
-                transform: isLight ? 'translateX(0px)' : 'translateX(24px)',
-                background: isLight
-                  ? 'linear-gradient(135deg, #f59e0b 0%, #f97316 100%)'
-                  : 'linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%)',
-                boxShadow: isLight
-                  ? '0 2px 8px rgba(245, 158, 11, 0.5)'
-                  : '0 2px 8px rgba(6, 182, 212, 0.5)',
-                color: '#ffffff',
+                transform: isLight ? 'translateX(0px)' : (window.innerWidth < 640 ? 'translateX(20px)' : 'translateX(28px)'),
+                background: isLight ? '#fbbf24' : '#00f0ff',
+                color: '#0f172a',
               }}
             >
-              {isLight ? <Sun size={13} /> : <Moon size={13} />}
+              {isLight ? <Sun size={14} className="fill-current text-slate-900" /> : <Moon size={14} className="fill-current text-slate-900" />}
             </div>
           </button>
         </div>
 
-        <div className="text-center space-y-1">
-          <div className="flex items-center justify-center gap-2" style={{ color: isLight ? '#0284c7' : '#22d3ee' }}>
-            <Globe2 size={18} />
-            <h2 className="text-base sm:text-lg font-extrabold tracking-tight font-mono">
-              選擇語言 / Select Language
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+            <Globe2 size={18} className="shrink-0" style={{ color: cyanCol }} />
+            <h2 className="text-base sm:text-lg font-bold font-hud uppercase tracking-wider whitespace-nowrap" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+              語言 LANGUAGE
             </h2>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 w-full">
+        <div className="grid grid-cols-2 gap-3.5 w-full">
           <button
             onClick={() => choose('zh')}
-            className="h-13 rounded-2xl font-bold text-sm sm:text-base font-code transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 border-2 shadow-md hover:scale-[1.03] active:scale-[0.97]"
+            className="h-12 px-6 sm:px-8 border cyber-cut-corner font-bold text-sm font-tech transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.03] active:scale-[0.97] shadow-sm"
             style={{
-              backgroundColor: isLight ? '#f0f9ff' : 'rgba(14, 116, 144, 0.15)',
-              borderColor: isLight ? '#7dd3fc' : 'rgba(6, 182, 212, 0.45)',
-              color: isLight ? '#0369a1' : '#38bdf8',
-            }}
-            onMouseEnter={(e) => {
-              if (isLight) {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #0284c7 0%, #2563eb 100%)';
-                e.currentTarget.style.borderColor = 'transparent';
-                e.currentTarget.style.color = '#ffffff';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(2, 132, 199, 0.35)';
-              } else {
-                e.currentTarget.style.backgroundColor = 'rgba(6, 182, 212, 0.28)';
-                e.currentTarget.style.borderColor = '#22d3ee';
-                e.currentTarget.style.color = '#ffffff';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(6, 182, 212, 0.4)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = isLight ? '#f0f9ff' : 'rgba(14, 116, 144, 0.15)';
-              e.currentTarget.style.borderColor = isLight ? '#7dd3fc' : 'rgba(6, 182, 212, 0.45)';
-              e.currentTarget.style.color = isLight ? '#0369a1' : '#38bdf8';
-              e.currentTarget.style.boxShadow = '';
+              backgroundColor: isLight ? '#f0f9ff' : 'rgba(0, 240, 255, 0.15)',
+              borderColor: isLight ? '#38bdf8' : '#00f0ff',
+              color: isLight ? '#0369a1' : '#00f0ff',
             }}
           >
             <span>繁體中文</span>
@@ -183,30 +151,11 @@ export const LangSelectModal: React.FC = () => {
 
           <button
             onClick={() => choose('en')}
-            className="h-13 rounded-2xl font-bold text-sm sm:text-base font-code transition-all duration-300 cursor-pointer flex items-center justify-center gap-2 border-2 shadow-md hover:scale-[1.03] active:scale-[0.97]"
+            className="h-12 px-6 sm:px-8 border cyber-cut-corner font-bold text-sm font-tech transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.03] active:scale-[0.97] shadow-sm"
             style={{
-              backgroundColor: isLight ? '#faf5ff' : 'rgba(126, 34, 206, 0.15)',
-              borderColor: isLight ? '#e9d5ff' : 'rgba(168, 85, 247, 0.45)',
+              backgroundColor: isLight ? '#faf5ff' : 'rgba(168, 85, 247, 0.15)',
+              borderColor: isLight ? '#c084fc' : '#a855f7',
               color: isLight ? '#7e22ce' : '#c084fc',
-            }}
-            onMouseEnter={(e) => {
-              if (isLight) {
-                e.currentTarget.style.background = 'linear-gradient(135deg, #9333ea 0%, #4f46e5 100%)';
-                e.currentTarget.style.borderColor = 'transparent';
-                e.currentTarget.style.color = '#ffffff';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(147, 51, 234, 0.35)';
-              } else {
-                e.currentTarget.style.backgroundColor = 'rgba(168, 85, 247, 0.28)';
-                e.currentTarget.style.borderColor = '#c084fc';
-                e.currentTarget.style.color = '#ffffff';
-                e.currentTarget.style.boxShadow = '0 6px 20px rgba(168, 85, 247, 0.4)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = isLight ? '#faf5ff' : 'rgba(126, 34, 206, 0.15)';
-              e.currentTarget.style.borderColor = isLight ? '#e9d5ff' : 'rgba(168, 85, 247, 0.45)';
-              e.currentTarget.style.color = isLight ? '#7e22ce' : '#c084fc';
-              e.currentTarget.style.boxShadow = '';
             }}
           >
             <span>English</span>
@@ -216,3 +165,5 @@ export const LangSelectModal: React.FC = () => {
     </div>
   );
 };
+
+export default LangSelectModal;

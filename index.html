@@ -1,55 +1,74 @@
 <!doctype html>
 <html lang="zh-TW">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="shortcut icon" type="image/svg+xml" href="./favicon.svg" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-    <link rel="mask-icon" href="./favicon.svg" color="#00f2fe" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#07090e" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Portfolio" />
 
-    <!-- ── Primary SEO Meta Tags ── -->
-    <title>Portfolio</title>
-    <meta name="title" content="Portfolio" />
-    <meta
-      name="description"
-      content="許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站，展示個人於互動應用開發、全端開發 與多媒體設計之專案成果、專業證照、經歷與美術畫廊。"
-    />
-    <meta
-      name="keywords"
-      content="許哲誠, HSU CHE-CHENG, Portfolio, 個人作品集"
-    />
-    <meta name="author" content="許哲誠 (HSU, CHE-CHENG)" />
-    <meta name="robots" content="index, follow" />
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="shortcut icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+  <link rel="mask-icon" href="./favicon.svg" color="#00f2fe" />
+  <link rel="manifest" href="./site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#07090e" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Portfolio" />
 
-    <!-- ── Open Graph / Facebook Meta Tags ── -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://ericxjason.github.io/my-portfolio-website/" />
-    <meta property="og:title" content="Portfolio" />
-    <meta
-      property="og:description"
-      content="許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站，展示個人於互動應用開發、全端開發 與多媒體設計之專案成果、專業證照、經歷與美術畫廊。"
-    />
-    <meta property="og:image" content="https://ericxjason.github.io/my-portfolio-website/assets/images/personal.avif" />
-    <meta property="og:site_name" content="JasonProduction Portfolio" />
-    <meta property="og:locale" content="zh_TW" />
+  <!-- ── Google Sci-Fi Gaming & Tech Fonts ── -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,400;0,600;0,700;1,700&family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap"
+    rel="stylesheet" />
 
-    <!-- ── Twitter Card Meta Tags ── -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://ericxjason.github.io/my-portfolio-website/" />
-    <meta name="twitter:title" content="Portfolio" />
-    <meta
-      name="twitter:description"
-      content="許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站，展示個人於互動應用開發、全端開發 與多媒體設計之專案成果、專業證照、經歷與美術畫廊。"
-    />
-    <meta name="twitter:image" content="https://ericxjason.github.io/my-portfolio-website/assets/images/personal.avif" />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- ── Primary SEO Meta Tags ── -->
+  <title>Portfolio | 許哲誠 (HSU, CHE-CHENG) 官方作品集</title>
+  <link rel="canonical" href="https://ericxjason.github.io/my-portfolio-website/" />
+  <meta name="title" content="Portfolio | 許哲誠 (HSU, CHE-CHENG) 官方作品集" />
+  <meta name="description"
+    content="許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站，展示個人於 VR/AR 互動應用開發、全端網頁工程與多媒體美學設計之代表專案成果、專業證照、經歷與美術畫廊。" />
+  <meta name="keywords" content="許哲誠, HSU CHE-CHENG, Portfolio, 個人作品集, 軟體工程師, VR/AR, 全端開發" />
+  <meta name="author" content="許哲誠 (HSU, CHE-CHENG)" />
+  <meta name="robots" content="index, follow" />
+
+  <!-- ── JSON-LD Structured Data for SEO ── -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "許哲誠 (HSU, CHE-CHENG)",
+      "alternateName": "Jason HSU",
+      "url": "https://ericxjason.github.io/my-portfolio-website/",
+      "jobTitle": "Full-Stack Software Engineer & Interactive Developer",
+      "sameAs": [
+        "https://github.com/ericxjason"
+      ],
+      "knowsAbout": ["React", "TypeScript", "Unity", "Spring Boot", "VR/AR", "Full-Stack Web Development"]
+    }
+  </script>
+
+  <!-- ── Open Graph / Facebook Meta Tags ── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://ericxjason.github.io/my-portfolio-website/" />
+  <meta property="og:title" content="Portfolio" />
+  <meta property="og:description" content="許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站，展示個人於互動應用開發、全端開發 與多媒體設計之專案成果、專業證照、經歷與美術畫廊。" />
+  <meta property="og:image" content="https://ericxjason.github.io/my-portfolio-website/assets/images/personal.avif" />
+  <meta property="og:site_name" content="JasonProduction Portfolio" />
+  <meta property="og:locale" content="zh_TW" />
+
+  <!-- ── Twitter Card Meta Tags ── -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content="https://ericxjason.github.io/my-portfolio-website/" />
+  <meta name="twitter:title" content="Portfolio" />
+  <meta name="twitter:description"
+    content="許哲誠 (HSU, CHE-CHENG) 個人官方作品集網站，展示個人於互動應用開發、全端開發 與多媒體設計之專案成果、專業證照、經歷與美術畫廊。" />
+  <meta name="twitter:image" content="https://ericxjason.github.io/my-portfolio-website/assets/images/personal.avif" />
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

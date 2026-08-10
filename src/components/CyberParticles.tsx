@@ -9,7 +9,6 @@ interface Particle {
   x: number;
   y: number;
   radius: number;
-  baseRadius: number;
   vx: number;
   vy: number;
   pulsePhase: number;
@@ -17,7 +16,7 @@ interface Particle {
   baseAlpha: number;
   darkColor: string;
   lightColor: string;
-  shape: 'circle' | 'square' | 'ring';
+  shape: 'circle' | 'square' | 'ring' | 'cross';
 }
 
 export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlaying }) => {
@@ -50,30 +49,27 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
 
-    const darkPalette = ['#06b6d4', '#38bdf8', '#8b5cf6', '#c084fc', '#ec4899', '#10b981', '#6366f1'];
-    // Independent Luminous Light Mode Palette: Soft Azure, Sky Blue, Indigo, and Soft Teal
-    const lightPalette = ['#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#06b6d4', '#14b8a6'];
+    const darkPalette = ['#00f0ff', '#ff0055', '#ffb700', '#00ff9d', '#b026ff', '#38bdf8'];
+    const lightPalette = ['#0284c7', '#2563eb', '#059669', '#d97706', '#7c3aed'];
 
     const isMobile = window.innerWidth < 768;
-    // Adaptive particle count for 60FPS fluid experience on mobile vs desktop
-    const particleCount = isMobile ? 24 : 68;
+    const particleCount = isMobile ? 32 : 70;
 
     const particles: Particle[] = Array.from({ length: particleCount }, () => {
       const darkColor = darkPalette[Math.floor(Math.random() * darkPalette.length)];
       const lightColor = lightPalette[Math.floor(Math.random() * lightPalette.length)];
       const r = Math.random() * 2.2 + 1.2;
-      const shapes: ('circle' | 'square' | 'ring')[] = ['circle', 'circle', 'circle', 'ring', 'square'];
+      const shapes: ('circle' | 'square' | 'ring' | 'cross')[] = ['circle', 'circle', 'ring', 'square', 'cross'];
 
       return {
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         radius: r,
-        baseRadius: r,
-        vx: (Math.random() - 0.5) * 0.55,
-        vy: (Math.random() - 0.5) * 0.55,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
         pulsePhase: Math.random() * Math.PI * 2,
-        pulseSpeed: 0.018 + Math.random() * 0.025,
-        baseAlpha: Math.random() * 0.4 + 0.45,
+        pulseSpeed: 0.02 + Math.random() * 0.025,
+        baseAlpha: Math.random() * 0.45 + 0.25,
         darkColor,
         lightColor,
         shape: shapes[Math.floor(Math.random() * shapes.length)],
@@ -92,14 +88,13 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
         p.pulsePhase += p.pulseSpeed;
         const speedMult = soundPlaying ? 1.6 : 1.0;
 
-        // Interactive mouse magnetic force
         if (mouse.active) {
           const dx = mouse.x - p.x;
           const dy = mouse.y - p.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
-          const maxDist = 180;
+          const maxDist = 200;
           if (dist < maxDist) {
-            const force = (1 - dist / maxDist) * 0.7;
+            const force = (1 - dist / maxDist) * 0.85;
             p.x -= (dx / dist) * force;
             p.y -= (dy / dist) * force;
           }
@@ -108,22 +103,20 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
         p.x += p.vx * speedMult;
         p.y += p.vy * speedMult;
 
-        // Wrap around boundaries smoothly
         if (p.x < -20) p.x = canvas.width + 20;
         if (p.x > canvas.width + 20) p.x = -20;
         if (p.y < -20) p.y = canvas.height + 20;
         if (p.y > canvas.height + 20) p.y = -20;
 
-        const soundPulse = soundPlaying ? 0.3 * Math.sin(frameCount * 0.08 + p.pulsePhase) : 0;
-        const pulseFactor = 0.75 + 0.25 * Math.sin(p.pulsePhase) + soundPulse;
-        const currentAlpha = Math.min(1, Math.max(0.1, p.baseAlpha * pulseFactor));
+        const soundPulse = soundPlaying ? 0.3 * Math.sin(frameCount * 0.1 + p.pulsePhase) : 0;
+        const pulseFactor = 0.8 + 0.2 * Math.sin(p.pulsePhase) + soundPulse;
+        const currentAlpha = Math.min(0.95, Math.max(0.15, p.baseAlpha * pulseFactor));
         const particleColor = isLight ? p.lightColor : p.darkColor;
 
         ctx.save();
-        // In light mode, render soft translucent ambient particles so they blend gracefully into bright backgrounds
-        ctx.globalAlpha = isLight ? Math.min(0.4, currentAlpha * 0.45) : currentAlpha;
+        ctx.globalAlpha = isLight ? Math.min(0.45, currentAlpha * 0.5) : currentAlpha;
 
-        if (p.radius > 2.0 && !isMobile) {
+        if (p.radius > 1.8 && !isMobile) {
           ctx.shadowColor = particleColor;
           ctx.shadowBlur = isLight ? 4 : 10;
         }
@@ -133,12 +126,21 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
 
         if (p.shape === 'circle') {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius * (soundPlaying ? 1.2 : 1.0), 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, p.radius * (soundPlaying ? 1.3 : 1.0), 0, Math.PI * 2);
           ctx.fill();
         } else if (p.shape === 'ring') {
           ctx.beginPath();
-          ctx.arc(p.x, p.y, p.radius * 1.4, 0, Math.PI * 2);
+          ctx.arc(p.x, p.y, p.radius * 1.5, 0, Math.PI * 2);
           ctx.lineWidth = 1;
+          ctx.stroke();
+        } else if (p.shape === 'cross') {
+          const len = p.radius * 1.6;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p.x - len, p.y);
+          ctx.lineTo(p.x + len, p.y);
+          ctx.moveTo(p.x, p.y - len);
+          ctx.lineTo(p.x, p.y + len);
           ctx.stroke();
         } else {
           ctx.fillRect(p.x - p.radius, p.y - p.radius, p.radius * 2, p.radius * 2);
@@ -146,8 +148,8 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
         ctx.restore();
       });
 
-      // Draw constellation network lines
-      const connectDist = soundPlaying ? 180 : 150;
+      // Draw Sci-Fi Laser Grid Telemetry Connectors
+      const connectDist = soundPlaying ? 170 : 135;
       for (let i = 0; i < particleCount; i++) {
         for (let j = i + 1; j < particleCount; j++) {
           const p1 = particles[i];
@@ -167,7 +169,7 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
             ctx.moveTo(p1.x, p1.y);
             ctx.lineTo(p2.x, p2.y);
             ctx.strokeStyle = lineStroke;
-            ctx.lineWidth = lineFactor * 1.0;
+            ctx.lineWidth = lineFactor * 1.1;
             ctx.stroke();
             ctx.restore();
           }
@@ -193,27 +195,22 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
   return (
     <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
       <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      {/* Sci-Fi Tactical Grid Overlay */}
       <div
-        className="absolute inset-0 pointer-events-none transition-opacity duration-500"
+        className="absolute inset-0 pointer-events-none transition-opacity duration-500 opacity-20"
         style={{
-          opacity: isLight ? 0.35 : 0.45,
           backgroundImage: isLight
-            ? `
-              linear-gradient(to right, rgba(2, 132, 199, 0.08) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(2, 132, 199, 0.08) 1px, transparent 1px)
-            `
-            : `
-              linear-gradient(to right, rgba(6, 182, 212, 0.07) 1px, transparent 1px),
-              linear-gradient(to bottom, rgba(6, 182, 212, 0.07) 1px, transparent 1px)
-            `,
-          backgroundSize: '4rem 4rem',
+            ? `radial-gradient(#0284c7 1px, transparent 1px), linear-gradient(to right, rgba(2, 132, 199, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(2, 132, 199, 0.08) 1px, transparent 1px)`
+            : `radial-gradient(#00f0ff 1px, transparent 1px), linear-gradient(to right, rgba(0, 240, 255, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 240, 255, 0.08) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px, 40px 40px, 40px 40px',
         }}
       />
+      {/* Holographic Laser Beam Scan Line */}
       <div
         className={`absolute inset-x-0 h-[2px] pointer-events-none filter blur-[1px] animate-cyber-scan ${
           isLight
-            ? 'bg-gradient-to-r from-transparent via-cyan-600/70 to-transparent'
-            : 'bg-gradient-to-r from-transparent via-cyan-400/70 to-transparent'
+            ? 'bg-gradient-to-r from-transparent via-sky-500 to-transparent'
+            : 'bg-gradient-to-r from-transparent via-cyan-400 to-transparent'
         }`}
       />
     </div>
