@@ -10,7 +10,7 @@ export const CustomCursor: React.FC = () => {
   const [hasMoved, setHasMoved] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isHidden, setIsHidden] = useState(true);
+  const [isHidden, setIsHidden] = useState(false);
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.matchMedia('(pointer: fine)').matches) {
@@ -65,7 +65,9 @@ export const CustomCursor: React.FC = () => {
       const y = e.clientY;
 
       pointer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
-      setHasMoved(true);
+      if (!hasMoved) {
+        setHasMoved(true);
+      }
 
       if (
         document.body.classList.contains('hide-custom-cursor') ||
@@ -100,16 +102,18 @@ export const CustomCursor: React.FC = () => {
     const handleMouseDown = () => setIsMouseDown(true);
     const handleMouseUp = () => setIsMouseDown(false);
 
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('mousedown', handleMouseDown);
-    window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('pointermove', handleMouseMove, { passive: true });
+    window.addEventListener('mousedown', handleMouseDown, { passive: true });
+    window.addEventListener('mouseup', handleMouseUp, { passive: true });
 
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('pointermove', handleMouseMove);
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [enabled]);
+  }, [enabled, hasMoved]);
 
   if (!enabled) return null;
 
@@ -121,7 +125,7 @@ export const CustomCursor: React.FC = () => {
     <div
       ref={pointerRef}
       aria-hidden="true"
-      className={`pointer-events-none fixed top-0 left-0 z-[999999] transition-opacity duration-150 ${
+      className={`pointer-events-none fixed top-0 left-0 z-[9999999] transition-opacity duration-150 ${
         !hasMoved || isHidden ? 'opacity-0' : 'opacity-100'
       }`}
     >

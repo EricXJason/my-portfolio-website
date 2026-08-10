@@ -3,25 +3,35 @@ import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Sun, Moon, Globe2 } from 'lucide-react';
 
-export const LangSelectModal: React.FC = () => {
+interface LangSelectModalProps {
+  isOpen?: boolean;
+  onSelectLanguage?: () => void;
+}
+
+export const LangSelectModal: React.FC<LangSelectModalProps> = ({
+  isOpen = true,
+  onSelectLanguage,
+}) => {
   const { lang, setLangDirect } = useLang();
   const { theme, toggleTheme } = useTheme();
   const isLight = theme === 'light';
-  const [visible, setVisible] = useState(false);
   const [closing, setClosing] = useState(false);
 
   const choose = useCallback((l: Language) => {
     setLangDirect(l);
     setClosing(true);
 
-    document.body.style.overflow = '';
-    document.documentElement.style.overflow = '';
-
-    setTimeout(() => setVisible(false), 350);
-  }, [setLangDirect]);
+    setTimeout(() => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+      if (onSelectLanguage) {
+        onSelectLanguage();
+      }
+    }, 350);
+  }, [setLangDirect, onSelectLanguage]);
 
   useEffect(() => {
-    setVisible(true);
+    if (!isOpen) return;
 
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
@@ -30,10 +40,10 @@ export const LangSelectModal: React.FC = () => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
     };
-  }, []);
+  }, [isOpen]);
 
   useEffect(() => {
-    if (!visible || closing) return;
+    if (!isOpen || closing) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' || e.code === 'Escape') {
@@ -45,9 +55,9 @@ export const LangSelectModal: React.FC = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown, true);
     };
-  }, [visible, closing, choose]);
+  }, [isOpen, closing, choose]);
 
-  if (!visible) return null;
+  if (!isOpen) return null;
 
   const cyanCol = isLight ? '#0284c7' : '#00f0ff';
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)';
@@ -55,9 +65,9 @@ export const LangSelectModal: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-6 sm:p-8 select-none"
+      className="fixed inset-0 z-[999999] flex items-center justify-center p-6 sm:p-8 select-none"
       style={{
-        backgroundColor: isLight ? 'rgba(15,23,42,0.70)' : 'rgba(3,7,18,0.90)',
+        backgroundColor: isLight ? 'rgba(15,23,42,0.85)' : 'rgba(3,7,18,0.95)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         opacity: closing ? 0 : 1,
@@ -71,7 +81,7 @@ export const LangSelectModal: React.FC = () => {
       <div
         className="relative w-full max-w-[calc(100%-2rem)] sm:max-w-md border cyber-cut-corner p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6 hud-corner-brackets"
         style={{
-          backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.96)',
+          backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.98)',
           borderColor: borderCol,
           '--hud-bracket-color': bracketCol,
         } as React.CSSProperties}
