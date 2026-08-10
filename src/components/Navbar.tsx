@@ -53,11 +53,24 @@ export const Navbar: React.FC<NavbarProps> = ({
     return () => document.removeEventListener('mousedown', handler);
   }, [desktopExpOpen]);
 
+  // Toggle body class 'mobile-menu-open' to hide BackToTop button when mobile navbar is opened
+  useEffect(() => {
+    if (mobileOpen) {
+      document.body.classList.add('mobile-menu-open');
+    } else {
+      document.body.classList.remove('mobile-menu-open');
+    }
+    return () => {
+      document.body.classList.remove('mobile-menu-open');
+    };
+  }, [mobileOpen]);
+
   // Screen resize listener to close mobile menu on desktop
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
         setMobileOpen(false);
+
         setMobileExpOpen(false);
       }
     };

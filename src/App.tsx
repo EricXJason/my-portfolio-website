@@ -14,7 +14,6 @@ import { ScrollProgress } from './components/ScrollProgress';
 import { CyberParticles } from './components/CyberParticles';
 import { FullStackCodeStreamBackground } from './components/FullStackCodeStreamBackground';
 import { LangSelectModal } from './components/LangSelectModal';
-import { LoadingScreen } from './components/LoadingScreen';
 import { SeoSchema } from './components/SeoSchema';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
 
@@ -60,9 +59,8 @@ function AppContent() {
 
       <SeoSchema />
 
-      <LoadingScreen />
-
       <LangSelectModal />
+
 
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute inset-0 light-aurora-bg" />

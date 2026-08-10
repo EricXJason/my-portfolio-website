@@ -806,5 +806,13 @@ body::-webkit-scrollbar-track {
   pointer-events: none;
 }
 
+/* Smoothly hide BackToTop button when mobile menu is expanded */
+body.mobile-menu-open .back-to-top-btn {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(1.5rem) !important;
+}
+
+
 
 

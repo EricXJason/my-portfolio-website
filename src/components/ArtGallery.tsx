@@ -214,18 +214,21 @@ export const ArtGallery: React.FC = () => {
               onTouchMove={handleRouletteTouchMove}
               onTouchEnd={handleRouletteTouchEnd}
             >
-              {/* Square Sci-Fi Left Arrow Button (Closer to center on PC viewports) */}
+              {/* Square Sci-Fi Left Arrow Button (Matching BackToTop Color System) */}
               <button
                 onClick={() => setRouletteIndex((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length)}
                 className="absolute left-2 sm:left-4 md:left-8 lg:left-16 xl:left-24 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-11 sm:h-11 border cyber-cut-sm rounded-none flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 shadow-2xl backdrop-blur-md"
                 style={{
-                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(11,19,41,0.90)',
-                  borderColor: isLight ? '#cbd5e1' : 'rgba(51,65,85,0.8)',
-                  color: isLight ? '#0f172a' : '#38bdf8',
+                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(8,14,26,0.85)',
+                  borderColor: isLight ? '#94a3b8' : 'rgba(0, 240, 255, 0.35)',
+                  color: isLight ? '#0284c7' : '#00f0ff',
+                  boxShadow: isLight
+                    ? '0 2px 10px rgba(0, 0, 0, 0.08)'
+                    : '0 4px 14px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 240, 255, 0.15)',
                 }}
                 aria-label="Previous Artwork"
               >
-                <ChevronLeft size={22} />
+                <ChevronLeft size={22} className="stroke-[2.5]" />
               </button>
 
               {/* 5-Card CoverFlow Depth Stack (100% Square 90° Corners) */}
@@ -308,18 +311,21 @@ export const ArtGallery: React.FC = () => {
                 );
               })}
 
-              {/* Square Sci-Fi Right Arrow Button (Closer to center on PC viewports) */}
+              {/* Square Sci-Fi Right Arrow Button (Matching BackToTop Color System) */}
               <button
                 onClick={() => setRouletteIndex((prev) => (prev + 1) % displayFeatured.length)}
                 className="absolute right-2 sm:right-4 md:right-8 lg:right-16 xl:right-24 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-11 sm:h-11 border cyber-cut-sm rounded-none flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 shadow-2xl backdrop-blur-md"
                 style={{
-                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(11,19,41,0.90)',
-                  borderColor: isLight ? '#cbd5e1' : 'rgba(51,65,85,0.8)',
-                  color: isLight ? '#0f172a' : '#38bdf8',
+                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(8,14,26,0.85)',
+                  borderColor: isLight ? '#94a3b8' : 'rgba(0, 240, 255, 0.35)',
+                  color: isLight ? '#0284c7' : '#00f0ff',
+                  boxShadow: isLight
+                    ? '0 2px 10px rgba(0, 0, 0, 0.08)'
+                    : '0 4px 14px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 240, 255, 0.15)',
                 }}
                 aria-label="Next Artwork"
               >
-                <ChevronRight size={22} />
+                <ChevronRight size={22} className="stroke-[2.5]" />
               </button>
             </div>
 
@@ -338,6 +344,31 @@ export const ArtGallery: React.FC = () => {
                 />
               ))}
             </div>
+
+            {/* Button to Switch directly to 'All Works' Category Tab */}
+            <div className="text-center pt-8 w-full max-w-6xl mx-auto">
+              <button
+                onClick={() => {
+                  setActiveTab('all');
+                  setIsExpanded(true);
+                }}
+                className="px-6 py-2.5 sm:px-8 sm:py-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm cursor-pointer transition-all hover:scale-105 shadow-md inline-flex items-center gap-2.5 backdrop-blur-md"
+                style={{
+                  backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                  borderColor: cyanCol,
+                  color: cyanCol,
+                  boxShadow: isLight
+                    ? '0 2px 10px rgba(2,132,199,0.1)'
+                    : '0 4px 14px rgba(0,240,255,0.15)',
+                }}
+              >
+                <span>
+                  {lang === 'zh' ? '檢視更多' : 'VIEW MORE'}
+                </span>
+                <ChevronRight size={16} className="stroke-[2.5]" />
+              </button>
+            </div>
+
 
           </div>
         ) : (
@@ -381,14 +412,16 @@ export const ArtGallery: React.FC = () => {
                   <span>
                     {isExpanded
                       ? (lang === 'zh' ? '收起畫廊' : 'COLLAPSE GALLERY')
-                      : (lang === 'zh' ? '查看全系列美術作品' : 'VIEW ALL ARTWORKS')}
+                      : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
                   </span>
-                  {isExpanded ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                  {isExpanded ? <ChevronUp size={15} className="stroke-[2.5]" /> : <ChevronDown size={15} className="stroke-[2.5]" />}
                 </button>
               </div>
             )}
+
           </div>
         )}
+
 
       </div>
 

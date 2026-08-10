@@ -74,17 +74,20 @@ export const About: React.FC = () => {
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-            {/* Portrait */}
+            {/* Portrait — Sleek, High-End Minimalist Cyber HUD Frame */}
             <div className="lg:col-span-5 flex justify-center">
-              <div className="relative group w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72">
+              <div className="relative group w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 select-none">
                 <div
-                  className="absolute inset-0 border cyber-cut-corner p-2 shadow-lg hud-corner-brackets"
+                  className="relative w-full h-full border cyber-cut-corner p-2 shadow-xl hud-corner-brackets flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:scale-[1.02]"
                   style={{
-                    backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.4)',
+                    backgroundColor: isLight ? '#f8fafc' : '#080e1a',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)',
+                    boxShadow: isLight
+                      ? '0 4px 20px rgba(0, 0, 0, 0.05), 0 0 12px rgba(2, 132, 199, 0.12)'
+                      : '0 8px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(0, 240, 255, 0.18)',
                   }}
                 >
-                  <div className="relative w-full h-full overflow-hidden">
+                  <div className="relative w-full h-full overflow-hidden cyber-cut-sm">
                     <img
                       src={getAssetUrl('/assets/images/personal.avif')}
                       alt="許哲誠 (Che-Cheng Hsu) Portrait"
@@ -92,12 +95,17 @@ export const About: React.FC = () => {
                       height="288"
                       loading="lazy"
                       decoding="async"
-                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-110"
+                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
                     />
+
+                    {/* Subtle Cyber Scanline Overlay Texture */}
+                    <div className="absolute inset-0 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.12)_50%)] bg-[length:100%_4px] pointer-events-none opacity-20" />
                   </div>
                 </div>
               </div>
             </div>
+
+
 
             {/* Bio & Stat Gauges */}
             <div className="lg:col-span-7 space-y-6 text-left">
