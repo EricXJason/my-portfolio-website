@@ -7,20 +7,15 @@
 
 ---
 
-## 1. Project Overview (專案簡介)
+## 1. 專案簡介 Project Overview
 
-### English
-This is the personal official portfolio website of **HSU, CHE-CHENG (許哲誠)**, a Master of Fine Arts (M.F.A.) graduate from the Department of Multimedia and Animation Arts, National Taiwan University of Arts. The portfolio showcases interactive applications (VR/AR/3D/Unity), full-stack web engineering (React, TypeScript, Vite, Tailwind CSS), multimedia design, certifications, publications, and an interactive art gallery under an elite Tactical Cyberpunk HUD aesthetic.
-
-### 繁體中文
 本專案為 **許哲誠 (HSU, CHE-CHENG)**（國立臺灣藝術大學多媒體動畫藝術學系碩士）之個人官方作品集網站。全站採用極致戰術賽博朋克 (Tactical Cyberpunk HUD) 視覺美學，完整呈現在 VR/AR/3D 互動應用開發 (Unity C#)、全端網頁工程 (React, TypeScript, Vite, Tailwind CSS)、多媒體美學設計、專業證照、學術論文發表與美術畫廊之代表作成果。
 
-- **Author / 作者**: HSU, CHE-CHENG (許哲誠)
-- **Degree / 學位**: Master of Fine Arts (新媒體藝術碩士), National Taiwan University of Arts
+This is the personal official portfolio website of **HSU, CHE-CHENG (許哲誠)**, a Master of Fine Arts (M.F.A.) graduate from the Department of Multimedia and Animation Arts, National Taiwan University of Arts. The portfolio showcases interactive applications (VR/AR/3D/Unity), full-stack web engineering (React, TypeScript, Vite, Tailwind CSS), multimedia design, certifications, publications, and an interactive art gallery under an elite Tactical Cyberpunk HUD aesthetic.
 
 ---
 
-## 2. Technology Stack (技術棧)
+## 2. 技術棧 Technology Stack 
 
 | Category / 類別 | Technology / 技術項目 | Description / 說明 |
 | :--- | :--- | :--- |
@@ -32,7 +27,7 @@ This is the personal official portfolio website of **HSU, CHE-CHENG (許哲誠)*
 
 ---
 
-## 3. Directory Structure (目錄結構)
+## 3. 目錄結構 Directory Structure 
 
 ```text
 my-portfolio-website/
@@ -87,7 +82,7 @@ my-portfolio-website/
 
 ---
 
-## 4. Local Development Setup (本地開發配置)
+## 4. 本地開發配置 Local Development Setup 
 
 ### Prerequisites (前置需求)
 - Node.js 18.0.0 or higher
@@ -99,7 +94,7 @@ Copy `.env.example` to `.env` if custom environment variables are needed:
 cp .env.example .env
 ```
 
-### Installation & Execution Commands (安裝與啟動指令)
+### 安裝與啟動指令 Installation & Execution Commands 
 ```bash
 # 1. Install dependencies
 pnpm install
