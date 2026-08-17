@@ -10,7 +10,7 @@ This is the personal official portfolio website of **HSU, CHE-CHENG (許哲誠)*
 
 ## 2. 技術棧 Technology Stack 
 
-| Category / 類別 | Technology / 技術項目 | Description / 說明 |
+| 類別 / Category /  | 技術項目 / Ｔechnology | 說明 / Description |
 | :--- | :--- | :--- |
 | **Core UI & Logic** | React 19, TypeScript, Vite 6 | High-performance SPA frontend foundation with full type safety |
 | **Styling & HUD Design** | Tailwind CSS 4, Vanilla CSS3 | Custom Cyberpunk HUD tokens, scanline lasers, cut-corner polygons |
@@ -80,12 +80,6 @@ my-portfolio-website/
 ### Prerequisites (前置需求)
 - Node.js 18.0.0 or higher
 - pnpm / npm / yarn package manager
-
-### Environment Configuration (.env)
-Copy `.env.example` to `.env` if custom environment variables are needed:
-```bash
-cp .env.example .env
-```
 
 ### 安裝與啟動指令 Installation & Execution Commands 
 ```bash
