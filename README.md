@@ -24,18 +24,18 @@ This is the personal official portfolio website of **HSU, CHE-CHENG (許哲誠)*
 
 ```text
 my-portfolio-website/
-├── docs/                      # Dynamic documentation (check-list.md gitignored, change-log.md tracked)
+├── docs/                      
 │   ├── check-list.md
 │   └── change-log.md
-├── public/                    # Static public assets & favicon
+├── public/                   
 │   ├── assets/
 │   │   ├── gallery/
 │   │   ├── images/
 │   │   └── logos/
-│   └── tech-icons/            # Vector SVG brand assets (artstation, css, github, html, js, react, tailwind, ts, vite)
+│   └── tech-icons/            
 ├── src/
-│   ├── components/            # React UI components
-│   │   ├── icons/             # Centralized TechIcon component
+│   ├── components/           
+│   │   ├── icons/             
 │   │   ├── About.tsx
 │   │   ├── ArtGallery.tsx
 │   │   ├── Certifications.tsx
@@ -49,8 +49,8 @@ my-portfolio-website/
 │   │   ├── Projects.tsx
 │   │   ├── Publications.tsx
 │   │   └── Skills.tsx
-│   ├── context/               # React Context (ThemeContext, LangContext)
-│   ├── data/                  # Structured JSON data files (kebab-case)
+│   ├── context/               
+│   ├── data/                  
 │   │   ├── about-section.json
 │   │   ├── artgallery-section.json
 │   │   ├── certifications-section.json
@@ -62,12 +62,12 @@ my-portfolio-website/
 │   │   ├── skills-section.json
 │   │   ├── site-translations.json
 │   │   └── tech-icons.json
-│   ├── utils/                 # Asset path utilities & helpers
+│   ├── utils/                 
 │   ├── App.tsx
 │   ├── index.css
 │   └── main.tsx
-├── .env.example               # Environment variables configuration template
-├── index.html                 # Main HTML entry with complete SEO meta tags
+├── .env.example               
+├── index.html                
 ├── package.json
 ├── tsconfig.json
 └── vite.config.ts
