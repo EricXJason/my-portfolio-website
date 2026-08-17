@@ -1,4 +1,4 @@
-# 個人官方作品集網站 (Personal Portfolio Website)
+# 個人官方作品集網站 Personal Portfolio Website
 
 ## 1. 專案簡介 Project Overview
 
