@@ -1,11 +1,4 @@
-# ⚡ 許哲誠 (HSU, CHE-CHENG) | 個人官方作品集網站 (Personal Portfolio Website)
-
-[![Author: HSU, CHE-CHENG](https://img.shields.io/badge/Author-HSU%2C_CHE--CHENG_許哲誠-orange?style=flat-square)](#)
-[![Version: 2.7.0](https://img.shields.io/badge/Version-2.7.0-blue?style=flat-square)](#)
-[![Build: Clean](https://img.shields.io/badge/Build-Passing-green?style=flat-square)](#)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](#)
-
----
+# 個人官方作品集網站 (Personal Portfolio Website)
 
 ## 1. 專案簡介 Project Overview
 
