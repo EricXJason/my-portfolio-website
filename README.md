@@ -10,14 +10,7 @@ This is the personal official portfolio website of **HSU, CHE-CHENG (許哲誠)*
 
 ## 2. 技術棧 Technology Stack 
 
-| 類別 / Category | 技術項目 / Ｔechnology | 說明 / Description |
-| :--- | :--- | :--- |
-| **Core UI & Logic** | React 19, TypeScript, Vite 6 | High-performance SPA frontend foundation with full type safety |
-| **Styling & HUD Design** | Tailwind CSS 4, Vanilla CSS3 | Custom Cyberpunk HUD tokens, scanline lasers, cut-corner polygons |
-| **Icon Systems** | Lucide React, Centralized Tech Icons JSON | Vector SVG icons with natural brand color rendering |
-| **Asset Optimization** | AVIF / WebP Compression, Vite Asset Pipeline | Lightning fast initial load times and optimized texture sizes |
-| **Interactive Overlays** | YouTube Lightbox, Custom Project Detail Modals | Unabridged project previews with full keyboard accessibility (ESC key) |
-
+HTML5 · CSS3 · Tailwind CSS · TypeScript · React · Vite · GitHub Actions
 ---
 
 ## 3. 目錄結構 Directory Structure 
