@@ -606,7 +606,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
         {/* Load More / Collapse Projects Button (Featured Mode) */}
         {filter === 'featured' && (
-          <div className="text-center mt-12 reveal-up" id="expand-button-container">
+          <div className="text-center mt-12 mb-4 relative z-10" id="expand-button-container">
             <button
               onClick={() => {
                 if (!showAllProjects) {
@@ -616,18 +616,19 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                   document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
                 }
               }}
-              className="px-7 sm:px-9 py-3.5 border font-hud font-bold text-xs sm:text-sm uppercase tracking-widest cyber-cut-corner transition-all hover:scale-105 cursor-pointer shadow-lg inline-flex items-center gap-2.5"
+              className="px-8 sm:px-10 py-3.5 border font-hud font-bold text-xs sm:text-sm uppercase tracking-widest cyber-cut-corner transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg inline-flex items-center gap-2.5"
               style={{
                 backgroundColor: isLight ? '#ffffff' : '#080e1a',
                 borderColor: cyanCol,
                 color: cyanCol,
+                boxShadow: isLight ? '0 4px 12px rgba(2,132,199,0.15)' : '0 0 15px rgba(0,240,255,0.25)',
               }}
-              aria-label={showAllProjects ? (lang === 'zh' ? '收起專案' : 'Collapse Projects') : (lang === 'zh' ? '載入更多專案' : 'Load More Projects')}
+              aria-label={showAllProjects ? (lang === 'zh' ? '收起專案' : 'Collapse Projects') : (lang === 'zh' ? '檢視更多專案' : 'View More Projects')}
             >
               <span>
                 {showAllProjects
                   ? (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')
-                  : (lang === 'zh' ? '載入更多專案' : 'LOAD MORE PROJECTS')}
+                  : (lang === 'zh' ? '檢視更多專案' : 'VIEW MORE PROJECTS')}
               </span>
               {showAllProjects ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
