@@ -177,6 +177,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T11:53:00+08:00 | [style] | Upgrade SideNav marker dots and tooltips in light mode: replace fuzzy muddy grey dots with sharp geometric 45° diamonds featuring crisp 1.5px slate borders and white fill, and active dots with high-contrast vibrant sky-blue fill, white outer rim, and soft glow | src/components/SideNav.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T11:54:00+08:00 | [style] | Remove project development date from Featured Projects cards to keep the header section ultra-clean, minimal, and focused | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T12:00:00+08:00 | [chore] | Update page title and primary SEO meta title tags to "Portfolio" | index.html, docs/check-list.md, docs/change-log.md
+- 2026-08-19T12:21:00+08:00 | [fix] | Fix mobile Navbar layout shift and overflow: optimize container padding (px-3 sm:px-6), make left branding flex-shrink with proper truncation, refine right control buttons (w-12 sm:w-16, gap-1 sm:gap-2.5) with CSS transforms, and synchronize mobile overlay top offset with 64px mobile header height | src/components/Navbar.tsx, docs/check-list.md, docs/change-log.md
 
 
 

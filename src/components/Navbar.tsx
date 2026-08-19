@@ -125,14 +125,14 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl border-b transition-all duration-300"
+        className="fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl border-b transition-all duration-300 overflow-x-clip"
         style={{
           backgroundColor: isLight ? 'rgba(255,255,255,0.96)' : 'rgba(3,7,18,0.92)',
           borderColor: borderCol,
           boxShadow: isLight ? '0 2px 15px rgba(15,23,42,0.06)' : '0 4px 30px rgba(0,0,0,0.6)',
         }}
       >
-        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-12 h-20 flex items-center justify-between gap-2 sm:gap-4 max-w-full">
+        <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-12 h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-4 w-full">
 
           {/* Logo & Branding */}
           <a
@@ -141,29 +141,29 @@ export const Navbar: React.FC<NavbarProps> = ({
               scrollToSection(e, '#home');
               closeMobileMenu();
             }}
-            className="flex items-center gap-2.5 sm:gap-3 group shrink-0 min-w-0 transition-transform duration-300 hover:scale-105 active:scale-95"
+            className="flex items-center gap-2 sm:gap-3 group min-w-0 transition-transform duration-300 hover:scale-105 active:scale-95 flex-shrink"
             aria-label="JasonProduction 許哲誠 HSU, CHE-CHENG"
           >
             <div
-              className="relative w-9 h-9 sm:w-10 sm:h-10 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0 transition-all duration-300 group-hover:border-cyan-400 group-hover:shadow-[0_0_12px_rgba(0,240,255,0.4)]"
+              className="relative w-8 h-8 sm:w-10 sm:h-10 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0 transition-all duration-300 group-hover:border-cyan-400 group-hover:shadow-[0_0_12px_rgba(0,240,255,0.4)]"
               style={{
                 backgroundColor: isLight ? '#e0f2fe' : '#080e1a',
                 borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.5)',
               }}
             >
               <div
-                className="font-hud font-black text-[11px] sm:text-xs tracking-wider"
+                className="font-hud font-black text-[10px] sm:text-xs tracking-wider"
                 style={{ color: isLight ? '#0284c7' : '#00f0ff' }}
               >
                 &lt;JP/&gt;
               </div>
             </div>
 
-            <div className="flex flex-col text-left leading-tight min-w-0 truncate">
+            <div className="flex flex-col text-left leading-tight min-w-0 overflow-hidden">
               <span className="font-mono text-xs sm:text-base font-extrabold tracking-wide truncate group-hover:text-cyan-400 transition-colors" style={{ color: textColor }}>
                 JasonProduction
               </span>
-              <span className="font-tech text-[10px] sm:text-xs font-bold tracking-wider truncate" style={{ color: cyanCol }}>
+              <span className="font-tech text-[9px] sm:text-xs font-bold tracking-wider truncate" style={{ color: cyanCol }}>
                 許哲誠 HSU, CHE-CHENG
               </span>
             </div>
@@ -245,7 +245,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </nav>
 
           {/* Right Controls */}
-          <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2.5 shrink-0">
 
             {/* Audio Toggle Button */}
             <div className="relative shrink-0" ref={volumeRef}>
@@ -269,9 +269,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 title={soundPlaying ? '音效開啟 (Audio Active)' : '音效關閉 (Audio Muted)'}
               >
                 {soundPlaying ? (
-                  <Volume2 size={15} className="animate-pulse text-cyan-400" />
+                  <Volume2 size={14} className="animate-pulse text-cyan-400 sm:w-[15px] sm:h-[15px]" />
                 ) : (
-                  <VolumeX size={15} />
+                  <VolumeX size={14} className="sm:w-[15px] sm:h-[15px]" />
                 )}
               </button>
 
@@ -284,7 +284,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     boxShadow: isLight ? '0 10px 25px rgba(0,0,0,0.1)' : '0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(0,240,255,0.15)',
                   }}
                 >
-                  <Volume2 size={15} className="text-cyan-400 shrink-0" />
+                  <Volume2 size={14} className="text-cyan-400 shrink-0" />
                   <input
                     type="range"
                     min="0"
@@ -302,7 +302,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Language Switcher */}
             <button
               onClick={toggleLang}
-              className="w-13 sm:w-16 h-8 sm:h-9 cyber-cut-sm border p-0.5 sm:p-1 relative flex items-center justify-between transition-all duration-300 cursor-pointer font-tech text-xs font-bold active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0"
+              className="w-12 sm:w-16 h-8 sm:h-9 cyber-cut-sm border p-0.5 sm:p-1 relative flex items-center justify-between transition-all duration-300 cursor-pointer font-tech text-xs font-bold active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0"
               style={{
                 backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
                 borderColor: borderCol,
@@ -310,12 +310,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label={lang === 'zh' ? '切換為 English' : 'Switch to 繁體中文'}
               title={lang === 'zh' ? '切換為 English' : 'Switch to 繁體中文'}
             >
-              <span className="z-0 px-1 text-[10px] sm:text-[11px]" style={{ color: lang === 'en' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>EN</span>
-              <span className="z-0 px-1 text-[10px] sm:text-[11px]" style={{ color: lang === 'zh' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>中</span>
+              <span className="z-0 px-0.5 sm:px-1 text-[9px] sm:text-[11px]" style={{ color: lang === 'en' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>EN</span>
+              <span className="z-0 px-0.5 sm:px-1 text-[9px] sm:text-[11px]" style={{ color: lang === 'zh' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>中</span>
               <div
-                className="absolute top-0.5 sm:top-1 left-0.5 sm:left-1 w-6 h-6 sm:w-7 sm:h-7 rounded-none shadow-md flex items-center justify-center transition-transform duration-300 z-10 text-[10px] sm:text-[11px] font-bold"
+                className={`absolute top-0.5 sm:top-1 left-0.5 sm:left-1 w-5 h-5 sm:w-7 sm:h-7 rounded-none shadow-md flex items-center justify-center transition-transform duration-300 z-10 text-[9px] sm:text-[11px] font-bold ${
+                  lang === 'zh' ? 'translate-x-[18px] sm:translate-x-[28px]' : 'translate-x-0'
+                }`}
                 style={{
-                  transform: lang === 'zh' ? (window.innerWidth < 640 ? 'translateX(20px)' : 'translateX(28px)') : 'translateX(0px)',
                   background: isLight ? '#0284c7' : '#00f0ff',
                   color: isLight ? '#ffffff' : '#030712',
                 }}
@@ -327,7 +328,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Theme Switcher */}
             <button
               onClick={toggleTheme}
-              className="w-13 sm:w-16 h-8 sm:h-9 cyber-cut-sm border p-0.5 sm:p-1 relative flex items-center transition-all duration-300 cursor-pointer active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0"
+              className="w-12 sm:w-16 h-8 sm:h-9 cyber-cut-sm border p-0.5 sm:p-1 relative flex items-center transition-all duration-300 cursor-pointer active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0"
               style={{
                 backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
                 borderColor: borderCol,
@@ -335,19 +336,20 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label={isLight ? '切換為深色模式 (Switch to Dark Mode)' : '切換為淺色模式 (Switch to Light Mode)'}
               title={isLight ? '深色模式' : '淺色模式'}
             >
-              <div className="absolute inset-0 px-2 flex items-center justify-between pointer-events-none text-xs">
-                <Sun size={13} className="text-amber-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
-                <Moon size={13} className="text-cyan-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(0,240,255,0.8)]" />
+              <div className="absolute inset-0 px-1 sm:px-2 flex items-center justify-between pointer-events-none text-xs">
+                <Sun size={11} className="text-amber-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)] sm:w-[13px] sm:h-[13px]" />
+                <Moon size={11} className="text-cyan-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(0,240,255,0.8)] sm:w-[13px] sm:h-[13px]" />
               </div>
               <div
-                className="w-6 h-6 sm:w-7 sm:h-7 rounded-none flex items-center justify-center transition-transform duration-300 z-10 text-xs shadow-md"
+                className={`w-5 h-5 sm:w-7 sm:h-7 rounded-none flex items-center justify-center transition-transform duration-300 z-10 text-xs shadow-md ${
+                  isLight ? 'translate-x-0' : 'translate-x-[18px] sm:translate-x-[28px]'
+                }`}
                 style={{
-                  transform: isLight ? 'translateX(0px)' : (window.innerWidth < 640 ? 'translateX(20px)' : 'translateX(28px)'),
                   background: isLight ? '#fbbf24' : '#00f0ff',
                   color: '#0f172a',
                 }}
               >
-                {isLight ? <Sun size={14} className="fill-current text-slate-900" /> : <Moon size={14} className="fill-current text-slate-900" />}
+                {isLight ? <Sun size={12} className="fill-current text-slate-900 sm:w-[14px] sm:h-[14px]" /> : <Moon size={12} className="fill-current text-slate-900 sm:w-[14px] sm:h-[14px]" />}
               </div>
             </button>
 
@@ -399,7 +401,7 @@ export const Navbar: React.FC<NavbarProps> = ({
       {/* Mobile Menu Overlay: Backdrop Click Closes Menu & Centered Animated Items */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 top-20 z-40 lg:hidden flex flex-col items-center justify-center min-h-[calc(100vh-80px)] p-6 overflow-y-auto max-w-full backdrop-blur-2xl animate-fadeIn"
+          className="fixed inset-0 top-16 sm:top-20 z-40 lg:hidden flex flex-col items-center justify-center min-h-[calc(100vh-64px)] sm:min-h-[calc(100vh-80px)] p-6 overflow-y-auto max-w-full backdrop-blur-2xl animate-fadeIn"
           style={{ backgroundColor: isLight ? 'rgba(255,255,255,0.98)' : 'rgba(3,7,18,0.96)' }}
           onClick={closeMobileMenu}
         >
