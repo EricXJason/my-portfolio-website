@@ -112,10 +112,10 @@ export const Skills: React.FC = () => {
                 >
                   <div className="space-y-6">
                     {/* Category Header with Category Icon */}
-                    <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">
-                      <div className="flex items-center gap-3">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3 border-b border-slate-700/40 pb-4">
+                      <div className="flex items-center gap-3 min-w-0">
                         <div
-                          className="p-3 border cyber-cut-sm shrink-0"
+                          className="p-2.5 sm:p-3 border cyber-cut-sm shrink-0"
                           style={{
                             backgroundColor: accent.bg,
                             borderColor: accent.border,
@@ -124,13 +124,13 @@ export const Skills: React.FC = () => {
                         >
                           <CatIcon size={22} />
                         </div>
-                        <h4 className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                        <h4 className="text-lg sm:text-2xl font-black font-hud uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                           {cat.category}
                         </h4>
                       </div>
 
                       <span
-                        className="px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs"
+                        className="px-3 sm:px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs self-start sm:self-auto"
                         style={{
                           backgroundColor: accent.bg,
                           borderColor: accent.border,
@@ -212,10 +212,10 @@ export const Skills: React.FC = () => {
                     borderColor: isLight ? accent.border : borderCol,
                   }}
                 >
-                  <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">
-                    <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3 border-b border-slate-700/40 pb-4">
+                    <div className="flex items-center gap-3 min-w-0">
                       <div
-                        className="p-3 border cyber-cut-sm shrink-0"
+                        className="p-2.5 sm:p-3 border cyber-cut-sm shrink-0"
                         style={{
                           backgroundColor: accent.bg,
                           borderColor: accent.border,
@@ -224,13 +224,13 @@ export const Skills: React.FC = () => {
                       >
                         <CatIcon size={22} />
                       </div>
-                      <h4 className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                      <h4 className="text-lg sm:text-2xl font-black font-hud uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                         {cat.category}
                       </h4>
                     </div>
 
                     <span
-                      className="px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs"
+                      className="px-3 sm:px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs self-start sm:self-auto"
                       style={{
                         backgroundColor: accent.bg,
                         borderColor: accent.border,
