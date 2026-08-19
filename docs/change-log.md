@@ -180,6 +180,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T12:21:00+08:00 | [fix] | Fix mobile Navbar layout shift and overflow: optimize container padding (px-3 sm:px-6), make left branding flex-shrink with proper truncation, refine right control buttons (w-12 sm:w-16, gap-1 sm:gap-2.5) with CSS transforms, and synchronize mobile overlay top offset with 64px mobile header height | src/components/Navbar.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T12:23:00+08:00 | [style] | Optimize Skills card header layout for mobile screens: wrap category badges (CORE FOCUS, SUPPORTING SKILLS) below the category title (flex-col sm:flex-row) to prevent overlapping and horizontal crowding | src/components/Skills.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T12:25:00+08:00 | [fix] | Rebuild Navbar Language and Theme switcher slider tracks: employ mathematically symmetric w-1/2 label blocks and top/bottom-anchored indicator blocks to ensure pixel-perfect vertical centering and flawless alignment in both languages and themes | src/components/Navbar.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-19T12:28:00+08:00 | [chore] | Configure Cloudflare Pages deployment compatibility: add public/_redirects for SPA routing and set dynamic Vite base path to seamlessly support both Cloudflare Pages root domain and GitHub Pages | vite.config.js, public/_redirects, docs/check-list.md, docs/change-log.md
 
 
 

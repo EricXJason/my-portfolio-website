@@ -12,7 +12,7 @@ export default defineConfig({
     strictPort: true,
   },
   plugins: [react(), tailwindcss()],
-  base: "/my-portfolio-website/",
+  base: process.env.CF_PAGES ? "/" : (process.env.VITE_BASE_PATH || "/my-portfolio-website/"),
   build: {
     cssMinify: true,
     target: "es2020",
