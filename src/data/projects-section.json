@@ -41,7 +41,7 @@
     "ytId": "amEg9Cjix10",
     "honors": [
       "2022 全國大專及高中職學生專題製作競賽成果展示 - 第一名",
-      "2022 Unreal Engine 5 台灣遊戲創意設計大賽 - 佳作",
+      "2022 Unreal Engine 5 臺灣遊戲創意設計大賽 - 佳作",
       "2023 放視大賞遊戲組 - 初選入圍"
     ],
     "honors_en": [
@@ -170,16 +170,16 @@
   },
   {
     "id": "aircraft",
-    "title_zh": "飛機檢修行動學習平台",
+    "title_zh": "飛機檢修行動學習平臺",
     "title_en": "Aircraft Maintenance Action Learning Platform",
     "category": "interactive",
     "featured": false,
     "order": 7,
     "image": "/assets/images/proj-aircraft.avif",
     "ytId": "bY66zTSSS6Y",
-    "honors": ["2021 第四屆台灣數位媒體設計獎 - 大專組互動科技應用 - 銀賞"],
+    "honors": ["2021 第四屆臺灣數位媒體設計獎 - 大專組互動科技應用 - 銀賞"],
     "honors_en": ["2021 4th Taiwan Digital Media Design Award - Interactive Tech Silver Medal"],
-    "desc": "針對空中巴士 A330 客機檢修訓練開發之跨平台行動學習軟體，以煞車器拆解與安裝模擬為核心教案。",
+    "desc": "針對空中巴士 A330 客機檢修訓練開發之跨平臺行動學習軟體，以煞車器拆解與安裝模擬為核心教案。",
     "desc_en": "Cross-platform interactive learning app for Airbus A330 brake assembly maintenance training.",
     "contributions": [
       "UI/UX 視覺系統獨立設計：獨立負責全套專業檢修介面視覺設計與美術素材製作（版面、按鈕、狀態指示圖標）。",

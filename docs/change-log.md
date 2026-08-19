@@ -195,6 +195,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T15:46:00+08:00 | [fix] | Retain active 'All Projects' category during Collapse Projects interaction (collapses from 8 to 4 items and smoothly scrolls to top without switching category tab) | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:48:00+08:00 | [chore] | Standardize Git workflow strictly to 'master' branch: delete remote 'main' branch, rename local branch to 'master', and configure GitHub Actions CI triggers exclusively on 'master' | .github/workflows/deploy.yml, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:51:00+08:00 | [style] | Refine About Me stats card: emphasize diverse cross-domain project development experience instead of fixed counts and specific awards in both EN and ZH | src/data/about-section.json, src/data/site-translations.json, docs/check-list.md, docs/change-log.md
+- 2026-08-19 19:23 | [fix] | 嚴格查核並修正全站深色與淺色、中文與英文模式之 WCAG 對比度規範；修正空白專案狀態說明文字對比度達 AAA 級；全面將資料集內所有「台」字符替換為標準正體「臺」；建立主架構開發計畫文件 | src/components/Projects.tsx, src/data/experience-section.json, src/data/site-translations.json, src/data/projects-section.json, docs/development-plan.md, docs/check-list.md, docs/change-log.md
 
 
 

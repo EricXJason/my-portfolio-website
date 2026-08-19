@@ -604,7 +604,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             <h3 className="text-lg sm:text-xl font-bold font-hud uppercase tracking-wider" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
               {lang === 'zh' ? '目前尚無 LINE Bot 專案' : 'No LINE Bot Projects Yet'}
             </h3>
-            <p className="text-xs sm:text-sm font-tech text-slate-400">
+            <p className="text-xs sm:text-sm font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
               {lang === 'zh' ? '專案準備中，敬請期待最新開發作品！' : 'Projects in development, stay tuned for upcoming releases!'}
             </p>
           </div>
