@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, MessageSquare, Cpu } from 'lucide-react';
+import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, ChevronUp, MessageSquare, Cpu } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -604,14 +604,17 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </div>
         )}
 
-        {/* Expand / Switch to All Projects Button Container */}
-        {filter === 'featured' && !showAllProjects && (
+        {/* Load More / Collapse Projects Button (Featured Mode) */}
+        {filter === 'featured' && (
           <div className="text-center mt-12 reveal-up" id="expand-button-container">
             <button
               onClick={() => {
-                setFilter('all');
-                setShowAllProjects(true);
-                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+                if (!showAllProjects) {
+                  setShowAllProjects(true);
+                } else {
+                  setShowAllProjects(false);
+                  document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+                }
               }}
               className="px-7 sm:px-9 py-3.5 border font-hud font-bold text-xs sm:text-sm uppercase tracking-widest cyber-cut-corner transition-all hover:scale-105 cursor-pointer shadow-lg inline-flex items-center gap-2.5"
               style={{
@@ -619,9 +622,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 borderColor: cyanCol,
                 color: cyanCol,
               }}
+              aria-label={showAllProjects ? (lang === 'zh' ? '收起專案' : 'Collapse Projects') : (lang === 'zh' ? '載入更多專案' : 'Load More Projects')}
             >
-              <span>{lang === 'zh' ? '檢視全部作品 (共 8 件)' : 'VIEW ALL PROJECTS (8 TOTAL)'}</span>
-              <ChevronDown size={16} />
+              <span>
+                {showAllProjects
+                  ? (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')
+                  : (lang === 'zh' ? '載入更多專案' : 'LOAD MORE PROJECTS')}
+              </span>
+              {showAllProjects ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
         )}
