@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, ChevronUp, MessageSquare, Cpu } from 'lucide-react';
+import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, MessageSquare, Cpu } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -604,16 +604,19 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </div>
         )}
 
-        {/* Load More / Collapse Projects Button (Featured Mode) */}
+        {/* View More Button (Featured Mode) -> Switches to All Projects and scrolls to top of section */}
         {filter === 'featured' && (
           <div className="text-center mt-12 mb-4 relative z-10" id="expand-button-container">
             <button
               onClick={() => {
-                if (!showAllProjects) {
-                  setShowAllProjects(true);
-                } else {
-                  setShowAllProjects(false);
-                  document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
+                setFilter('all');
+                setShowAllProjects(false);
+                const element = document.getElementById('projects');
+                if (element) {
+                  const headerOffset = 100;
+                  const elementPosition = element.getBoundingClientRect().top;
+                  const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                  window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
                 }
               }}
               className="px-8 sm:px-10 py-3.5 border font-hud font-bold text-xs sm:text-sm uppercase tracking-widest cyber-cut-corner transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg inline-flex items-center gap-2.5"
@@ -623,14 +626,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 color: cyanCol,
                 boxShadow: isLight ? '0 4px 12px rgba(2,132,199,0.15)' : '0 0 15px rgba(0,240,255,0.25)',
               }}
-              aria-label={showAllProjects ? (lang === 'zh' ? '收起專案' : 'Collapse Projects') : (lang === 'zh' ? '檢視更多專案' : 'View More Projects')}
+              aria-label={lang === 'zh' ? '檢視更多' : 'View More'}
             >
-              <span>
-                {showAllProjects
-                  ? (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')
-                  : (lang === 'zh' ? '檢視更多專案' : 'VIEW MORE PROJECTS')}
-              </span>
-              {showAllProjects ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+              <span>{lang === 'zh' ? '檢視更多' : 'VIEW MORE'}</span>
+              <ChevronDown size={16} />
             </button>
           </div>
         )}

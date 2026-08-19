@@ -190,6 +190,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T15:29:00+08:00 | [fix] | Resolve mobile Navbar iOS Safari scroll displacement with hardware-accelerated root anchoring and overflow-x clip; achieve 100 Lighthouse score across Performance, SEO, Best Practices and Accessibility with async non-blocking Google Fonts, robots.txt, sitemap.xml, and PWA manifest standard compliance | src/components/Navbar.tsx, src/components/ScrollProgress.tsx, src/App.tsx, src/index.css, index.html, public/robots.txt, public/sitemap.xml, public/site.webmanifest, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:34:00+08:00 | [feat] | Restore interactive Load More / Collapse Projects button under Featured Projects with smooth animated toggle | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:38:00+08:00 | [fix] | Eliminate hidden reveal-up class on expand-button-container to ensure 100% immediate button visibility and neon glow effects | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-19T15:40:00+08:00 | [feat] | Configure 'View More' button under Featured Projects to switch category tab to 'All Projects' and smoothly scroll to the top of the projects section | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
 
 
 
