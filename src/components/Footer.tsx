@@ -63,11 +63,11 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Tech Badges with Natural Brand SVG Colors */}
-        <div className="flex flex-wrap items-center justify-center gap-2.5 max-w-5xl mx-auto pt-2">
+        <div className="flex flex-wrap lg:flex-nowrap items-center justify-center gap-2 sm:gap-2.5 lg:gap-3 max-w-7xl mx-auto pt-2">
           {techBadges.map((tech, idx) => (
             <div
               key={idx}
-              className="px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold cyber-cut-sm flex items-center gap-2 shadow-xs transition-transform hover:scale-105"
+              className="px-2.5 sm:px-3 lg:px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold cyber-cut-sm flex items-center gap-2 shadow-xs transition-transform hover:scale-105 shrink-0 whitespace-nowrap"
               style={{
                 backgroundColor: isLight ? '#f8fafc' : '#080e1a',
                 borderColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.12)',
