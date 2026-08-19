@@ -125,11 +125,15 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl border-b transition-all duration-300 overflow-x-clip"
+        className="fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl border-b transition-colors duration-300"
         style={{
           backgroundColor: isLight ? 'rgba(255,255,255,0.96)' : 'rgba(3,7,18,0.92)',
           borderColor: borderCol,
           boxShadow: isLight ? '0 2px 15px rgba(15,23,42,0.06)' : '0 4px 30px rgba(0,0,0,0.6)',
+          transform: 'translateZ(0)',
+          WebkitTransform: 'translateZ(0)',
+          WebkitBackfaceVisibility: 'hidden',
+          backfaceVisibility: 'hidden',
         }}
       >
         <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-3 sm:px-6 lg:px-12 h-16 sm:h-20 flex items-center justify-between gap-1.5 sm:gap-4 w-full">

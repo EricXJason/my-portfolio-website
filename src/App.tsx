@@ -74,25 +74,35 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] relative transition-colors duration-300 overflow-x-hidden">
+    <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] relative transition-colors duration-300">
 
       <SeoSchema />
 
-      {/* Global Laser Custom Cursor — Mounted at top level so cursor is ALWAYS active */}
+      {/* Global Laser Custom Cursor */}
       <CustomCursor />
+
+      {/* Top Reading Progress Bar & Fixed Header */}
+      <ScrollProgress />
+      <Navbar
+        soundPlaying={soundPlaying}
+        onToggleSound={handleToggleSound}
+        soundVolume={soundVolume}
+        onChangeVolume={setSoundVolume}
+      />
+      <SideNav />
 
       {/* Step 1: Tactical HUD Preloader Animation (0% -> 100%) */}
       {!preloaderDone && (
         <InitialPreloader onComplete={() => setPreloaderDone(true)} />
       )}
 
-      {/* Step 2: Language Selection Modal (Opens only when preloader finishes 100%) */}
+      {/* Step 2: Language Selection Modal */}
       <LangSelectModal
         isOpen={preloaderDone && !siteEntered}
         onSelectLanguage={() => setSiteEntered(true)}
       />
 
-      {/* Step 3: Main Site Container (Revealed smoothly after selecting language) */}
+      {/* Step 3: Main Site Container */}
       <div
         className={`min-h-screen relative transition-opacity duration-700 ease-out ${
           siteEntered ? 'opacity-100' : 'opacity-0 pointer-events-none'
@@ -117,17 +127,6 @@ function AppContent() {
         <div className="fixed top-0 bottom-0 right-0 w-[1px] z-50 pointer-events-none overflow-hidden hidden md:block opacity-40">
           <div className="w-full h-48 bg-gradient-to-b from-transparent via-[var(--neon-cyan)] to-transparent animate-laser-vert shadow-[0_0_4px_var(--neon-cyan)]" style={{ animationDelay: '3s' }} />
         </div>
-
-        <ScrollProgress />
-
-        <Navbar
-          soundPlaying={soundPlaying}
-          onToggleSound={handleToggleSound}
-          soundVolume={soundVolume}
-          onChangeVolume={setSoundVolume}
-        />
-
-        <SideNav />
 
         <main className="relative">
           <Hero soundPlaying={soundPlaying} />

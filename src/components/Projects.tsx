@@ -1,8 +1,8 @@
-import React, { useState, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronUp, ChevronDown, MessageSquare, Cpu } from 'lucide-react';
+import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, MessageSquare, Cpu } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -115,7 +115,6 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
   };
   const [filter, setFilter] = useState('featured');
   const [showAllProjects, setShowAllProjects] = useState(false);
-  const preExpandScrollPos = useRef<number>(0);
 
   // Full Project Detail Lightbox Modal State
   const [selectedProjectModal, setSelectedProjectModal] = useState<ProjectItem | null>(null);
@@ -158,9 +157,9 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     return projects.filter((p) => p.category === filter).sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
   }, [filter, showAllProjects, projects, allProjectsSorted]);
 
-  const visibleProjects = showAllProjects
-    ? targetProjectsList
-    : (filter === 'featured' ? targetProjectsList.slice(0, 3) : targetProjectsList.slice(0, 4));
+  const visibleProjects = (filter === 'featured' && !showAllProjects)
+    ? targetProjectsList.slice(0, 3)
+    : targetProjectsList;
 
   const isFeaturedSideBySideView = filter === 'featured' && !showAllProjects;
 
@@ -606,22 +605,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         )}
 
         {/* Expand / Switch to All Projects Button Container */}
-        {(filter === 'featured' || targetProjectsList.length > 3) && (
+        {filter === 'featured' && !showAllProjects && (
           <div className="text-center mt-12 reveal-up" id="expand-button-container">
             <button
               onClick={() => {
-                if (filter === 'featured') {
-                  preExpandScrollPos.current = window.scrollY;
-                  setFilter('all');
-                  setShowAllProjects(true);
-                  document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
-                } else if (!showAllProjects) {
-                  preExpandScrollPos.current = window.scrollY;
-                  setShowAllProjects(true);
-                } else {
-                  setShowAllProjects(false);
-                  window.scrollTo({ top: preExpandScrollPos.current, behavior: 'smooth' });
-                }
+                setFilter('all');
+                setShowAllProjects(true);
+                document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="px-7 sm:px-9 py-3.5 border font-hud font-bold text-xs sm:text-sm uppercase tracking-widest cyber-cut-corner transition-all hover:scale-105 cursor-pointer shadow-lg inline-flex items-center gap-2.5"
               style={{
@@ -630,20 +620,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 color: cyanCol,
               }}
             >
-              <span>
-                {filter === 'featured'
-                  ? (lang === 'zh' ? '檢視更多' : 'VIEW MORE')
-                  : showAllProjects
-                  ? (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')
-                  : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
-              </span>
-              {filter === 'featured' ? (
-                <ChevronDown size={16} />
-              ) : showAllProjects ? (
-                <ChevronUp size={16} />
-              ) : (
-                <ChevronDown size={16} />
-              )}
+              <span>{lang === 'zh' ? '檢視全部作品 (共 8 件)' : 'VIEW ALL PROJECTS (8 TOTAL)'}</span>
+              <ChevronDown size={16} />
             </button>
           </div>
         )}
