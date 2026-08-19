@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-export const ScrollProgress: React.FC = () => {
+interface ScrollProgressProps {
+  siteEntered?: boolean;
+}
+
+export const ScrollProgress: React.FC<ScrollProgressProps> = ({ siteEntered = true }) => {
   const [scrollWidth, setScrollWidth] = useState(0);
 
   useEffect(() => {
@@ -19,7 +23,9 @@ export const ScrollProgress: React.FC = () => {
   return (
     /* Top Horizontal Reading Progress Line — Positioned strictly below Navbar (top-16 sm:top-20) */
     <div
-      className="fixed top-16 sm:top-20 left-0 h-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 z-40 transition-all duration-150 shadow-[0_2px_8px_rgba(0,240,255,0.5)] pointer-events-none"
+      className={`fixed top-16 sm:top-20 left-0 h-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 z-40 transition-opacity duration-700 shadow-[0_2px_8px_rgba(0,240,255,0.5)] pointer-events-none ${
+        siteEntered ? 'opacity-100' : 'opacity-0'
+      }`}
       style={{
         width: `${scrollWidth}%`,
         transform: 'translateZ(0)',

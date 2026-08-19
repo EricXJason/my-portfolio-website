@@ -8,6 +8,7 @@ interface NavbarProps {
   onToggleSound: () => void;
   soundVolume: number;
   onChangeVolume: (val: number) => void;
+  siteEntered?: boolean;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -15,6 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   onToggleSound,
   soundVolume,
   onChangeVolume,
+  siteEntered = true,
 }) => {
   const { lang, toggleLang, t } = useLang();
   const { theme, toggleTheme } = useTheme();
@@ -125,7 +127,9 @@ export const Navbar: React.FC<NavbarProps> = ({
   return (
     <>
       <header
-        className="fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl border-b transition-colors duration-300"
+        className={`fixed top-0 left-0 right-0 w-full z-50 backdrop-blur-xl border-b transition-colors duration-300 transition-opacity duration-700 ease-out ${
+          siteEntered ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
         style={{
           backgroundColor: isLight ? 'rgba(255,255,255,0.96)' : 'rgba(3,7,18,0.92)',
           borderColor: borderCol,

@@ -19,7 +19,11 @@
 
 全站採用單頁式架構（SPA），包含八大核心展示區塊與多模態互動控制系統。
 
-### A. 導覽與全域控制系統
+### A. 三階段開場與全域導覽控制系統
+- **三階段流暢開場機制 (Three-Stage Onboarding Flow)**：
+  - **階段一（0% -> 100% 科技載入動畫）**：`InitialPreloader` 獨立置頂運行，全站主體、導覽列與側邊欄維持 `opacity-0 pointer-events-none`，杜絕任何畫面跳動。
+  - **階段二（語言選擇視窗）**：`LangSelectModal` 即時呈現，背景完全隱蔽，等待使用者確認語系偏好。
+  - **階段三（全站同步淡入）**：完成選擇後觸發 `siteEntered: true`，導覽列（Navbar）、進度條（ScrollProgress）、側邊索引（SideNav）與首頁內容以 700ms 齊步平滑淡入。
 - **頂部導覽列 (Navbar)**：
   - 品牌徽標、章節錨點快速跳轉。
   - 語系即時切換開關（繁體中文 / English）。

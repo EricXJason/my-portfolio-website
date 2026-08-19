@@ -17,7 +17,11 @@ const SECTIONS: SectionItem[] = [
   { id: 'gallery', labelKey: 'nav_gallery' },
 ];
 
-export const SideNav: React.FC = () => {
+interface SideNavProps {
+  siteEntered?: boolean;
+}
+
+export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
   const { t } = useLang();
   const { theme } = useTheme();
   const isLight = theme === 'light';
@@ -63,7 +67,9 @@ export const SideNav: React.FC = () => {
 
   return (
     <div
-      className="fixed right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-end gap-3 select-none"
+      className={`fixed right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-end gap-3 select-none transition-opacity duration-700 ease-out ${
+        siteEntered ? 'opacity-100' : 'opacity-0 pointer-events-none'
+      }`}
       role="navigation"
       aria-label="快速導覽 Quick Nav"
     >

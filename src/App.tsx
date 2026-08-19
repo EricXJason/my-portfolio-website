@@ -82,14 +82,15 @@ function AppContent() {
       <CustomCursor />
 
       {/* Top Reading Progress Bar & Fixed Header */}
-      <ScrollProgress />
+      <ScrollProgress siteEntered={siteEntered} />
       <Navbar
         soundPlaying={soundPlaying}
         onToggleSound={handleToggleSound}
         soundVolume={soundVolume}
         onChangeVolume={setSoundVolume}
+        siteEntered={siteEntered}
       />
-      <SideNav />
+      <SideNav siteEntered={siteEntered} />
 
       {/* Step 1: Tactical HUD Preloader Animation (0% -> 100%) */}
       {!preloaderDone && (
