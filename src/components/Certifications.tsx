@@ -3,6 +3,7 @@ import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { CheckCircle2, ExternalLink, Trophy, Award, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 import certData from '../data/certifications-section.json';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface CertItem {
   name: string;
@@ -38,6 +39,9 @@ export const Certifications: React.FC = () => {
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
   const cyanCol = isLight ? '#0284c7' : '#00f0ff';
 
+  const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const containerRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+
   // Distinct color palettes for certification groups to highlight structural hierarchy & order
   const groupAccents = [
     {
@@ -63,22 +67,25 @@ export const Certifications: React.FC = () => {
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16 space-y-3">
 
-          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
             <Award size={34} style={{ color: cyanCol }} className="shrink-0" />
             <span>{t('awards_title')}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('awards_intro')}
           </p>
         </div>
 
-        <div className="max-w-6xl mx-auto space-y-10">
+        <div ref={containerRef} className="max-w-6xl mx-auto space-y-10">
 
           {/* High-Contrast Amber Gold TOEIC 755 Card */}
           <div
-            className="p-6 sm:p-7 border cyber-cut-corner flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl backdrop-blur-xl"
+            className="p-6 sm:p-7 border cyber-cut-corner flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl backdrop-blur-xl reveal-scale reveal-d1"
             style={{
               backgroundColor: isLight ? '#fffbeb' : '#091328',
               borderColor: isLight ? '#fcd34d' : '#f59e0b',
@@ -138,7 +145,7 @@ export const Certifications: React.FC = () => {
             return (
               <div
                 key={gIdx}
-                className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+                className={`cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale reveal-d${((gIdx % 2) + 2) as 2 | 3}`}
                 style={{
                   backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
                   borderColor: isLight ? accent.border : borderCol,

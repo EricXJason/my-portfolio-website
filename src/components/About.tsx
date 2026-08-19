@@ -4,6 +4,7 @@ import { useTheme } from '../context/ThemeContext';
 import { Award, GraduationCap, Briefcase, ExternalLink, LucideIcon, UserCheck } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 import aboutData from '../data/about-section.json';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface StatItem {
   id: string;
@@ -33,6 +34,9 @@ export const About: React.FC = () => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
+  const headerRef = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const cardRef   = useScrollReveal(0.08) as React.RefObject<HTMLDivElement>;
+
   const dataMap = aboutData as unknown as Record<Language, AboutSectionData> & { driveLinks: Record<string, string> };
   const currentData: AboutSectionData = dataMap[lang] ?? dataMap.zh;
   const driveLinks = dataMap.driveLinks;
@@ -45,26 +49,30 @@ export const About: React.FC = () => {
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12">
 
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16 space-y-3">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-16 space-y-3">
 
-          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
             <UserCheck size={32} style={{ color: cyanCol }} className="shrink-0" />
             <span>{currentData.title}</span>
           </h2>
-          <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+          <p className="text-sm sm:text-base font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
             {currentData.intro}
           </p>
         </div>
 
         {/* Master Container */}
         <div
+          ref={cardRef}
           className="cyber-card p-6 sm:p-10 cyber-cut-corner max-w-6xl mx-auto border shadow-xl"
           style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)', borderColor: borderCol }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
 
-            {/* Portrait — High-End Cyber HUD Frame with Theme-Specific Lighting Calibration */}
-            <div className="lg:col-span-5 flex justify-center">
+            {/* Portrait */}
+            <div className="lg:col-span-5 flex justify-center reveal-left">
               <div className="relative group w-56 h-56 sm:w-64 sm:h-64 lg:w-72 lg:h-72 select-none">
                 <div
                   className="relative w-full h-full border cyber-cut-corner p-2 shadow-xl hud-corner-brackets flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:scale-[1.02]"
@@ -124,11 +132,11 @@ export const About: React.FC = () => {
             {/* Bio & Stat Gauges */}
             <div className="lg:col-span-7 space-y-6 text-left">
               <div className="space-y-3">
-                <h3 className="text-2xl sm:text-3xl font-black font-hud leading-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                <h3 className="text-2xl sm:text-3xl font-black font-hud leading-tight reveal-right" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                   {currentData.heading}
                 </h3>
 
-                <p className="text-sm sm:text-base leading-relaxed font-tech" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                <p className="text-sm sm:text-base leading-relaxed font-tech reveal-right reveal-d2" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
                   {currentData.p1}
                 </p>
               </div>
@@ -150,7 +158,7 @@ export const About: React.FC = () => {
                   return (
                     <div
                       key={st.id}
-                      className="p-4 border cyber-cut-sm flex flex-col justify-between gap-3 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-sm"
+                      className={`p-4 border cyber-cut-sm flex flex-col justify-between gap-3 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-sm stat-reveal reveal-d${(idx + 1) as 1 | 2 | 3}`}
                       style={{
                         backgroundColor: isLight ? '#ffffff' : 'rgba(3,7,18,0.8)',
                         borderColor: isLight ? accent.border : borderCol,

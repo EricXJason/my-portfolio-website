@@ -1,5 +1,4 @@
-/* oxlint-disable react/only-export-components */
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import i18n from '../data/site-translations.json';
 
 export type Language = 'zh' | 'en';
@@ -21,6 +20,10 @@ export const LangProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const toggleLang = () => {
     setLang((prev) => (prev === 'zh' ? 'en' : 'zh'));
   };
+
+  useEffect(() => {
+    document.documentElement.lang = lang === 'zh' ? 'zh-TW' : 'en';
+  }, [lang]);
 
   const t = (key: string): string => {
     const translations = (i18n as Record<Language, Record<string, string>>)[lang];

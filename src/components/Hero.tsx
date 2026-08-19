@@ -89,10 +89,12 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
         <div className="flex flex-col items-center text-center gap-3 sm:gap-6 max-w-5xl mx-auto select-text">
 
           {/* Interactive Sci-Fi Robot Mecha Avatar with Eye Tracking */}
-          <SciFiRobotAvatar soundPlaying={soundPlaying} />
+          <div className="hero-stagger hero-stagger-1">
+            <SciFiRobotAvatar soundPlaying={soundPlaying} />
+          </div>
 
           {/* Hero Main Header */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-5 hero-stagger hero-stagger-2">
             <h1
               className="text-3xl sm:text-6xl lg:text-7xl font-black font-hud tracking-tight cursor-default leading-none"
               style={{ color: isLight ? '#0f172a' : '#ffffff' }}
@@ -103,8 +105,8 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </h1>
           </div>
 
-          {/* Subtitle Matrix — High-Contrast Precision 3-Stop Static Cyber Gradient Typography */}
-          <div className="max-w-full text-center flex items-center justify-center -mt-1 sm:-mt-2">
+          {/* Subtitle Matrix */}
+          <div className="max-w-full text-center flex items-center justify-center -mt-1 sm:-mt-2 hero-stagger hero-stagger-3">
             <p
               className="text-sm sm:text-xl lg:text-2xl font-bold font-tech tracking-wider uppercase select-text"
               style={{
@@ -124,14 +126,14 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
 
           {/* Description */}
           <p
-            className="text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-normal select-text"
+            className="text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-normal select-text hero-stagger hero-stagger-4"
             style={{ color: isLight ? '#334155' : '#cbd5e1' }}
           >
             {currentData.description}
           </p>
 
-          {/* Action Buttons (100% Equal Width on PC Mode) */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-xs sm:max-w-none pt-1 sm:pt-2">
+          {/* Action Buttons */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-xs sm:max-w-none pt-1 sm:pt-2 hero-stagger hero-stagger-5">
             {/* GitHub Profile Button */}
             <a
               href={links.github}
@@ -165,8 +167,8 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
             </a>
           </div>
 
-          {/* Contact Cards — 100% Equal Width Row on PC Mode (305px), Full Width Stack on Mobile Mode */}
-          <div className="w-full max-w-xs md:max-w-none mx-auto mt-4 sm:mt-5 select-text">
+          {/* Contact Cards */}
+          <div className="w-full max-w-xs md:max-w-none mx-auto mt-4 sm:mt-5 select-text hero-stagger hero-stagger-6">
             <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full select-text">
               {contactList.map((item) => {
                 const label = lang === 'zh' ? item.labelZh : item.labelEn;

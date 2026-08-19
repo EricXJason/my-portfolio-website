@@ -61,9 +61,6 @@ export const SideNav: React.FC = () => {
     }
   };
 
-  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
-  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
-
   return (
     <div
       className="fixed right-4 lg:right-6 top-1/2 -translate-y-1/2 z-40 hidden xl:flex flex-col items-end gap-3 select-none"
@@ -82,32 +79,46 @@ export const SideNav: React.FC = () => {
           >
             {/* Tooltip Label */}
             <span
-              className={`px-3 py-1 border cyber-cut-sm font-tech text-xs font-bold uppercase transition-all duration-200 shadow-md ${
+              className={`px-3 py-1 border cyber-cut-sm font-tech text-xs font-bold uppercase transition-all duration-200 backdrop-blur-md ${
                 isActive
-                  ? 'opacity-100 shadow-sm'
-                  : 'opacity-0 group-hover:opacity-100'
+                  ? 'opacity-100 shadow-md'
+                  : 'opacity-0 group-hover:opacity-100 shadow-sm'
               }`}
               style={{
-                backgroundColor: isLight ? '#ffffff' : '#080e1a',
-                borderColor: isActive ? cyanCol : borderCol,
-                color: isActive ? cyanCol : isLight ? '#334155' : '#cbd5e1',
+                backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.95)',
+                borderColor: isActive ? (isLight ? '#0284c7' : '#00f0ff') : (isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.15)'),
+                color: isActive ? (isLight ? '#0284c7' : '#00f0ff') : (isLight ? '#334155' : '#cbd5e1'),
+                boxShadow: isActive
+                  ? (isLight ? '0 2px 10px rgba(2, 132, 199, 0.18)' : '0 0 10px rgba(0, 240, 255, 0.25)')
+                  : (isLight ? '0 2px 8px rgba(0, 0, 0, 0.06)' : 'none'),
               }}
             >
               {t(section.labelKey)}
             </span>
 
-            {/* Tactical Marker Dot */}
-            <div
-              className={`transition-all duration-300 ${
-                isActive
-                  ? 'w-3 h-3 rotate-45 border shadow-md'
-                  : 'w-2 h-2 rotate-45 rounded-none hover:scale-125'
-              }`}
-              style={{
-                backgroundColor: isActive ? cyanCol : isLight ? '#cbd5e1' : '#475569',
-                borderColor: isActive ? cyanCol : 'transparent',
-              }}
-            />
+            {/* Tactical Marker Dot (Crisp Precision Geometric Diamond) */}
+            <div className="relative flex items-center justify-center w-5 h-5">
+              <div
+                className={`transition-all duration-300 rotate-45 ${
+                  isActive
+                    ? 'w-3 h-3 scale-110'
+                    : 'w-2 h-2 group-hover:scale-125'
+                }`}
+                style={{
+                  backgroundColor: isActive
+                    ? (isLight ? '#0284c7' : '#00f0ff')
+                    : (isLight ? '#ffffff' : '#080e1a'),
+                  borderWidth: isActive ? '2px' : '1.5px',
+                  borderStyle: 'solid',
+                  borderColor: isActive
+                    ? (isLight ? '#ffffff' : '#e0f2fe')
+                    : (isLight ? '#64748b' : 'rgba(0, 240, 255, 0.45)'),
+                  boxShadow: isActive
+                    ? (isLight ? '0 0 10px rgba(2, 132, 199, 0.55), 0 2px 5px rgba(0, 0, 0, 0.2)' : '0 0 14px rgba(0, 240, 255, 0.85)')
+                    : (isLight ? '0 1px 3px rgba(0, 0, 0, 0.1)' : '0 0 4px rgba(0, 240, 255, 0.2)'),
+                }}
+              />
+            </div>
           </a>
         );
       })}

@@ -1,7 +1,7 @@
 # ⚡ 許哲誠 (HSU, CHE-CHENG) | 個人官方作品集網站 (Personal Portfolio Website)
 
 [![Author: HSU, CHE-CHENG](https://img.shields.io/badge/Author-HSU%2C_CHE--CHENG_許哲誠-orange?style=flat-square)](#)
-[![Version: 2.7.0](https://img.shields.io/badge/Version-2.7.0-blue?style=flat-square)](#)
+[![Version: 2.8.0](https://img.shields.io/badge/Version-2.8.0-blue?style=flat-square)](#)
 [![Build: Clean](https://img.shields.io/badge/Build-Passing-green?style=flat-square)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](#)
 
@@ -50,30 +50,39 @@ my-portfolio-website/
 │   │   ├── icons/             # Centralized TechIcon component
 │   │   ├── About.tsx
 │   │   ├── ArtGallery.tsx
+│   │   ├── BackToTop.tsx
 │   │   ├── Certifications.tsx
+│   │   ├── CustomCursor.tsx
+│   │   ├── CyberParticles.tsx
 │   │   ├── Education.tsx
-│   │   ├── Experience.tsx
 │   │   ├── Footer.tsx
 │   │   ├── FullStackCodeStreamBackground.tsx
 │   │   ├── GlobalAmbientNeon.tsx
 │   │   ├── Hero.tsx
+│   │   ├── InitialPreloader.tsx
+│   │   ├── LangSelectModal.tsx
 │   │   ├── Navbar.tsx
 │   │   ├── Projects.tsx
-│   │   ├── Publications.tsx
-│   │   └── Skills.tsx
+│   │   ├── SciFiRobotAvatar.tsx
+│   │   ├── ScrollProgress.tsx
+│   │   ├── SeoSchema.tsx
+│   │   ├── SideNav.tsx
+│   │   ├── Skills.tsx
+│   │   └── YoutubeModal.tsx
 │   ├── context/               # React Context (ThemeContext, LangContext)
 │   ├── data/                  # Structured JSON data files (kebab-case)
 │   │   ├── about-section.json
-│   │   ├── artgallery-section.json
 │   │   ├── certifications-section.json
-│   │   ├── education-section.json
 │   │   ├── experience-section.json
+│   │   ├── gallery-section.json
 │   │   ├── hero-section.json
 │   │   ├── projects-section.json
-│   │   ├── publications-section.json
-│   │   ├── skills-section.json
+│   │   ├── seo-schema.json
 │   │   ├── site-translations.json
+│   │   ├── skills-section.json
 │   │   └── tech-icons.json
+│   ├── hooks/                 # Custom React Hooks
+│   │   └── useScrollReveal.ts
 │   ├── utils/                 # Asset path utilities & helpers
 │   ├── App.tsx
 │   ├── index.css
@@ -82,7 +91,7 @@ my-portfolio-website/
 ├── index.html                 # Main HTML entry with complete SEO meta tags
 ├── package.json
 ├── tsconfig.json
-└── vite.config.ts
+└── vite.config.js
 ```
 
 ---

@@ -2,9 +2,10 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronUp, ChevronDown, MessageSquare } from 'lucide-react';
+import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronUp, ChevronDown, MessageSquare, Cpu } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface ProjectItem {
   id: string;
@@ -42,6 +43,7 @@ interface CategoryStyle {
   lightBg: string;
   lightBorder: string;
   lightText: string;
+  iconName?: string;
 }
 
 const categoryMap: Record<string, CategoryStyle> = {
@@ -54,6 +56,7 @@ const categoryMap: Record<string, CategoryStyle> = {
     lightBg: '#e0f2fe',
     lightBorder: '#0284c7',
     lightText: '#0369a1',
+    iconName: 'interactive',
   },
   frontend: {
     zh: '前端開發',
@@ -64,6 +67,7 @@ const categoryMap: Record<string, CategoryStyle> = {
     lightBg: '#e0e7ff',
     lightBorder: '#4338ca',
     lightText: '#3730a3',
+    iconName: 'frontend',
   },
   fullstack: {
     zh: '全端開發',
@@ -74,6 +78,7 @@ const categoryMap: Record<string, CategoryStyle> = {
     lightBg: '#f3e8ff',
     lightBorder: '#7c3aed',
     lightText: '#6b21a8',
+    iconName: 'fullstack',
   },
   linebot: {
     zh: 'LINE Bot',
@@ -84,6 +89,7 @@ const categoryMap: Record<string, CategoryStyle> = {
     lightBg: '#d1fae5',
     lightBorder: '#059669',
     lightText: '#065f46',
+    iconName: 'linebot',
   },
 };
 
@@ -91,6 +97,22 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
   const { t, lang } = useLang();
   const { theme } = useTheme();
   const isLight = theme === 'light';
+
+  // 渲染分類對應的 Lucide 圖示
+  const renderCategoryIcon = (iconName?: string, size = 13, className = '') => {
+    switch (iconName) {
+      case 'interactive':
+        return <Gamepad2 size={size} className={className} />;
+      case 'frontend':
+        return <Layout size={size} className={className} />;
+      case 'fullstack':
+        return <Globe size={size} className={className} />;
+      case 'linebot':
+        return <MessageSquare size={size} className={className} />;
+      default:
+        return null;
+    }
+  };
   const [filter, setFilter] = useState('featured');
   const [showAllProjects, setShowAllProjects] = useState(false);
   const preExpandScrollPos = useRef<number>(0);
@@ -155,6 +177,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
   const cyanCol = isLight ? '#0284c7' : '#00f0ff';
 
+  const headerRef = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const gridRef   = useScrollReveal(0.05) as React.RefObject<HTMLDivElement>;
+  const listRef   = useScrollReveal(0.05) as React.RefObject<HTMLDivElement>;
+
   const handleWatchVideo = (ytId: string) => {
     window.open(`https://www.youtube.com/watch?v=${ytId}`, '_blank', 'noopener,noreferrer');
   };
@@ -168,6 +194,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     lightBg: '#e0f2fe',
     lightBorder: '#0284c7',
     lightText: '#0369a1',
+    iconName: 'globe',
   };
 
   return (
@@ -175,13 +202,16 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-12 space-y-3">
 
-          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
             <FolderGit2 size={34} style={{ color: cyanCol }} className="shrink-0" />
             <span>{t('projects_title')}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('projects_note')}
           </p>
         </div>
@@ -218,8 +248,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
         {/* FEATURED MODE: 3 EQUAL CORE REPRESENTATIVE PROJECTS SIDE-BY-SIDE GRID */}
         {isFeaturedSideBySideView ? (
-          <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {visibleProjects.map((project) => {
+          <div ref={gridRef} className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+            {visibleProjects.map((project, pIdx) => {
               const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
               const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
               const categoryObj = categoryMap[project.category] ?? fallbackCategoryStyle;
@@ -228,7 +258,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               return (
                 <article
                   key={project.id}
-                  className="cyber-card p-6 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-lg relative flex flex-col justify-between"
+                  className={`cyber-card p-6 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-lg relative flex flex-col justify-between reveal-scale reveal-d${((pIdx % 3) + 1) as 1 | 2 | 3}`}
                   style={{
                     backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
                     borderColor: borderCol,
@@ -236,23 +266,6 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 >
                   <div className="flex-1 flex flex-col justify-between">
                     <div className="space-y-4">
-                      {/* Top Category Badge & Date */}
-                      <div className="flex flex-row items-center justify-between gap-2 pb-3 border-b border-slate-700/40">
-                        <span
-                          className="px-3 py-1 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm shadow-xs w-fit"
-                          style={{
-                            backgroundColor: isLight ? categoryObj.lightBg : categoryObj.darkBg,
-                            borderColor: isLight ? categoryObj.lightBorder : categoryObj.darkBorder,
-                            color: isLight ? categoryObj.lightText : categoryObj.darkText,
-                          }}
-                        >
-                          {categoryLabel}
-                        </span>
-                        <span className="text-xs font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
-                          {project.date}
-                        </span>
-                      </div>
-
                       {/* Image Thumbnail — Click opens full Detail Modal */}
                       <div
                         className="relative group overflow-hidden cyber-cut-corner border shadow-md cursor-pointer aspect-video w-full"
@@ -262,6 +275,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                         <img
                           src={getAssetUrl(project.image)}
                           alt={title}
+                          width="640"
+                          height="360"
                           className="w-full h-full aspect-video object-cover object-center transition-transform duration-700 group-hover:scale-105"
                           loading="lazy"
                           decoding="async"
@@ -269,6 +284,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                         <div className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
 
+                      {/* Project Title */}
                       <h3
                         className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight cursor-pointer hover:text-cyan-400 transition-colors"
                         style={{ color: isLight ? '#0f172a' : '#ffffff' }}
@@ -277,8 +293,36 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                         {title}
                       </h3>
 
+                      {/* Category Badge & AI Badge Row — Positioned Directly Below Title */}
+                      <div className="flex items-center flex-wrap gap-2 pt-0.5">
+                        <span
+                          className="px-3 py-1 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm shadow-xs w-fit flex items-center gap-1.5"
+                          style={{
+                            backgroundColor: isLight ? categoryObj.lightBg : categoryObj.darkBg,
+                            borderColor: isLight ? categoryObj.lightBorder : categoryObj.darkBorder,
+                            color: isLight ? categoryObj.lightText : categoryObj.darkText,
+                          }}
+                        >
+                          {renderCategoryIcon(categoryObj.iconName, 13, "shrink-0")}
+                          <span>{categoryLabel}</span>
+                        </span>
+                        {project.aiAssisted && (
+                          <span className="px-2.5 py-1 border border-solid rounded-none font-tech text-xs font-bold uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-xs transition-shadow"
+                            style={{
+                              backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)',
+                              borderColor: isLight ? '#34d399' : '#10b981',
+                              color: isLight ? '#065f46' : '#a7f3d0',
+                              boxShadow: isLight ? 'none' : '0 0 6px rgba(16, 185, 129, 0.35)',
+                            }}
+                          >
+                            <Cpu size={12} className="shrink-0" />
+                            <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
+                          </span>
+                        )}
+                      </div>
+
                       {/* Full Project Description */}
-                      <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                      <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
                         {desc}
                       </p>
                     </div>
@@ -352,8 +396,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </div>
         ) : (
           /* STANDARD DETAILED LIST VIEW */
-          <div className="max-w-6xl mx-auto space-y-8">
-            {visibleProjects.map((project) => {
+          <div ref={listRef} className="max-w-6xl mx-auto space-y-8">
+            {visibleProjects.map((project, lIdx) => {
               const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
               const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
               const honorsList = lang === 'zh' ? project.honors : (project.honors_en || project.honors);
@@ -364,7 +408,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               return (
                 <article
                   key={project.id}
-                  className="cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-lg relative"
+                  className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-lg relative reveal-left reveal-d${((lIdx % 3) + 1) as 1 | 2 | 3}`}
                   style={{
                     backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
                     borderColor: borderCol,
@@ -383,6 +427,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                         <img
                           src={getAssetUrl(project.image)}
                           alt={title}
+                          width="640"
+                          height="360"
                           className="w-full h-full aspect-video object-cover object-center transition-transform duration-700 group-hover:scale-105"
                           loading="lazy"
                           decoding="async"
@@ -445,27 +491,39 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                     {/* Right Column: Project Details */}
                     <div className="lg:col-span-7 flex flex-col justify-between space-y-4 h-full">
                       <div className="space-y-4 flex-1">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-700/30 pb-3">
-                          <div className="flex items-center gap-2">
-                            <h3
-                              className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight cursor-pointer hover:text-cyan-400 transition-colors"
-                              style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-                              onClick={() => setSelectedProjectModal(project)}
-                            >
-                              {title}
-                            </h3>
-                          </div>
-                          <div className="flex flex-row items-center gap-2.5 sm:gap-3 shrink-0">
+                        <div className="border-b border-slate-700/30 pb-3 space-y-2.5">
+                          <h3
+                            className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight cursor-pointer hover:text-cyan-400 transition-colors"
+                            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+                            onClick={() => setSelectedProjectModal(project)}
+                          >
+                            {title}
+                          </h3>
+                          <div className="flex flex-row items-center flex-wrap gap-2 sm:gap-2.5">
                             <span
-                              className="px-3 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shadow-xs w-fit"
+                              className="px-3 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shadow-xs w-fit flex items-center gap-1.5"
                               style={{
                                 backgroundColor: isLight ? categoryObj.lightBg : categoryObj.darkBg,
                                 borderColor: isLight ? categoryObj.lightBorder : categoryObj.darkBorder,
                                 color: isLight ? categoryObj.lightText : categoryObj.darkText,
                               }}
                             >
-                              {categoryLabel}
+                              {renderCategoryIcon(categoryObj.iconName, 13, "shrink-0")}
+                              <span>{categoryLabel}</span>
                             </span>
+                            {project.aiAssisted && (
+                              <span className="px-2.5 py-1 border border-solid rounded-none font-tech text-xs sm:text-sm font-bold uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-xs transition-shadow"
+                                style={{
+                                  backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)',
+                                  borderColor: isLight ? '#34d399' : '#10b981',
+                                  color: isLight ? '#065f46' : '#a7f3d0',
+                                  boxShadow: isLight ? 'none' : '0 0 6px rgba(16, 185, 129, 0.35)',
+                                }}
+                              >
+                                <Cpu size={12} className="shrink-0" />
+                                <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
+                              </span>
+                            )}
                             <span className="text-xs sm:text-sm font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
                               {project.date}
                             </span>
@@ -529,7 +587,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         {/* EMPTY STATE CARD (For empty categories like LINE Bot) */}
         {visibleProjects.length === 0 && (
           <div
-            className="max-w-3xl mx-auto p-10 sm:p-12 text-center border cyber-cut-corner backdrop-blur-xl space-y-4 my-8 shadow-lg"
+            className="max-w-3xl mx-auto p-10 sm:p-12 text-center border cyber-cut-corner backdrop-blur-xl space-y-4 my-8 shadow-lg reveal-scale"
             style={{
               backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
               borderColor: borderCol,
@@ -549,7 +607,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
         {/* Expand / Switch to All Projects Button Container */}
         {(filter === 'featured' || targetProjectsList.length > 3) && (
-          <div className="text-center mt-12" id="expand-button-container">
+          <div className="text-center mt-12 reveal-up" id="expand-button-container">
             <button
               onClick={() => {
                 if (filter === 'featured') {
@@ -609,9 +667,9 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                   <h3 className="font-hud font-black text-2xl sm:text-3xl uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                     {lang === 'zh' ? selectedProjectModal.title_zh : (selectedProjectModal.title_en || selectedProjectModal.title_zh)}
                   </h3>
-                  <div className="flex flex-row items-center gap-2.5 sm:gap-3">
+                  <div className="flex flex-row items-center flex-wrap gap-2.5">
                     <span
-                      className="px-3 py-0.5 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm w-fit"
+                      className="px-3 py-0.5 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm w-fit flex items-center gap-1.5"
                       style={{
                         backgroundColor: isLight
                           ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightBg
@@ -624,10 +682,26 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkText,
                       }}
                     >
-                      {lang === 'zh'
-                        ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).zh
-                        : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).en}
+                      {renderCategoryIcon((categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).iconName, 13, "shrink-0")}
+                      <span>
+                        {lang === 'zh'
+                          ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).zh
+                          : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).en}
+                      </span>
                     </span>
+                    {selectedProjectModal.aiAssisted && (
+                      <span className="px-2.5 py-0.5 border border-solid rounded-none font-tech text-xs font-bold uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-xs transition-shadow"
+                        style={{
+                          backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)',
+                          borderColor: isLight ? '#34d399' : '#10b981',
+                          color: isLight ? '#065f46' : '#a7f3d0',
+                          boxShadow: isLight ? 'none' : '0 0 6px rgba(16, 185, 129, 0.35)',
+                        }}
+                      >
+                        <Cpu size={12} className="shrink-0" />
+                        <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
+                      </span>
+                    )}
                     <span className="text-xs font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
                       {selectedProjectModal.date}
                     </span>
@@ -652,8 +726,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 <img
                   src={getAssetUrl(selectedProjectModal.image)}
                   alt={selectedProjectModal.title_zh}
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
+                  width="800"
+                  height="450"
                   className="w-full h-full aspect-video object-cover object-center"
                 />
               </div>

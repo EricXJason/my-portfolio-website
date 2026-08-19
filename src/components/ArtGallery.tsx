@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 import artGalleryDataJson from '../data/gallery-section.json';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface Artwork {
   id: string;
@@ -148,18 +149,24 @@ export const ArtGallery: React.FC = () => {
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
   const cyanCol = isLight ? '#0284c7' : '#00f0ff';
 
+  const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const containerRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+
   return (
     <section id="gallery" className="py-20 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16">
 
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-14 space-y-3">
 
-          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
             <Palette size={32} className="text-cyan-400 shrink-0" />
             <span>{t('gallery_title')}</span>
           </h2>
-          <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+          <p className="text-sm sm:text-base font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
             {t('gallery_note')}
           </p>
         </div>
@@ -189,9 +196,9 @@ export const ArtGallery: React.FC = () => {
           ))}
         </div>
 
-        {/* FEATURED 3D COVER-FLOW CAROUSEL (SQUARE SCI-FI TACTICAL FRAME & BUTTONS) */}
+        {/* FEATURED 3D COVER-FLOW CAROUSEL */}
         {activeTab === 'featured' ? (
-          <div className="relative w-full max-w-6xl mx-auto flex flex-col items-center py-6 select-none">
+          <div ref={containerRef} className="relative w-full max-w-6xl mx-auto flex flex-col items-center py-6 select-none reveal-scale">
 
             {/* Carousel Outer Track Window */}
             <div
@@ -278,6 +285,8 @@ export const ArtGallery: React.FC = () => {
                     <img
                       src={getAssetUrl(art.img)}
                       alt={`許哲誠美術作品 - ${art.cat} (${art.id})`}
+                      width="400"
+                      height="400"
                       loading="lazy"
                       decoding="async"
                       className="w-full h-full aspect-square object-cover rounded-none transition-transform duration-700 group-hover:scale-105"
@@ -378,6 +387,8 @@ export const ArtGallery: React.FC = () => {
                   <img
                     src={getAssetUrl(art.img)}
                     alt={`許哲誠美術作品縮圖 (${art.id})`}
+                    width="300"
+                    height="300"
                     className="w-full h-full aspect-square object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
                     decoding="async"
@@ -468,8 +479,10 @@ export const ArtGallery: React.FC = () => {
                 <img
                   src={getAssetUrl(activeImage.img)}
                   alt={`許哲誠美術作品預覽 (${activeImage.id})`}
-                  loading="lazy"
+                  loading="eager"
                   decoding="async"
+                  width="800"
+                  height="800"
                   className="max-h-[72vh] w-auto object-contain"
                 />
               )}

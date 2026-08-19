@@ -40,9 +40,6 @@ function AppContent() {
   const [preloaderDone, setPreloaderDone] = useState<boolean>(false);
   const [siteEntered, setSiteEntered] = useState<boolean>(false);
 
-  // Dynamic local date formatting (ISO YYYY-MM-DD)
-  const currentLocalDate = new Date().toISOString().split('T')[0];
-
   // Lock scrollbars completely before user officially enters site
   useEffect(() => {
     if (!siteEntered) {
@@ -145,7 +142,7 @@ function AppContent() {
         </main>
 
         <Suspense fallback={null}>
-          <Footer lastUpdated={currentLocalDate} />
+          <Footer />
         </Suspense>
         <BackToTop />
 

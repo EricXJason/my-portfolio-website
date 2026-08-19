@@ -3,6 +3,7 @@ import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, Box, LucideIcon, Zap, Layers } from 'lucide-react';
 import skillsData from '../data/skills-section.json';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface SkillItem {
   label: string;
@@ -63,25 +64,32 @@ export const Skills: React.FC = () => {
   const primaryColor = isLight ? '#0284c7' : '#00f0ff';
   const secondaryColor = isLight ? '#047857' : '#34d399';
 
+  const headerRef   = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const primaryRef  = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const secondaryRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+
   return (
     <section id="skills" className="py-20 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 space-y-16">
 
         {/* Section Title Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto space-y-3">
 
-          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
             <Cpu size={34} style={{ color: primaryColor }} className="shrink-0" />
             <span>{t('skills_title')}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('skills_intro')}
           </p>
         </div>
 
-        {/* 2 PRIMARY CORE DOMAINS (遊戲與互動應用開發 & 全端開發) */}
-        <div className="max-w-6xl mx-auto space-y-6">
-          <div className="flex items-center gap-2.5 pb-2 border-b" style={{ borderColor: isLight ? 'rgba(2, 132, 199, 0.3)' : 'rgba(0, 240, 255, 0.3)' }}>
+        {/* 2 PRIMARY CORE DOMAINS */}
+        <div ref={primaryRef} className="max-w-6xl mx-auto space-y-6">
+          <div className="flex items-center gap-2.5 pb-2 border-b reveal-up" style={{ borderColor: isLight ? 'rgba(2, 132, 199, 0.3)' : 'rgba(0, 240, 255, 0.3)' }}>
             <Zap size={20} style={{ color: primaryColor }} />
             <h3 className="font-hud font-bold text-base sm:text-lg uppercase tracking-wider" style={{ color: primaryColor }}>
               {lang === 'zh' ? '主要專業領域' : 'PRIMARY CORE COMPETENCIES'}
@@ -96,7 +104,7 @@ export const Skills: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className="cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-xl relative"
+                  className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-xl relative reveal-scale reveal-d${(idx + 1) as 1 | 2}`}
                   style={{
                     backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
                     borderColor: isLight ? accent.border : borderCol,
@@ -158,11 +166,12 @@ export const Skills: React.FC = () => {
                               {tokens.map((sub, sIdx) => (
                                 <span
                                   key={sIdx}
-                                  className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm"
+                                  className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm skill-tag-reveal"
                                   style={{
                                     backgroundColor: isLight ? '#ffffff' : 'rgba(0,0,0,0.4)',
                                     borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
                                     color: isLight ? '#0f172a' : '#e2e8f0',
+                                    animationDelay: `${(iIdx * 0.08 + sIdx * 0.04).toFixed(2)}s`,
                                   }}
                                 >
                                   {sub}
@@ -180,10 +189,10 @@ export const Skills: React.FC = () => {
           </div>
         </div>
 
-        {/* 1 AUXILIARY COMPETENCY (多媒體設計) */}
+        {/* 1 AUXILIARY COMPETENCY */}
         {secondarySkills.length > 0 && (
-          <div className="max-w-6xl mx-auto space-y-6">
-            <div className="flex items-center gap-2.5 pb-2 border-b" style={{ borderColor: isLight ? 'rgba(4, 120, 87, 0.3)' : 'rgba(52, 211, 153, 0.3)' }}>
+          <div ref={secondaryRef} className="max-w-6xl mx-auto space-y-6">
+            <div className="flex items-center gap-2.5 pb-2 border-b reveal-up" style={{ borderColor: isLight ? 'rgba(4, 120, 87, 0.3)' : 'rgba(52, 211, 153, 0.3)' }}>
               <Layers size={20} style={{ color: secondaryColor }} />
               <h3 className="font-hud font-bold text-base sm:text-lg uppercase tracking-wider" style={{ color: secondaryColor }}>
                 {lang === 'zh' ? '輔助專業技能' : 'AUXILIARY COMPETENCY'}
@@ -197,7 +206,7 @@ export const Skills: React.FC = () => {
               return (
                 <div
                   key={sIdx}
-                  className="cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-xl space-y-6"
+                  className="cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-xl space-y-6 reveal-scale reveal-d1"
                   style={{
                     backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
                     borderColor: isLight ? accent.border : borderCol,
@@ -259,11 +268,12 @@ export const Skills: React.FC = () => {
                             {tokens.map((sub, sIdx) => (
                               <span
                                 key={sIdx}
-                                className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm"
+                                className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm skill-tag-reveal"
                                 style={{
                                   backgroundColor: isLight ? '#ffffff' : 'rgba(0,0,0,0.4)',
                                   borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
                                   color: isLight ? '#0f172a' : '#e2e8f0',
+                                  animationDelay: `${(iIdx * 0.07 + sIdx * 0.035).toFixed(2)}s`,
                                 }}
                               >
                                 {sub}

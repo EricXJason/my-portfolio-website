@@ -16,6 +16,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import eduData from '../data/experience-section.json';
+import { useScrollReveal } from '../hooks/useScrollReveal';
 
 interface DegreeButton {
   key: string;
@@ -93,6 +94,12 @@ export const Education: React.FC = () => {
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
   const cyanCol = isLight ? '#0284c7' : '#00f0ff';
 
+  const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const degreesRef   = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const workRef      = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const workshopsRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const thesesRef    = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+
   // Strict Sequential Palette Accent Loop for item ordering distinction: 藍 -> 紫 -> 綠 -> 黃
   const sequenceAccents = [
     // 1: 藍 (Blue / Cyan)
@@ -110,13 +117,16 @@ export const Education: React.FC = () => {
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 space-y-16">
 
         {/* Section Title Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-3">
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto space-y-3">
 
-          <h2 className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
             <Briefcase size={34} className="text-cyan-400 shrink-0" />
             <span>{t('exp_title')}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('exp_intro')}
           </p>
         </div>
@@ -124,10 +134,11 @@ export const Education: React.FC = () => {
         {/* Master Experience Container */}
         <div className="max-w-6xl mx-auto space-y-12">
 
-          {/* Sub-section 1: Degrees (教育學歷 - 藍 / 紫 順序) */}
+          {/* Sub-section 1: Degrees */}
           <div
             id="education-degrees"
-            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+            ref={degreesRef}
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
             style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
           >
             <div className="flex items-center gap-3 border-b border-slate-700/40 pb-4">
@@ -200,10 +211,11 @@ export const Education: React.FC = () => {
             </div>
           </div>
 
-          {/* Sub-section 2: Work Experience (工作經歷 - 藍 / 紫 / 綠 / 黃 順序) */}
+          {/* Sub-section 2: Work Experience */}
           <div
             id="work-experience"
-            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+            ref={workRef}
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
             style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
           >
             <div className="flex items-center gap-3 border-b border-slate-700/40 pb-4">
@@ -280,10 +292,11 @@ export const Education: React.FC = () => {
             </div>
           </div>
 
-          {/* Sub-section 3: Workshops & Training (研習與受訓歷程 - 藍 / 紫 / 綠 / 黃 順序) */}
+          {/* Sub-section 3: Workshops & Training */}
           <div
             id="workshops"
-            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+            ref={workshopsRef}
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
             style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
           >
             <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">
@@ -390,11 +403,12 @@ export const Education: React.FC = () => {
             )}
           </div>
 
-          {/* Sub-section 4: Academic Theses & Publications (學術論文與發表 - 藍 / 紫 / 綠 / 黃 順序) */}
+          {/* Sub-section 4: Academic Theses & Publications */}
           {currentData.theses && currentData.theses.length > 0 && (
             <div
               id="publications"
-              className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl"
+              ref={thesesRef}
+              className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
               style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
             >
               <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">

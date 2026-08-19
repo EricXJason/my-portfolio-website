@@ -857,5 +857,312 @@ body.mobile-menu-open .back-to-top-btn {
 }
 
 
+/* ════════════════════════════════════════════════════════════
+   LIGHT MODE AURORA BACKGROUND
+   ════════════════════════════════════════════════════════════ */
+.light-aurora-bg {
+  background: transparent;
+  pointer-events: none;
+}
+:root.light .light-aurora-bg {
+  background:
+    radial-gradient(ellipse 55% 28% at 15% 18%, rgba(56,189,248,0.09) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 22% at 88% 78%, rgba(168,85,247,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
 
+/* ════════════════════════════════════════════════════════════
+   SCI-FI SCROLL REVEAL SYSTEM
+   ════════════════════════════════════════════════════════════ */
 
+/* ── Base state: invisible, in-position (no layout shift → CLS = 0) ── */
+.reveal-up,
+.reveal-left,
+.reveal-right,
+.reveal-scale,
+.reveal-fade {
+  opacity: 0;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+}
+.reveal-up    { transform: translate3d(0, 28px, 0); }
+.reveal-left  { transform: translate3d(-32px, 0, 0); }
+.reveal-right { transform: translate3d(32px, 0, 0); }
+.reveal-scale { transform: scale3d(0.93, 0.93, 1); }
+.reveal-fade  { transform: translate3d(0, 0, 0); }
+
+/* ── Stagger delay modifiers ── */
+.reveal-d1  { transition-delay: 0.06s !important; }
+.reveal-d2  { transition-delay: 0.12s !important; }
+.reveal-d3  { transition-delay: 0.18s !important; }
+.reveal-d4  { transition-delay: 0.24s !important; }
+.reveal-d5  { transition-delay: 0.30s !important; }
+.reveal-d6  { transition-delay: 0.36s !important; }
+.reveal-d7  { transition-delay: 0.42s !important; }
+.reveal-d8  { transition-delay: 0.48s !important; }
+
+/* ── Revealed state: all classes animate to natural position ── */
+[data-revealed="true"] .reveal-up,
+[data-revealed="true"] .reveal-left,
+[data-revealed="true"] .reveal-right,
+[data-revealed="true"] .reveal-scale,
+[data-revealed="true"] .reveal-fade {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Self-reveal (element directly observed, not via parent) ── */
+.reveal-up[data-revealed="true"],
+.reveal-left[data-revealed="true"],
+.reveal-right[data-revealed="true"],
+.reveal-scale[data-revealed="true"],
+.reveal-fade[data-revealed="true"] {
+  opacity: 1;
+  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
+  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ════════════════════════════════════════════════════════════
+   HERO INITIAL STAGGER (no IntersectionObserver needed — always visible)
+   ════════════════════════════════════════════════════════════ */
+@keyframes hero-enter {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.hero-stagger {
+  opacity: 0;
+  animation: hero-enter 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  backface-visibility: hidden;
+}
+.hero-stagger-1 { animation-delay: 0.05s; }
+.hero-stagger-2 { animation-delay: 0.18s; }
+.hero-stagger-3 { animation-delay: 0.30s; }
+.hero-stagger-4 { animation-delay: 0.42s; }
+.hero-stagger-5 { animation-delay: 0.54s; }
+.hero-stagger-6 { animation-delay: 0.65s; }
+
+/* ════════════════════════════════════════════════════════════
+   GLITCH TEXT SYSTEM (Pure CSS — Zero JS timers)
+   Dual channel RGB split on section headings, entry once.
+   ════════════════════════════════════════════════════════════ */
+@keyframes glitch-clip-1 {
+  0%, 90%, 100% { clip-path: inset(0 0 100% 0); transform: translate3d(0,0,0); opacity: 0; }
+  91%           { clip-path: inset(8% 0 48% 0);  transform: translate3d(-3px,0,0); opacity: 1; }
+  93%           { clip-path: inset(52% 0 12% 0); transform: translate3d(3px,0,0);  opacity: 1; }
+  96%           { clip-path: inset(22% 0 62% 0); transform: translate3d(-2px,0,0); opacity: 0.8; }
+  98%           { clip-path: inset(0 0 100% 0);  transform: translate3d(0,0,0); opacity: 0; }
+}
+@keyframes glitch-clip-2 {
+  0%, 85%, 100% { clip-path: inset(0 0 100% 0); transform: translate3d(0,0,0); opacity: 0; }
+  87%           { clip-path: inset(65% 0 2% 0);  transform: translate3d(4px,0,0); opacity: 1; }
+  89%           { clip-path: inset(38% 0 35% 0); transform: translate3d(-4px,0,0); opacity: 1; }
+  91%           { clip-path: inset(10% 0 75% 0); transform: translate3d(2px,0,0); opacity: 0.7; }
+  93%           { clip-path: inset(0 0 100% 0);  transform: translate3d(0,0,0); opacity: 0; }
+}
+
+.glitch-heading {
+  position: relative;
+}
+.glitch-heading::before,
+.glitch-heading::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  backface-visibility: hidden;
+}
+.glitch-heading::before {
+  color: #00f0ff;
+  animation: glitch-clip-1 9s ease-in-out infinite;
+}
+.glitch-heading::after {
+  color: #c084fc;
+  animation: glitch-clip-2 9s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+:root.light .glitch-heading::before { color: #0284c7; }
+:root.light .glitch-heading::after  { color: #7c3aed; }
+
+/* ════════════════════════════════════════════════════════════
+   HUD BORDER FLICKER (Periodic Glitch on Cyber Cards)
+   ════════════════════════════════════════════════════════════ */
+@keyframes hud-border-flicker {
+  0%, 92%, 100% { opacity: 1; }
+  93%           { opacity: 0.35; }
+  94%           { opacity: 0.9;  }
+  95%           { opacity: 0.2;  }
+  96%           { opacity: 1;    }
+}
+.hud-flicker {
+  animation: hud-border-flicker 8s ease-in-out infinite;
+}
+.hud-flicker-delay {
+  animation: hud-border-flicker 8s ease-in-out infinite;
+  animation-delay: 3.4s;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SECTION DIVIDER — Animated Cyber Hairline
+   ════════════════════════════════════════════════════════════ */
+@keyframes section-divider-expand {
+  from { transform: scaleX(0); opacity: 0; }
+  to   { transform: scaleX(1); opacity: 1; }
+}
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, var(--neon-cyan) 50%, transparent 100%);
+  opacity: 0.35;
+  transform: scaleX(0);
+  transform-origin: center;
+}
+[data-revealed="true"] .section-divider {
+  animation: section-divider-expand 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.15s forwards;
+}
+
+/* ════════════════════════════════════════════════════════════
+   3D CARD TILT — CSS transition for mouse-leave reset
+   ════════════════════════════════════════════════════════════ */
+.tilt-card {
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+  will-change: transform;
+  backface-visibility: hidden;
+}
+/* Immediate response on hover entry (rAF handles the actual values) */
+.tilt-card:hover {
+  transition: transform 0.08s linear;
+}
+
+/* ════════════════════════════════════════════════════════════
+   SKILL TAG ENTRY — Stagger Pop (used inside reveal-scale container)
+   ════════════════════════════════════════════════════════════ */
+@keyframes skill-pop {
+  from { opacity: 0; transform: scale3d(0.8, 0.8, 1) translate3d(0, 8px, 0); }
+  to   { opacity: 1; transform: scale3d(1, 1, 1) translate3d(0, 0, 0); }
+}
+.skill-tag-reveal {
+  opacity: 0;
+  backface-visibility: hidden;
+}
+[data-revealed="true"] .skill-tag-reveal {
+  animation: skill-pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ════════════════════════════════════════════════════════════
+   COUNTER / NUMBER FLASH (for stat cards in About section)
+   ════════════════════════════════════════════════════════════ */
+@keyframes stat-flash {
+  0%   { opacity: 0.3; filter: brightness(2.5); }
+  40%  { opacity: 1;   filter: brightness(1.4); }
+  100% { opacity: 1;   filter: brightness(1); }
+}
+.stat-reveal {
+  opacity: 0;
+  backface-visibility: hidden;
+}
+[data-revealed="true"] .stat-reveal {
+  animation: stat-flash 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ════════════════════════════════════════════════════════════
+   TIMELINE CONNECTOR LINE DRAW (Education section)
+   ════════════════════════════════════════════════════════════ */
+@keyframes line-draw-down {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+.timeline-line-draw {
+  transform: scaleY(0);
+  transform-origin: top center;
+}
+[data-revealed="true"] .timeline-line-draw {
+  animation: line-draw-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+/* ════════════════════════════════════════════════════════════
+   PREFERS REDUCED MOTION — Disable ALL animations for a11y
+   Ensures Lighthouse Accessibility = 100
+   ════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  /* Immediately reveal all elements */
+  .reveal-up, .reveal-left, .reveal-right, .reveal-scale, .reveal-fade,
+  [data-revealed="true"] .reveal-up,
+  [data-revealed="true"] .reveal-left,
+  [data-revealed="true"] .reveal-right,
+  [data-revealed="true"] .reveal-scale,
+  [data-revealed="true"] .reveal-fade {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  /* Disable hero stagger */
+  .hero-stagger, .hero-stagger-1, .hero-stagger-2, .hero-stagger-3,
+  .hero-stagger-4, .hero-stagger-5, .hero-stagger-6 {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  /* Disable glitch */
+  .glitch-heading::before,
+  .glitch-heading::after {
+    display: none !important;
+  }
+
+  /* Disable periodic animations */
+  .hud-flicker, .hud-flicker-delay,
+  .animate-breathe-cyan, .animate-breathe-purple,
+  .animate-ambient-left, .animate-ambient-right, .animate-ambient-core-pulse,
+  .animate-code-stream, .animate-code-stream-reverse,
+  .animate-laser-top, .animate-laser-vert,
+  .animate-logo-glow, .animate-arcade-pulse,
+  .card-scanline-laser, .animate-cyber-scan-v,
+  .animate-hacker-scanline-1, .animate-hacker-scanline-2, .animate-hacker-glitch {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  /* Disable tilt */
+  .tilt-card {
+    transition: none !important;
+  }
+
+  /* Disable skill pop */
+  .skill-tag-reveal,
+  [data-revealed="true"] .skill-tag-reveal {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  /* Disable stat flash */
+  .stat-reveal,
+  [data-revealed="true"] .stat-reveal {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  /* Disable timeline draw */
+  .timeline-line-draw,
+  [data-revealed="true"] .timeline-line-draw {
+    transform: none !important;
+    animation: none !important;
+  }
+
+  /* Disable section divider */
+  .section-divider,
+  [data-revealed="true"] .section-divider {
+    transform: none !important;
+    opacity: 0.35 !important;
+    animation: none !important;
+  }
+}
