@@ -184,6 +184,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T12:37:00+08:00 | [chore] | Add wrangler.json root configuration to support zero-config static site deployments across Cloudflare Workers CI and Pages with 0 required environment variables | wrangler.json, docs/check-list.md, docs/change-log.md
 - 2026-08-19T12:40:00+08:00 | [fix] | Remove public/_redirects and configure not_found_handling to single-page-application in wrangler.json to prevent Wrangler infinite loop deploy error | wrangler.json, public/_redirects, docs/check-list.md, docs/change-log.md
 - 2026-08-19T12:48:00+08:00 | [fix] | Configure relative base path ("./") in vite.config.js and update assetPath utility to eliminate white screen on Cloudflare Workers static asset host | vite.config.js, src/utils/assetPath.ts, docs/check-list.md, docs/change-log.md
+- 2026-08-19T13:08:00+08:00 | [feat] | Add Cloudflare Pages tech badge to Footer alongside GitHub Actions with dual-tone SVG; update project portfolio description; configure GitHub Actions CI workflow and remove obsolete public/assets/logos/ directory | src/components/Footer.tsx, src/components/icons/TechIcon.tsx, src/data/projects-section.json, .github/workflows/deploy.yml, README.md, docs/check-list.md, docs/change-log.md
 
 
 

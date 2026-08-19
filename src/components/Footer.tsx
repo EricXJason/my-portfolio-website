@@ -10,13 +10,14 @@ interface TechBadge {
 }
 
 const techBadges: TechBadge[] = [
-  { name: 'HTML5',          iconName: 'html' },
-  { name: 'CSS3',           iconName: 'css' },
-  { name: 'Tailwind CSS',   iconName: 'tailwind' },
-  { name: 'TypeScript',     iconName: 'typescript' },
-  { name: 'React',          iconName: 'react' },
-  { name: 'Vite',           iconName: 'vite' },
-  { name: 'GitHub Actions', iconName: 'githubactions' },
+  { name: 'HTML5',            iconName: 'html' },
+  { name: 'CSS3',             iconName: 'css' },
+  { name: 'Tailwind CSS',     iconName: 'tailwind' },
+  { name: 'TypeScript',       iconName: 'typescript' },
+  { name: 'React',            iconName: 'react' },
+  { name: 'Vite',             iconName: 'vite' },
+  { name: 'GitHub Actions',   iconName: 'githubactions' },
+  { name: 'Cloudflare Pages', iconName: 'cloudflare' },
 ];
 
 export const Footer: React.FC = () => {

@@ -266,6 +266,30 @@ export const TechIcon: React.FC<TechIconProps> = ({
     );
   }
 
+  // 11. Cloudflare / Cloudflare Pages SVG (Dual-tone orange & amber cloud)
+  if (nKey.includes('cloudflare') || nKey === 'cf') {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        xmlns="http://www.w3.org/2000/svg"
+        className={`inline-block shrink-0 ${className}`}
+        style={combinedStyle}
+        aria-hidden="true"
+      >
+        <path
+          fill={color || "#F38020"}
+          d="M18.232 9.07c-.443-3.415-3.37-6.04-6.938-6.04-3.155 0-5.814 2.05-6.685 4.965C2.08 8.442 0 10.985 0 14.07c0 3.86 3.14 7 7 7h11.232c3.18 0 5.768-2.588 5.768-5.768 0-3.036-2.355-5.525-5.768-6.232z"
+        />
+        <path
+          fill={color || "#FAAE40"}
+          d="M18.232 18.825h1.996c2.083 0 3.772-1.636 3.772-3.654 0-1.895-1.488-3.456-3.417-3.634l-.454-.022-.058-.453c-.347-2.73-2.57-4.787-5.284-4.787-1.194 0-2.345.412-3.255 1.157l-.36.295.334.323c2.518 2.44 2.84 6.368.79 9.176l-.372.507 6.308.092z"
+        />
+      </svg>
+    );
+  }
+
   // Fallback Single-path Registry
   const iconDef = registry[nKey] || registry.default;
   return (

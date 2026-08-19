@@ -42,8 +42,7 @@ my-portfolio-website/
 ├── public/                    # Static public assets & favicon
 │   ├── assets/
 │   │   ├── gallery/
-│   │   ├── images/
-│   │   └── logos/
+│   │   └── images/
 │   └── tech-icons/            # Vector SVG brand assets (artstation, css, github, html, js, react, tailwind, ts, vite)
 ├── src/
 │   ├── components/            # React UI components

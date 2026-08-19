@@ -74,7 +74,7 @@
     "order": 3,
     "image": "/assets/images/proj-portfolio.avif",
     "ytId": "",
-    "websiteUrl": "https://ericxjason.github.io/my-portfolio-website/",
+    "websiteUrl": "https://my-portfolio-website.user46972.workers.dev/",
     "githubUrl": "https://github.com/EricXJason/my-portfolio-website",
     "aiAssisted": true,
     "honors": [],
@@ -84,14 +84,14 @@
     "contributions": [
       "現代前端架構與組件化設計：採用 React + TypeScript 打造高擴充性組件結構，結合 Vite 極速建構工具與 Context API 進行全域語言與主題狀態管理。",
       "動態視覺與 RWD 響應式佈局：設計賽博龐克風格深色主題與典雅淺色主題，整合 Canvas 動態粒子背景、客製化滑鼠游標、視差滾動與跨裝置自適應邊距。",
-      "自動化 CI/CD 部署：設定 GitHub Actions (CI/CD) 自動化建構與部署流程，無縫發布至 GitHub Pages。"
+      "自動化 CI/CD 部署：整合 GitHub Actions (CI/CD) 與 Cloudflare Pages 自動化建構與部署流程，無縫發布至全球 Anycast CDN 邊緣節點。"
     ],
     "contributions_en": [
       "Modern Frontend Architecture: React + TypeScript component design with Vite build tool and Context API for global language & theme state.",
       "Dynamic Visuals & Responsive Layout: Modern cyberpunk dark mode & elegant light mode, Canvas particles, custom cursor, parallax scrolling, and RWD layout.",
-      "Automated CI/CD Pipeline: Configured GitHub Actions (CI/CD) automated build & deployment workflow seamlessly to GitHub Pages."
+      "Automated CI/CD Pipeline: Configured GitHub Actions (CI/CD) and Cloudflare Pages automated build & deployment workflow seamlessly to Cloudflare Anycast Edge CDN."
     ],
-    "tags": ["HTML", "CSS", "Canvas API", "Tailwind CSS", "TypeScript", "React", "Vite", "GitHub Actions (CI/CD)"],
+    "tags": ["HTML", "CSS", "Canvas API", "Tailwind CSS", "TypeScript", "React", "Vite", "GitHub Actions (CI/CD)", "Cloudflare Pages"],
     "date": "2026.07"
   },
   {
