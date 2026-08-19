@@ -157,11 +157,17 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     return projects.filter((p) => p.category === filter).sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
   }, [filter, showAllProjects, projects, allProjectsSorted]);
 
-  const visibleProjects = (filter === 'featured' && !showAllProjects)
-    ? targetProjectsList.slice(0, 3)
-    : targetProjectsList;
+  const visibleProjects = useMemo(() => {
+    if (filter === 'featured') {
+      return targetProjectsList.slice(0, 3);
+    }
+    if (filter === 'all') {
+      return showAllProjects ? targetProjectsList : targetProjectsList.slice(0, 4);
+    }
+    return targetProjectsList;
+  }, [filter, showAllProjects, targetProjectsList]);
 
-  const isFeaturedSideBySideView = filter === 'featured' && !showAllProjects;
+  const isFeaturedSideBySideView = filter === 'featured';
 
   // Category Filters Order: Featured -> All -> Interactive -> Frontend -> Fullstack -> LINE Bot
   const filters = [
@@ -604,14 +610,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </div>
         )}
 
-        {/* Navigation Action Buttons: Featured (檢視更多) <-> All (收起專案) */}
-        {(filter === 'featured' || filter === 'all') && (
+        {/* Navigation Action Buttons: Featured (檢視更多) | All (檢視更多 / 收起專案 在全部專案內切換) */}
+        {filter === 'featured' && (
           <div className="text-center mt-12 mb-4 relative z-10" id="expand-button-container">
             <button
               onClick={() => {
-                const targetFilter = filter === 'featured' ? 'all' : 'featured';
-                setFilter(targetFilter);
-                setShowAllProjects(false);
+                setFilter('all');
+                setShowAllProjects(true);
                 const element = document.getElementById('projects');
                 if (element) {
                   const headerOffset = 100;
@@ -627,14 +632,46 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 color: cyanCol,
                 boxShadow: isLight ? '0 4px 12px rgba(2,132,199,0.15)' : '0 0 15px rgba(0,240,255,0.25)',
               }}
-              aria-label={filter === 'featured' ? (lang === 'zh' ? '檢視更多' : 'View More') : (lang === 'zh' ? '收起專案' : 'Collapse Projects')}
+              aria-label={lang === 'zh' ? '檢視更多' : 'View More'}
+            >
+              <span>{lang === 'zh' ? '檢視更多' : 'VIEW MORE'}</span>
+              <ChevronDown size={16} />
+            </button>
+          </div>
+        )}
+
+        {filter === 'all' && (
+          <div className="text-center mt-12 mb-4 relative z-10" id="expand-button-container">
+            <button
+              onClick={() => {
+                if (!showAllProjects) {
+                  setShowAllProjects(true);
+                } else {
+                  setShowAllProjects(false);
+                  const element = document.getElementById('projects');
+                  if (element) {
+                    const headerOffset = 100;
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+                  }
+                }
+              }}
+              className="px-8 sm:px-10 py-3.5 border font-hud font-bold text-xs sm:text-sm uppercase tracking-widest cyber-cut-corner transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg inline-flex items-center gap-2.5"
+              style={{
+                backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                borderColor: cyanCol,
+                color: cyanCol,
+                boxShadow: isLight ? '0 4px 12px rgba(2,132,199,0.15)' : '0 0 15px rgba(0,240,255,0.25)',
+              }}
+              aria-label={showAllProjects ? (lang === 'zh' ? '收起專案' : 'Collapse Projects') : (lang === 'zh' ? '檢視更多' : 'View More')}
             >
               <span>
-                {filter === 'featured'
-                  ? (lang === 'zh' ? '檢視更多' : 'VIEW MORE')
-                  : (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')}
+                {showAllProjects
+                  ? (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')
+                  : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
               </span>
-              {filter === 'featured' ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+              {showAllProjects ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
         )}
