@@ -194,6 +194,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T15:43:00+08:00 | [feat] | Add 'Collapse Projects' button in All Projects view to switch back to Featured mode with smooth scrolling; ensure fixed 'Portfolio' title and full SEO/accessibility optimization | src/components/Projects.tsx, src/data/seo-schema.json, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:46:00+08:00 | [fix] | Retain active 'All Projects' category during Collapse Projects interaction (collapses from 8 to 4 items and smoothly scrolls to top without switching category tab) | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:48:00+08:00 | [chore] | Standardize Git workflow strictly to 'master' branch: delete remote 'main' branch, rename local branch to 'master', and configure GitHub Actions CI triggers exclusively on 'master' | .github/workflows/deploy.yml, docs/check-list.md, docs/change-log.md
+- 2026-08-19T15:51:00+08:00 | [style] | Refine About Me stats card: emphasize diverse cross-domain project development experience instead of fixed counts and specific awards in both EN and ZH | src/data/about-section.json, src/data/site-translations.json, docs/check-list.md, docs/change-log.md
 
 
 
