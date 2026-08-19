@@ -183,6 +183,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T12:28:00+08:00 | [chore] | Configure Cloudflare Pages deployment compatibility: add public/_redirects for SPA routing and set dynamic Vite base path to seamlessly support both Cloudflare Pages root domain and GitHub Pages | vite.config.js, public/_redirects, docs/check-list.md, docs/change-log.md
 - 2026-08-19T12:37:00+08:00 | [chore] | Add wrangler.json root configuration to support zero-config static site deployments across Cloudflare Workers CI and Pages with 0 required environment variables | wrangler.json, docs/check-list.md, docs/change-log.md
 - 2026-08-19T12:40:00+08:00 | [fix] | Remove public/_redirects and configure not_found_handling to single-page-application in wrangler.json to prevent Wrangler infinite loop deploy error | wrangler.json, public/_redirects, docs/check-list.md, docs/change-log.md
+- 2026-08-19T12:48:00+08:00 | [fix] | Configure relative base path ("./") in vite.config.js and update assetPath utility to eliminate white screen on Cloudflare Workers static asset host | vite.config.js, src/utils/assetPath.ts, docs/check-list.md, docs/change-log.md
 
 
 
