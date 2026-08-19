@@ -191,6 +191,7 @@ All structural changes, features, and refactoring history are tracked in this fi
 - 2026-08-19T15:34:00+08:00 | [feat] | Restore interactive Load More / Collapse Projects button under Featured Projects with smooth animated toggle | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:38:00+08:00 | [fix] | Eliminate hidden reveal-up class on expand-button-container to ensure 100% immediate button visibility and neon glow effects | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
 - 2026-08-19T15:40:00+08:00 | [feat] | Configure 'View More' button under Featured Projects to switch category tab to 'All Projects' and smoothly scroll to the top of the projects section | src/components/Projects.tsx, docs/check-list.md, docs/change-log.md
+- 2026-08-19T15:43:00+08:00 | [feat] | Add 'Collapse Projects' button in All Projects view to switch back to Featured mode with smooth scrolling; ensure fixed 'Portfolio' title and full SEO/accessibility optimization | src/components/Projects.tsx, src/data/seo-schema.json, docs/check-list.md, docs/change-log.md
 
 
 

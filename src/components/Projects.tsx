@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, MessageSquare, Cpu } from 'lucide-react';
+import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, ChevronUp, MessageSquare, Cpu } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -604,12 +604,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </div>
         )}
 
-        {/* View More Button (Featured Mode) -> Switches to All Projects and scrolls to top of section */}
-        {filter === 'featured' && (
+        {/* Navigation Action Buttons: Featured (檢視更多) <-> All (收起專案) */}
+        {(filter === 'featured' || filter === 'all') && (
           <div className="text-center mt-12 mb-4 relative z-10" id="expand-button-container">
             <button
               onClick={() => {
-                setFilter('all');
+                const targetFilter = filter === 'featured' ? 'all' : 'featured';
+                setFilter(targetFilter);
                 setShowAllProjects(false);
                 const element = document.getElementById('projects');
                 if (element) {
@@ -626,10 +627,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 color: cyanCol,
                 boxShadow: isLight ? '0 4px 12px rgba(2,132,199,0.15)' : '0 0 15px rgba(0,240,255,0.25)',
               }}
-              aria-label={lang === 'zh' ? '檢視更多' : 'View More'}
+              aria-label={filter === 'featured' ? (lang === 'zh' ? '檢視更多' : 'View More') : (lang === 'zh' ? '收起專案' : 'Collapse Projects')}
             >
-              <span>{lang === 'zh' ? '檢視更多' : 'VIEW MORE'}</span>
-              <ChevronDown size={16} />
+              <span>
+                {filter === 'featured'
+                  ? (lang === 'zh' ? '檢視更多' : 'VIEW MORE')
+                  : (lang === 'zh' ? '收起專案' : 'COLLAPSE PROJECTS')}
+              </span>
+              {filter === 'featured' ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
             </button>
           </div>
         )}
