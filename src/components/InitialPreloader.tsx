@@ -13,7 +13,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
 
   useEffect(() => {
     let startTimestamp: number | null = null;
-    const duration = 1200; // 1.2 seconds smooth load
+    const duration = 100; // Instantaneous mobile/desktop tactical preloader
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -30,8 +30,8 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           setFadingOut(true);
           setTimeout(() => {
             onComplete();
-          }, 350);
-        }, 150);
+          }, 80);
+        }, 30);
       }
     };
 
