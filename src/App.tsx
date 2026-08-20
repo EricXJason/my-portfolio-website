@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect } from 'react';
 import { LangProvider } from './context/LangContext';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { LangSelectModal } from './components/LangSelectModal';
@@ -6,24 +6,24 @@ import { InitialPreloader } from './components/InitialPreloader';
 import { SeoSchema } from './components/SeoSchema';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
 
-const Navbar = lazy(() => import('./components/Navbar').then(m => ({ default: m.Navbar })));
-const Hero = lazy(() => import('./components/Hero').then(m => ({ default: m.Hero })));
-const CustomCursor = lazy(() => import('./components/CustomCursor').then(m => ({ default: m.CustomCursor })));
-const BackToTop = lazy(() => import('./components/BackToTop').then(m => ({ default: m.BackToTop })));
-const SideNav = lazy(() => import('./components/SideNav').then(m => ({ default: m.SideNav })));
-const ScrollProgress = lazy(() => import('./components/ScrollProgress').then(m => ({ default: m.ScrollProgress })));
-const CyberParticles = lazy(() => import('./components/CyberParticles').then(m => ({ default: m.CyberParticles })));
-const FullStackCodeStreamBackground = lazy(() => import('./components/FullStackCodeStreamBackground').then(m => ({ default: m.FullStackCodeStreamBackground })));
-const GlobalAmbientNeon = lazy(() => import('./components/GlobalAmbientNeon').then(m => ({ default: m.GlobalAmbientNeon })));
+import { Navbar } from './components/Navbar';
+import { Hero } from './components/Hero';
+import { CustomCursor } from './components/CustomCursor';
+import { BackToTop } from './components/BackToTop';
+import { SideNav } from './components/SideNav';
+import { ScrollProgress } from './components/ScrollProgress';
+import { CyberParticles } from './components/CyberParticles';
+import { FullStackCodeStreamBackground } from './components/FullStackCodeStreamBackground';
+import { GlobalAmbientNeon } from './components/GlobalAmbientNeon';
 
-const About = lazy(() => import('./components/About').then(m => ({ default: m.About })));
-const Skills = lazy(() => import('./components/Skills').then(m => ({ default: m.Skills })));
-const Projects = lazy(() => import('./components/Projects').then(m => ({ default: m.Projects })));
-const Footer = lazy(() => import('./components/Footer').then(m => ({ default: m.Footer })));
-const Certifications = lazy(() => import('./components/Certifications').then(m => ({ default: m.Certifications })));
-const Education = lazy(() => import('./components/Education').then(m => ({ default: m.Education })));
-const ArtGallery = lazy(() => import('./components/ArtGallery').then(m => ({ default: m.ArtGallery })));
-const YoutubeModal = lazy(() => import('./components/YoutubeModal').then(m => ({ default: m.YoutubeModal })));
+import { About } from './components/About';
+import { Skills } from './components/Skills';
+import { Projects } from './components/Projects';
+import { Footer } from './components/Footer';
+import { Certifications } from './components/Certifications';
+import { Education } from './components/Education';
+import { ArtGallery } from './components/ArtGallery';
+import { YoutubeModal } from './components/YoutubeModal';
 
 interface YtModalState {
   open: boolean;
@@ -74,26 +74,6 @@ function AppContent() {
     setYtModal({ open: false, videoId: '', title: '' });
   };
 
-  // Prefetch main website chunks after initial paint so clicking language enters the site instantly with 0ms wait
-  useEffect(() => {
-    const prefetch = () => {
-      import('./components/Hero');
-      import('./components/Navbar');
-      import('./components/About');
-      import('./components/Skills');
-      import('./components/Projects');
-      import('./components/Certifications');
-      import('./components/Education');
-      import('./components/ArtGallery');
-      import('./components/Footer');
-      import('./components/SideNav');
-      import('./components/ScrollProgress');
-    };
-
-    const timer = setTimeout(prefetch, 1200);
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] relative transition-colors duration-300">
 
@@ -101,7 +81,7 @@ function AppContent() {
 
       {/* Global Laser Custom Cursor & Top Navigation — Mounted once site is entered */}
       {siteEntered && (
-        <Suspense fallback={null}>
+        <>
           <CustomCursor />
           <ScrollProgress siteEntered={siteEntered} />
           <Navbar
@@ -112,7 +92,7 @@ function AppContent() {
             siteEntered={siteEntered}
           />
           <SideNav siteEntered={siteEntered} />
-        </Suspense>
+        </>
       )}
 
       {/* Step 1: Tactical HUD Preloader Animation (0% -> 100%) */}
@@ -159,29 +139,23 @@ function AppContent() {
           <>
             <main className="relative">
               <Hero soundPlaying={soundPlaying} />
-              <Suspense fallback={null}>
-                <About />
-                <Skills />
-                <Projects onOpenYoutube={handleOpenYoutube} />
-                <Certifications />
-                <Education />
-                <ArtGallery />
-              </Suspense>
+              <About />
+              <Skills />
+              <Projects onOpenYoutube={handleOpenYoutube} />
+              <Certifications />
+              <Education />
+              <ArtGallery />
             </main>
 
-            <Suspense fallback={null}>
-              <Footer />
-            </Suspense>
+            <Footer />
             <BackToTop />
 
-            <Suspense fallback={null}>
-              <YoutubeModal
-                isOpen={ytModal.open}
-                onClose={handleCloseYoutube}
-                videoId={ytModal.videoId}
-                title={ytModal.title}
-              />
-            </Suspense>
+            <YoutubeModal
+              isOpen={ytModal.open}
+              onClose={handleCloseYoutube}
+              videoId={ytModal.videoId}
+              title={ytModal.title}
+            />
           </>
         )}
       </div>
