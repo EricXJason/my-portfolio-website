@@ -13,12 +13,15 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
 
   useEffect(() => {
     let startTimestamp: number | null = null;
-    const duration = 30; // 0.03s lightning tactical preloader
+    const duration = 1200; // 1.2s smooth tactical preloader
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const elapsed = timestamp - startTimestamp;
-      const currentProgress = Math.min(Math.floor((elapsed / duration) * 100), 100);
+      const rawRatio = Math.min(elapsed / duration, 1);
+      // Subtle dynamic curve for high-tech system initialization feel
+      const easedRatio = Math.min(1, Math.pow(rawRatio, 0.88));
+      const currentProgress = Math.min(Math.floor(easedRatio * 100), 100);
 
       setProgress(currentProgress);
 
@@ -30,22 +33,23 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           setFadingOut(true);
           setTimeout(() => {
             onComplete();
-          }, 15);
-        }, 10);
+          }, 300);
+        }, 120);
       }
     };
 
-    requestAnimationFrame(step);
+    const frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
   }, [onComplete]);
 
   const cyanCol = isLight ? '#0284c7' : '#00f0ff';
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.4)';
-  const bgCol = isLight ? '#0f172a' : '#030712'; // Solid non-flashing dark backdrop
-  const textColor = isLight ? '#ffffff' : '#f8fafc';
+  const bgCol = isLight ? '#f8fafc' : '#030712';
+  const textColor = isLight ? '#0f172a' : '#f8fafc';
 
   return (
     <div
-      className="fixed inset-0 z-[9999999] flex flex-col items-center justify-center p-6 select-none transition-opacity duration-350"
+      className="fixed inset-0 z-[9999999] flex flex-col items-center justify-center p-6 select-none transition-opacity duration-300"
       style={{
         backgroundColor: bgCol,
         opacity: fadingOut ? 0 : 1,
@@ -60,7 +64,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
         {/* Brand Icon Header (Exact Match to Site Navbar Logo) */}
         <div className="flex items-center gap-3">
           <div
-            className="w-10 h-10 sm:w-11 sm:h-11 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0"
+            className="w-10 h-10 sm:w-11 sm:h-11 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0 transition-colors duration-300"
             style={{
               backgroundColor: isLight ? '#e0f2fe' : '#080e1a',
               borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.5)',
@@ -74,10 +78,10 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
             </div>
           </div>
           <div className="flex flex-col text-left leading-tight min-w-0">
-            <span className="font-mono text-sm sm:text-base font-extrabold tracking-wide" style={{ color: textColor }}>
+            <span className="font-mono text-sm sm:text-base font-extrabold tracking-wide truncate" style={{ color: textColor }}>
               JasonProduction
             </span>
-            <span className="font-tech text-xs font-bold tracking-wider" style={{ color: cyanCol }}>
+            <span className="font-tech text-xs font-bold tracking-wider truncate" style={{ color: cyanCol }}>
               許哲誠 HSU, CHE-CHENG
             </span>
           </div>
@@ -87,15 +91,15 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
         <div className="w-full flex flex-col items-center gap-2.5">
           {/* Progress Bar Container */}
           <div
-            className="w-full h-3 border cyber-cut-sm p-[2px] relative overflow-hidden"
+            className="w-full h-3 border cyber-cut-sm p-[2px] relative overflow-hidden transition-colors duration-300"
             style={{
-              backgroundColor: isLight ? '#0f172a' : '#080e1a',
+              backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
               borderColor: borderCol,
             }}
           >
             {/* Fill Bar — Instant 100% Sync with Progress Percentage */}
             <div
-              className="h-full rounded-none shadow-[0_0_12px_rgba(0,240,255,0.75)]"
+              className="h-full rounded-none shadow-[0_0_12px_rgba(0,240,255,0.75)] transition-all duration-75"
               style={{
                 width: `${progress}%`,
                 willChange: 'width',
