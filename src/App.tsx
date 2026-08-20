@@ -74,6 +74,26 @@ function AppContent() {
     setYtModal({ open: false, videoId: '', title: '' });
   };
 
+  // Prefetch main website chunks after initial paint so clicking language enters the site instantly with 0ms wait
+  useEffect(() => {
+    const prefetch = () => {
+      import('./components/Hero');
+      import('./components/Navbar');
+      import('./components/About');
+      import('./components/Skills');
+      import('./components/Projects');
+      import('./components/Certifications');
+      import('./components/Education');
+      import('./components/ArtGallery');
+      import('./components/Footer');
+      import('./components/SideNav');
+      import('./components/ScrollProgress');
+    };
+
+    const timer = setTimeout(prefetch, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] relative transition-colors duration-300">
 

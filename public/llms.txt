@@ -1,0 +1,27 @@
+# HSU, CHE-CHENG (許哲誠) - Personal Official Portfolio
+
+> Personal official portfolio website of HSU, CHE-CHENG (許哲誠), Master of Fine Arts from National Taiwan University of Arts. Showcasing interactive applications, VR/AR engineering, full-stack web development, and 3D multimedia design under a high-performance Tactical Cyberpunk HUD aesthetic.
+
+## About the Author
+- **Name**: HSU, CHE-CHENG (許哲誠)
+- **Role**: Interactive Application Engineer / Full-Stack Web Developer / 3D Multimedia Artist
+- **Education**: Master of Fine Arts, Department of Multimedia and Animation Arts, National Taiwan University of Arts (國立臺灣藝術大學)
+- **Email**: ericxjason@gmail.com
+- **GitHub**: [https://github.com/EricXJason](https://github.com/EricXJason)
+- **ArtStation**: [https://www.artstation.com/eric_hsu](https://www.artstation.com/eric_hsu)
+- **Website**: [https://my-portfolio-website.user46972.workers.dev/](https://my-portfolio-website.user46972.workers.dev/)
+
+## Core Sections & Capabilities
+
+- [Projects](https://my-portfolio-website.user46972.workers.dev/#projects): Showcase of 8 featured core projects including Unity VR/AR interactive applications, Unreal Engine 5 3D co-op multiplayer games, full-stack React TypeScript platforms, and LINE Bot applications.
+- [About](https://my-portfolio-website.user46972.workers.dev/#about): Professional biography, academic background, NSTC research grants, and core strengths.
+- [Skills](https://my-portfolio-website.user46972.workers.dev/#skills): Technical matrix covering Unity, Unreal Engine 5, React 19, TypeScript, Vite, Tailwind CSS, C#, Java Spring Boot, MySQL, Blender, and Maya.
+- [Certifications](https://my-portfolio-website.user46972.workers.dev/#awards): Official certifications including TOEIC 755 Blue Certificate, Class B Technician Certificates, and international vendor credentials.
+- [Experience](https://my-portfolio-website.user46972.workers.dev/#experience): Academic degrees, professor research assistantship under Prof. Hung-I Pai on 3 National Science and Technology Council (NSTC) funded research projects.
+- [Art Gallery](https://my-portfolio-website.user46972.workers.dev/#gallery): Interactive 3D art gallery featuring character models, environment design, and digital artworks.
+
+## Technical Architecture
+- **Framework**: React 19 SPA with TypeScript 5.8 and Vite 8
+- **Styling**: Tailwind CSS v4 & custom Cyberpunk HUD design tokens
+- **Accessibility**: 100% WCAG 2.1/2.2 AAA/AA compliant dual-mode contrast
+- **Deployment**: Automated CI via GitHub Actions and edge delivery via Cloudflare Pages

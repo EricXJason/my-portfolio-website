@@ -20,13 +20,13 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
   const choose = useCallback((l: Language) => {
     setLangDirect(l);
     setClosing(true);
+    if (onSelectLanguage) {
+      onSelectLanguage();
+    }
 
     setTimeout(() => {
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
-      if (onSelectLanguage) {
-        onSelectLanguage();
-      }
     }, 350);
   }, [setLangDirect, onSelectLanguage]);
 

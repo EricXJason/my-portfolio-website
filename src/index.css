@@ -885,35 +885,28 @@ body.mobile-menu-open .back-to-top-btn {
   will-change: transform, opacity;
   backface-visibility: hidden;
 }
-.reveal-up    { transform: translate3d(0, 28px, 0); }
-.reveal-left  { transform: translate3d(-32px, 0, 0); }
-.reveal-right { transform: translate3d(32px, 0, 0); }
-.reveal-scale { transform: scale3d(0.93, 0.93, 1); }
+.reveal-up    { transform: translate3d(0, 18px, 0); }
+.reveal-left  { transform: translate3d(-20px, 0, 0); }
+.reveal-right { transform: translate3d(20px, 0, 0); }
+.reveal-scale { transform: scale3d(0.97, 0.97, 1); }
 .reveal-fade  { transform: translate3d(0, 0, 0); }
 
 /* ── Stagger delay modifiers ── */
-.reveal-d1  { transition-delay: 0.06s !important; }
-.reveal-d2  { transition-delay: 0.12s !important; }
-.reveal-d3  { transition-delay: 0.18s !important; }
-.reveal-d4  { transition-delay: 0.24s !important; }
-.reveal-d5  { transition-delay: 0.30s !important; }
-.reveal-d6  { transition-delay: 0.36s !important; }
-.reveal-d7  { transition-delay: 0.42s !important; }
-.reveal-d8  { transition-delay: 0.48s !important; }
+.reveal-d1  { transition-delay: 0.08s !important; }
+.reveal-d2  { transition-delay: 0.16s !important; }
+.reveal-d3  { transition-delay: 0.24s !important; }
+.reveal-d4  { transition-delay: 0.32s !important; }
+.reveal-d5  { transition-delay: 0.40s !important; }
+.reveal-d6  { transition-delay: 0.48s !important; }
+.reveal-d7  { transition-delay: 0.56s !important; }
+.reveal-d8  { transition-delay: 0.64s !important; }
 
-/* ── Revealed state: all classes animate to natural position ── */
+/* ── Revealed state: all classes animate to natural position with silky smooth easing ── */
 [data-revealed="true"] .reveal-up,
 [data-revealed="true"] .reveal-left,
 [data-revealed="true"] .reveal-right,
 [data-revealed="true"] .reveal-scale,
-[data-revealed="true"] .reveal-fade {
-  opacity: 1;
-  transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
-  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* ── Self-reveal (element directly observed, not via parent) ── */
+[data-revealed="true"] .reveal-fade,
 .reveal-up[data-revealed="true"],
 .reveal-left[data-revealed="true"],
 .reveal-right[data-revealed="true"],
@@ -921,8 +914,8 @@ body.mobile-menu-open .back-to-top-btn {
 .reveal-fade[data-revealed="true"] {
   opacity: 1;
   transform: translate3d(0, 0, 0) scale3d(1, 1, 1);
-  transition: opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
-              transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* ════════════════════════════════════════════════════════════

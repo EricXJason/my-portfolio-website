@@ -13,7 +13,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
 
   useEffect(() => {
     let startTimestamp: number | null = null;
-    const duration = 100; // Instantaneous mobile/desktop tactical preloader
+    const duration = 80; // 0.08s ultra-lean tactical preloader
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -30,8 +30,8 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           setFadingOut(true);
           setTimeout(() => {
             onComplete();
-          }, 80);
-        }, 30);
+          }, 40);
+        }, 20);
       }
     };
 
@@ -45,7 +45,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
 
   return (
     <div
-      className="fixed inset-0 z-[999999] flex flex-col items-center justify-center p-6 select-none transition-opacity duration-350"
+      className="fixed inset-0 z-[9999999] flex flex-col items-center justify-center p-6 select-none transition-opacity duration-350"
       style={{
         backgroundColor: bgCol,
         opacity: fadingOut ? 0 : 1,
