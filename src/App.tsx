@@ -79,10 +79,12 @@ function AppContent() {
 
       <SeoSchema />
 
-      {/* Global Laser Custom Cursor & Top Navigation — Mounted once site is entered */}
+      {/* Global Laser Custom Cursor — Always active for Loading, Language Modal, and Main Site */}
+      <CustomCursor />
+
+      {/* Top Navigation & Indicators — Mounted once site is entered */}
       {siteEntered && (
         <>
-          <CustomCursor />
           <ScrollProgress siteEntered={siteEntered} />
           <Navbar
             soundPlaying={soundPlaying}

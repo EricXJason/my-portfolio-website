@@ -27,23 +27,16 @@ export const Footer: React.FC = () => {
 
   const footerRef = useScrollReveal(0.1) as React.RefObject<HTMLDivElement>;
 
-  // 取得本地最新日期與時區碼，例如 "2026-08-19 (UTC+8)"
-  const getLocalDateWithTimezone = () => {
+  // 取得本地最新日期，例如 "2026-08-20"
+  const getLocalDate = () => {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
-    const dateStr = `${year}-${month}-${day}`;
-
-    const offsetMinutes = now.getTimezoneOffset();
-    const offsetHours = -offsetMinutes / 60;
-    const sign = offsetHours >= 0 ? '+' : '';
-    const tzStr = `UTC${sign}${offsetHours}`;
-
-    return `${dateStr} (${tzStr})`;
+    return `${year}-${month}-${day}`;
   };
 
-  const displayDate = getLocalDateWithTimezone();
+  const displayDate = getLocalDate();
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.2)';
 
   return (

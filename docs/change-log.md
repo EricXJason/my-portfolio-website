@@ -17,3 +17,4 @@
 [2026-08-20 10:41] | [feat] | 於全端開發類別之雲端服務技能中新增 Cloudflare Pages 技能標籤 | [src/data/skills-section.json]
 [2026-08-20 10:43] | [chore] | 執行嚴格專案最佳化，同步主架構計畫與雙語 README 文檔並推向遠端 | [docs/development-plan.md, README.md, docs/check-list.md]
 [2026-08-20 10:51] | [perf] | 查證線上部署環境並重構模組打包為零瀑布流單一快取架構，達成雙平臺所有維度滿分 | [src/App.tsx]
+[2026-08-20 11:26] | [fix] | 回歸 master 主分支，修復開場游標可見性、手機端機器人頭像觸控互動與移除頁尾時區文字 | [src/App.tsx, src/components/CustomCursor.tsx, src/components/SciFiRobotAvatar.tsx, src/components/Footer.tsx]

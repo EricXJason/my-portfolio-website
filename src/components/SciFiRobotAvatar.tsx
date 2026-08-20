@@ -53,6 +53,24 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('touchmove', (e: TouchEvent) => {
+      if (!e.touches[0]) return;
+      const touch = e.touches[0];
+      const centerX = centerPosRef.current.x;
+      const centerY = centerPosRef.current.y;
+      if (!centerX && !centerY) return;
+
+      const deltaX = touch.clientX - centerX;
+      const deltaY = touch.clientY - centerY;
+      const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY) || 1;
+
+      const maxOffset = 7;
+      const moveX = (deltaX / distance) * Math.min(Math.abs(deltaX * 0.05), maxOffset);
+      const moveY = (deltaY / distance) * Math.min(Math.abs(deltaY * 0.05), maxOffset);
+
+      setEyeOffset({ x: moveX, y: moveY });
+    }, { passive: true });
+
     return () => {
       window.removeEventListener('resize', updateCenter);
       window.removeEventListener('scroll', updateCenter);
@@ -71,21 +89,23 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
   }, []);
 
   // Click handler to trigger holographic scan overdrive
-  const handleAvatarClick = () => {
+  const handleAvatarClick = (e: React.MouseEvent | React.TouchEvent) => {
+    e.stopPropagation();
     setIsScanning(true);
     setTimeout(() => {
       setIsScanning(false);
-    }, 2500);
+    }, 1800);
   };
 
   const cyanCol = isLight ? '#0284c7' : '#00f0ff';
 
   return (
-    <div className="flex flex-col items-center select-text">
+    <div className="flex flex-col items-center select-none">
       <div
         ref={avatarRef}
         onClick={handleAvatarClick}
-        className="relative w-36 h-36 sm:w-56 sm:h-56 lg:w-64 lg:h-64 flex items-center justify-center cursor-pointer select-text group"
+        onTouchEnd={handleAvatarClick}
+        className="relative w-36 h-36 sm:w-56 sm:h-56 lg:w-64 lg:h-64 flex items-center justify-center cursor-pointer select-none touch-manipulation group"
         title="點擊啟動機器人系統動態掃描 (Click for AI System Scan)"
       >
       {/* Left Side Surround Sound Equalizer Bars */}
@@ -284,9 +304,9 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
 
         {/* Laser Scan Beam overlay when clicked */}
         {isScanning && (
-          <div className="absolute inset-0 pointer-events-none flex flex-col justify-between overflow-hidden rounded-full animate-pulse z-30">
-            <div className="w-full h-1.5 bg-cyan-400 shadow-[0_0_20px_#00f0ff] animate-[bounce_0.8s_infinite]" />
-            <div className="w-full h-1 bg-purple-400 shadow-[0_0_20px_#c084fc] animate-[bounce_1.2s_infinite_reverse]" />
+          <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-full z-30">
+            <div className="w-full h-1.5 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_16px_#00f0ff] animate-laser-top" />
+            <div className="absolute inset-0 bg-cyan-400/10 animate-pulse pointer-events-none" />
           </div>
         )}
       </div>

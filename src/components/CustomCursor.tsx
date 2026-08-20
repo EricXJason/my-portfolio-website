@@ -125,7 +125,7 @@ export const CustomCursor: React.FC = () => {
     <div
       ref={pointerRef}
       aria-hidden="true"
-      className={`pointer-events-none fixed top-0 left-0 z-[9999999] transition-opacity duration-150 ${
+      className={`pointer-events-none fixed top-0 left-0 z-[99999999] transition-opacity duration-150 ${
         !hasMoved || isHidden ? 'opacity-0' : 'opacity-100'
       }`}
     >
