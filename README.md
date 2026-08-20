@@ -1,5 +1,6 @@
 # ⚡ HSU, CHE-CHENG | Official Personal Portfolio Website
 
+[![Live Demo: Online](https://img.shields.io/badge/Live_Demo-Online-00f0ff?style=flat-square)](https://my-portfolio-website.user46972.workers.dev/)
 [![Author: HSU, CHE-CHENG](https://img.shields.io/badge/Author-HSU%2C_CHE--CHENG-orange?style=flat-square)](#)
 [![Version: 3.1.0](https://img.shields.io/badge/Version-3.1.0-blue?style=flat-square)](#)
 [![Build: Clean](https://img.shields.io/badge/Build-Passing-green?style=flat-square)](#)
@@ -13,6 +14,7 @@
 
 This is the personal official portfolio website of **HSU, CHE-CHENG**, Master of Fine Arts from the Department of Multimedia and Animation Arts, National Taiwan University of Arts. The portfolio showcases interactive applications (VR/AR/3D/Unity), full-stack web engineering (React 19, TypeScript, Vite, Tailwind CSS), multimedia aesthetic design, academic research, certifications, publications, and an interactive 3D art gallery under an elite Tactical Cyberpunk HUD visual aesthetic.
 
+- **Live Deployed URL**: [https://my-portfolio-website.user46972.workers.dev/](https://my-portfolio-website.user46972.workers.dev/)
 - **Project Author**: HSU, CHE-CHENG
 - **Degree**: Master of Fine Arts, National Taiwan University of Arts
 - **Core Vision**: Merging high-level engineering performance, WCAG AAA accessibility standards, and immersive cyberpunk aesthetics into an ultra-fast web portfolio.
