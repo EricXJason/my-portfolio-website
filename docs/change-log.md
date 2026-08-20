@@ -23,3 +23,4 @@
 [2026-08-20 11:32] | [docs] | 於 README.md 頂部與第一章節嵌入正式部署之線上網址與即時徽章 | [README.md, docs/check-list.md]
 [2026-08-20 11:36] | [feat] | 重構背景程式碼流為左側 HTML 與右側 TS 多腳本串接架構，並實現零卡頓無縫循環 | [src/components/FullStackCodeStreamBackground.tsx, docs/check-list.md]
 [2026-08-20 11:39] | [perf] | 將專案所有 AVIF 與 PNG 圖片全數轉換為 WebP，嚴格鎖定全域僅使用 WebP 與 SVG 圖示 | [public/assets, src/data, index.html, public/site.webmanifest, docs/check-list.md]
+[2026-08-20 11:44] | [style] | 實施 text-wrap: balance 與排版容器優化，徹底消除 Hero 首屏文字孤行斷字問題 | [src/index.css, src/components/Hero.tsx, docs/check-list.md]

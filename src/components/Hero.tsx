@@ -126,7 +126,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
 
           {/* Description */}
           <p
-            className="text-sm sm:text-base lg:text-lg max-w-3xl leading-relaxed font-normal select-text hero-stagger hero-stagger-4"
+            className="text-sm sm:text-base lg:text-lg max-w-2xl lg:max-w-3xl leading-relaxed font-normal select-text text-balance mx-auto hero-stagger hero-stagger-4"
             style={{ color: isLight ? '#334155' : '#cbd5e1' }}
           >
             {currentData.description}
