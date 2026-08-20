@@ -104,9 +104,19 @@ html, body, #root, main, section, article, div, p, span, h1, h2, h3, h4, h5, h6,
 }
 
 @media (pointer: fine) {
-  *, *::before, *::after, html, body, a, button, input,
-  select, textarea, [role="button"] {
+  html.custom-cursor-active,
+  html.custom-cursor-active *,
+  html.custom-cursor-active *::before,
+  html.custom-cursor-active *::after {
     cursor: none !important;
+  }
+
+  html.custom-cursor-active body.hide-custom-cursor,
+  html.custom-cursor-active body.hide-custom-cursor *,
+  html.custom-cursor-active iframe,
+  html.custom-cursor-active .iframe-container,
+  html.custom-cursor-active .modal-iframe-area {
+    cursor: auto !important;
   }
 }
 

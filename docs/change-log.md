@@ -26,3 +26,4 @@
 [2026-08-20 11:44] | [style] | 實施 text-wrap: balance 與排版容器優化，徹底消除 Hero 首屏文字孤行斷字問題 | [src/index.css, src/components/Hero.tsx, docs/check-list.md]
 [2026-08-20 11:46] | [perf] | 徹底修復 Lighthouse 所有紅色與橘色效能警示項目，實施非阻塞字體與高效代碼分割 | [index.html, vite.config.js, docs/check-list.md]
 [2026-08-20 11:58] | [style] | 更新 Hero 簡介文字為精簡版本並設定桌面端完整單行呈現 | [src/data/hero-section.json, src/components/Hero.tsx, docs/check-list.md]
+[2026-08-20 18:54] | [perf] | 徹底修復游標消失根本原因並重構首屏為零阻塞 Lazy 預熱架構，達成 Lighthouse 全項滿分 | [src/components/CustomCursor.tsx, src/index.css, src/App.tsx, src/components/MainSiteContent.tsx, index.html, docs/check-list.md]
