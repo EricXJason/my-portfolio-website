@@ -18,3 +18,4 @@
 [2026-08-20 10:43] | [chore] | 執行嚴格專案最佳化，同步主架構計畫與雙語 README 文檔並推向遠端 | [docs/development-plan.md, README.md, docs/check-list.md]
 [2026-08-20 10:51] | [perf] | 查證線上部署環境並重構模組打包為零瀑布流單一快取架構，達成雙平臺所有維度滿分 | [src/App.tsx]
 [2026-08-20 11:26] | [fix] | 回歸 master 主分支，修復開場游標可見性、手機端機器人頭像觸控互動與移除頁尾時區文字 | [src/App.tsx, src/components/CustomCursor.tsx, src/components/SciFiRobotAvatar.tsx, src/components/Footer.tsx]
+[2026-08-20 11:28] | [chore] | 全面清理專案多餘檔案、修剪依賴套件並執行嚴格專案最佳化 | [pnpm-lock.yaml, docs/check-list.md]
