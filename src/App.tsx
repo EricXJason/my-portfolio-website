@@ -76,15 +76,13 @@ function AppContent() {
 
       {/* Step 3: Lazy Loaded Main Site Content */}
       <Suspense fallback={null}>
-        {siteEntered && (
-          <MainSiteContent
-            siteEntered={siteEntered}
-            soundPlaying={soundPlaying}
-            soundVolume={soundVolume}
-            onToggleSound={handleToggleSound}
-            onChangeVolume={setSoundVolume}
-          />
-        )}
+        <MainSiteContent
+          siteEntered={siteEntered}
+          soundPlaying={soundPlaying}
+          soundVolume={soundVolume}
+          onToggleSound={handleToggleSound}
+          onChangeVolume={setSoundVolume}
+        />
       </Suspense>
     </div>
   );

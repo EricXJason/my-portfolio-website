@@ -67,11 +67,11 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
     <div
       className="fixed inset-0 z-[999999] flex items-center justify-center p-6 sm:p-8 select-none"
       style={{
-        backgroundColor: isLight ? 'rgba(15,23,42,0.85)' : 'rgba(3,7,18,0.95)',
+        backgroundColor: isLight ? 'rgba(248, 250, 252, 0.50)' : 'rgba(3, 7, 18, 0.65)',
         backdropFilter: 'blur(16px)',
         WebkitBackdropFilter: 'blur(16px)',
         opacity: closing ? 0 : 1,
-        transition: 'opacity 0.35s ease',
+        transition: 'opacity 0.35s ease, background-color 0.3s ease',
       }}
       onClick={() => choose('zh')}
       role="dialog"
@@ -79,10 +79,13 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
       aria-label="選擇語言 / Select Language"
     >
       <div
-        className="relative w-full max-w-[calc(100%-2rem)] sm:max-w-md border cyber-cut-corner p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6 hud-corner-brackets"
+        className="relative w-full max-w-[calc(100%-2rem)] sm:max-w-md border cyber-cut-corner p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6 hud-corner-brackets transition-all duration-300"
         style={{
-          backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.98)',
+          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(8, 14, 26, 0.95)',
           borderColor: borderCol,
+          boxShadow: isLight
+            ? '0 20px 50px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8)'
+            : '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 240, 255, 0.2)',
           '--hud-bracket-color': bracketCol,
         } as React.CSSProperties}
         onClick={(e) => e.stopPropagation()}
@@ -90,7 +93,7 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
         <div className="w-full flex items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div
-              className="w-10 h-10 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0"
+              className="w-10 h-10 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0 transition-colors duration-300"
               style={{
                 borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.4)',
                 backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
@@ -127,7 +130,7 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
             <div
               className="w-6 h-6 sm:w-7 sm:h-7 rounded-none flex items-center justify-center transition-all duration-300 z-10 text-xs shadow-md"
               style={{
-                transform: isLight ? 'translateX(0px)' : (window.innerWidth < 640 ? 'translateX(20px)' : 'translateX(28px)'),
+                transform: isLight ? 'translateX(0px)' : (typeof window !== 'undefined' && window.innerWidth < 640 ? 'translateX(20px)' : 'translateX(28px)'),
                 background: isLight ? '#fbbf24' : '#00f0ff',
                 color: '#0f172a',
               }}

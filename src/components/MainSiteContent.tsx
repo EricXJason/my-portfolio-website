@@ -64,8 +64,8 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
 
       {/* Main Site Container */}
       <div
-        className={`min-h-screen relative transition-opacity duration-700 ease-out ${
-          siteEntered ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`min-h-screen relative transition-all duration-500 ease-out ${
+          siteEntered ? 'pointer-events-auto' : 'pointer-events-none select-none'
         }`}
       >
         {/* Background Ambient Layers */}
