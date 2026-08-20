@@ -87,7 +87,7 @@ export const About: React.FC = () => {
                   <div className="relative w-full h-full overflow-hidden cyber-cut-sm">
                     {/* Real Portrait Photo with Dedicated Light / Dark Filters */}
                     <img
-                      src={getAssetUrl('/assets/images/personal.avif')}
+                      src={getAssetUrl('/assets/images/personal.webp')}
                       alt="許哲誠 (Che-Cheng Hsu) Portrait"
                       width="288"
                       height="288"
