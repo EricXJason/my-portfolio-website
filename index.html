@@ -15,12 +15,18 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Portfolio" />
 
-  <!-- ── Google Fonts ── -->
+  <!-- ── Google Fonts (Preconnect + Asynchronous Non-Render-Blocking) ── -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    rel="stylesheet"
+    rel="preload"
+    as="style"
     href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Orbitron:wght@700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" />
+  <link
+    rel="stylesheet"
+    id="gfonts"
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Orbitron:wght@700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap"
+    media="print" />
 
   <!-- ── Primary SEO Meta Tags ── -->
   <title>Portfolio</title>

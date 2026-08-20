@@ -99,28 +99,30 @@ function AppContent() {
 
       <SeoSchema />
 
-      {/* Global Laser Custom Cursor & Top Navigation */}
-      <Suspense fallback={null}>
-        <CustomCursor />
-        <ScrollProgress siteEntered={siteEntered} />
-        <Navbar
-          soundPlaying={soundPlaying}
-          onToggleSound={handleToggleSound}
-          soundVolume={soundVolume}
-          onChangeVolume={setSoundVolume}
-          siteEntered={siteEntered}
-        />
-        <SideNav siteEntered={siteEntered} />
-      </Suspense>
+      {/* Global Laser Custom Cursor & Top Navigation — Mounted once site is entered */}
+      {siteEntered && (
+        <Suspense fallback={null}>
+          <CustomCursor />
+          <ScrollProgress siteEntered={siteEntered} />
+          <Navbar
+            soundPlaying={soundPlaying}
+            onToggleSound={handleToggleSound}
+            soundVolume={soundVolume}
+            onChangeVolume={setSoundVolume}
+            siteEntered={siteEntered}
+          />
+          <SideNav siteEntered={siteEntered} />
+        </Suspense>
+      )}
 
       {/* Step 1: Tactical HUD Preloader Animation (0% -> 100%) */}
       {!preloaderDone && (
         <InitialPreloader onComplete={() => setPreloaderDone(true)} />
       )}
 
-      {/* Step 2: Language Selection Modal */}
+      {/* Step 2: Language Selection Modal (Rendered on Frame 1 under Preloader for instant LCP) */}
       <LangSelectModal
-        isOpen={preloaderDone && !siteEntered}
+        isOpen={!siteEntered}
         onSelectLanguage={() => setSiteEntered(true)}
       />
 

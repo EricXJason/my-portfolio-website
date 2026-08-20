@@ -13,7 +13,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
 
   useEffect(() => {
     let startTimestamp: number | null = null;
-    const duration = 80; // 0.08s ultra-lean tactical preloader
+    const duration = 30; // 0.03s lightning tactical preloader
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
@@ -30,8 +30,8 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           setFadingOut(true);
           setTimeout(() => {
             onComplete();
-          }, 40);
-        }, 20);
+          }, 15);
+        }, 10);
       }
     };
 

@@ -9,6 +9,12 @@ if ('scrollRestoration' in history) {
 }
 window.scrollTo(0, 0);
 
+// Activate Google Fonts without render-blocking critical path
+const gf = document.getElementById('gfonts') as HTMLLinkElement | null;
+if (gf) {
+  gf.media = 'all';
+}
+
 const rootElement = document.getElementById('root')
 if (rootElement) {
   ReactDOM.createRoot(rootElement).render(
