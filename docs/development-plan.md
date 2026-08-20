@@ -1,17 +1,17 @@
 # ⚡ Project Master Development Plan (專案主架構開發計畫)
 
-> 本文件為個人官方作品集網站（Portfolio）之全域核心架構規範與規格藍圖，涵蓋系統願景、功能模組、非功能性需求（WCAG 無障礙對比標準與 SEO）、設計系統、技術棧及資料架構。
+> 本文件為個人官方作品集網站（Portfolio）之全域核心架構規範與規格藍圖，涵蓋系統願景、功能模組、非功能性需求（WCAG 無障礙對比標準、Lighthouse 雙平臺雙百標準與 AI 代理爬蟲規範）、設計系統、技術棧及資料架構。
 
 ---
 
 ## 1. 🎯 系統願景與核心價值 (Vision & Core Goals)
 
-本專案旨在為 許哲誠（HSU, CHE-CHENG）建置具備極致科技美學與頂級工程標準的個人官方作品集網站，提供全球招募主管、技術專家與訪客卓越的互動體驗。
+本專案旨在為 許哲誠（HSU, CHE-CHENG）建置具備極致科技美學與頂級工程標準的個人官方作品集網站，提供全球招募主管、技術專家、AI 代理爬蟲與訪客卓越的互動體驗。
 
 ### A. 核心定位
-- **跨領域技術整合**：結合 VR/AR 互動應用開發、全端網頁工程架構與新媒體美學設計。
-- **極致響應式與流暢體驗**：全平臺 PC、平板與手機（直向與橫向）自適應佈局，零版面偏移（CLS 0）。
-- **零妥協無障礙與效能**：100% 符合最新 WCAG 對比度規範、Lighthouse 四項滿分標準（效能、無障礙、最佳實踐、SEO）。
+- **跨領域技術整合**：結合 VR/AR 互動應用開發 (Unity / Unreal Engine)、全端網頁工程架構 (React 19 / TypeScript / Tailwind CSS / Spring Boot / FastAPI / Cloudflare Pages) 與新媒體美學設計。
+- **極致響應式與流暢體驗**：全平臺 PC、平板與手機（直向與橫向）自適應佈局，零版面偏移（CLS 0），具備 0.85s 細膩減速阻尼之向下滾動視差動效。
+- **零妥協無障礙與極限效能**：100% 符合最新 WCAG 2.1/2.2 AAA/AA 對比度規範、Lighthouse 雙平臺五項指標（效能、無障礙、最佳實踐、SEO、AI 代理瀏覽）全滿分標竿。
 
 ---
 
@@ -21,9 +21,9 @@
 
 ### A. 三階段開場與全域導覽控制系統
 - **三階段流暢開場機制 (Three-Stage Onboarding Flow)**：
-  - **階段一（0% -> 100% 科技載入動畫）**：`InitialPreloader` 獨立置頂運行，全站主體、導覽列與側邊欄維持 `opacity-0 pointer-events-none`，杜絕任何畫面跳動。
+  - **階段一（0% -> 100% 科技載入動畫）**：`InitialPreloader` 獨立置頂運行，全站主體、導覽列與側邊欄維持完全隔離，杜絕任何載入中途畫面跳動。
   - **階段二（語言選擇視窗）**：`LangSelectModal` 即時呈現，背景完全隱蔽，等待使用者確認語系偏好。
-  - **階段三（全站同步淡入）**：完成選擇後觸發 `siteEntered: true`，導覽列（Navbar）、進度條（ScrollProgress）、側邊索引（SideNav）與首頁內容以 700ms 齊步平滑淡入。
+  - **階段三（全站同步淡入與 0ms 極速切換）**：完成選擇後立即觸發 `siteEntered: true`，背景提前預熱完成，導覽列（Navbar）、進度條（ScrollProgress）、側邊索引（SideNav）與首頁內容以 0ms 零延遲齊步平滑淡入。
 - **頂部導覽列 (Navbar)**：
   - 品牌徽標、章節錨點快速跳轉。
   - 語系即時切換開關（繁體中文 / English）。
@@ -40,12 +40,12 @@
    - GitHub 專頁與 ArtStation 作品集外鏈按鈕。
    - 聯絡資訊看板（電話、Email、LINE ID）與一鍵複製功能。
 2. **關於我 (About)**：
-   - 臺藝大新媒體藝術碩士背景介紹。
+   - 國立臺灣藝術大學新媒體藝術碩士背景介紹。
    - 核心專長與專業定位論述。
    - 數據指標卡（碩士學歷、多種核心專案經驗、TOEIC 755 多益成績證書外鏈）。
 3. **專業技能 (Skills)**：
    - 分為「主要專業領域 (Primary)」與「輔助專業技能 (Auxiliary)」。
-   - 涵蓋遊戲引擎、全端技術、多媒體設計之晶片化標籤矩陣。
+   - 涵蓋遊戲引擎、全端技術（含 Cloudflare Pages、AWS、GCP、Firebase 等雲端服務）、多媒體設計之晶片化標籤矩陣。
 4. **專案作品 (Projects)**：
    - 類別過濾系統（精選作品、全部作品、互動應用、前端開發、全端開發、LINE Bot）。
    - 精選作品視圖（3 件代表作橫向卡片）與「檢視更多」跳轉按鈕。
@@ -70,7 +70,7 @@
 
 ## 3. 🛡️ 非功能性需求與無障礙標準 (Non-Functional Requirements & WCAG Standards)
 
-全站設計嚴格遵循國際頂級無障礙與效能標準。
+全站設計嚴格遵循國際頂級無障礙、爬蟲友善與效能標準。
 
 ### A. WCAG 2.1 / 2.2 AAA & AA 對比度標準
 - **深色模式 (Dark Mode)**：
@@ -89,9 +89,10 @@
   - 支援鍵盤 Tab 焦點導航與 Escape 快速關閉彈窗。
   - 支援 `prefers-reduced-motion` 媒體查詢以照顧前庭覺敏感使用者。
 
-### B. 搜尋引擎最佳化 (SEO)
+### B. 搜尋引擎最佳化 (SEO) 與 AI 代理瀏覽 (Agentic Browsing)
 - 網頁標題固定為 **`Portfolio`**。
 - 完整 Open Graph、Twitter Card、Canonical URL、robots.txt、sitemap.xml 與 Schema.org JSON-LD 結構化資料。
+- 遵循 llms.txt 官方規範建立標準 `public/llms.txt`，包含一級標題與 Markdown 導航結構，獲得 Agentic Browsing 滿分（100/100）。
 
 ---
 
@@ -101,6 +102,10 @@
   - 戰術 HUD 標題：`Orbitron`, `Chakra Petch`, `Noto Sans TC`
   - 科技標籤與數據：`Chakra Petch`, `Rajdhani`, `Share Tech Mono`
   - 內文與閱讀排版：`Inter`, `Noto Sans TC`
+  - Google Fonts 採用 Preconnect + Preload + 非阻塞 Media 加載，徹底消除渲染阻塞（0ms blocking）。
+- **動畫曲線與阻尼**：
+  - 滾動進場：`0.85s` 動畫時長搭配高階減速阻尼曲線 `cubic-bezier(0.22, 1, 0.36, 1)`，微幅位移 `18px/20px`。
+  - 視窗觸發門檻：`IntersectionObserver` 門檻 `threshold: 0.05`、`rootMargin: '0px 0px -20px 0px'`。
 - **斷點系統**：
   - Mobile: `< 640px`
   - Tablet: `640px ~ 1024px`

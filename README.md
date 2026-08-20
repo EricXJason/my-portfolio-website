@@ -47,6 +47,7 @@ my-portfolio-website/
 │   │   ├── gallery/
 │   │   └── images/
 │   ├── tech-icons/            # Vector SVG brand assets
+│   ├── llms.txt               # AI Agent & LLM Web Crawler Standard Spec
 │   ├── robots.txt
 │   ├── sitemap.xml
 │   └── site.webmanifest
