@@ -8,24 +8,63 @@ interface InitialPreloaderProps {
 export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }) => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
-  const [progress, setProgress] = useState<number>(0);
+  const [progress, setProgress] = useState<number>(1);
   const [fadingOut, setFadingOut] = useState<boolean>(false);
 
   useEffect(() => {
     let startTimestamp: number | null = null;
-    const duration = 1200; // 1.2s smooth tactical preloader
+    const minDuration = 1150; // Guaranteed minimum duration of at least ~1.15 seconds
+    let isRealReady = false;
+
+    // Track real browser loading state
+    if (typeof document !== 'undefined') {
+      if (document.readyState === 'complete') {
+        isRealReady = true;
+      } else {
+        window.addEventListener('load', () => { isRealReady = true; }, { once: true });
+      }
+      if (document.fonts) {
+        document.fonts.ready.then(() => { isRealReady = true; }).catch(() => {});
+      }
+    }
+
+    let displayedProgress = 1;
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const elapsed = timestamp - startTimestamp;
-      const rawRatio = Math.min(elapsed / duration, 1);
-      // Subtle dynamic curve for high-tech system initialization feel
-      const easedRatio = Math.min(1, Math.pow(rawRatio, 0.88));
-      const currentProgress = Math.min(Math.floor(easedRatio * 100), 100);
+      const timeRatio = Math.min(elapsed / minDuration, 1);
 
-      setProgress(currentProgress);
+      // Realistic non-linear telemetry curve with organic cyber staging:
+      // Stage 1 (0-30%): Fast initial kernel bootstrap
+      // Stage 2 (30-75%): Resource & font hydration micro-bursts
+      // Stage 3 (75-95%): Asset preheat verification
+      // Stage 4 (95-100%): Final handshake lock
+      let targetProgress = 1;
+      if (timeRatio < 0.25) {
+        targetProgress = 1 + (timeRatio / 0.25) * 28; // 1 -> 29%
+      } else if (timeRatio < 0.65) {
+        targetProgress = 29 + ((timeRatio - 0.25) / 0.40) * 42; // 29 -> 71%
+      } else if (timeRatio < 0.90) {
+        targetProgress = 71 + ((timeRatio - 0.65) / 0.25) * 21; // 71 -> 92%
+      } else {
+        targetProgress = 92 + ((timeRatio - 0.90) / 0.10) * 8; // 92 -> 100%
+      }
 
-      if (elapsed < duration) {
+      // If real page loading is done, smoothly pull towards target
+      if (isRealReady && timeRatio >= 0.95) {
+        targetProgress = 100;
+      }
+
+      // Monotonic smooth incremental step (ensures every number feels alive and never skips erratically)
+      if (displayedProgress < targetProgress) {
+        const increment = Math.max(1, (targetProgress - displayedProgress) * 0.45);
+        displayedProgress = Math.min(Math.round(displayedProgress + increment), 100);
+      }
+
+      setProgress(displayedProgress);
+
+      if (elapsed < minDuration || displayedProgress < 100) {
         requestAnimationFrame(step);
       } else {
         setProgress(100);
@@ -34,7 +73,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           setTimeout(() => {
             onComplete();
           }, 300);
-        }, 120);
+        }, 150);
       }
     };
 
@@ -99,7 +138,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           >
             {/* Fill Bar — Instant 100% Sync with Progress Percentage */}
             <div
-              className="h-full rounded-none shadow-[0_0_12px_rgba(0,240,255,0.75)] transition-all duration-75"
+              className="h-full rounded-none shadow-[0_0_12px_rgba(0,240,255,0.75)]"
               style={{
                 width: `${progress}%`,
                 willChange: 'width',

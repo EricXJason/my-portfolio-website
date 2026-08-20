@@ -29,3 +29,4 @@
 [2026-08-20 18:54] | [perf] | 徹底修復游標消失根本原因並重構首屏為零阻塞 Lazy 預熱架構，達成 Lighthouse 全項滿分 | [src/components/CustomCursor.tsx, src/index.css, src/App.tsx, src/components/MainSiteContent.tsx, index.html, docs/check-list.md]
 [2026-08-20 18:57] | [style] | 重構語言選擇背景為半透明磨砂玻璃模糊濾鏡，呈現底層網站深淺模式之自然模糊視覺 | [src/App.tsx, src/components/LangSelectModal.tsx, src/components/MainSiteContent.tsx, docs/check-list.md]
 [2026-08-20 19:00] | [style] | 調校開場進度條為 1.2 秒平滑減速遞增曲線，呈現清晰流暢之 1% 至 100% 科技動效 | [src/components/InitialPreloader.tsx, docs/check-list.md]
+[2026-08-20 19:03] | [perf] | 實現真實資源遙測與 1.15 秒保底時序之單調平滑載入引擎，達成流暢且真實之 1% 至 100% 體驗 | [src/components/InitialPreloader.tsx, docs/check-list.md]
