@@ -14,3 +14,4 @@
 [2026-08-20 10:24] | [feat] | 建立符合 AI 爬蟲標準規範之 llms.txt 文檔，使 Agentic Browsing 達 100/100 滿分 | [public/llms.txt]
 [2026-08-20 10:25] | [fix] | 移除行內事件處理器以徹底修復 DevTools Content Security Policy 警告 | [index.html]
 [2026-08-20 10:38] | [perf] | 實施 Google Fonts 非阻塞載入與首屏分離架構，達成雙平臺效能極限拉滿 (Desktop 100 / Mobile 99) | [index.html, src/main.tsx, src/App.tsx, src/components/InitialPreloader.tsx, vite.config.js]
+[2026-08-20 10:41] | [feat] | 於全端開發類別之雲端服務技能中新增 Cloudflare Pages 技能標籤 | [src/data/skills-section.json]
