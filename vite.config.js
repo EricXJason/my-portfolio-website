@@ -11,12 +11,15 @@ export default defineConfig({
     port: 5500,
     strictPort: true,
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+  ],
   base: "./",
   build: {
     cssMinify: true,
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 800,
     modulePreload: {
       polyfill: false,
     },
@@ -36,6 +39,4 @@ export default defineConfig({
       },
     },
   },
-
-
 });
