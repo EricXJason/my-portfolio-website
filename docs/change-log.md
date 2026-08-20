@@ -21,3 +21,4 @@
 [2026-08-20 11:28] | [chore] | 全面清理專案多餘檔案、修剪依賴套件並執行嚴格專案最佳化 | [pnpm-lock.yaml, docs/check-list.md]
 [2026-08-20 11:31] | [docs] | 依使用者明確指示將 README.md 轉換為純英文版本並維持四大核心章節 | [README.md, docs/check-list.md]
 [2026-08-20 11:32] | [docs] | 於 README.md 頂部與第一章節嵌入正式部署之線上網址與即時徽章 | [README.md, docs/check-list.md]
+[2026-08-20 11:36] | [feat] | 重構背景程式碼流為左側 HTML 與右側 TS 多腳本串接架構，並實現零卡頓無縫循環 | [src/components/FullStackCodeStreamBackground.tsx, docs/check-list.md]
