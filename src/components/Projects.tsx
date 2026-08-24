@@ -288,7 +288,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           loading="lazy"
                           decoding="async"
                         />
-                        <div className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="card-scanline-laser opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
 
                       {/* Project Title */}
@@ -439,7 +439,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           loading="lazy"
                           decoding="async"
                         />
-                        <div className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div className="card-scanline-laser opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2.5 pt-1">
@@ -730,7 +730,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                       height="450"
                       className="w-full h-full aspect-video object-cover object-center"
                     />
-                    <div className="card-scanline-laser opacity-80" />
+                    <div className="card-scanline-laser opacity-85" />
                   </div>
 
                   {/* Action Buttons Row */}

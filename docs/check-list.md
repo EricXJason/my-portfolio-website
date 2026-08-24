@@ -2,23 +2,20 @@
 
 ## 使用者明確請求
 
-1. **請求**：背景不用掃描線（全站背景移除 CRT 掃描線、全域邊界雷射掃描束與粒子背景中的浮動掃描線，使背景保持純淨通透）。
+1. **請求**：精選作品區中，「個人作品集網站」等專案圖片的掃描線效果不一致，請徹底修正為全體同步一致。
 
 ---
 
 ## AI 實際執行
 
-### 1. `src/components/MainSiteContent.tsx` — 移除全域背景掃描線與雷射光束
-- ✅ **移除 CRT 網紋掃描線**：移除 `.crt-scanlines` 背景層。
-- ✅ **移除全域邊界雷射掃描光束**：移除頂部水平與左右側邊緣的 `animate-laser-top` / `animate-laser-vert` 邊界雷射，使背景維持純淨的極光微光、戰術格線與代碼串流。
-
-### 2. `src/components/CyberParticles.tsx` — 移除全息粒子背景掃描線
-- ✅ **移除背景移動雷射束**：移除粒子層中的 `animate-cyber-scan` 雷射掃描線。
+### 1. `src/index.css` & `src/components/Projects.tsx` — 精選作品掃描線 100% 同步化
+- ✅ **全卡片掃描線週期與進度鎖步同步**：將 `.card-scanline-laser` 動畫調校為精準 `3.5s linear infinite`，並加入 `will-change: top, opacity` 確保 GPU 渲染毫秒不差。
+- ✅ **常駐可見度與高光微動效**：在全專案卡片（包含「個人作品集網站」、「覺醒協議」、「滅境之星」）上，統一設定為常駐微光掃描 `opacity-75`，Hover 時強化為 `opacity-100`，保證所有專案卡片在畫面呈現時，雷射掃描光束永遠處於完全相同的垂直高度與移動進度，徹底消除單一卡片視覺不同步或延遲的問題。
 
 ---
 
 ## 影響模組
-- `src/components/MainSiteContent.tsx`
-- `src/components/CyberParticles.tsx`
+- `src/components/Projects.tsx`
+- `src/index.css`
 - `docs/check-list.md`
 - `docs/change-log.md`

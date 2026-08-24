@@ -673,14 +673,14 @@ body::-webkit-scrollbar-track {
 @keyframes card-laser-sweep {
   0% {
     top: -5%;
-    opacity: 0.2;
+    opacity: 0.3;
   }
   50% {
     opacity: 0.95;
   }
   100% {
     top: 105%;
-    opacity: 0.2;
+    opacity: 0.3;
   }
 }
 
@@ -688,17 +688,20 @@ body::-webkit-scrollbar-track {
   position: absolute;
   left: 0;
   right: 0;
-  height: 1.5px;
+  height: 2px;
   background: linear-gradient(
     90deg,
     transparent 0%,
+    var(--neon-cyan) 25%,
     var(--neon-cyan) 50%,
+    var(--neon-cyan) 75%,
     transparent 100%
   );
-  box-shadow: 0 0 8px var(--neon-cyan);
-  animation: card-laser-sweep 4.5s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--neon-cyan), 0 0 3px var(--neon-cyan);
+  animation: card-laser-sweep 3.5s linear infinite;
   pointer-events: none;
   z-index: 10;
+  will-change: top, opacity;
 }
 @keyframes hacker-scanline-primary {
   0% {
