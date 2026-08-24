@@ -2,22 +2,23 @@
 
 ## 使用者明確請求
 
-1. **請求**：掃描線效果請統一一致（所有卡片與邊界雷射掃描動效回復統一標準參數與同步節奏），完成後直接 Push。
+1. **請求**：背景不用掃描線（全站背景移除 CRT 掃描線、全域邊界雷射掃描束與粒子背景中的浮動掃描線，使背景保持純淨通透）。
 
 ---
 
 ## AI 實際執行
 
-### 1. `src/components/Projects.tsx` — 統一專案卡片雷射掃描動效
-- ✅ **全專案卡片掃描線標準化**：精選作品卡片、列表專案卡片與彈跳視窗預覽圖之雷射掃描線均統一採用純淨標準 `.card-scanline-laser` 動畫樣式，移除個別行內樣式覆寫，回復整齊一致的賽博龐克掃描律動。
+### 1. `src/components/MainSiteContent.tsx` — 移除全域背景掃描線與雷射光束
+- ✅ **移除 CRT 網紋掃描線**：移除 `.crt-scanlines` 背景層。
+- ✅ **移除全域邊界雷射掃描光束**：移除頂部水平與左右側邊緣的 `animate-laser-top` / `animate-laser-vert` 邊界雷射，使背景維持純淨的極光微光、戰術格線與代碼串流。
 
-### 2. `src/components/MainSiteContent.tsx` — 統一全域邊界雷射動效
-- ✅ **全域左右邊界雷射掃描一致化**：移除左右獨立延遲與週期覆寫，回復標準 `.animate-laser-vert` 統一動畫規範。
+### 2. `src/components/CyberParticles.tsx` — 移除全息粒子背景掃描線
+- ✅ **移除背景移動雷射束**：移除粒子層中的 `animate-cyber-scan` 雷射掃描線。
 
 ---
 
 ## 影響模組
-- `src/components/Projects.tsx`
 - `src/components/MainSiteContent.tsx`
+- `src/components/CyberParticles.tsx`
 - `docs/check-list.md`
 - `docs/change-log.md`

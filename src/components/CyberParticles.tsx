@@ -222,14 +222,6 @@ export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlay
           backgroundSize: '40px 40px, 40px 40px, 40px 40px',
         }}
       />
-      {/* Holographic Laser Beam Scan Line */}
-      <div
-        className={`absolute inset-x-0 h-[1.5px] pointer-events-none filter blur-[0.5px] animate-cyber-scan ${
-          isLight
-            ? 'bg-gradient-to-r from-transparent via-sky-500 to-transparent opacity-30'
-            : 'bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-60'
-        }`}
-      />
     </div>
   );
 };

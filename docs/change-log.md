@@ -47,3 +47,4 @@
 [2026-08-20 11:55] | [refactor] | 精準規範專案彈窗範圍與 1:1 卡片排版鏡像：僅限「精選作品」開啟彈跳視窗（全部分類與單獨分類已為完整卡片，不觸發彈窗）；彈跳視窗重構為水平正中且左右平衡之 2 欄架構（左側 16:9 媒體與三大按鈕，右側標題/標籤/簡介/亮點/榮譽/Tags），視覺體驗與全部分類卡片達成 1:1 完美統一 | [src/components/Projects.tsx, docs/check-list.md]
 [2026-08-20 11:57] | [style] | 專案彈跳視窗手機端體驗最佳化：隱藏行動端常駐捲軸（scrollbar-width: none），僅保留平滑觸控滑動手勢；緊縮手機端內距與關閉按鈕，大幅提高資訊密度並消除不必要的滑動需求 | [src/components/Projects.tsx, src/index.css, docs/check-list.md]
 [2026-08-20 12:00] | [style] | 統一全站雷射掃描線動效規範：移除卡片與邊界個別樣式覆寫，全面回復標準統一的 .card-scanline-laser 與 .animate-laser-vert 掃描節奏 | [src/components/Projects.tsx, src/components/MainSiteContent.tsx, docs/check-list.md]
+[2026-08-20 12:03] | [style] | 移除全站背景掃描線：完全清除背景 CRT 掃描線、全域邊界雷射光束與粒子層移動掃描線，保留純淨微光、戰術格線與代碼背景 | [src/components/MainSiteContent.tsx, src/components/CyberParticles.tsx, docs/check-list.md]
