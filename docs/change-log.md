@@ -62,4 +62,5 @@
 [2026-08-20 16:00] | [refactor] | 美術畫廊燈箱彈跳視窗重構為比例動態自適應：彈窗外框依據直式/橫式圖片長寬比例自適應縮放（w-auto max-w-[90vw]），直式畫作自動收窄緊密包裹，橫式與3D模型完整展開，達成全裝置像素級貼合 | [src/components/ArtGallery.tsx, docs/check-list.md]
 [2026-08-20 16:01] | [style] | 美術畫廊燈箱彈跳視窗頂部標籤精簡：移除「作品預覽」文字，頂部欄僅保留簡潔關閉按鈕，視覺純淨無冗餘干擾 | [src/components/ArtGallery.tsx, docs/check-list.md]
 [2026-08-20 16:03] | [style] | 全站彈跳視窗（專案詳細頁、美術畫廊燈箱、YouTube展示窗）背景遮罩全面重構為通透毛玻璃（Frosted Glass Blur）：遮罩透明度調整為 50%~65% 穿透並注入 blur(16px)，底層網站內容自然顯露且模糊柔化 | [src/components/ArtGallery.tsx, src/components/Projects.tsx, src/components/YoutubeModal.tsx, docs/check-list.md]
+[2026-08-20 16:11] | [refactor] | 專業研習經歷（Workshops）順序逆序重構：將核心重要的「2026 AI 賦能 Java & Angular 全端養成班」與「2023 數位發展部 T大使計畫」置於首位與次位優先展示，中英雙語資料集完全同步對齊 | [src/data/experience-section.json, docs/check-list.md]
 [2026-08-20 15:45] | [style] | 全站色彩順序全面統一大改版為「1: 綠色 -> 2: 青色 -> 3: 藍色 -> 4: 紫色」；互動開發改為綠色、全端開發改為青色、多媒體改為紫色；多益卡片文案精簡為「ETS 多益英語測驗成績證明 • 聽力與閱讀」（移除括號）並徹底清除下方標籤 | [src/components/Certifications.tsx, src/components/Education.tsx, src/components/Skills.tsx, src/components/Projects.tsx, docs/check-list.md]

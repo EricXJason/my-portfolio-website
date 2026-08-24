@@ -125,32 +125,19 @@
     ],
     "workshops": [
       {
-        "title": "2022 冒險者必學UE遊戲工程課研習",
-        "date": "2022/9 ~ 2022/11",
-        "org": "主辦單位：夢想方舟",
-        "iconType": "game",
-        "driveLinkKey": "dreamArkUnrealEngineWorkshopProofDriveUrl",
+        "title": "2026 AI 賦能：Java & Angular 全端整合開發實戰養成班",
+        "date": "2026/7 ~ 2026/12",
+        "org": "主辦單位：勞動部高屏澎東分署 × 高雄市電腦商業同業公會",
+        "iconType": "code",
+        "driveLinkKey": "taiwanLaborJavaAngularBootcampProofDriveUrl",
         "btnText": "檢視研習證明",
         "skillsHeader": "專業內容與技能學習",
         "skills": [
-          "掌握 Unreal Engine 遊戲引擎基礎架構與開發流程，熟悉核心機制運作。",
-          "研習 Blueprint 開發邏輯，具備遊戲互動事件與邏輯控制之編程能力。",
-          "學習 PBR 材質應用、動畫系統綁定、音效與粒子特效整合技術。",
-          "實作遊戲互動階段運作流、場景渲染與後製合成效果處理。"
-        ]
-      },
-      {
-        "title": "2023 VTuber 虛擬網紅快速開發應用研習課程",
-        "date": "2023/4 ~ 2023/4",
-        "org": "主辦單位：國立虎尾科技大學多媒體設計系 × 愛迪斯科技股份有限公司",
-        "iconType": "video",
-        "driveLinkKey": "nfuVtuberMoCapWorkshopProofDriveUrl",
-        "btnText": "檢視研習證明",
-        "skillsHeader": "專業內容與技能學習",
-        "skills": [
-          "學習 VRoid Studio，掌握從角色設定到即時動態呈現之完整流程。",
-          "熟悉 動作捕捉系統 之設備操作、數據錄製與虛擬角色骨骼驅動應用。",
-          "理解元宇宙虛擬角色創作設計實務，強化跨領域互動媒體與數位內容產出技能。"
+          "AI 賦能與開發流程：運用 AI 工具輔助系統分析、生成測試代碼與 Code Review，提升開發效率。",
+          "前端技術與框架：掌握 HTML5/CSS3、JavaScript/TypeScript、Bootstrap 及 Angular 框架。",
+          "後端開發與微服務：運用 Java OOP、Spring Boot、Hibernate 打造 RESTful API 及微服務架構。",
+          "資料庫與資安實務：具備 ER Model 設計、MySQL/SQL 語法優化及資訊安全防護實作經驗。",
+          "專案管理與團隊實作：使用 Git/GitHub 進行版本控制與 CI/CD 流程構建。"
         ]
       },
       {
@@ -168,19 +155,32 @@
         ]
       },
       {
-        "title": "2026 AI 賦能：Java & Angular 全端整合開發實戰養成班",
-        "date": "2026/7 ~ 2026/12",
-        "org": "主辦單位：勞動部高屏澎東分署 × 高雄市電腦商業同業公會",
-        "iconType": "code",
-        "driveLinkKey": "taiwanLaborJavaAngularBootcampProofDriveUrl",
+        "title": "2023 VTuber 虛擬網紅快速開發應用研習課程",
+        "date": "2023/4 ~ 2023/4",
+        "org": "主辦單位：國立虎尾科技大學多媒體設計系 × 愛迪斯科技股份有限公司",
+        "iconType": "video",
+        "driveLinkKey": "nfuVtuberMoCapWorkshopProofDriveUrl",
         "btnText": "檢視研習證明",
         "skillsHeader": "專業內容與技能學習",
         "skills": [
-          "AI 賦能與開發流程：運用 AI 工具輔助系統分析、生成測試代碼與 Code Review，提升開發效率。",
-          "前端技術與框架：掌握 HTML5/CSS3、JavaScript/TypeScript、Bootstrap 及 Angular 框架。",
-          "後端開發與微服務：運用 Java OOP、Spring Boot、Hibernate 打造 RESTful API 及微服務架構。",
-          "資料庫與資安實務：具備 ER Model 設計、MySQL/SQL 語法優化及資訊安全防護實作經驗。",
-          "專案管理與團隊實作：使用 Git/GitHub 進行版本控制與 CI/CD 流程構建。"
+          "學習 VRoid Studio，掌握從角色設定到即時動態呈現之完整流程。",
+          "熟悉 動作捕捉系統 之設備操作、數據錄製與虛擬角色骨骼驅動應用。",
+          "理解元宇宙虛擬角色創作設計實務，強化跨領域互動媒體與數位內容產出技能。"
+        ]
+      },
+      {
+        "title": "2022 冒險者必學UE遊戲工程課研習",
+        "date": "2022/9 ~ 2022/11",
+        "org": "主辦單位：夢想方舟",
+        "iconType": "game",
+        "driveLinkKey": "dreamArkUnrealEngineWorkshopProofDriveUrl",
+        "btnText": "檢視研習證明",
+        "skillsHeader": "專業內容與技能學習",
+        "skills": [
+          "掌握 Unreal Engine 遊戲引擎基礎架構與開發流程，熟悉核心機制運作。",
+          "研習 Blueprint 開發邏輯，具備遊戲互動事件與邏輯控制之編程能力。",
+          "學習 PBR 材質應用、動畫系統綁定、音效與粒子特效整合技術。",
+          "實作遊戲互動階段運作流、場景渲染與後製合成效果處理。"
         ]
       }
     ],
@@ -316,32 +316,19 @@
     ],
     "workshops": [
       {
-        "title": "2022 UE Game Engineering Workshop for Adventurers",
-        "date": "2022/9 ~ 2022/11",
-        "org": "Organizer: Dream Ark",
-        "iconType": "game",
-        "driveLinkKey": "dreamArkUnrealEngineWorkshopProofDriveUrl",
+        "title": "2026 AI-Enabled Java & Angular Fullstack Bootcamp",
+        "date": "2026/7 ~ 2026/12",
+        "org": "Organizer: Ministry of Labor & Kaohsiung Computer Association",
+        "iconType": "code",
+        "driveLinkKey": "taiwanLaborJavaAngularBootcampProofDriveUrl",
         "btnText": "View Proof",
         "skillsHeader": "Skills & Content Mastered",
         "skills": [
-          "Mastered Unreal Engine core architecture, event logic, and game dev pipelines.",
-          "Studied Blueprint programming for interactive events, state flows, and logic control.",
-          "Applied PBR texturing, animation rigging, audio synchronization, and particle VFX.",
-          "Executed real-time scene rendering, cinematic camera setups, and post-processing."
-        ]
-      },
-      {
-        "title": "2023 VTuber Rapid Development & MoCap Workshop",
-        "date": "2023/4 ~ 2023/4",
-        "org": "Organizer: NFU Multimedia Design × Axis 3D Technology",
-        "iconType": "video",
-        "driveLinkKey": "nfuVtuberMoCapWorkshopProofDriveUrl",
-        "btnText": "View Proof",
-        "skillsHeader": "Skills & Content Mastered",
-        "skills": [
-          "Learned VRoid Studio for character modeling, texture mapping, and real-time rendering.",
-          "Operated optical motion capture hardware, bone rigging, and live avatar tracking.",
-          "Understood metaverse avatar creation practices to enhance cross-disciplinary output."
+          "AI-Enabled Workflow: Leveraged LLM APIs and prompt engineering for code review and automated unit tests.",
+          "Frontend Engineering: Mastered HTML5/CSS3, TypeScript, Bootstrap, and Angular with RxJS and REST APIs.",
+          "Backend & Microservices: Built RESTful APIs using Java OOP, Spring Boot, Hibernate, and JUnit testing.",
+          "Database & Security: ER modeling, SQL optimization, JDBC, and security protection (SQLi, XSS, CSRF).",
+          "DevOps & Team Project: Employed Git/GitHub for version control, CI/CD pipelines, and fullstack deployment."
         ]
       },
       {
@@ -359,19 +346,32 @@
         ]
       },
       {
-        "title": "2026 AI-Enabled Java & Angular Fullstack Bootcamp",
-        "date": "2026/7 ~ 2026/12",
-        "org": "Organizer: Ministry of Labor & Kaohsiung Computer Association",
-        "iconType": "code",
-        "driveLinkKey": "taiwanLaborJavaAngularBootcampProofDriveUrl",
+        "title": "2023 VTuber Rapid Development & MoCap Workshop",
+        "date": "2023/4 ~ 2023/4",
+        "org": "Organizer: NFU Multimedia Design × Axis 3D Technology",
+        "iconType": "video",
+        "driveLinkKey": "nfuVtuberMoCapWorkshopProofDriveUrl",
         "btnText": "View Proof",
         "skillsHeader": "Skills & Content Mastered",
         "skills": [
-          "AI-Enabled Workflow: Leveraged LLM APIs and prompt engineering for code review and automated unit tests.",
-          "Frontend Engineering: Mastered HTML5/CSS3, TypeScript, Bootstrap, and Angular with RxJS and REST APIs.",
-          "Backend & Microservices: Built RESTful APIs using Java OOP, Spring Boot, Hibernate, and JUnit testing.",
-          "Database & Security: ER modeling, SQL optimization, JDBC, and security protection (SQLi, XSS, CSRF).",
-          "DevOps & Team Project: Employed Git/GitHub for version control, CI/CD pipelines, and fullstack deployment."
+          "Learned VRoid Studio for character modeling, texture mapping, and real-time rendering.",
+          "Operated optical motion capture hardware, bone rigging, and live avatar tracking.",
+          "Understood metaverse avatar creation practices to enhance cross-disciplinary output."
+        ]
+      },
+      {
+        "title": "2022 UE Game Engineering Workshop for Adventurers",
+        "date": "2022/9 ~ 2022/11",
+        "org": "Organizer: Dream Ark",
+        "iconType": "game",
+        "driveLinkKey": "dreamArkUnrealEngineWorkshopProofDriveUrl",
+        "btnText": "View Proof",
+        "skillsHeader": "Skills & Content Mastered",
+        "skills": [
+          "Mastered Unreal Engine core architecture, event logic, and game dev pipelines.",
+          "Studied Blueprint programming for interactive events, state flows, and logic control.",
+          "Applied PBR texturing, animation rigging, audio synchronization, and particle VFX.",
+          "Executed real-time scene rendering, cinematic camera setups, and post-processing."
         ]
       }
     ],
