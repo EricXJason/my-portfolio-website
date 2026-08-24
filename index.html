@@ -10,26 +10,30 @@
   <link rel="manifest" href="./site.webmanifest" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#07090e" />
+  <meta name="color-scheme" content="dark light" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Portfolio" />
 
-  <!-- ── Google Fonts (Preconnect + Zero-Render-Blocking Asynchronous Loading) ── -->
+  <!-- ── Google Fonts ────────────────────────────────────────────────────── -->
+  <!-- Step 1: Early connection to font servers -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Step 2: Non-blocking async stylesheet (media=print trick) — activated in main.tsx -->
   <link
     rel="stylesheet"
     id="gfonts"
-    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Orbitron:wght@700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Chakra+Petch:wght@400;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap"
     media="print" />
   <noscript>
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;700&family=Orbitron:wght@700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" />
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Chakra+Petch:wght@400;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" />
   </noscript>
 
-  <!-- ── Primary SEO Meta Tags ── -->
+  <!-- ── Primary SEO Meta Tags ────────────────────────────────────────────── -->
   <title>Portfolio</title>
   <link rel="canonical" href="https://my-portfolio-website.user46972.workers.dev/" />
   <meta name="title" content="Portfolio" />
@@ -39,7 +43,7 @@
   <meta name="author" content="許哲誠 (HSU, CHE-CHENG)" />
   <meta name="robots" content="index, follow" />
 
-  <!-- ── Open Graph / Facebook Meta Tags ── -->
+  <!-- ── Open Graph / Facebook Meta Tags ─────────────────────────────────── -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://my-portfolio-website.user46972.workers.dev/" />
   <meta property="og:title" content="Portfolio" />
@@ -48,7 +52,7 @@
   <meta property="og:site_name" content="JasonProduction Portfolio" />
   <meta property="og:locale" content="zh_TW" />
 
-  <!-- ── Twitter Card Meta Tags ── -->
+  <!-- ── Twitter Card Meta Tags ───────────────────────────────────────────── -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:url" content="https://my-portfolio-website.user46972.workers.dev/" />
   <meta name="twitter:title" content="Portfolio" />

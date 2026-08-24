@@ -34,11 +34,11 @@ export const BackToTop: React.FC = () => {
 
       style={{
         position: 'fixed',
-        backgroundColor: isLight ? 'rgba(255, 255, 255, 0.85)' : 'rgba(8, 14, 26, 0.85)',
-        borderColor: isLight ? '#94a3b8' : 'rgba(0, 240, 255, 0.35)',
-        color: isLight ? '#0284c7' : '#00f0ff',
+        backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(8, 14, 26, 0.85)',
+        borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)',
+        color: isLight ? '#0369a1' : '#00f0ff',
         boxShadow: isLight
-          ? '0 2px 10px rgba(0, 0, 0, 0.08)'
+          ? '0 2px 12px rgba(15, 23, 42, 0.1)'
           : '0 4px 14px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 240, 255, 0.15)',
       }}
       aria-label="一鍵往上 (Back to Top)"

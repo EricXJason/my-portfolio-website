@@ -56,12 +56,12 @@ export const Skills: React.FC = () => {
   const secondarySkills = currentSkills.filter((s) => s.catTier === 'secondary');
 
   const catAccents: Record<string, { main: string; bg: string; border: string }> = {
-    game:      { main: isLight ? '#0284c7' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)', border: isLight ? '#38bdf8' : 'rgba(0,240,255,0.35)' },
-    fullstack: { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' },
+    game:      { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)', border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)' },
+    fullstack: { main: isLight ? '#6d28d9' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' },
     media:     { main: isLight ? '#047857' : '#34d399', bg: isLight ? '#d1fae5' : 'rgba(16,185,129,0.12)', border: isLight ? '#34d399' : 'rgba(16,185,129,0.35)' },
   };
 
-  const primaryColor = isLight ? '#0284c7' : '#00f0ff';
+  const primaryColor = isLight ? '#0369a1' : '#00f0ff';
   const secondaryColor = isLight ? '#047857' : '#34d399';
 
   const headerRef   = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;

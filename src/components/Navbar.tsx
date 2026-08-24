@@ -268,7 +268,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                 }}
                 className={`h-8 w-8 sm:h-9 sm:w-9 border cyber-cut-sm flex items-center justify-center transition-all duration-300 active:scale-95 hover:scale-105 cursor-pointer shrink-0 ${
                   soundPlaying
-                    ? 'border-cyan-400 text-cyan-400 bg-cyan-950/40 shadow-[0_0_12px_rgba(0,240,255,0.4)]'
+                    ? isLight
+                      ? 'border-sky-700 text-sky-700 bg-sky-100/60'
+                      : 'border-cyan-400 text-cyan-400 bg-cyan-950/40 shadow-[0_0_12px_rgba(0,240,255,0.4)]'
                     : isLight
                     ? 'border-slate-300 text-slate-600 bg-slate-100 hover:border-slate-400'
                     : 'border-slate-800 text-slate-400 bg-slate-900/60 hover:border-slate-600'
@@ -277,7 +279,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 title={soundPlaying ? '音效開啟 (Audio Active)' : '音效關閉 (Audio Muted)'}
               >
                 {soundPlaying ? (
-                  <Volume2 size={14} className="animate-pulse text-cyan-400 sm:w-[15px] sm:h-[15px]" />
+                  <Volume2 size={14} className={`animate-pulse sm:w-[15px] sm:h-[15px] ${isLight ? 'text-sky-700' : 'text-cyan-400'}`} />
                 ) : (
                   <VolumeX size={14} className="sm:w-[15px] sm:h-[15px]" />
                 )}
@@ -292,7 +294,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     boxShadow: isLight ? '0 10px 25px rgba(0,0,0,0.1)' : '0 10px 30px rgba(0,0,0,0.8), 0 0 15px rgba(0,240,255,0.15)',
                   }}
                 >
-                  <Volume2 size={14} className="text-cyan-400 shrink-0" />
+                  <Volume2 size={14} className={`shrink-0 ${isLight ? 'text-sky-700' : 'text-cyan-400'}`} />
                   <input
                     type="range"
                     min="0"

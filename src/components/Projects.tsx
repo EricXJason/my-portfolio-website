@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
@@ -115,6 +115,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
   };
   const [filter, setFilter] = useState('featured');
   const [showAllProjects, setShowAllProjects] = useState(false);
+  // Ref to the collapse button container — used to keep scroll position on collapse
+  const collapseButtonRef = useRef<HTMLDivElement | null>(null);
 
   // Full Project Detail Lightbox Modal State
   const [selectedProjectModal, setSelectedProjectModal] = useState<ProjectItem | null>(null);
@@ -180,7 +182,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
   ];
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
-  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+  const cyanCol = isLight ? '#0369a1' : '#00f0ff';
 
   const headerRef = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const gridRef   = useScrollReveal(0.05) as React.RefObject<HTMLDivElement>;
@@ -641,20 +643,26 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         )}
 
         {filter === 'all' && (
-          <div className="text-center mt-12 mb-4 relative z-10" id="expand-button-container">
+          <div ref={collapseButtonRef} className="text-center mt-12 mb-4 relative z-10" id="expand-button-container">
             <button
               onClick={() => {
                 if (!showAllProjects) {
                   setShowAllProjects(true);
                 } else {
+                  // Scroll to the collapse button itself (not section top)
+                  // so the user stays near where they clicked
                   setShowAllProjects(false);
-                  const element = document.getElementById('projects');
-                  if (element) {
-                    const headerOffset = 100;
-                    const elementPosition = element.getBoundingClientRect().top;
-                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-                  }
+                  requestAnimationFrame(() => {
+                    const el = collapseButtonRef.current;
+                    if (el) {
+                      const rect = el.getBoundingClientRect();
+                      const headerOffset = 120;
+                      window.scrollTo({
+                        top: window.scrollY + rect.top - headerOffset,
+                        behavior: 'smooth',
+                      });
+                    }
+                  });
                 }
               }}
               className="px-8 sm:px-10 py-3.5 border font-hud font-bold text-xs sm:text-sm uppercase tracking-widest cyber-cut-corner transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg inline-flex items-center gap-2.5"

@@ -1,4 +1,4 @@
-# Logs
+# ── Logs ──────────────────────────────────────────────────────────────────────
 logs
 *.log
 npm-debug.log*
@@ -7,24 +7,27 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# ── Build outputs ─────────────────────────────────────────────────────────────
 node_modules
 dist
 dist-ssr
-*.local
 
-# Editor directories and files
+# ── Local secrets & env ───────────────────────────────────────────────────────
+*.local
+.env
+.env.*
+
+# ── macOS metadata ────────────────────────────────────────────────────────────
+.DS_Store
+**/.DS_Store
+._*
+
+# ── Editor & IDE ──────────────────────────────────────────────────────────────
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
-**/.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-# Dynamic Documentation & Checklist Git Isolation
-docs/check-list.md
-docs/check-lists/
-

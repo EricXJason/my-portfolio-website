@@ -92,8 +92,8 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
               }`}
               style={{
                 backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.95)',
-                borderColor: isActive ? (isLight ? '#0284c7' : '#00f0ff') : (isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.15)'),
-                color: isActive ? (isLight ? '#0284c7' : '#00f0ff') : (isLight ? '#334155' : '#cbd5e1'),
+                borderColor: isActive ? (isLight ? '#0369a1' : '#00f0ff') : (isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.15)'),
+                color: isActive ? (isLight ? '#0369a1' : '#00f0ff') : (isLight ? '#334155' : '#cbd5e1'),
                 boxShadow: isActive
                   ? (isLight ? '0 2px 10px rgba(2, 132, 199, 0.18)' : '0 0 10px rgba(0, 240, 255, 0.25)')
                   : (isLight ? '0 2px 8px rgba(0, 0, 0, 0.06)' : 'none'),
@@ -102,29 +102,21 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
               {t(section.labelKey)}
             </span>
 
-            {/* Tactical Marker Dot (Crisp Precision Geometric Diamond) */}
-            <div className="relative flex items-center justify-center w-5 h-5">
-              <div
-                className={`transition-all duration-300 rotate-45 ${
-                  isActive
-                    ? 'w-3 h-3 scale-110'
-                    : 'w-2 h-2 group-hover:scale-125'
-                }`}
-                style={{
-                  backgroundColor: isActive
-                    ? (isLight ? '#0284c7' : '#00f0ff')
-                    : (isLight ? '#ffffff' : '#080e1a'),
-                  borderWidth: isActive ? '2px' : '1.5px',
-                  borderStyle: 'solid',
-                  borderColor: isActive
-                    ? (isLight ? '#ffffff' : '#e0f2fe')
-                    : (isLight ? '#64748b' : 'rgba(0, 240, 255, 0.45)'),
-                  boxShadow: isActive
-                    ? (isLight ? '0 0 10px rgba(2, 132, 199, 0.55), 0 2px 5px rgba(0, 0, 0, 0.2)' : '0 0 14px rgba(0, 240, 255, 0.85)')
-                    : (isLight ? '0 1px 3px rgba(0, 0, 0, 0.1)' : '0 0 4px rgba(0, 240, 255, 0.2)'),
-                }}
-              />
-            </div>
+            {/* Indicator Dot */}
+            <div
+              className={`w-2.5 h-2.5 cyber-cut-sm border transition-all duration-300 ${
+                isActive
+                  ? 'scale-125'
+                  : 'opacity-40 group-hover:opacity-100 group-hover:scale-110'
+              }`}
+              style={{
+                backgroundColor: isActive ? (isLight ? '#0369a1' : '#00f0ff') : (isLight ? '#94a3b8' : 'rgba(255, 255, 255, 0.3)'),
+                borderColor: isActive ? (isLight ? '#0369a1' : '#00f0ff') : (isLight ? '#64748b' : 'rgba(255, 255, 255, 0.5)'),
+                boxShadow: isActive
+                  ? (isLight ? '0 0 8px rgba(2, 132, 199, 0.5)' : '0 0 8px #00f0ff')
+                  : 'none',
+              }}
+            />
           </a>
         );
       })}

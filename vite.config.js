@@ -17,23 +17,49 @@ export default defineConfig({
   ],
   base: "./",
   build: {
+    // Target modern browsers only — eliminates unnecessary polyfills
+    target: "esnext",
+    // Vite 8 uses oxc (native Rust minifier) — no esbuild dependency needed
+    minify: true,
     cssMinify: true,
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 800,
+    chunkSizeWarningLimit: 600,
     modulePreload: {
       polyfill: false,
     },
     rollupOptions: {
       output: {
+        // Fine-grained manual chunks: keeps vendor code separate from app code
+        // and splits the heaviest sections into their own async chunks
         manualChunks(id) {
+          // ── Vendor: React runtime ────────────────────────────────────────
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/")) {
+            return "vendor-react";
+          }
+          // ── Vendor: Lucide icons ────────────────────────────────────────
+          if (id.includes("node_modules/lucide-react")) {
+            return "vendor-lucide";
+          }
+          // ── Vendor: remaining node_modules ─────────────────────────────
           if (id.includes("node_modules")) {
-            if (id.includes("react") || id.includes("react-dom")) {
-              return "vendor-react";
-            }
-            if (id.includes("lucide-react")) {
-              return "vendor-lucide";
-            }
             return "vendor";
+          }
+          // ── App: heavy below-fold sections (lazy-loaded in MainSiteContent) ─
+          if (id.includes("/components/ArtGallery")) {
+            return "section-gallery";
+          }
+          if (id.includes("/components/Education")) {
+            return "section-education";
+          }
+          if (id.includes("/components/Certifications")) {
+            return "section-certifications";
+          }
+          if (id.includes("/components/Projects")) {
+            return "section-projects";
+          }
+          // ── App: decorative background (desktop-only, large file) ───────
+          if (id.includes("/components/FullStackCodeStreamBackground")) {
+            return "bg-code-stream";
           }
         },
       },

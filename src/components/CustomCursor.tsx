@@ -1,50 +1,75 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
+// Zero-re-render custom cursor — all state tracked via refs & direct DOM manipulation.
+// mousemove / pointermove events NEVER trigger React reconciliation.
 export const CustomCursor: React.FC = () => {
   const { theme } = useTheme();
   const isLight = theme === 'light';
 
-  const pointerRef = useRef<HTMLDivElement | null>(null);
-  const [hasMoved, setHasMoved] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
-  const [isMouseDown, setIsMouseDown] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
+  const wrapperRef   = useRef<HTMLDivElement | null>(null);
+  const svgFillRef   = useRef<SVGPathElement | null>(null);
+  // Mutable ref bag — avoids any setState on hot paths
+  const stateRef = useRef({
+    hasMoved:    false,
+    isHovered:   false,
+    isMouseDown: false,
+    isHidden:    false,
+  });
+
+  // Derive colours from current theme (re-evaluated when theme changes via layout effect)
+  const cyanColor    = isLight ? '#0284c7' : '#00f0ff';
+  const defaultFill  = isLight ? '#ffffff'  : '#070d19';
 
   useEffect(() => {
-    // Only activate on devices with fine pointer (mouse / trackpad)
     if (typeof window === 'undefined') return;
     const isFinePointer = window.matchMedia('(pointer: fine)').matches;
     if (!isFinePointer) return;
 
     document.documentElement.classList.add('custom-cursor-active');
 
-    const pointer = pointerRef.current;
+    const wrapper = wrapperRef.current;
+    const fill    = svgFillRef.current;
+    if (!wrapper || !fill) return;
 
-    const updatePosition = (x: number, y: number, target: HTMLElement | null) => {
-      if (pointer) {
-        pointer.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    // ── Direct DOM helpers (zero React re-render) ──────────────────────────
+    const applyVisibility = () => {
+      const s = stateRef.current;
+      wrapper.style.opacity = (!s.hasMoved || s.isHidden) ? '0' : '1';
+    };
+
+    const applyScale = () => {
+      const s = stateRef.current;
+      const scale = s.isMouseDown ? 0.90 : s.isHovered ? 1.10 : 1.00;
+      if (wrapper.firstElementChild) {
+        (wrapper.firstElementChild as HTMLElement).style.transform = `scale(${scale})`;
       }
-      setHasMoved(true);
+    };
 
-      // Check if mouse is over iframe or body has hide class
+    const applyFill = () => {
+      const s = stateRef.current;
+      fill.setAttribute('fill', s.isHovered ? cyanColor : defaultFill);
+    };
+
+    // ── Core position update (called in pointermove — already on rAF boundary) ─
+    const updatePosition = (x: number, y: number, target: HTMLElement | null) => {
+      wrapper.style.transform = `translate3d(${x}px,${y}px,0)`;
+
+      const s = stateRef.current;
+      if (!s.hasMoved) { s.hasMoved = true; }
+
       const isOverIframe =
         target &&
         (target.tagName === 'IFRAME' ||
           target.closest('iframe') ||
           target.closest('.iframe-container') ||
           target.closest('.modal-iframe-area'));
-
       const isBodyHidden = document.body.classList.contains('hide-custom-cursor');
 
-      if (isOverIframe || isBodyHidden) {
-        setIsHidden(true);
-      } else {
-        setIsHidden(false);
-      }
+      const newHidden = !!(isOverIframe || isBodyHidden);
+      if (newHidden !== s.isHidden) { s.isHidden = newHidden; applyVisibility(); }
 
-      // Check if target is interactive
-      if (
+      const newHovered = !!(
         target &&
         (target.tagName === 'BUTTON' ||
           target.tagName === 'A' ||
@@ -55,96 +80,104 @@ export const CustomCursor: React.FC = () => {
           target.closest('a') ||
           target.classList?.contains('cursor-pointer') ||
           target.getAttribute('role') === 'button')
-      ) {
-        setIsHovered(true);
-      } else {
-        setIsHovered(false);
-      }
+      );
+      if (newHovered !== s.isHovered) { s.isHovered = newHovered; applyFill(); applyScale(); }
+
+      applyVisibility();
     };
 
-    const handlePointerMove = (e: PointerEvent) => {
+    // ── Event handlers ──────────────────────────────────────────────────────
+    const onPointerMove = (e: PointerEvent) =>
       updatePosition(e.clientX, e.clientY, e.target as HTMLElement | null);
-    };
 
-    const handleMouseMove = (e: MouseEvent) => {
+    const onMouseMove = (e: MouseEvent) =>
       updatePosition(e.clientX, e.clientY, e.target as HTMLElement | null);
+
+    const onDown = () => {
+      stateRef.current.isMouseDown = true;
+      applyScale();
+    };
+    const onUp = () => {
+      stateRef.current.isMouseDown = false;
+      applyScale();
     };
 
-    const handleMouseDown = () => setIsMouseDown(true);
-    const handleMouseUp = () => setIsMouseDown(false);
-
-    const handleWindowLeave = (e: MouseEvent) => {
+    const onWindowLeave = (e: MouseEvent) => {
       if (
-        e.clientY <= 0 ||
-        e.clientX <= 0 ||
+        e.clientY <= 0 || e.clientX <= 0 ||
         e.clientX >= window.innerWidth ||
         e.clientY >= window.innerHeight ||
         !e.relatedTarget
       ) {
-        setIsHidden(true);
+        stateRef.current.isHidden = true;
+        applyVisibility();
       }
     };
-
-    const handleWindowEnter = () => {
-      setIsHidden(false);
+    const onWindowEnter = () => {
+      stateRef.current.isHidden = false;
+      applyVisibility();
     };
-
-    const handleVisibility = () => {
+    const onVisibility = () => {
       if (document.visibilityState === 'visible') {
-        setIsHidden(false);
+        stateRef.current.isHidden = false;
+        applyVisibility();
       }
     };
 
-    window.addEventListener('pointermove', handlePointerMove, { passive: true });
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    window.addEventListener('pointerdown', handleMouseDown, { passive: true });
-    window.addEventListener('pointerup', handleMouseUp, { passive: true });
-    window.addEventListener('mousedown', handleMouseDown, { passive: true });
-    window.addEventListener('mouseup', handleMouseUp, { passive: true });
-    window.addEventListener('mouseleave', handleWindowLeave, { passive: true });
-    window.addEventListener('mouseenter', handleWindowEnter, { passive: true });
-    window.addEventListener('focus', handleWindowEnter, { passive: true });
-    document.addEventListener('visibilitychange', handleVisibility, { passive: true });
+    window.addEventListener('pointermove',    onPointerMove,  { passive: true });
+    window.addEventListener('mousemove',      onMouseMove,    { passive: true });
+    window.addEventListener('pointerdown',    onDown,         { passive: true });
+    window.addEventListener('pointerup',      onUp,           { passive: true });
+    window.addEventListener('mousedown',      onDown,         { passive: true });
+    window.addEventListener('mouseup',        onUp,           { passive: true });
+    window.addEventListener('mouseleave',     onWindowLeave,  { passive: true });
+    window.addEventListener('mouseenter',     onWindowEnter,  { passive: true });
+    window.addEventListener('focus',          onWindowEnter,  { passive: true });
+    document.addEventListener('visibilitychange', onVisibility, { passive: true });
 
     return () => {
       document.documentElement.classList.remove('custom-cursor-active');
-      window.removeEventListener('pointermove', handlePointerMove);
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('pointerdown', handleMouseDown);
-      window.removeEventListener('pointerup', handleMouseUp);
-      window.removeEventListener('mousedown', handleMouseDown);
-      window.removeEventListener('mouseup', handleMouseUp);
-      window.removeEventListener('mouseleave', handleWindowLeave);
-      window.removeEventListener('mouseenter', handleWindowEnter);
-      window.removeEventListener('focus', handleWindowEnter);
-      document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('pointermove',    onPointerMove);
+      window.removeEventListener('mousemove',      onMouseMove);
+      window.removeEventListener('pointerdown',    onDown);
+      window.removeEventListener('pointerup',      onUp);
+      window.removeEventListener('mousedown',      onDown);
+      window.removeEventListener('mouseup',        onUp);
+      window.removeEventListener('mouseleave',     onWindowLeave);
+      window.removeEventListener('mouseenter',     onWindowEnter);
+      window.removeEventListener('focus',          onWindowEnter);
+      document.removeEventListener('visibilitychange', onVisibility);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const cyanColor = isLight ? '#0284c7' : '#00f0ff';
-  const currentFill = isHovered ? cyanColor : (isLight ? '#ffffff' : '#070d19');
+  // Update colour attrs synchronously when theme toggles (not on hot path)
+  useEffect(() => {
+    const fill = svgFillRef.current;
+    if (!fill) return;
+    fill.setAttribute('stroke', cyanColor);
+    if (!stateRef.current.isHovered) fill.setAttribute('fill', defaultFill);
+  }, [cyanColor, defaultFill]);
 
   return (
     <div
-      ref={pointerRef}
+      ref={wrapperRef}
       aria-hidden="true"
-      className={`pointer-events-none fixed top-0 left-0 z-[99999999] will-change-transform transition-opacity duration-100 ${
-        !hasMoved || isHidden ? 'opacity-0' : 'opacity-100'
-      }`}
+      className="pointer-events-none fixed top-0 left-0 z-[99999999] will-change-transform opacity-0"
+      style={{ transition: 'opacity 100ms' }}
     >
       <div
-        className={`relative flex items-center justify-center transition-transform duration-100 ${
-          isMouseDown ? 'scale-90' : isHovered ? 'scale-110' : 'scale-100'
-        }`}
+        className="relative flex items-center justify-center"
+        style={{ transition: 'transform 100ms' }}
       >
-        {/* Standard Arrow Pointer with Cyan Laser Glow & Blue Fill on Hover */}
         <svg
-          className="w-6 h-6 filter drop-shadow-[0_0_8px_rgba(0,240,255,0.75)] transition-colors duration-100"
+          className="w-6 h-6 filter drop-shadow-[0_0_8px_rgba(0,240,255,0.75)]"
           viewBox="0 0 24 24"
         >
           <path
+            ref={svgFillRef}
             d="M3 3l7 18 3-7 7-3L3 3z"
-            fill={currentFill}
+            fill={defaultFill}
             stroke={cyanColor}
             strokeWidth="2.2"
             strokeLinejoin="round"

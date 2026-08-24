@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
 import { About } from './About';
 import { Skills } from './Skills';
 import { Projects } from './Projects';
-import { Certifications } from './Certifications';
-import { Education } from './Education';
-import { ArtGallery } from './ArtGallery';
 import { Footer } from './Footer';
 import { BackToTop } from './BackToTop';
 import { SideNav } from './SideNav';
@@ -16,6 +13,11 @@ import { CyberParticles } from './CyberParticles';
 import { FullStackCodeStreamBackground } from './FullStackCodeStreamBackground';
 import { GlobalAmbientNeon } from './GlobalAmbientNeon';
 import { YoutubeModal } from './YoutubeModal';
+
+// Below-the-fold sections: lazy-loaded to reduce initial JS parse time
+const Certifications = lazy(() => import('./Certifications'));
+const Education      = lazy(() => import('./Education'));
+const ArtGallery     = lazy(() => import('./ArtGallery'));
 
 interface MainSiteContentProps {
   siteEntered: boolean;
@@ -93,13 +95,22 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
         </div>
 
         <main className="relative">
+          {/* Above-fold: eager loaded */}
           <Hero soundPlaying={soundPlaying} />
           <About />
           <Skills />
           <Projects onOpenYoutube={handleOpenYoutube} />
-          <Certifications />
-          <Education />
-          <ArtGallery />
+
+          {/* Below-fold: lazy loaded (Suspense with null fallback — sections reveal via IntersectionObserver anyway) */}
+          <Suspense fallback={null}>
+            <Certifications />
+          </Suspense>
+          <Suspense fallback={null}>
+            <Education />
+          </Suspense>
+          <Suspense fallback={null}>
+            <ArtGallery />
+          </Suspense>
         </main>
 
         <Footer />

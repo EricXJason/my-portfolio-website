@@ -23,7 +23,7 @@ export const ScrollProgress: React.FC<ScrollProgressProps> = ({ siteEntered = tr
   return (
     /* Top Horizontal Reading Progress Line — Positioned strictly below Navbar (top-16 sm:top-20) */
     <div
-      className={`fixed top-16 sm:top-20 left-0 h-[2px] bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 z-40 transition-opacity duration-700 shadow-[0_2px_8px_rgba(0,240,255,0.5)] pointer-events-none ${
+      className={`fixed top-16 sm:top-20 left-0 h-[2px] bg-gradient-to-r from-sky-500 via-blue-600 to-purple-600 dark:from-cyan-400 dark:via-blue-500 dark:to-purple-600 z-40 transition-opacity duration-700 shadow-sm pointer-events-none ${
         siteEntered ? 'opacity-100' : 'opacity-0'
       }`}
       style={{

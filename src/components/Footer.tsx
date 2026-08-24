@@ -10,8 +10,8 @@ interface TechBadge {
 }
 
 const techBadges: TechBadge[] = [
-  { name: 'HTML5',            iconName: 'html' },
-  { name: 'CSS3',             iconName: 'css' },
+  { name: 'HTML',             iconName: 'html' },
+  { name: 'CSS',              iconName: 'css' },
   { name: 'Tailwind CSS',     iconName: 'tailwind' },
   { name: 'TypeScript',       iconName: 'typescript' },
   { name: 'React',            iconName: 'react' },

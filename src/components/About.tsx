@@ -42,7 +42,7 @@ export const About: React.FC = () => {
   const driveLinks = dataMap.driveLinks;
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
-  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+  const cyanCol = isLight ? '#0369a1' : '#00f0ff';
 
   return (
     <section id="about" className="py-20 relative select-text">
@@ -149,9 +149,9 @@ export const About: React.FC = () => {
 
                   // Distinct color hierarchy by sequence/importance
                   const cardAccents = [
-                    { border: isLight ? '#0284c7' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.1)', text: isLight ? '#0369a1' : '#00f0ff' },
-                    { border: isLight ? '#7c3aed' : '#a855f7', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.1)', text: isLight ? '#6b21a8' : '#c084fc' },
-                    { border: isLight ? '#d97706' : '#f59e0b', bg: isLight ? '#fef3c7' : 'rgba(245,158,11,0.1)', text: isLight ? '#92400e' : '#fbbf24' },
+                    { border: isLight ? '#7dd3fc' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.1)', text: isLight ? '#0369a1' : '#00f0ff' },
+                    { border: isLight ? '#c084fc' : '#a855f7', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.1)', text: isLight ? '#6d28d9' : '#c084fc' },
+                    { border: isLight ? '#fcd34d' : '#f59e0b', bg: isLight ? '#fef3c7' : 'rgba(245,158,11,0.1)', text: isLight ? '#92400e' : '#fbbf24' },
                   ];
                   const accent = cardAccents[idx % cardAccents.length];
 

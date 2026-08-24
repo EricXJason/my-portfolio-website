@@ -37,7 +37,7 @@ export const Certifications: React.FC = () => {
   };
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
-  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+  const cyanCol = isLight ? '#0369a1' : '#00f0ff';
 
   const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const containerRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
@@ -45,15 +45,15 @@ export const Certifications: React.FC = () => {
   // Distinct color palettes for certification groups to highlight structural hierarchy & order
   const groupAccents = [
     {
-      main: isLight ? '#0284c7' : '#00f0ff',
+      main: isLight ? '#0369a1' : '#00f0ff',
       bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.12)',
-      border: isLight ? '#38bdf8' : 'rgba(0, 240, 255, 0.35)',
+      border: isLight ? '#7dd3fc' : 'rgba(0, 240, 255, 0.35)',
       itemBorder: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)',
       badge: lang === 'zh' ? '國家級技能檢定' : 'NATIONAL LICENSES',
       Icon: ShieldCheck,
     },
     {
-      main: isLight ? '#7c3aed' : '#c084fc',
+      main: isLight ? '#6d28d9' : '#c084fc',
       bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.12)',
       border: isLight ? '#c084fc' : 'rgba(168, 85, 247, 0.35)',
       itemBorder: isLight ? '#e9d5ff' : 'rgba(168, 85, 247, 0.25)',

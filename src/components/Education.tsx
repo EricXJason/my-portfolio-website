@@ -92,7 +92,7 @@ export const Education: React.FC = () => {
   const [showAllTheses, setShowAllTheses] = useState(false);
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
-  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+  const cyanCol = isLight ? '#0369a1' : '#00f0ff';
 
   const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const degreesRef   = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
@@ -103,11 +103,11 @@ export const Education: React.FC = () => {
   // Strict Sequential Palette Accent Loop for item ordering distinction: 藍 -> 紫 -> 綠 -> 黃
   const sequenceAccents = [
     // 1: 藍 (Blue / Cyan)
-    { main: isLight ? '#0284c7' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.12)', border: isLight ? '#38bdf8' : '#00f0ff' },
+    { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.12)', border: isLight ? '#7dd3fc' : '#00f0ff' },
     // 2: 紫 (Purple / Violet)
-    { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.12)', border: isLight ? '#c084fc' : '#a855f7' },
+    { main: isLight ? '#6d28d9' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.12)', border: isLight ? '#c084fc' : '#a855f7' },
     // 3: 綠 (Green / Emerald)
-    { main: isLight ? '#059669' : '#34d399', bg: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)', border: isLight ? '#34d399' : '#10b981' },
+    { main: isLight ? '#047857' : '#34d399', bg: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)', border: isLight ? '#34d399' : '#10b981' },
     // 4: 黃 (Yellow / Amber Gold)
     { main: isLight ? '#b45309' : '#fbbf24', bg: isLight ? '#fffbeb' : 'rgba(245, 158, 11, 0.12)', border: isLight ? '#fcd34d' : '#f59e0b' },
   ];
@@ -123,7 +123,7 @@ export const Education: React.FC = () => {
             className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
             style={{ color: isLight ? '#0f172a' : '#ffffff' }}
           >
-            <Briefcase size={34} className="text-cyan-400 shrink-0" />
+            <Briefcase size={34} className="shrink-0" style={{ color: isLight ? '#0369a1' : '#22d3ee' }} />
             <span>{t('exp_title')}</span>
           </h2>
           <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>

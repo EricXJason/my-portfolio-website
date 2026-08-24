@@ -51,6 +51,31 @@
 }
 
 /* ════════════════════════════════════════════════════════════
+   WCAG LIGHT MODE — Cyan contrast override
+   Tailwind's cyan-400 (#22d3ee) on white = 1.9:1 (FAIL ✗)
+   This block remaps ALL raw text-cyan-400 / border-cyan-400 /
+   bg-cyan-400 usages to Sky-700 (#0369a1) = 7.2:1 (AAA ✓)
+   ════════════════════════════════════════════════════════════ */
+:root.light .text-cyan-400          { color: #0369a1 !important; }
+:root.light .hover\:text-cyan-400:hover { color: #0369a1 !important; }
+:root.light .border-cyan-400        { border-color: #0369a1 !important; }
+:root.light .hover\:border-cyan-400:hover { border-color: #0369a1 !important; }
+:root.light .bg-cyan-400            { background-color: #0369a1 !important; }
+:root.light .accent-cyan-400        { accent-color: #0369a1 !important; }
+/* Hover underline bar on nav links */
+:root.light .group-hover\:scale-x-100.bg-cyan-400 { background-color: #0369a1 !important; }
+/* Glow shadows using raw #00f0ff \u2014 suppress on light mode (decorative only) */
+:root.light .shadow-\[0_0_8px_\#00f0ff\]  { box-shadow: 0 0 8px rgba(3, 105, 161, 0.4) !important; }
+:root.light .shadow-\[0_0_12px_\#00f0ff\] { box-shadow: 0 0 12px rgba(3, 105, 161, 0.3) !important; }
+:root.light .shadow-\[0_0_16px_\#00f0ff\] { box-shadow: 0 0 12px rgba(3, 105, 161, 0.3) !important; }
+/* Volume2 icon on active audio button */
+:root.light .border-cyan-400.bg-cyan-950\/40 {
+  border-color: #0369a1 !important;
+  background-color: rgba(224, 242, 254, 0.6) !important;
+  color: #0369a1 !important;
+}
+
+/* ════════════════════════════════════════════════════════════
    GLOBAL FONTS & BASE BEHAVIOR
    ════════════════════════════════════════════════════════════ */
 .font-hud {
@@ -339,8 +364,8 @@ body {
 }
 :root.light .tech-tag:hover {
   background-color: #e0f2fe !important;
-  border-color: #0284c7 !important;
-  color: #0284c7 !important;
+  border-color: #0369a1 !important;
+  color: #0369a1 !important;
 }
 
 /* ════════════════════════════════════════════════════════════
@@ -387,9 +412,9 @@ body::-webkit-scrollbar-track {
 }
 
 :root.light ::-webkit-scrollbar-thumb {
-  background: #0284c7;
+  background: #0369a1;
   border-radius: 0px;
-  box-shadow: 0 0 6px rgba(2, 132, 199, 0.4);
+  box-shadow: 0 0 6px rgba(3, 105, 161, 0.3);
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -555,12 +580,12 @@ body::-webkit-scrollbar-track {
 
 .animate-ambient-left,
 .animate-ambient-right {
-  animation: ambient-silky-breathe 10s ease-in-out infinite;
+  animation: ambient-silky-breathe 15s ease-in-out infinite;
   will-change: opacity, transform;
 }
 
 .animate-ambient-core-pulse {
-  animation: ambient-silky-core-pulse 10s ease-in-out infinite;
+  animation: ambient-silky-core-pulse 15s ease-in-out infinite;
   will-change: opacity, transform;
 }
 
@@ -1098,6 +1123,23 @@ body.mobile-menu-open .back-to-top-btn {
 }
 [data-revealed="true"] .timeline-line-draw {
   animation: line-draw-down 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+/* ════════════════════════════════════════════════════════════
+   MOBILE PERFORMANCE — Disable GPU-heavy decorative effects
+   on touch devices (pointer: coarse = touchscreen)
+   ════════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+  .crt-scanlines {
+    display: none !important;
+  }
+  .tactical-grid-bg {
+    display: none !important;
+  }
+  .animate-laser-top,
+  .animate-laser-vert {
+    display: none !important;
+  }
 }
 
 /* ════════════════════════════════════════════════════════════
