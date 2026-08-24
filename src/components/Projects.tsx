@@ -685,7 +685,12 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         {/* PROJECT FULL DETAIL LIGHTBOX MODAL (FOR FEATURED PROJECTS) */}
         {selectedProjectModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 lg:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn"
+            className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 lg:p-8 animate-fadeIn select-none"
+            style={{
+              backgroundColor: isLight ? 'rgba(248, 250, 252, 0.50)' : 'rgba(3, 7, 18, 0.65)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
+            }}
             onClick={() => setSelectedProjectModal(null)}
           >
             <div

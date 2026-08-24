@@ -429,13 +429,16 @@ export const ArtGallery: React.FC = () => {
         <div
           className="fixed inset-0 z-[99999] flex items-center justify-center p-4 select-none"
           style={{
-            backgroundColor: isLight ? 'rgba(15,23,42,0.85)' : 'rgba(3,7,18,0.92)',
-            backdropFilter: 'blur(20px)',
+            backgroundColor: isLight ? 'rgba(248, 250, 252, 0.50)' : 'rgba(3, 7, 18, 0.65)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
           }}
           onClick={handleCloseModal}
         >
           <div
-            className="relative max-w-5xl w-full border cyber-cut-corner p-4 space-y-4 shadow-2xl hud-corner-brackets"
+            className={`relative border cyber-cut-corner p-4 space-y-3.5 shadow-2xl hud-corner-brackets flex flex-col items-center mx-auto transition-all duration-300 ${
+              activeImage.embedUrl ? 'max-w-5xl w-full' : 'w-auto max-w-[95vw] sm:max-w-[90vw]'
+            }`}
             style={{
               backgroundColor: isLight ? '#ffffff' : '#080e1a',
               borderColor: borderCol,
@@ -443,9 +446,7 @@ export const ArtGallery: React.FC = () => {
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Top Bar */}
-            <div className="flex items-center justify-between border-b pb-2" style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.2)' }}>
-              <div className="flex items-center gap-2" />
-
+            <div className="w-full flex items-center justify-end border-b pb-2" style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.2)' }}>
               <button
                 onClick={handleCloseModal}
                 className="p-1.5 border cyber-cut-sm flex items-center justify-center transition-all cursor-pointer hover:scale-105"
@@ -460,39 +461,48 @@ export const ArtGallery: React.FC = () => {
               </button>
             </div>
 
-            {/* Display 3D iFrame Viewer if embedUrl exists, else High Res Image */}
-            <div
-              className={`relative flex items-center justify-center overflow-hidden border bg-slate-950 ${
-                activeImage.embedUrl ? 'w-full aspect-video shadow-2xl' : 'max-h-[72vh] min-h-[300px] sm:min-h-[480px]'
-              }`}
-              style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}
-            >
+            {/* Display 3D iFrame Viewer if embedUrl exists, else High Res Image hugging natural aspect ratio */}
+            <div className="relative flex items-center justify-center overflow-hidden w-full">
               {activeImage.embedUrl ? (
-                <iframe
-                  src={activeImage.embedUrl}
-                  title={`3D Model Viewer (${activeImage.id})`}
-                  className="w-full h-full border-0 absolute inset-0"
-                  allow="autoplay; fullscreen; xr-spatial-tracking"
-                  loading="lazy"
-                />
+                <div
+                  className="w-full aspect-video shadow-2xl relative border cyber-cut-sm overflow-hidden"
+                  style={{
+                    backgroundColor: isLight ? '#f1f5f9' : '#030712',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)',
+                  }}
+                >
+                  <iframe
+                    src={activeImage.embedUrl}
+                    title={`3D Model Viewer (${activeImage.id})`}
+                    className="w-full h-full border-0 absolute inset-0"
+                    allow="autoplay; fullscreen; xr-spatial-tracking"
+                    loading="lazy"
+                  />
+                </div>
               ) : (
-                <img
-                  src={getAssetUrl(activeImage.img)}
-                  alt={`許哲誠美術作品預覽 (${activeImage.id})`}
-                  loading="eager"
-                  decoding="async"
-                  width="800"
-                  height="800"
-                  className="max-h-[72vh] w-auto object-contain"
-                />
+                <div
+                  className="relative inline-flex items-center justify-center overflow-hidden shadow-md border cyber-cut-sm"
+                  style={{
+                    backgroundColor: isLight ? '#f8fafc' : '#080e1a',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)',
+                  }}
+                >
+                  <img
+                    src={getAssetUrl(activeImage.img)}
+                    alt={`許哲誠美術作品預覽 (${activeImage.id})`}
+                    loading="eager"
+                    decoding="async"
+                    className="max-h-[66vh] sm:max-h-[72vh] max-w-[85vw] w-auto object-contain block"
+                  />
+                </div>
               )}
             </div>
 
             {/* Modal Bottom Controls */}
-            <div className="flex items-center justify-between font-tech text-xs font-bold pt-1">
+            <div className="w-full flex items-center justify-between font-tech text-xs font-bold pt-1 gap-2">
               <button
                 onClick={handlePrevImage}
-                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shrink-0"
                 style={{
                   backgroundColor: isLight ? '#f1f5f9' : 'rgba(30, 41, 59, 0.8)',
                   borderColor: borderCol,
@@ -508,7 +518,7 @@ export const ArtGallery: React.FC = () => {
                 download
                 target="_blank"
                 rel="noreferrer"
-                className="flex items-center gap-1.5 px-4 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shadow-xs"
+                className="flex items-center gap-1.5 px-4 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0"
                 style={{
                   backgroundColor: isLight ? '#fffbeb' : 'rgba(245, 158, 11, 0.15)',
                   borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.4)',
@@ -521,7 +531,7 @@ export const ArtGallery: React.FC = () => {
 
               <button
                 onClick={handleNextImage}
-                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shrink-0"
                 style={{
                   backgroundColor: isLight ? '#f1f5f9' : 'rgba(30, 41, 59, 0.8)',
                   borderColor: borderCol,

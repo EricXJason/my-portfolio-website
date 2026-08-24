@@ -47,9 +47,11 @@ export const YoutubeModal: React.FC<YoutubeModalProps> = ({ isOpen, onClose, vid
     <div
       ref={modalRef}
       tabIndex={-1}
-      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 backdrop-blur-xl outline-hidden select-none"
+      className="fixed inset-0 z-[99999] flex items-center justify-center p-4 outline-hidden select-none"
       style={{
-        backgroundColor: isLight ? 'rgba(15,23,42,0.75)' : 'rgba(3,7,18,0.92)',
+        backgroundColor: isLight ? 'rgba(248, 250, 252, 0.50)' : 'rgba(3, 7, 18, 0.65)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
       }}
       onClick={handleClose}
       role="dialog"
