@@ -423,6 +423,19 @@ body::-webkit-scrollbar-track {
   box-shadow: 0 0 10px rgba(2, 132, 199, 0.7);
 }
 
+/* Modal and touch device scrollbar optimization (Hide persistent scrollbars on mobile < 768px) */
+@media (max-width: 768px) {
+  .modal-scroll-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .modal-scroll-container::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    height: 0px;
+  }
+}
+
 /* ════════════════════════════════════════════════════════════
    DYNAMIC STREAMING CODE ANIMATION (IDE BACKGROUND)
    ════════════════════════════════════════════════════════════ */
@@ -767,6 +780,24 @@ body::-webkit-scrollbar-track {
 
 .animate-hacker-glitch {
   animation: hacker-glitch-pulse 5.8s ease-in-out infinite;
+}
+
+@keyframes cyber-scan-h {
+  0% {
+    top: -2%;
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 102%;
+    opacity: 0.1;
+  }
+}
+.animate-cyber-scan {
+  animation: cyber-scan-h 9.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  animation-delay: 1.8s;
 }
 
 @keyframes cyber-scan-v {

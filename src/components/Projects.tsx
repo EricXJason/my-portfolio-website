@@ -288,7 +288,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           loading="lazy"
                           decoding="async"
                         />
-                        <div className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div
+                          className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          style={{
+                            animationDuration: `${3.8 + ((pIdx * 0.95) % 2.85)}s`,
+                            animationDelay: `${((pIdx * 1.45) % 4.35).toFixed(2)}s`,
+                          }}
+                        />
                       </div>
 
                       {/* Project Title */}
@@ -425,11 +431,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
                     {/* Left Column: Media Preview + Action Buttons */}
                     <div className="lg:col-span-5 space-y-4">
-                      {/* Image Thumbnail — Click opens full Detail Modal */}
+                      {/* Image Thumbnail */}
                       <div
-                        className="relative group overflow-hidden cyber-cut-corner border shadow-md cursor-pointer aspect-video w-full"
+                        className="relative group overflow-hidden cyber-cut-corner border shadow-md aspect-video w-full"
                         style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0,240,255,0.35)' }}
-                        onClick={() => setSelectedProjectModal(project)}
                       >
                         <img
                           src={getAssetUrl(project.image)}
@@ -440,22 +445,28 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           loading="lazy"
                           decoding="async"
                         />
-                        <div className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        <div
+                          className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                          style={{
+                            animationDuration: `${3.6 + ((lIdx * 0.85) % 2.55)}s`,
+                            animationDelay: `${((lIdx * 1.35) % 4.05).toFixed(2)}s`,
+                          }}
+                        />
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2.5 pt-1">
                         {project.ytId && (
                           <button
                             onClick={() => handleWatchVideo(project.ytId!)}
-                            className="flex-1 min-w-[130px] py-2 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-105 shadow-xs"
+                            className="flex-1 min-w-[120px] py-2 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:scale-105 shadow-xs"
                             style={{
                               backgroundColor: isLight ? '#ffe4e6' : 'rgba(225, 29, 72, 0.25)',
                               borderColor: isLight ? '#f43f5e' : '#e11d48',
                               color: isLight ? '#be123c' : '#fda4af',
                             }}
                           >
-                            <TechIcon name="youtube" size={16} className="text-rose-500 shrink-0 fill-current" />
-                            <span>{lang === 'zh' ? '觀看展示影片' : 'WATCH VIDEO'}</span>
+                            <TechIcon name="youtube" size={15} className="text-rose-500 shrink-0 fill-current" />
+                            <span>{lang === 'zh' ? '展示影片' : 'VIDEO'}</span>
                           </button>
                         )}
 
@@ -464,14 +475,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                             href={project.websiteUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex-1 min-w-[120px] py-2.5 px-4 sm:px-5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-xs"
+                            className="flex-1 min-w-[110px] py-2.5 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all hover:scale-105 shadow-xs"
                             style={{
                               backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
                               borderColor: cyanCol,
                               color: isLight ? '#0369a1' : '#00f0ff',
                             }}
                           >
-                            <Globe size={15} className="shrink-0" />
+                            <Globe size={14} className="shrink-0" />
                             <span>{lang === 'zh' ? '前往網站' : 'WEBSITE'}</span>
                           </a>
                         )}
@@ -481,15 +492,15 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                             href={project.githubUrl}
                             target="_blank"
                             rel="noreferrer"
-                            className="flex-1 min-w-[120px] py-2.5 px-4 sm:px-5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-xs"
+                            className="flex-1 min-w-[110px] py-2.5 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all hover:scale-105 shadow-xs"
                             style={{
                               backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.95)',
                               borderColor: isLight ? '#0f172a' : 'rgba(255, 255, 255, 0.35)',
                               color: isLight ? '#0f172a' : '#ffffff',
                             }}
                           >
-                            <TechIcon name="github" size={16} className="shrink-0 fill-current" style={{ color: isLight ? '#0f172a' : '#ffffff' }} />
-                            <span>{lang === 'zh' ? '專案原始碼' : 'SOURCE CODE'}</span>
+                            <TechIcon name="github" size={15} className="shrink-0 fill-current" style={{ color: isLight ? '#0f172a' : '#ffffff' }} />
+                            <span>{lang === 'zh' ? '專案原始碼' : 'SOURCE'}</span>
                           </a>
                         )}
                       </div>
@@ -500,9 +511,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                       <div className="space-y-4 flex-1">
                         <div className="border-b border-slate-700/30 pb-3 space-y-2.5">
                           <h3
-                            className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight cursor-pointer hover:text-cyan-400 transition-colors"
+                            className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight"
                             style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-                            onClick={() => setSelectedProjectModal(project)}
                           >
                             {title}
                           </h3>
@@ -684,199 +694,216 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </div>
         )}
 
-        {/* PROJECT FULL DETAIL LIGHTBOX MODAL */}
+        {/* PROJECT FULL DETAIL LIGHTBOX MODAL (FOR FEATURED PROJECTS) */}
         {selectedProjectModal && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/85 backdrop-blur-md animate-fade-in overflow-y-auto"
+            className="fixed inset-0 z-50 flex items-center justify-center p-2.5 sm:p-5 lg:p-8 bg-black/80 backdrop-blur-sm animate-fadeIn"
             onClick={() => setSelectedProjectModal(null)}
           >
             <div
-              className="relative max-w-3xl w-full border cyber-cut-corner backdrop-blur-2xl p-6 sm:p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-6xl border cyber-cut-corner p-4 sm:p-7 lg:p-8 shadow-2xl transition-all duration-300 max-h-[94vh] sm:max-h-[90vh] lg:max-h-[88vh] overflow-y-auto modal-scroll-container"
               style={{
                 backgroundColor: isLight ? '#ffffff' : '#080e1a',
                 borderColor: cyanCol,
+                boxShadow: isLight
+                  ? '0 20px 60px rgba(15, 23, 42, 0.18), 0 0 0 1px rgba(2, 132, 199, 0.2)'
+                  : '0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 240, 255, 0.25)',
+                transform: 'translateZ(0)',
+                WebkitTransform: 'translateZ(0)',
               }}
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-start justify-between border-b border-slate-700/40 pb-4">
-                <div className="space-y-2 pr-4">
-                  <h3 className="font-hud font-black text-2xl sm:text-3xl uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                    {lang === 'zh' ? selectedProjectModal.title_zh : (selectedProjectModal.title_en || selectedProjectModal.title_zh)}
-                  </h3>
-                  <div className="flex flex-row items-center flex-wrap gap-2.5">
-                    <span
-                      className="px-3 py-0.5 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm w-fit flex items-center gap-1.5"
+              {/* Close Button Top-Right */}
+              <button
+                onClick={() => setSelectedProjectModal(null)}
+                className="absolute top-3 right-3 sm:top-5 sm:right-5 p-1.5 sm:p-2 border cyber-cut-sm hover:scale-105 active:scale-95 transition-all cursor-pointer z-30"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)',
+                  borderColor: borderCol,
+                  color: isLight ? '#0f172a' : '#ffffff',
+                }}
+                aria-label="關閉視窗 (Close Modal)"
+              >
+                <X size={18} className="sm:w-5 sm:h-5" />
+              </button>
+
+              {/* Exact Balanced 2-Column Layout Matching All-Projects Cards */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
+                {/* Left Column: Media Preview + Action Buttons */}
+                <div className="lg:col-span-5 space-y-4">
+                  {/* 16:9 HD Media Preview */}
+                  <div className="aspect-video w-full overflow-hidden cyber-cut-corner border shadow-md relative" style={{ borderColor: borderCol }}>
+                    <img
+                      src={getAssetUrl(selectedProjectModal.image)}
+                      alt={selectedProjectModal.title_zh}
+                      loading="eager"
+                      decoding="async"
+                      width="800"
+                      height="450"
+                      className="w-full h-full aspect-video object-cover object-center"
+                    />
+                    <div
+                      className="card-scanline-laser opacity-80"
                       style={{
-                        backgroundColor: isLight
-                          ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightBg
-                          : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkBg,
-                        borderColor: isLight
-                          ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightBorder
-                          : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkBorder,
-                        color: isLight
-                          ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightText
-                          : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkText,
+                        animationDuration: '5.2s',
+                        animationDelay: '0.8s',
                       }}
-                    >
-                      {renderCategoryIcon((categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).iconName, 13, "shrink-0")}
-                      <span>
-                        {lang === 'zh'
-                          ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).zh
-                          : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).en}
-                      </span>
-                    </span>
-                    {selectedProjectModal.aiAssisted && (
-                      <span className="px-2.5 py-0.5 border border-solid rounded-none font-tech text-xs font-bold uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-xs transition-shadow"
+                    />
+                  </div>
+
+                  {/* Action Buttons Row */}
+                  <div className="flex flex-wrap items-center gap-2.5 pt-1">
+                    {selectedProjectModal.ytId && (
+                      <button
+                        onClick={() => handleWatchVideo(selectedProjectModal.ytId!)}
+                        className="flex-1 min-w-[120px] py-2 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer hover:scale-105 shadow-xs"
                         style={{
-                          backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)',
-                          borderColor: isLight ? '#34d399' : '#10b981',
-                          color: isLight ? '#065f46' : '#a7f3d0',
-                          boxShadow: isLight ? 'none' : '0 0 6px rgba(16, 185, 129, 0.35)',
+                          backgroundColor: isLight ? '#ffe4e6' : 'rgba(225, 29, 72, 0.25)',
+                          borderColor: isLight ? '#f43f5e' : '#e11d48',
+                          color: isLight ? '#be123c' : '#fda4af',
                         }}
                       >
-                        <Cpu size={12} className="shrink-0" />
-                        <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
-                      </span>
+                        <TechIcon name="youtube" size={15} className="text-rose-500 shrink-0 fill-current" />
+                        <span>{lang === 'zh' ? '展示影片' : 'VIDEO'}</span>
+                      </button>
                     )}
-                    <span className="text-xs font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
-                      {selectedProjectModal.date}
-                    </span>
+
+                    {selectedProjectModal.websiteUrl && (
+                      <a
+                        href={selectedProjectModal.websiteUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 min-w-[110px] py-2.5 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all hover:scale-105 shadow-xs"
+                        style={{
+                          backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+                          borderColor: cyanCol,
+                          color: isLight ? '#0369a1' : '#00f0ff',
+                        }}
+                      >
+                        <Globe size={14} className="shrink-0" />
+                        <span>{lang === 'zh' ? '前往網站' : 'WEBSITE'}</span>
+                      </a>
+                    )}
+
+                    {selectedProjectModal.githubUrl && (
+                      <a
+                        href={selectedProjectModal.githubUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex-1 min-w-[110px] py-2.5 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all hover:scale-105 shadow-xs"
+                        style={{
+                          backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.95)',
+                          borderColor: isLight ? '#0f172a' : 'rgba(255, 255, 255, 0.35)',
+                          color: isLight ? '#0f172a' : '#ffffff',
+                        }}
+                      >
+                        <TechIcon name="github" size={15} className="shrink-0 fill-current" style={{ color: isLight ? '#0f172a' : '#ffffff' }} />
+                        <span>{lang === 'zh' ? '專案原始碼' : 'SOURCE'}</span>
+                      </a>
+                    )}
                   </div>
                 </div>
 
-                <button
-                  onClick={() => setSelectedProjectModal(null)}
-                  className="p-2 border cyber-cut-sm hover:scale-105 transition-all cursor-pointer shrink-0"
-                  style={{
-                    backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.1)',
-                    borderColor: borderCol,
-                    color: isLight ? '#0f172a' : '#ffffff',
-                  }}
-                >
-                  <X size={20} />
-                </button>
-              </div>
-
-              {/* 16:9 Media Preview */}
-              <div className="aspect-video w-full overflow-hidden cyber-cut-corner border shadow-md relative" style={{ borderColor: borderCol }}>
-                <img
-                  src={getAssetUrl(selectedProjectModal.image)}
-                  alt={selectedProjectModal.title_zh}
-                  loading="eager"
-                  decoding="async"
-                  width="800"
-                  height="450"
-                  className="w-full h-full aspect-video object-cover object-center"
-                />
-              </div>
-
-              {/* Full Description */}
-              <div className="space-y-2">
-                <h4 className="font-hud font-bold text-sm sm:text-base uppercase tracking-wider" style={{ color: cyanCol }}>
-                  {lang === 'zh' ? '專案完整簡介：' : 'FULL PROJECT DESCRIPTION:'}
-                </h4>
-                <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
-                  {lang === 'zh' ? selectedProjectModal.desc : (selectedProjectModal.desc_en || selectedProjectModal.desc)}
-                </p>
-              </div>
-
-              {/* Full Contributions List */}
-              {((lang === 'zh' ? selectedProjectModal.contributions : (selectedProjectModal.contributions_en || selectedProjectModal.contributions)) || []).length > 0 && (
-                <div className="space-y-2">
-                  <h4 className="font-hud font-bold text-sm sm:text-base uppercase tracking-wider" style={{ color: cyanCol }}>
-                    {lang === 'zh' ? '核心貢獻與技術重點：' : 'KEY CONTRIBUTIONS & TECHNICAL HIGHLIGHTS:'}
-                  </h4>
-                  <ul className="list-disc list-inside text-sm font-tech space-y-2 pl-1" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
-                    {((lang === 'zh' ? selectedProjectModal.contributions : (selectedProjectModal.contributions_en || selectedProjectModal.contributions)) || []).map((cItem, cIdx) => (
-                      <li key={cIdx} className="leading-relaxed">{cItem}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Honors List */}
-              {((lang === 'zh' ? selectedProjectModal.honors : (selectedProjectModal.honors_en || selectedProjectModal.honors)) || []).length > 0 && (
-                <div
-                  className="p-4 border font-tech text-xs sm:text-sm space-y-1.5 cyber-cut-sm"
-                  style={{
-                    backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.15)',
-                    borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.35)',
-                    color: isLight ? '#b45309' : '#fbbf24',
-                  }}
-                >
-                  {((lang === 'zh' ? selectedProjectModal.honors : (selectedProjectModal.honors_en || selectedProjectModal.honors)) || []).map((h, i) => (
-                    <div key={i} className="flex items-center gap-2 font-bold">
-                      <Trophy size={16} className="shrink-0" />
-                      <span>{h}</span>
+                {/* Right Column: Project Details Matching All Projects Layout */}
+                <div className="lg:col-span-7 flex flex-col justify-between space-y-4 h-full pr-0 sm:pr-6">
+                  <div className="space-y-4 flex-1">
+                    {/* Header */}
+                    <div className="border-b border-slate-700/30 pb-3 space-y-2.5">
+                      <h3
+                        className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight"
+                        style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+                      >
+                        {lang === 'zh' ? selectedProjectModal.title_zh : (selectedProjectModal.title_en || selectedProjectModal.title_zh)}
+                      </h3>
+                      <div className="flex flex-row items-center flex-wrap gap-2 sm:gap-2.5">
+                        <span
+                          className="px-3 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shadow-xs w-fit flex items-center gap-1.5"
+                          style={{
+                            backgroundColor: isLight
+                              ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightBg
+                              : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkBg,
+                            borderColor: isLight
+                              ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightBorder
+                              : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkBorder,
+                            color: isLight
+                              ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightText
+                              : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkText,
+                          }}
+                        >
+                          {renderCategoryIcon((categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).iconName, 13, "shrink-0")}
+                          <span>
+                            {lang === 'zh'
+                              ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).zh
+                              : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).en}
+                          </span>
+                        </span>
+                        {selectedProjectModal.aiAssisted && (
+                          <span className="px-2.5 py-1 border border-solid rounded-none font-tech text-xs sm:text-sm font-bold uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-xs transition-shadow"
+                            style={{
+                              backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)',
+                              borderColor: isLight ? '#34d399' : '#10b981',
+                              color: isLight ? '#065f46' : '#a7f3d0',
+                              boxShadow: isLight ? 'none' : '0 0 6px rgba(16, 185, 129, 0.35)',
+                            }}
+                          >
+                            <Cpu size={12} className="shrink-0" />
+                            <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
+                          </span>
+                        )}
+                        <span className="text-xs sm:text-sm font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
+                          {selectedProjectModal.date}
+                        </span>
+                      </div>
                     </div>
-                  ))}
+
+                    {/* Description */}
+                    <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                      {lang === 'zh' ? selectedProjectModal.desc : (selectedProjectModal.desc_en || selectedProjectModal.desc)}
+                    </p>
+
+                    {/* Key Highlights */}
+                    {((lang === 'zh' ? selectedProjectModal.contributions : (selectedProjectModal.contributions_en || selectedProjectModal.contributions)) || []).length > 0 && (
+                      <div className="space-y-1.5 pt-1">
+                        <p className="text-xs sm:text-sm font-hud font-bold uppercase tracking-wider" style={{ color: isLight ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightText : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkText }}>
+                          {lang === 'zh' ? '核心技術亮點：' : 'KEY HIGHLIGHTS:'}
+                        </p>
+                        <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1 pl-1" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                          {((lang === 'zh' ? selectedProjectModal.contributions : (selectedProjectModal.contributions_en || selectedProjectModal.contributions)) || []).map((cItem, cIdx) => (
+                            <li key={cIdx} className="leading-relaxed">{cItem}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Honors List (if present) */}
+                    {((lang === 'zh' ? selectedProjectModal.honors : (selectedProjectModal.honors_en || selectedProjectModal.honors)) || []).length > 0 && (
+                      <div
+                        className="p-3.5 border font-tech text-xs sm:text-sm space-y-1 cyber-cut-sm"
+                        style={{
+                          backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.15)',
+                          borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.35)',
+                          color: isLight ? '#b45309' : '#fbbf24',
+                        }}
+                      >
+                        {((lang === 'zh' ? selectedProjectModal.honors : (selectedProjectModal.honors_en || selectedProjectModal.honors)) || []).map((h, i) => (
+                          <div key={i} className="flex items-center gap-2 font-bold">
+                            <Trophy size={15} className="shrink-0" />
+                            <span>{h}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Full Tech Tags pinned to bottom */}
+                  <div className="flex flex-wrap items-center gap-2 pt-2 mt-auto">
+                    {selectedProjectModal.tags.map((tTag, idx) => (
+                      <span key={idx} className="tech-tag px-3 py-1 border text-xs sm:text-sm font-semibold inline-flex items-center">
+                        <span>{tTag}</span>
+                      </span>
+                    ))}
+                  </div>
                 </div>
-              )}
-
-              {/* Full Tech Tags */}
-              <div className="space-y-2">
-                <h4 className="font-hud font-bold text-xs sm:text-sm uppercase tracking-wider" style={{ color: cyanCol }}>
-                  {lang === 'zh' ? '技術棧與工具：' : 'TECH STACK & TOOLS:'}
-                </h4>
-                <div className="flex flex-wrap items-center gap-2">
-                  {selectedProjectModal.tags.map((tTag, idx) => (
-                    <span key={idx} className="tech-tag px-3 py-1 border text-xs sm:text-sm font-semibold inline-flex items-center">
-                      <span>{tTag}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-slate-700/30">
-                {selectedProjectModal.ytId && (
-                  <button
-                    onClick={() => handleWatchVideo(selectedProjectModal.ytId!)}
-                    className="flex-1 py-2.5 px-4 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-105 shadow-sm"
-                    style={{
-                      backgroundColor: isLight ? '#ffe4e6' : 'rgba(225, 29, 72, 0.25)',
-                      borderColor: isLight ? '#f43f5e' : '#e11d48',
-                      color: isLight ? '#be123c' : '#fda4af',
-                    }}
-                  >
-                    <TechIcon name="youtube" size={16} className="text-rose-500 shrink-0 fill-current" />
-                    <span>{lang === 'zh' ? '觀看展示影片' : 'WATCH VIDEO'}</span>
-                  </button>
-                )}
-
-                {selectedProjectModal.websiteUrl && (
-                  <a
-                    href={selectedProjectModal.websiteUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 py-2.5 px-5 sm:px-6 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-sm"
-                    style={{
-                      backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
-                      borderColor: cyanCol,
-                      color: isLight ? '#0369a1' : '#00f0ff',
-                    }}
-                  >
-                    <Globe size={15} className="shrink-0" />
-                    <span>{lang === 'zh' ? '前往專案網站' : 'VISIT WEBSITE'}</span>
-                  </a>
-                )}
-
-                {selectedProjectModal.githubUrl && (
-                  <a
-                    href={selectedProjectModal.githubUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex-1 py-2.5 px-5 sm:px-6 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-sm"
-                    style={{
-                      backgroundColor: isLight ? '#ffffff' : '#080e1a',
-                      borderColor: isLight ? '#0f172a' : 'rgba(255, 255, 255, 0.35)',
-                      color: isLight ? '#0f172a' : '#ffffff',
-                    }}
-                  >
-                    <TechIcon name="github" size={16} className="shrink-0 fill-current" style={{ color: isLight ? '#0f172a' : '#ffffff' }} />
-                    <span>{lang === 'zh' ? '專案原始碼' : 'SOURCE CODE'}</span>
-                  </a>
-                )}
               </div>
             </div>
           </div>
