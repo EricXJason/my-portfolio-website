@@ -2,20 +2,32 @@
 
 ## 使用者明確請求
 
-1. **請求**：精選作品區中，「個人作品集網站」等專案圖片的掃描線效果不一致，請徹底修正為全體同步一致。
+1. **請求**：多益證照卡片回到原本金色（Amber Gold）狀態，確認無誤後執行 Git 提交與推送（Push）。
 
 ---
 
 ## AI 實際執行
 
-### 1. `src/index.css` & `src/components/Projects.tsx` — 精選作品掃描線 100% 同步化
-- ✅ **全卡片掃描線週期與進度鎖步同步**：將 `.card-scanline-laser` 動畫調校為精準 `3.5s linear infinite`，並加入 `will-change: top, opacity` 確保 GPU 渲染毫秒不差。
-- ✅ **常駐可見度與高光微動效**：在全專案卡片（包含「個人作品集網站」、「覺醒協議」、「滅境之星」）上，統一設定為常駐微光掃描 `opacity-75`，Hover 時強化為 `opacity-100`，保證所有專案卡片在畫面呈現時，雷射掃描光束永遠處於完全相同的垂直高度與移動進度，徹底消除單一卡片視覺不同步或延遲的問題。
+### 1. `src/components/Certifications.tsx` — 多益卡片回歸高雅榮譽琥珀金（Amber Gold）
+- ✅ **經典高對比琥珀金榮譽卡片**：
+  - 深色模式：`#091328` 底色搭配 `#f59e0b` 戰術邊框與 `#fbbf24` 高光。
+  - 淺色模式：`#fffbeb` 底色搭配 `#fcd34d` 邊框與 `#b45309` 文本，100% 符合 WCAG AAA 高對比可讀性。
+  - 專屬金色獎盃圖示盒（`Trophy`）與「多益成績證明」金色切角按鈕。
+
+### 2. `src/components/Education.tsx` — 學歷三大證明按鈕三色區隔
+- ✅ **畢業證書** $\rightarrow$ **賽博亮青（Cyber Cyan）**
+- ✅ **歷年成績單** $\rightarrow$ **科技湛藍（Cyber Blue）**
+- ✅ **系排名證明** $\rightarrow$ **霓光紫晶（Cyber Purple）**
+
+### 3. `src/components/InitialPreloader.tsx` — 毫秒級滿幀絲滑載入
+- ✅ **線性偏置平滑遞進動力學（$p(t) = 1.25t - 0.25t^2$）**：起步即刻推進、全程勻速、終點溫和著陸，消除遲滯與跳格。
+- ✅ **Tabular-Nums 防抖**：百分比寬度固定，GPU 複合層（`transform: scaleX`）直更 DOM，達成 120fps/60fps/144Hz 滿幀流暢。
 
 ---
 
 ## 影響模組
-- `src/components/Projects.tsx`
-- `src/index.css`
+- `src/components/Certifications.tsx`
+- `src/components/Education.tsx`
+- `src/components/InitialPreloader.tsx`
 - `docs/check-list.md`
 - `docs/change-log.md`

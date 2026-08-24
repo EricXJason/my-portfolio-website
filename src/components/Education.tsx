@@ -112,6 +112,31 @@ export const Education: React.FC = () => {
     { main: isLight ? '#b45309' : '#fbbf24', bg: isLight ? '#fffbeb' : 'rgba(245, 158, 11, 0.12)', border: isLight ? '#fcd34d' : '#f59e0b' },
   ];
 
+  // 3 distinct cyber theme colors for Degree Buttons: (1: 畢業證書 -> Cyan, 2: 歷年成績單 -> Blue, 3: 系排名證明 -> Purple)
+  const degreeButtonStyles: Record<string, { bg: string; border: string; text: string }> = {
+    cert: {
+      bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+      border: isLight ? '#0284c7' : '#00f0ff',
+      text: isLight ? '#0369a1' : '#00f0ff',
+    },
+    transcript: {
+      bg: isLight ? '#dbeafe' : 'rgba(59, 130, 246, 0.15)',
+      border: isLight ? '#2563eb' : '#60a5fa',
+      text: isLight ? '#1d4ed8' : '#93c5fd',
+    },
+    ranking: {
+      bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.15)',
+      border: isLight ? '#9333ea' : '#c084fc',
+      text: isLight ? '#6b21a8' : '#e9d5ff',
+    },
+  };
+
+  const defaultBtnStyle = {
+    bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+    border: isLight ? '#0284c7' : '#00f0ff',
+    text: isLight ? '#0369a1' : '#00f0ff',
+  };
+
   return (
     <section id="experience" className="py-20 relative select-text">
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 space-y-16">
@@ -187,23 +212,28 @@ export const Education: React.FC = () => {
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2.5 pt-2">
-                      {deg.buttons.map((btn, bIdx) => (
-                        <a
-                          key={bIdx}
-                          href={driveLinks[btn.linkKey]}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="px-5 sm:px-6 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
-                          style={{
-                            backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
-                            borderColor: cyanCol,
-                            color: isLight ? '#0369a1' : '#00f0ff',
-                          }}
-                        >
-                          <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
-                          <span>{btn.label}</span>
-                        </a>
-                      ))}
+                      {deg.buttons.map((btn, bIdx) => {
+                        const styleKey = btn.key || (bIdx === 0 ? 'cert' : bIdx === 1 ? 'transcript' : 'ranking');
+                        const btnStyle = degreeButtonStyles[styleKey] ?? defaultBtnStyle;
+
+                        return (
+                          <a
+                            key={bIdx}
+                            href={driveLinks[btn.linkKey]}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-5 sm:px-6 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                            style={{
+                              backgroundColor: btnStyle.bg,
+                              borderColor: btnStyle.border,
+                              color: btnStyle.text,
+                            }}
+                          >
+                            <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                            <span>{btn.label}</span>
+                          </a>
+                        );
+                      })}
                     </div>
                   </div>
                 );
