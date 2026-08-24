@@ -288,13 +288,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           loading="lazy"
                           decoding="async"
                         />
-                        <div
-                          className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          style={{
-                            animationDuration: `${3.8 + ((pIdx * 0.95) % 2.85)}s`,
-                            animationDelay: `${((pIdx * 1.45) % 4.35).toFixed(2)}s`,
-                          }}
-                        />
+                        <div className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
 
                       {/* Project Title */}
@@ -445,13 +439,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           loading="lazy"
                           decoding="async"
                         />
-                        <div
-                          className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                          style={{
-                            animationDuration: `${3.6 + ((lIdx * 0.85) % 2.55)}s`,
-                            animationDelay: `${((lIdx * 1.35) % 4.05).toFixed(2)}s`,
-                          }}
-                        />
+                        <div className="card-scanline-laser opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2.5 pt-1">
@@ -742,13 +730,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                       height="450"
                       className="w-full h-full aspect-video object-cover object-center"
                     />
-                    <div
-                      className="card-scanline-laser opacity-80"
-                      style={{
-                        animationDuration: '5.2s',
-                        animationDelay: '0.8s',
-                      }}
-                    />
+                    <div className="card-scanline-laser opacity-80" />
                   </div>
 
                   {/* Action Buttons Row */}

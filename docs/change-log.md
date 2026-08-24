@@ -46,3 +46,4 @@
 [2026-08-20 11:53] | [style] | 全站雷射掃描線動態去同步化（Desynchronization）：依據卡片索引動態計算互質週期與時序落差（Prime Modulo Staggering），徹底消除多卡片同時掃描的僵硬同步感，並微調全域左右邊界與全息粒子掃描時序，實現自然有機的錯開律動 | [src/components/Projects.tsx, src/components/MainSiteContent.tsx, src/index.css, docs/check-list.md]
 [2026-08-20 11:55] | [refactor] | 精準規範專案彈窗範圍與 1:1 卡片排版鏡像：僅限「精選作品」開啟彈跳視窗（全部分類與單獨分類已為完整卡片，不觸發彈窗）；彈跳視窗重構為水平正中且左右平衡之 2 欄架構（左側 16:9 媒體與三大按鈕，右側標題/標籤/簡介/亮點/榮譽/Tags），視覺體驗與全部分類卡片達成 1:1 完美統一 | [src/components/Projects.tsx, docs/check-list.md]
 [2026-08-20 11:57] | [style] | 專案彈跳視窗手機端體驗最佳化：隱藏行動端常駐捲軸（scrollbar-width: none），僅保留平滑觸控滑動手勢；緊縮手機端內距與關閉按鈕，大幅提高資訊密度並消除不必要的滑動需求 | [src/components/Projects.tsx, src/index.css, docs/check-list.md]
+[2026-08-20 12:00] | [style] | 統一全站雷射掃描線動效規範：移除卡片與邊界個別樣式覆寫，全面回復標準統一的 .card-scanline-laser 與 .animate-laser-vert 掃描節奏 | [src/components/Projects.tsx, src/components/MainSiteContent.tsx, docs/check-list.md]
