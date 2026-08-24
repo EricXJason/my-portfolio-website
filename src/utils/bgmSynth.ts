@@ -1,5 +1,5 @@
 /**
- * TechAmbient BGM Engine
+ * TechAmbient BGM Engine — Bulletproof Web Audio Synthesizer
  *
  * Architecture: Am pentatonic generative composition
  *   - Bass drone: A1 (55Hz) + A2 (110Hz) filtered sine waves
@@ -7,10 +7,12 @@
  *   - Melody: occasional pentatonic lead notes (triangle osc)
  *   - Hi-pass shimmer: soft high-freq triangle texture
  *   - Global reverb via ConvolverNode (impulse-response)
- *   - All routed through master limiter to prevent clipping
+ *   - Master gain & dynamics limiter to prevent clipping
  *
- * Design goal: "Low-key, tech-feel ambient" — no percussion,
- *   continuous pads, subtle movement, comfortable over long sessions.
+ * Guaranteed Instant Mute & Zero-Leak State Machine:
+ *   - Immediate cancellation of all AudioParam automations
+ *   - Synchronous oscillator termination and disconnect to eliminate ghost audio
+ *   - Context suspend on stop & instant resume on start
  */
 
 interface PadOscillator {
@@ -35,15 +37,15 @@ let melodyTimer: ReturnType<typeof setInterval> | null = null;
 let padLfoTimer: ReturnType<typeof setInterval> | null = null;
 let isPlaying = false;
 
-/* ── Build a simple stereo reverb from a white-noise impulse ── */
+/* ── Build a stereo reverb from a white-noise impulse ── */
 function buildReverb(audioCtx: AudioContext): ConvolverNode {
   const convolver = audioCtx.createConvolver();
-  const length = audioCtx.sampleRate * 2.5;
+  const length = Math.floor(audioCtx.sampleRate * 2.2);
   const impulse = audioCtx.createBuffer(2, length, audioCtx.sampleRate);
   for (let ch = 0; ch < 2; ch++) {
     const data = impulse.getChannelData(ch);
     for (let i = 0; i < length; i++) {
-      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.8);
+      data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
     }
   }
   convolver.buffer = impulse;
@@ -68,33 +70,121 @@ const PentaHz = [
 
 /* ── Chord voicings in Hz: Am / Fmaj / Cmaj / Gmaj ── */
 const CHORDS = [
-  [110, 165, 220, 277, 330],   // Am
-  [87.3, 130.8, 174.6, 220, 261.6], // Fm-ish low voice
-  [130.8, 196, 261.6, 329.6], // Cmaj
-  [98, 146.8, 196, 246.9],    // Gm pentatonic
+  [110, 165, 220, 277, 330],          // Am
+  [87.3, 130.8, 174.6, 220, 261.6],   // Fm-ish low voice
+  [130.8, 196, 261.6, 329.6],         // Cmaj
+  [98, 146.8, 196, 246.9],            // Gm pentatonic
 ];
+
+/**
+ * Synchronously terminate and cleanup all running audio nodes and timers
+ */
+const cleanupAllNodes = () => {
+  if (melodyTimer) {
+    clearInterval(melodyTimer);
+    melodyTimer = null;
+  }
+  if (padLfoTimer) {
+    clearInterval(padLfoTimer);
+    padLfoTimer = null;
+  }
+
+  // Stop and disconnect all pad oscillators
+  pads.forEach(({ osc, g, filter }) => {
+    try {
+      osc.stop();
+      osc.disconnect();
+      g.disconnect();
+      filter.disconnect();
+    } catch {
+      /* ignore already stopped */
+    }
+  });
+  pads = [];
+
+  // Stop and disconnect bass oscillators
+  if (bass) {
+    bass.forEach((o) => {
+      try {
+        o.stop();
+        o.disconnect();
+      } catch {
+        /* ignore */
+      }
+    });
+    bass = null;
+  }
+
+  // Stop shimmer
+  if (shimmer) {
+    try {
+      shimmer.osc.stop();
+      shimmer.osc.disconnect();
+      shimmer.g.disconnect();
+    } catch {
+      /* ignore */
+    }
+    shimmer = null;
+  }
+
+  // Silence master immediately
+  if (master && ctx) {
+    try {
+      master.gain.cancelScheduledValues(ctx.currentTime);
+      master.gain.setValueAtTime(0, ctx.currentTime);
+      master.disconnect();
+    } catch {
+      /* ignore */
+    }
+    master = null;
+  }
+
+  if (reverb) {
+    try {
+      reverb.disconnect();
+    } catch {
+      /* ignore */
+    }
+    reverb = null;
+  }
+
+  if (limiter) {
+    try {
+      limiter.disconnect();
+    } catch {
+      /* ignore */
+    }
+    limiter = null;
+  }
+};
 
 export const toggleBGMAudio = (volume = 0.35): boolean => {
   if (isPlaying) {
     stopBGMAudio();
     return false;
   } else {
-    startBGMAudio(volume);
-    return true;
+    return startBGMAudio(volume);
   }
 };
 
 export const startBGMAudio = (volume = 0.35): boolean => {
   try {
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-    if (!ctx) ctx = new AC();
-    if (ctx.state === 'suspended') ctx.resume();
-    if (isPlaying) return true;
-    isPlaying = true;
+    // 1. Clean up any existing nodes first to prevent ghost/stacked audio
+    cleanupAllNodes();
 
+    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!ctx) {
+      ctx = new AC();
+    }
+
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+
+    isPlaying = true;
     const now = ctx.currentTime;
 
-    // Limiter at very end
+    // 2. Limiter at very end
     limiter = ctx.createDynamicsCompressor();
     limiter.threshold.setValueAtTime(-4, now);
     limiter.knee.setValueAtTime(3, now);
@@ -103,41 +193,47 @@ export const startBGMAudio = (volume = 0.35): boolean => {
     limiter.release.setValueAtTime(0.25, now);
     limiter.connect(ctx.destination);
 
-    // Master gain
+    // 3. Master gain with smooth attack
     master = ctx.createGain();
     master.gain.setValueAtTime(0, now);
-    master.gain.linearRampToValueAtTime(volume * 0.4, now + 2.5);
+    master.gain.linearRampToValueAtTime(Math.max(0, Math.min(1, volume)) * 0.45, now + 1.8);
     master.connect(limiter);
 
-    // Reverb (wet mix)
+    // 4. Reverb (wet mix)
     reverb = buildReverb(ctx);
     const reverbGain = ctx.createGain();
     reverbGain.gain.setValueAtTime(0.3, now);
     reverb.connect(reverbGain);
     reverbGain.connect(master);
 
-    // ── Bass drone: two sine waves, A1 + A2 ──
+    // 5. Bass drone: two sine waves, A1 + A2
     const bassOsc1 = ctx.createOscillator();
     const bassOsc2 = ctx.createOscillator();
     const bassFilter = ctx.createBiquadFilter();
-    const bassGain   = ctx.createGain();
-    bassOsc1.type = 'sine'; bassOsc1.frequency.setValueAtTime(55, now);
-    bassOsc2.type = 'sine'; bassOsc2.frequency.setValueAtTime(110, now);
-    bassFilter.type = 'lowpass'; bassFilter.frequency.setValueAtTime(300, now); bassFilter.Q.setValueAtTime(1, now);
+    const bassGain = ctx.createGain();
+    bassOsc1.type = 'sine';
+    bassOsc1.frequency.setValueAtTime(55, now);
+    bassOsc2.type = 'sine';
+    bassOsc2.frequency.setValueAtTime(110, now);
+    bassFilter.type = 'lowpass';
+    bassFilter.frequency.setValueAtTime(300, now);
+    bassFilter.Q.setValueAtTime(1, now);
     bassGain.gain.setValueAtTime(0, now);
-    bassGain.gain.linearRampToValueAtTime(0.55, now + 4);
-    bassOsc1.connect(bassFilter); bassOsc2.connect(bassFilter);
+    bassGain.gain.linearRampToValueAtTime(0.55, now + 3.0);
+    bassOsc1.connect(bassFilter);
+    bassOsc2.connect(bassFilter);
     bassFilter.connect(bassGain);
     bassGain.connect(master);
-    bassOsc1.start(); bassOsc2.start();
+    bassOsc1.start();
+    bassOsc2.start();
     bass = [bassOsc1, bassOsc2];
 
-    // ── Pad layer: 5 detuned oscillators on chord 0 ──
+    // 6. Pad layer: 5 detuned oscillators on chord 0
     const chord = CHORDS[0];
     chord.forEach((freq, i) => {
       if (!ctx || !master || !reverb) return;
       const osc = ctx.createOscillator();
-      const g   = ctx.createGain();
+      const g = ctx.createGain();
       const filter = ctx.createBiquadFilter();
       osc.type = i < 2 ? 'sawtooth' : 'triangle';
       osc.frequency.setValueAtTime(freq, now);
@@ -146,26 +242,28 @@ export const startBGMAudio = (volume = 0.35): boolean => {
       filter.frequency.setValueAtTime(1200 + i * 200, now);
       filter.Q.setValueAtTime(0.8, now);
       g.gain.setValueAtTime(0, now);
-      g.gain.linearRampToValueAtTime(0.03 / (i + 1), now + 3.5);
-      osc.connect(filter); filter.connect(g);
+      g.gain.linearRampToValueAtTime(0.03 / (i + 1), now + 2.5);
+      osc.connect(filter);
+      filter.connect(g);
       g.connect(master);
       g.connect(reverb);
       osc.start();
       pads.push({ osc, g, filter });
     });
 
-    // ── Shimmer: ultra-high soft triangle oscillator ──
+    // 7. Shimmer: ultra-high soft triangle oscillator
     const shimOsc = ctx.createOscillator();
     const shimGain = ctx.createGain();
     shimOsc.type = 'triangle';
     shimOsc.frequency.setValueAtTime(2093, now);
     shimGain.gain.setValueAtTime(0, now);
-    shimGain.gain.linearRampToValueAtTime(0.008, now + 5);
-    shimOsc.connect(shimGain); shimGain.connect(reverb);
+    shimGain.gain.linearRampToValueAtTime(0.008, now + 4);
+    shimOsc.connect(shimGain);
+    shimGain.connect(reverb);
     shimOsc.start();
     shimmer = { osc: shimOsc, g: shimGain };
 
-    // ── Melody: occasional soft lead notes ──
+    // 8. Melody: occasional soft lead notes
     let mIdx = 0;
     const MELODY_SEQ = [0, 4, 7, 5, 9, 7, 4, 2, 0, 7, 9, 7];
     melodyTimer = setInterval(() => {
@@ -185,10 +283,12 @@ export const startBGMAudio = (volume = 0.35): boolean => {
         mGain.connect(master);
         mOsc.start();
         mOsc.stop(ctx.currentTime + 2.3);
-      } catch { /* suppress */ }
+      } catch {
+        /* suppress */
+      }
     }, 1800 + Math.random() * 600);
 
-    // ── Chord morph: shift pads through chord voicings every 8s ──
+    // 9. Chord morph: shift pads through chord voicings every 8s
     let chordIdx = 0;
     padLfoTimer = setInterval(() => {
       if (!isPlaying || !ctx) return;
@@ -197,7 +297,13 @@ export const startBGMAudio = (volume = 0.35): boolean => {
       const nextChord = CHORDS[chordIdx];
       pads.forEach(({ osc }, i) => {
         if (nextChord[i]) {
-          osc.frequency.linearRampToValueAtTime(nextChord[i], audioCtx.currentTime + 4);
+          try {
+            osc.frequency.cancelScheduledValues(audioCtx.currentTime);
+            osc.frequency.setValueAtTime(osc.frequency.value, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(nextChord[i], audioCtx.currentTime + 4);
+          } catch {
+            /* ignore */
+          }
         }
       });
     }, 8000);
@@ -206,29 +312,34 @@ export const startBGMAudio = (volume = 0.35): boolean => {
   } catch (e) {
     console.warn('BGM start failed:', e);
     isPlaying = false;
+    cleanupAllNodes();
     return false;
   }
 };
 
 export const stopBGMAudio = (): void => {
   isPlaying = false;
-  if (melodyTimer) { clearInterval(melodyTimer); melodyTimer = null; }
-  if (padLfoTimer) { clearInterval(padLfoTimer); padLfoTimer = null; }
-
-  if (master && ctx) {
-    master.gain.linearRampToValueAtTime(0, ctx.currentTime + 1.0);
+  cleanupAllNodes();
+  if (ctx && ctx.state === 'running') {
+    try {
+      ctx.suspend();
+    } catch {
+      /* ignore */
+    }
   }
-
-  setTimeout(() => {
-    pads.forEach(({ osc }) => { try { osc.stop(); } catch {} });
-    pads = [];
-    if (bass) { bass.forEach(o => { try { o.stop(); } catch {} }); bass = null; }
-    if (shimmer) { try { shimmer.osc.stop(); } catch {} shimmer = null; }
-  }, 1200);
 };
 
 export const setBGMVolume = (volume: number): void => {
   if (master && ctx && isPlaying) {
-    master.gain.linearRampToValueAtTime(Math.max(0, Math.min(1, volume)) * 0.55, ctx.currentTime + 0.1);
+    try {
+      const now = ctx.currentTime;
+      master.gain.cancelScheduledValues(now);
+      master.gain.setValueAtTime(master.gain.value, now);
+      master.gain.linearRampToValueAtTime(Math.max(0, Math.min(1, volume)) * 0.45, now + 0.08);
+    } catch {
+      /* ignore */
+    }
   }
 };
+
+export const getBGMIsPlaying = (): boolean => isPlaying;

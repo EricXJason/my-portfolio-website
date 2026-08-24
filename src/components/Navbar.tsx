@@ -312,7 +312,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Language Switcher */}
             <button
               onClick={toggleLang}
-              className="w-14 sm:w-16 h-8 sm:h-9 cyber-cut-sm border relative p-0.5 sm:p-1 flex items-center justify-between transition-all duration-300 cursor-pointer font-tech text-xs font-bold active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none"
+              className="w-[52px] sm:w-[62px] h-[28px] sm:h-[32px] border cyber-cut-sm relative p-[2px] flex items-center transition-all duration-300 cursor-pointer font-tech text-xs font-bold active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none overflow-hidden"
               style={{
                 backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
                 borderColor: borderCol,
@@ -320,18 +320,19 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label={lang === 'zh' ? '切換為 English' : 'Switch to 繁體中文'}
               title={lang === 'zh' ? '切換為 English' : 'Switch to 繁體中文'}
             >
-              <span className="w-1/2 text-center text-[10px] sm:text-xs z-0 select-none font-bold" style={{ color: lang === 'en' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>
-                EN
-              </span>
-              <span className="w-1/2 text-center text-[10px] sm:text-xs z-0 select-none font-bold" style={{ color: lang === 'zh' ? 'transparent' : isLight ? '#475569' : '#94a3b8' }}>
-                中
-              </span>
+              <div className="w-full h-full flex items-center justify-between pointer-events-none z-0">
+                <span className="w-1/2 text-center text-[10px] sm:text-xs font-bold" style={{ color: lang === 'en' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}>
+                  EN
+                </span>
+                <span className="w-1/2 text-center text-[10px] sm:text-xs font-bold" style={{ color: lang === 'zh' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}>
+                  中
+                </span>
+              </div>
               <div
-                className={`absolute top-0.5 sm:top-1 bottom-0.5 sm:bottom-1 w-[calc(50%-2px)] sm:w-[calc(50%-4px)] rounded-none shadow-md flex items-center justify-center transition-all duration-300 z-10 text-[10px] sm:text-xs font-black ${
-                  lang === 'zh' ? 'left-[calc(50%+1px)] sm:left-[calc(50%+2px)]' : 'left-0.5 sm:left-1'
-                }`}
+                className="absolute top-[2px] bottom-[2px] left-[2px] w-[calc(50%-2px)] cyber-cut-sm flex items-center justify-center transition-transform duration-300 ease-out z-10 shadow-sm text-[10px] sm:text-xs font-black"
                 style={{
-                  backgroundColor: isLight ? '#0284c7' : '#00f0ff',
+                  transform: lang === 'zh' ? 'translateX(100%)' : 'translateX(0%)',
+                  backgroundColor: isLight ? '#0369a1' : '#00f0ff',
                   color: isLight ? '#ffffff' : '#030712',
                 }}
               >
@@ -342,7 +343,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Theme Switcher */}
             <button
               onClick={toggleTheme}
-              className="w-14 sm:w-16 h-8 sm:h-9 cyber-cut-sm border relative p-0.5 sm:p-1 flex items-center justify-between transition-all duration-300 cursor-pointer active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none"
+              className="w-[52px] sm:w-[62px] h-[28px] sm:h-[32px] border cyber-cut-sm relative p-[2px] flex items-center transition-all duration-300 cursor-pointer active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none overflow-hidden"
               style={{
                 backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
                 borderColor: borderCol,
@@ -350,25 +351,26 @@ export const Navbar: React.FC<NavbarProps> = ({
               aria-label={isLight ? '切換為深色模式 (Switch to Dark Mode)' : '切換為淺色模式 (Switch to Light Mode)'}
               title={isLight ? '深色模式' : '淺色模式'}
             >
-              <div className="w-1/2 flex items-center justify-center z-0 pointer-events-none">
-                <Sun size={12} className="text-amber-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)] sm:w-[13px] sm:h-[13px]" />
-              </div>
-              <div className="w-1/2 flex items-center justify-center z-0 pointer-events-none">
-                <Moon size={12} className="text-cyan-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(0,240,255,0.8)] sm:w-[13px] sm:h-[13px]" />
+              <div className="w-full h-full flex items-center justify-between pointer-events-none z-0 px-1">
+                <div className="w-1/2 flex items-center justify-center">
+                  <Sun size={12} className="text-amber-400 font-bold opacity-80" />
+                </div>
+                <div className="w-1/2 flex items-center justify-center">
+                  <Moon size={12} className="text-cyan-400 font-bold opacity-80" />
+                </div>
               </div>
               <div
-                className={`absolute top-0.5 sm:top-1 bottom-0.5 sm:bottom-1 w-[calc(50%-2px)] sm:w-[calc(50%-4px)] rounded-none flex items-center justify-center transition-all duration-300 z-10 shadow-md ${
-                  isLight ? 'left-0.5 sm:left-1' : 'left-[calc(50%+1px)] sm:left-[calc(50%+2px)]'
-                }`}
+                className="absolute top-[2px] bottom-[2px] left-[2px] w-[calc(50%-2px)] cyber-cut-sm flex items-center justify-center transition-transform duration-300 ease-out z-10 shadow-sm"
                 style={{
+                  transform: isLight ? 'translateX(0%)' : 'translateX(100%)',
                   backgroundColor: isLight ? '#fbbf24' : '#00f0ff',
                   color: '#0f172a',
                 }}
               >
                 {isLight ? (
-                  <Sun size={12} className="fill-current text-slate-900 sm:w-[13px] sm:h-[13px]" />
+                  <Sun size={13} className="fill-current text-slate-900" />
                 ) : (
-                  <Moon size={12} className="fill-current text-slate-900 sm:w-[13px] sm:h-[13px]" />
+                  <Moon size={13} className="fill-current text-slate-900" />
                 )}
               </div>
             </button>

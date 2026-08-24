@@ -115,7 +115,7 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
 
           <button
             onClick={toggleTheme}
-            className="w-13 sm:w-16 h-8 sm:h-9 cyber-cut-sm border p-0.5 sm:p-1 relative flex items-center transition-all cursor-pointer active:scale-95 shrink-0 hover:border-cyan-400"
+            className="w-[52px] sm:w-[62px] h-[28px] sm:h-[32px] border cyber-cut-sm relative p-[2px] flex items-center transition-all duration-300 cursor-pointer active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none overflow-hidden"
             style={{
               backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
               borderColor: borderCol,
@@ -123,19 +123,27 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
             aria-label={isLight ? (lang === 'zh' ? '目前模式：淺色模式' : 'Current Mode: Light Mode') : (lang === 'zh' ? '目前模式：深色模式' : 'Current Mode: Dark Mode')}
             title={isLight ? (lang === 'zh' ? '淺色模式' : 'Light Mode') : (lang === 'zh' ? '深色模式' : 'Dark Mode')}
           >
-            <div className="absolute inset-0 px-2 flex items-center justify-between pointer-events-none text-xs">
-              <Sun size={13} className="text-amber-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(251,191,36,0.8)]" />
-              <Moon size={13} className="text-cyan-400 font-bold opacity-100 drop-shadow-[0_0_5px_rgba(0,240,255,0.8)]" />
+            <div className="w-full h-full flex items-center justify-between pointer-events-none z-0 px-1">
+              <div className="w-1/2 flex items-center justify-center">
+                <Sun size={12} className="text-amber-400 font-bold opacity-80" />
+              </div>
+              <div className="w-1/2 flex items-center justify-center">
+                <Moon size={12} className="text-cyan-400 font-bold opacity-80" />
+              </div>
             </div>
             <div
-              className="w-6 h-6 sm:w-7 sm:h-7 rounded-none flex items-center justify-center transition-all duration-300 z-10 text-xs shadow-md"
+              className="absolute top-[2px] bottom-[2px] left-[2px] w-[calc(50%-2px)] cyber-cut-sm flex items-center justify-center transition-transform duration-300 ease-out z-10 shadow-sm"
               style={{
-                transform: isLight ? 'translateX(0px)' : (typeof window !== 'undefined' && window.innerWidth < 640 ? 'translateX(20px)' : 'translateX(28px)'),
-                background: isLight ? '#fbbf24' : '#00f0ff',
+                transform: isLight ? 'translateX(0%)' : 'translateX(100%)',
+                backgroundColor: isLight ? '#fbbf24' : '#00f0ff',
                 color: '#0f172a',
               }}
             >
-              {isLight ? <Sun size={14} className="fill-current text-slate-900" /> : <Moon size={14} className="fill-current text-slate-900" />}
+              {isLight ? (
+                <Sun size={13} className="fill-current text-slate-900" />
+              ) : (
+                <Moon size={13} className="fill-current text-slate-900" />
+              )}
             </div>
           </button>
         </div>
