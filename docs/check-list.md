@@ -6,35 +6,24 @@
 
 ## 使用者明確請求
 
-1. **代碼動畫速度放慢**：目前背景代碼流速度過快，需調緩。
-2. **Loading Bar 更順暢合理**：目前載入條卡頓不自然，需重構為有機感的載入曲線。
-3. **完整專案整理與嚴格最佳化**：執行 AGENTS.md § 7「Strict Project Optimization」完整流程。
+1. **頭髮去背要在更加乾淨**：徹底消除頭髮邊緣所有白白的小瑕疵與微小雜點。
+2. **直接 push**：完成去背品質最佳化後，執行 Git Commit 並推送到遠端儲存庫。
 
 ---
 
 ## AI 實際執行
 
-### 任務一：代碼動畫減速（`src/components/FullStackCodeStreamBackground.tsx`）
-- 左欄速度：`0.45px/frame → 0.28px/frame`（≈17px/s @60fps，更沉穩環境感）
-- 右欄速度：`0.35px/frame → 0.22px/frame`（≈13px/s @60fps）
-- RAF 無縫 Loop 架構維持不變
-
-### 任務二：Loading Bar 三段式有機曲線（`src/components/InitialPreloader.tsx`）
-- 舊實作：`p(t) = 1.25t - 0.25t²` 線性偏移曲線（1100ms），視覺感受機械卡頓
-- 新實作：三段式有機載入曲線（1600ms）：
-  - Phase 1（t: 0→0.28）：easeOutQuart，0%→55%，快速衝刺
-  - Phase 2（t: 0.28→0.72）：easeInOutCubic，55%→82%，有機節奏
-  - Phase 3（t: 0.72→1.0）：easeOutQuart，82%→100%，自信收尾
-  - 100% 停留 120ms → 300ms 淡出
-
-### 任務三：嚴格專案最佳化掃描結果
-- 外部 Hotlink 圖片：無，所有圖片皆本地 WebP/SVG 物理檔案 ✅
-- 無效 console.log：僅 bgmSynth.ts 之 console.warn 屬正常錯誤邊界 ✅
-- Oxlint：1 warning（非 error），0 errors ✅
-- TypeScript 型別：pnpm tsc --noEmit 零錯誤 ✅
-- 圖示格式：12 個品牌 SVG + favicon.svg 全本地 ✅
-- 圖片資產：所有 gallery/proj-*/personal 均為 WebP ✅
-- 依賴項：無冗餘，全部必要 ✅
-- 空目錄：無 ✅
-- SEO：OG/Twitter/Canonical/robots/sitemap/Schema.org/llms.txt 完整 ✅
-- docs/development-plan.md：已同步追加 §6 背景動畫架構、§7 個人肖像處理規範 ✅
+1. **頭髮邊緣高精度消除與無瑕化去背（`public/assets/images/personal.webp`）**：
+   - 深入診斷根因：原照片在攝影棚打光下，頭髮邊緣高光處（x=260-290, y=55-70）局部像素亮度較高，加上先前鬆散閾值導致邊緣滲透破碎。
+   - 採用精準連通區域洪水演算法（連通純黑背景 RGB <= 8）完整保護頭髮深層組織。
+   - 導入有號距離場（Signed Distance Field Transform）計算 1.2px 精緻次像素抗鋸齒平滑過渡，透明度漸層細膩無鋸齒。
+   - 實施邊緣抗色偏抑制（Edge Defringing）：針對頭髮外邊緣 3px 內亮度異常凸出的高光雜點進行色彩自然壓制（0.55x），徹底消滅深色背景與淺色背景下的白點與白色毛邊。
+   - 確保完全透明區域（alpha=0）之 RGB 歸零，杜絕任何透明度滲色。
+2. **視覺驗證**：
+   - 生成深色背景（`#050a16`）與純白背景（`#ffffff`）高解析局部裁切預覽圖，經視覺檢驗確認頭髮邊界圓潤自然、白點完全消除。
+3. **文件與專案同步**：
+   - 依據 AGENTS.md 規範完整更新單次會話清單 `docs/check-list.md`。
+   - 追加全中文記錄至 `docs/change-log.md`。
+4. **Git 提交與遠端推送**：
+   - 遵循 Conventional Commits 規範建立精確提交訊息。
+   - 執行 `git push origin master` 完成同步。

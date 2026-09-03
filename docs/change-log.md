@@ -71,3 +71,4 @@
 [2026-09-04 01:50] | [style] | 完全移除人工肩膀合成延展（因超寬違和感），改採原始圖片全寬正方形裁切（796×796 → 1000×1000 upscale）自然鏡頭拉近策略，人物臉部特寫自然充滿 1:1 卡片 | [public/assets/images/personal.webp, docs/check-list.md]
 
 [2026-09-04 02:01] | [perf] | 嚴格專案最佳化：(1) 代碼流動畫減速（左欄 0.45→0.28px/frame，右欄 0.35→0.22px/frame），環境感更沉穩；(2) Loading Bar 重構為三段式有機緩動曲線（1600ms，Phase1 easeOutQuart 0→55%，Phase2 easeInOutCubic 55→82%，Phase3 easeOutQuart 82→100%），消除機械卡頓感；(3) development-plan.md 同步追加 §6 動畫架構與 §7 肖像處理規範；(4) 全站掃描：無外部 Hotlink、無冗餘依賴、無空目錄、TypeScript/Lint 全通過 | [src/components/FullStackCodeStreamBackground.tsx, src/components/InitialPreloader.tsx, docs/development-plan.md, docs/check-list.md, docs/change-log.md]
+[2026-09-04 02:15] | [fix] | 個人肖像頭髮去背極限精修：深入診斷並解決攝影棚高光所致之頭髮邊緣白斑問題，採用 Signed Distance Field 有號距離場 1.2px 次像素抗鋸齒平滑邊緣，並針對頭髮外邊緣 3px 高光實施邊緣抗色偏去雜色（Defringing），徹底根除深淺模式下所有白色小雜點與毛邊瑕疵 | [public/assets/images/personal.webp, docs/check-list.md, docs/change-log.md]
