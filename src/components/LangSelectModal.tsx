@@ -105,7 +105,7 @@ export const LangSelectModal: React.FC<LangSelectModalProps> = ({
             </div>
             <div className="flex flex-col text-left leading-tight min-w-0">
               <span className="font-mono text-sm sm:text-base font-extrabold tracking-wide truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                JasonProduction
+                Portfolio
               </span>
               <span className="font-tech text-xs sm:text-sm font-bold tracking-wider truncate" style={{ color: cyanCol }}>
                 許哲誠 HSU, CHE-CHENG

@@ -122,3 +122,32 @@
   - **CI (GitHub Actions)**：靜態代碼檢查 (`oxlint`) 與建置門禁 (`vite build`)。
   - **CD (Cloudflare Pages)**：邊緣節點自動化建構與全球 Anycast CDN 快取加速發布。
 - **版本控制分支規範**：僅維護單一主分支 **`master`**。
+
+---
+
+## 6. ⚙️ 背景動畫架構 (Background Animation Architecture)
+
+本節記錄背景代碼流動畫的技術實作規範。
+
+### A. FullStackCodeStreamBackground — RAF 無縫滾動引擎
+- **架構**：雙欄（左 HTML / 右 TypeScript）代碼流，各欄採用獨立 `useSeamlessScroll()` 自定義 Hook 驅動。
+- **核心算法**：`requestAnimationFrame` + `offsetHeight` 量測實際 Block A 高度，以 `modulo` 重置 offset — 確保 Loop 點 100% 精準像素對齊，永久消除跳接問題。
+- **速度設定**：左欄 0.28px/frame（≈17px/s @60fps），右欄 0.22px/frame（≈13px/s @60fps），右欄初始偏移 320px 形成視覺錯落感。
+- **GPU 合成**：`will-change: transform` + `translate3d(0, y, 0)`，全 GPU Compositor 渲染，零 Layout Reflow。
+
+### B. InitialPreloader — 三段式有機載入曲線
+- **總時長**：1600ms（段落一 0–55% 快速衝刺，段落二 55–82% 有機節奏，段落三 82–100% 收尾）。
+- **緩動函式**：第一與第三段採 `easeOutQuart`，中間段採 `easeInOutCubic`，模擬真實資源載入體驗。
+- **完成序列**：100% 停留 120ms → 300ms 淡出消失，讓使用者有時間感知完成。
+
+---
+
+## 7. 🖼️ 個人肖像處理規範 (Portrait Processing Standard)
+
+- **格式**：`public/assets/images/personal.webp`（1000×1000 RGBA WebP，quality=95）
+- **去背策略**：Trimap Alpha Matting
+  - 確定前景（FG Core）：侵蝕 12 次後的人物內部 → alpha=255
+  - 確定背景（BG Core）：侵蝕 6 次後的遠邊背景 → alpha=0
+  - 模糊邊緣帶（Unknown）：頭髮邊緣 ~15px → 依像素顏色與 BG 色距計算 alpha
+- **裁切策略**：原始圖片 796×796 全寬正方形裁切（頂部 796px）→ resize 至 1000×1000，完全無人工肩膀延展。
+- **色調校正**：僅對 215+ 極端高光進行 S-Curve 柔和滾降（保留 65% 超額亮度），保持膚色層次自然。

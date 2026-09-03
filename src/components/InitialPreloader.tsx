@@ -14,29 +14,27 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
   const textRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    let startTimestamp: number | null = null;
-    const duration = 1100; // Optimal 1.1s silky telemetry duration
     let animationFrameId: number;
+    let startTimestamp: number | null = null;
+
+    // Uniform linear progression — same speed throughout, no acceleration/deceleration.
+    // 1 800 ms total: long enough to feel intentional, short enough to not block.
+    const DURATION = 1800;
 
     const step = (timestamp: number) => {
       if (!startTimestamp) startTimestamp = timestamp;
       const elapsed = timestamp - startTimestamp;
-      const t = Math.min(elapsed / duration, 1);
+      const t = Math.min(elapsed / DURATION, 1);
 
-      // Steady, energetic linear-biased progression with gentle ease-out (p(t) = 1.25t - 0.25t^2)
-      // Velocity v(t) = 1.25 - 0.5t: Starts actively at 1.25x speed, cruises at 1.0x at midpoint, softly finishes at 0.75x speed without EVER stalling or freezing
-      const progressRatio = 1.25 * t - 0.25 * t * t;
-      const currentPercent = Math.min(Math.max(Math.round(progressRatio * 100), 1), 100);
-      const scaleValue = Math.min(Math.max(progressRatio, 0.01), 1);
+      // Pure linear: every ms advances the bar at exactly the same rate
+      const progressPercent = Math.max(Math.round(t * 100), 1);
+      const scaleValue = Math.max(t, 0.01);
 
-      // Direct GPU composite transform (0 layout reflow cost, 60fps/120fps fluid)
       if (barRef.current) {
         barRef.current.style.transform = `scaleX(${scaleValue})`;
       }
-
-      // Direct text update with fixed monospace tabular figures
       if (textRef.current) {
-        textRef.current.textContent = `${currentPercent}%`;
+        textRef.current.textContent = `${progressPercent}%`;
       }
 
       if (t < 1) {
@@ -44,13 +42,10 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
       } else {
         if (barRef.current) barRef.current.style.transform = 'scaleX(1)';
         if (textRef.current) textRef.current.textContent = '100%';
-
         setTimeout(() => {
           setFadingOut(true);
-          setTimeout(() => {
-            onComplete();
-          }, 250);
-        }, 80);
+          setTimeout(() => onComplete(), 300);
+        }, 120);
       }
     };
 
@@ -93,7 +88,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
           </div>
           <div className="flex flex-col text-left leading-tight min-w-0">
             <span className="font-mono text-sm sm:text-base font-extrabold tracking-wide truncate" style={{ color: textColor }}>
-              JasonProduction
+              Portfolio
             </span>
             <span className="font-tech text-xs font-bold tracking-wider truncate" style={{ color: cyanCol }}>
               許哲誠 HSU, CHE-CHENG

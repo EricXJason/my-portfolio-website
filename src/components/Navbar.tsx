@@ -150,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               closeMobileMenu();
             }}
             className="flex items-center gap-2 sm:gap-3 group min-w-0 transition-transform duration-300 hover:scale-105 active:scale-95 flex-shrink"
-            aria-label="JasonProduction 許哲誠 HSU, CHE-CHENG"
+            aria-label="Portfolio 許哲誠 HSU, CHE-CHENG"
           >
             <div
               className="relative w-8 h-8 sm:w-10 sm:h-10 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0 transition-all duration-300 group-hover:border-cyan-400 group-hover:shadow-[0_0_12px_rgba(0,240,255,0.4)]"
@@ -169,7 +169,7 @@ export const Navbar: React.FC<NavbarProps> = ({
 
             <div className="flex flex-col text-left leading-tight min-w-0 overflow-hidden">
               <span className="font-mono text-xs sm:text-base font-extrabold tracking-wide truncate group-hover:text-cyan-400 transition-colors" style={{ color: textColor }}>
-                JasonProduction
+                Portfolio
               </span>
               <span className="font-tech text-[9px] sm:text-xs font-bold tracking-wider truncate" style={{ color: cyanCol }}>
                 許哲誠 HSU, CHE-CHENG

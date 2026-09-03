@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
 interface ThemeProps {
@@ -301,6 +301,44 @@ const TsScriptScroll: React.FC<ThemeProps> = ({ isLight }) => {
 };
 
 /* ════════════════════════════════════════════════════════════
+   SEAMLESS SCROLL HOOK — RAF-driven, pixel-perfect loop
+   Measures Block A height at runtime, resets offset modulo that
+   height so the jump is always invisible (Block B == Block A).
+   ════════════════════════════════════════════════════════════ */
+
+function useSeamlessScroll(speed: number, initialOffset = 0) {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const blockARef = useRef<HTMLDivElement>(null);
+  const offsetRef = useRef(initialOffset);
+  const rafRef   = useRef<number>(0);
+
+  const tick = useCallback(() => {
+    const outer  = outerRef.current;
+    const blockA = blockARef.current;
+    if (!outer || !blockA) { rafRef.current = requestAnimationFrame(tick); return; }
+
+    const loopHeight = blockA.offsetHeight;
+    if (loopHeight === 0)  { rafRef.current = requestAnimationFrame(tick); return; }
+
+    offsetRef.current += speed;
+    // Reset modulo loop height — seamless because Block B is identical to Block A
+    if (offsetRef.current >= loopHeight) {
+      offsetRef.current -= loopHeight;
+    }
+    // Apply with GPU-composited transform — no layout reflow
+    outer.style.transform = `translate3d(0, ${-offsetRef.current}px, 0)`;
+    rafRef.current = requestAnimationFrame(tick);
+  }, [speed]);
+
+  useEffect(() => {
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, [tick]);
+
+  return { outerRef, blockARef };
+}
+
+/* ════════════════════════════════════════════════════════════
    MAIN BACKGROUND COMPONENT (DUAL STREAM: LEFT HTML / RIGHT TS)
    ════════════════════════════════════════════════════════════ */
 
@@ -310,12 +348,15 @@ export const FullStackCodeStreamBackground: React.FC = React.memo(() => {
   const [isDesktop, setIsDesktop] = useState(() => typeof window !== 'undefined' && window.innerWidth >= 1024);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 1024);
-    };
+    const handleResize = () => setIsDesktop(window.innerWidth >= 1024);
     window.addEventListener('resize', handleResize, { passive: true });
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Left stream: 0.28px/frame ≈ 17px/s at 60fps — slower, more ambient
+  const left  = useSeamlessScroll(0.28, 0);
+  // Right stream: slightly slower + initial offset for visual variety
+  const right = useSeamlessScroll(0.22, 320);
 
   if (!isDesktop) return null;
 
@@ -326,41 +367,43 @@ export const FullStackCodeStreamBackground: React.FC = React.memo(() => {
       aria-hidden="true"
     >
       {/* ── Left Column: Multi-Script HTML Repository Stream ── */}
-      <div className="hidden lg:flex flex-col w-[320px] xl:w-[420px] 2xl:w-[490px] opacity-20 dark:opacity-25 light:opacity-20 pointer-events-none select-none animate-code-stream font-mono text-[11px] leading-relaxed">
-        {/* Block A */}
-        <div className="flex flex-col shrink-0">
-          <HtmlScriptIndex isLight={isLight} />
-          <HtmlScriptNavbar isLight={isLight} />
-          <HtmlScriptHero isLight={isLight} />
-          <HtmlScriptProjects isLight={isLight} />
-        </div>
-        {/* Block B (Exact mirror duplicate for seamless 60/120fps infinite loop) */}
-        <div className="flex flex-col shrink-0" aria-hidden="true">
-          <HtmlScriptIndex isLight={isLight} />
-          <HtmlScriptNavbar isLight={isLight} />
-          <HtmlScriptHero isLight={isLight} />
-          <HtmlScriptProjects isLight={isLight} />
+      <div className="hidden lg:block w-[320px] xl:w-[420px] 2xl:w-[490px] opacity-20 dark:opacity-25 overflow-hidden pointer-events-none select-none font-mono text-[11px] leading-relaxed">
+        {/* RAF-scrolled outer wrapper — transform applied here */}
+        <div ref={left.outerRef} style={{ willChange: 'transform' }}>
+          {/* Block A — measured for loop height */}
+          <div ref={left.blockARef}>
+            <HtmlScriptIndex isLight={isLight} />
+            <HtmlScriptNavbar isLight={isLight} />
+            <HtmlScriptHero isLight={isLight} />
+            <HtmlScriptProjects isLight={isLight} />
+          </div>
+          {/* Block B — identical duplicate, shown while A scrolls out */}
+          <div aria-hidden="true">
+            <HtmlScriptIndex isLight={isLight} />
+            <HtmlScriptNavbar isLight={isLight} />
+            <HtmlScriptHero isLight={isLight} />
+            <HtmlScriptProjects isLight={isLight} />
+          </div>
         </div>
       </div>
 
       {/* ── Right Column: Multi-Script TypeScript (TS) Repository Stream ── */}
-      <div
-        className="hidden lg:flex flex-col w-[320px] xl:w-[420px] 2xl:w-[490px] opacity-20 dark:opacity-25 light:opacity-20 pointer-events-none select-none animate-code-stream font-mono text-[11px] leading-relaxed"
-        style={{ animationDelay: '-22s', animationDuration: '48s' }}
-      >
-        {/* Block A */}
-        <div className="flex flex-col shrink-0">
-          <TsScriptApp isLight={isLight} />
-          <TsScriptSynth isLight={isLight} />
-          <TsScriptAvatar isLight={isLight} />
-          <TsScriptScroll isLight={isLight} />
-        </div>
-        {/* Block B (Exact mirror duplicate for seamless 60/120fps infinite loop) */}
-        <div className="flex flex-col shrink-0" aria-hidden="true">
-          <TsScriptApp isLight={isLight} />
-          <TsScriptSynth isLight={isLight} />
-          <TsScriptAvatar isLight={isLight} />
-          <TsScriptScroll isLight={isLight} />
+      <div className="hidden lg:block w-[320px] xl:w-[420px] 2xl:w-[490px] opacity-20 dark:opacity-25 overflow-hidden pointer-events-none select-none font-mono text-[11px] leading-relaxed">
+        <div ref={right.outerRef} style={{ willChange: 'transform' }}>
+          {/* Block A */}
+          <div ref={right.blockARef}>
+            <TsScriptApp isLight={isLight} />
+            <TsScriptSynth isLight={isLight} />
+            <TsScriptAvatar isLight={isLight} />
+            <TsScriptScroll isLight={isLight} />
+          </div>
+          {/* Block B */}
+          <div aria-hidden="true">
+            <TsScriptApp isLight={isLight} />
+            <TsScriptSynth isLight={isLight} />
+            <TsScriptAvatar isLight={isLight} />
+            <TsScriptScroll isLight={isLight} />
+          </div>
         </div>
       </div>
     </div>
