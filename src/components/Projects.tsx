@@ -2,7 +2,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import projectsData from '../data/projects-section.json';
-import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, ChevronUp, MessageSquare, Cpu } from 'lucide-react';
+import { Trophy, Layers, Gamepad2, Globe, Star, Layout, FolderGit2, X, ChevronDown, ChevronUp, Cpu } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -28,6 +28,7 @@ interface ProjectItem {
   contributions_en?: string[];
   tags: string[];
   date: string;
+  date_en?: string;
 }
 
 interface ProjectsProps {
@@ -80,17 +81,6 @@ const categoryMap: Record<string, CategoryStyle> = {
     lightText: '#6b21a8',
     iconName: 'fullstack',
   },
-  linebot: {
-    zh: 'LINE Bot',
-    en: 'LINE Bot App',
-    darkBg: 'rgba(16, 185, 129, 0.20)',
-    darkBorder: '#10b981',
-    darkText: '#34d399',
-    lightBg: '#d1fae5',
-    lightBorder: '#059669',
-    lightText: '#065f46',
-    iconName: 'linebot',
-  },
 };
 
 export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutube }) => {
@@ -107,8 +97,6 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         return <Layout size={size} className={className} />;
       case 'fullstack':
         return <Globe size={size} className={className} />;
-      case 'linebot':
-        return <MessageSquare size={size} className={className} />;
       default:
         return null;
     }
@@ -171,14 +159,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const isFeaturedSideBySideView = filter === 'featured';
 
-  // Category Filters Order: Featured -> All -> Interactive -> Frontend -> Fullstack -> LINE Bot
+  // Category Filters Order: Featured -> All -> Interactive -> Frontend -> Fullstack
   const filters = [
     { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
     { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
     { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
     { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={15} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
-    { key: 'linebot', label: t('cat_linebot'), icon: <MessageSquare size={15} /> },
   ];
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
@@ -409,6 +396,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
               const honorsList = lang === 'zh' ? project.honors : (project.honors_en || project.honors);
               const contribList = lang === 'zh' ? project.contributions : (project.contributions_en || project.contributions);
+              const projectDate = lang === 'zh' ? project.date : (project.date_en || project.date);
               const categoryObj = categoryMap[project.category] ?? fallbackCategoryStyle;
               const categoryLabel = lang === 'zh' ? categoryObj.zh : categoryObj.en;
 
@@ -491,6 +479,19 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                             <span>{lang === 'zh' ? '專案原始碼' : 'SOURCE'}</span>
                           </a>
                         )}
+
+                        {!project.ytId && !project.websiteUrl && !project.githubUrl && (
+                          <div
+                            className="w-full py-2 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 opacity-80"
+                            style={{
+                              backgroundColor: isLight ? '#f1f5f9' : 'rgba(148, 163, 184, 0.1)',
+                              borderColor: isLight ? '#cbd5e1' : 'rgba(148, 163, 184, 0.25)',
+                              color: isLight ? '#64748b' : '#94a3b8',
+                            }}
+                          >
+                            <span>{lang === 'zh' ? '⚡ 專案籌備與建置中' : '⚡ IN DEVELOPMENT'}</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -530,7 +531,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                               </span>
                             )}
                             <span className="text-xs sm:text-sm font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
-                              {project.date}
+                              {projectDate}
                             </span>
                           </div>
                         </div>
@@ -589,7 +590,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           </div>
         )}
 
-        {/* EMPTY STATE CARD (For empty categories like LINE Bot) */}
+        {/* EMPTY STATE CARD (Fallback for any empty category) */}
         {visibleProjects.length === 0 && (
           <div
             className="max-w-3xl mx-auto p-10 sm:p-12 text-center border cyber-cut-corner backdrop-blur-xl space-y-4 my-8 shadow-lg reveal-scale"
@@ -599,10 +600,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             }}
           >
             <div className="flex justify-center text-slate-500">
-              <MessageSquare size={42} style={{ color: cyanCol }} />
+              <FolderGit2 size={42} style={{ color: cyanCol }} />
             </div>
             <h3 className="text-lg sm:text-xl font-bold font-hud uppercase tracking-wider" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-              {lang === 'zh' ? '目前尚無 LINE Bot 專案' : 'No LINE Bot Projects Yet'}
+              {lang === 'zh' ? '目前尚無相關專案' : 'No Projects Available Yet'}
             </h3>
             <p className="text-xs sm:text-sm font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
               {lang === 'zh' ? '專案準備中，敬請期待最新開發作品！' : 'Projects in development, stay tuned for upcoming releases!'}
@@ -838,7 +839,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           </span>
                         )}
                         <span className="text-xs sm:text-sm font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
-                          {selectedProjectModal.date}
+                          {lang === 'zh' ? selectedProjectModal.date : (selectedProjectModal.date_en || selectedProjectModal.date)}
                         </span>
                       </div>
                     </div>

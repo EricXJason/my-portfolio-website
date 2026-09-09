@@ -12,22 +12,25 @@
     "githubUrl": "https://github.com/EricXJason/awakening-protocol",
     "honors": ["國立臺灣藝術大學設計學院多媒體動畫藝術學系 114 學年度畢業創作影片補助"],
     "honors_en": ["NTUA Department of Multimedia & Animation Arts Graduation Project Grant"],
-    "desc": "基於皮亞傑認知發展理論設計之 VR 哲學解謎遊戲。體驗者化身虛擬生命體 12T06，於去文本化環境中透過手部控制器操作與物理回饋，經歷感知探索、符號表徵、具體運算至抽象推理之意識覺醒歷程。",
-    "desc_en": "VR philosophy puzzle game designed around Piaget's cognitive development theory. Players embody artificial lifeform 12T06 navigating textless environments towards consciousness awakening.",
+    "desc": "基於皮亞傑認知發展理論設計之 VR 哲學解謎遊戲。體驗者化身虛擬生命體 12T06，透過手部控制器操作與物理回饋，經歷感知探索、符號表徵、具體運算至抽象推理之意識覺醒歷程。",
+    "desc_en": "VR philosophy puzzle game designed around Piaget's cognitive development theory. Players embody artificial lifeform 12T06, utilizing hand controllers and physical feedback to progress from sensory exploration to abstract reasoning.",
     "contributions": [
-      "事件驅動架構：採用 EDA (Event-Driven Architecture) 與 Event 事件委派機制，整合 Singleton、Observer 與 Registry 模式，實作 UI、音訊、動畫與物理機關組件之結構性解耦。",
-      "VR 物理互動與關卡邏輯：基於 XR Interaction Toolkit 實作手部抓取與機關觸發；獨立編寫音階觸發序列、代數算式驗證與迷宮路徑重置邏輯。",
+      "事件驅動架構：採用 EDA 與事件委派機制，整合 Singleton、Observer 與 Registry 模式，實作 UI、音訊、動畫與物理機關組件之結構性解耦。",
+      "VR 物理互動與關卡邏輯：基於 XR Interaction Toolkit 實作 6-DoF 手部抓取與機關觸發；獨立編寫音階觸發序列、代數算式驗證與迷宮路徑重置演算法。",
       "渲染管線與自訂著色器：採用 URP 與 UV 頂點對齊色票技術，編寫 Hard Edge Outline 拓撲線條著色器插件，實現極簡賽博龐克視覺風格。",
-      "多媒體控制與 AIGC 整合：運用 Timeline 控管非線性過場；整合 DeepVoice Pro 語音合成與 Suno AI 聲場演算。"
+      "動畫控制：運用 Timeline 處理開頭文本動畫，並使用 DOTween 實現場景物件動畫。",
+      "AIGC 音訊生成：整合 DeepVoice Pro 語音合成與 Suno AI 聲場演算，建構空間音訊體驗。"
     ],
     "contributions_en": [
-      "Event-Driven Architecture: Employed EDA with Event Delegation mechanism, integrating Singleton, Observer & Registry patterns for structural component decoupling.",
-      "VR Physics & Level Logic: XR Interaction Toolkit hand grabbing & mechanics; programmed musical pitch triggers, algebraic validation & maze resets.",
-      "Render Pipeline & Custom Shaders: URP & UV vertex alignment color palette tech; custom Hard Edge Outline topology line shader for minimalist cyberpunk visuals.",
-      "Multimedia & AIGC Integration: Timeline non-linear cutscenes; integrated DeepVoice Pro voice synthesis & Suno AI soundscape calculation."
+      "Event-Driven Architecture (EDA): Employed EDA with event delegation mechanisms, integrating Singleton, Observer, and Registry patterns for structural component decoupling across UI, audio, animations, and physics.",
+      "VR Physics & Level Logic: Implemented 6-DoF hand grabbing and interactive mechanics via XR Interaction Toolkit; programmed musical pitch triggers, algebraic validation, and maze path resets.",
+      "Render Pipeline & Custom Shaders: Leveraged URP and UV vertex alignment color palette techniques; authored a custom Hard Edge Outline topology line shader for minimalist cyberpunk visuals.",
+      "Animation Control: Utilized Timeline for opening text sequence animations, and DOTween for interactive object animations.",
+      "AIGC Audio Generation: Integrated DeepVoice Pro speech synthesis and Suno AI sound generation to construct a spatial audio experience."
     ],
     "tags": ["Unity (C#)", "XR Interaction Toolkit", "URP", "DOTween Pro", "Timeline", "Blender", "DeepVoice Pro", "Suno AI"],
-    "date": "2025.09 - 2026.05"
+    "date": "2025.09 - 2026.05",
+    "date_en": "2025.09 - 2026.05"
   },
   {
     "id": "extinction",
@@ -47,10 +50,10 @@
     "honors_en": [
       "1st Place in National Special Topic Contest",
       "UE5 Taiwan Game Contest - Merit Award",
-      "2023 FaView Awards - Finalist"
+      "2023 Vision Get Wild Awards - Finalist"
     ],
-    "desc": "由 Unreal Engine 5 開發之 3D 多人合作第一人稱射擊遊戲。玩家需於限時內對抗大量敵人並採集星球能源，考驗戰術反應與射擊操作。",
-    "desc_en": "3D co-op FPS game built with Unreal Engine 5. Players engage in tactical combat against enemy hordes and gather planet energy under tight time constraints.",
+    "desc": "基於 Unreal Engine 5 開發之 3D 多人合作第一人稱射擊遊戲。玩家需於限時內協同對抗敵群並採集星球能源，考驗戰術反應與射擊操作。榮獲 2022 全國大專專題製作競賽第一名及 2022 UE5 臺灣遊戲創意設計大賽佳作。",
+    "desc_en": "3D co-op FPS game built with Unreal Engine 5. Players engage in tactical combat against enemy hordes and gather planet energy under tight time constraints. Winner of 1st Place in the National Special Topic Contest and Merit Award in the UE5 Taiwan Game Contest.",
     "contributions": [
       "核心系統全藍圖開發：獨立建構玩家控制器、核心 UI 狀態流與關卡狀態機切換機制。",
       "AI 行為與感知系統：運用 Behavior Tree 與 AIPerception，實作怪物巡邏、感知追擊、動態包圍與戰術移動邏輯。",
@@ -62,7 +65,8 @@
       "Terrain & 3D Assets: Landscape giant terrain editing, 3D weapon modeling, LOD optimization, and engine asset pipeline."
     ],
     "tags": ["Unreal Engine", "Blueprints", "Blender", "Substance Painter"],
-    "date": "2022.03 - 2023.04"
+    "date": "2022.03 - 2023.04",
+    "date_en": "2022.03 - 2023.04"
   },
   {
     "id": "portfolio-website",
@@ -79,20 +83,21 @@
     "aiAssisted": true,
     "honors": [],
     "honors_en": [],
-    "desc": "採用 React、TypeScript、Vite 與 Tailwind CSS 打造的高質感響應式個人作品集網站。整合現代 UI/UX 設計美學、動態資產加載、雙語多國語言切換（繁中/英文）、深淺色主題切換與全動態 RWD 佈局。",
-    "desc_en": "Premium responsive personal portfolio website built with React, TypeScript, Vite, and Tailwind CSS. Features modern UI/UX design, dynamic asset loading, bilingual support (ZH/EN), dark/light theme switching, and responsive layout.",
+    "desc": "採用 React、TypeScript、Vite 與 Tailwind CSS 打造的高質感響應式個人作品集網站。採用 i18n 雙語國際化架構設計，整合現代 UI/UX 設計美學、動態資產加載、中英多國語言即時切換、深淺色主題切換與全動態 RWD 佈局。",
+    "desc_en": "Premium responsive personal portfolio website built with React, TypeScript, Vite, and Tailwind CSS. Features an i18n bilingual architecture design, modern UI/UX aesthetics, dynamic asset loading, instant ZH/EN language switching, dark/light theme switching, and responsive RWD layout.",
     "contributions": [
-      "現代前端架構與組件化設計：採用 React + TypeScript 打造高擴充性組件結構，結合 Vite 極速建構工具與 Context API 進行全域語言與主題狀態管理。",
-      "動態視覺與 RWD 響應式佈局：設計賽博龐克風格深色主題與典雅淺色主題，整合 Canvas 動態粒子背景、客製化滑鼠游標、視差滾動與跨裝置自適應邊距。",
-      "自動化 CI/CD 部署：整合 GitHub Actions (CI) 自動化建構品質門禁與 Cloudflare Pages (CD) 邊緣部署流程，無縫發布至全球 Anycast CDN 邊緣節點。"
+      "前端架構與 i18n 國際化設計：採用 React + TypeScript 打造模組化組件結構，結合 Vite 建構工具與 Context API 實作輕量化 i18n 雙語架構，支援全域語言狀態管理、HTML lang 標籤即時同步與深淺主題切換。",
+      "動態視覺與 RWD 響應式佈局：設計賽博龐克風格深色主題與典雅淺色主題，整合 Canvas 動態粒子背景、客製化滑鼠游標、視差滾動與跨裝置自適應排版，符合 WCAG 高對比無障礙標準。",
+      "自動化 CI/CD 部署：整合 GitHub Actions 自動化建構品質門禁與 Cloudflare Pages 邊緣部署流程，無縫發布至全球 Anycast CDN 邊緣節點。"
     ],
     "contributions_en": [
-      "Modern Frontend Architecture: React + TypeScript component design with Vite build tool and Context API for global language & theme state.",
-      "Dynamic Visuals & Responsive Layout: Modern cyberpunk dark mode & elegant light mode, Canvas particles, custom cursor, parallax scrolling, and RWD layout.",
-      "Automated CI/CD Pipeline: Integrated GitHub Actions (CI) build & lint quality gates with Cloudflare Pages (CD) edge deployment workflow seamlessly to Cloudflare Anycast Edge CDN."
+      "Frontend Architecture & i18n Design: Modular React + TypeScript component architecture with Vite and Context API for a lightweight i18n system, supporting global bilingual state, HTML lang sync, and theme management.",
+      "Dynamic Visuals & Responsive Layout: Modern cyberpunk dark mode and light mode, Canvas particles, custom cursor, parallax scrolling, and responsive layout complying with WCAG high-contrast accessibility standards.",
+      "Automated CI/CD Pipeline: Integrated GitHub Actions (CI) build and lint quality gates with Cloudflare Pages (CD) edge deployment workflow seamlessly to Cloudflare Anycast Edge CDN."
     ],
-    "tags": ["HTML", "CSS", "Canvas API", "Tailwind CSS", "TypeScript", "React", "Vite", "GitHub Actions (CI)", "Cloudflare Pages (CD)"],
-    "date": "2026.07"
+    "tags": ["HTML", "CSS", "Canvas API", "Tailwind CSS", "TypeScript", "React", "Vite", "i18n", "GitHub Actions (CI)", "Cloudflare Pages (CD)"],
+    "date": "2026.07",
+    "date_en": "2026.07"
   },
   {
     "id": "rhythmsync",
@@ -109,16 +114,17 @@
     "desc_en": "Grayscale 2D audio-synced action runner. Real-time audio spectrum drives dynamic UI, particle VFX, camera shake, and background shifts.",
     "contributions": [
       "即時頻譜解析與映射：呼叫 AudioSource.GetSpectrumData 解析即時頻譜數據，將特定頻段動態映射至場景物件縮放與粒子特效。",
-      "Cinemachine 動態運鏡：整合 Cinemachine 實作鏡頭震動與追蹤，並與音訊頻譜數據即時連動。",
-      "全域狀態與資料持久化：導入 Singleton 模式管理全域音訊狀態機，並透過 PlayerPrefs 實作輕量化數據存檔。"
+      "Cinemachine 動態運鏡：整合 Cinemachine 實作程序化鏡頭震動與追蹤軌跡，並與音訊頻譜數據即時連動。",
+      "全域狀態與資料持久化：導入 Singleton 模式管理全域音訊狀態機，並透過 PlayerPrefs 實作輕量化數據非同步存檔。"
     ],
     "contributions_en": [
-      "Real-Time Spectrum Mapping: AudioSource.GetSpectrumData API for frequency amplitude mapping to object scaling & particle VFX.",
-      "Cinemachine Dynamic Camera: Linked camera shake and tracking trajectory with real-time audio spectrum beat detection.",
-      "Global State & Persistence: Singleton pattern for global audio state machine and PlayerPrefs lightweight data saving."
+      "Real-Time Spectrum Mapping: Utilized AudioSource.GetSpectrumData for frequency amplitude mapping to procedural object scaling and particle VFX.",
+      "Cinemachine Dynamic Camera: Linked procedural camera shake and tracking trajectory with real-time audio spectrum beat detection.",
+      "Global State & Persistence: Employed Singleton pattern for global audio state machine and PlayerPrefs for lightweight data persistence."
     ],
     "tags": ["Unity (C#)", "Cinemachine"],
-    "date": "2024.10 - 2024.12"
+    "date": "2024.10 - 2024.12",
+    "date_en": "2024.10 - 2024.12"
   },
   {
     "id": "temporal-shrine",
@@ -142,7 +148,8 @@
       "Cutscenes & State Management: Timeline system for camera animation and audio sync; Singleton pattern for scene loading & quest state."
     ],
     "tags": ["Unity (C#)", "Vuforia SDK", "Timeline"],
-    "date": "2025.10 - 2026.02"
+    "date": "2025.10 - 2026.02",
+    "date_en": "2025.10 - 2026.02"
   },
   {
     "id": "ecohoops",
@@ -166,7 +173,8 @@
       "State & Scoring System: Singleton pattern for global score tracking, timer, and stage flow control."
     ],
     "tags": ["Unity (C#)", "Meta Quest SDK"],
-    "date": "2025.03 - 2025.05"
+    "date": "2025.03 - 2025.05",
+    "date_en": "2025.03 - 2025.05"
   },
   {
     "id": "aircraft",
@@ -190,7 +198,8 @@
       "UGUI Logic & State Machine: Integrated custom assets into Unity UGUI to program complex interactive maintenance procedures."
     ],
     "tags": ["Unity (C#)", "Photoshop", "Illustrator", "Premiere"],
-    "date": "2020.07 - 2021.06"
+    "date": "2020.07 - 2021.06",
+    "date_en": "2020.07 - 2021.06"
   },
   {
     "id": "little-prince",
@@ -214,6 +223,91 @@
       "Motion Navigation & Video Production: Directed dynamic tour navigation, audio-visual tuning, and showcase video editing."
     ],
     "tags": ["Unity (C#)", "Blender", "Substance Painter", "Premiere"],
-    "date": "2022.07 - 2023.06"
+    "date": "2022.07 - 2023.06",
+    "date_en": "2022.07 - 2023.06"
+  },
+  {
+    "id": "taiwan-weather",
+    "title_zh": "臺灣天氣預報網站",
+    "title_en": "Taiwan Weather Forecast Website",
+    "category": "frontend",
+    "featured": false,
+    "order": 9,
+    "image": "/assets/images/proj-placeholder.webp",
+    "desc": "專案規劃與開發中，內容即將推出。",
+    "desc_en": "Project planning and development in progress. Coming soon.",
+    "tags": [],
+    "date": "2026 (規劃中)",
+    "date_en": "2026 (In Planning)"
+  },
+  {
+    "id": "movie-collection",
+    "title_zh": "電影收藏網站",
+    "title_en": "Movie Collection Website",
+    "category": "frontend",
+    "featured": false,
+    "order": 10,
+    "image": "/assets/images/proj-placeholder.webp",
+    "desc": "專案規劃與開發中，內容即將推出。",
+    "desc_en": "Project planning and development in progress. Coming soon.",
+    "tags": [],
+    "date": "2026 (規劃中)",
+    "date_en": "2026 (In Planning)"
+  },
+  {
+    "id": "restaurant-ordering",
+    "title_zh": "餐廳點餐網站",
+    "title_en": "Restaurant Ordering Website",
+    "category": "fullstack",
+    "featured": false,
+    "order": 11,
+    "image": "/assets/images/proj-placeholder.webp",
+    "desc": "專案規劃與開發中，內容即將推出。",
+    "desc_en": "Project planning and development in progress. Coming soon.",
+    "tags": [],
+    "date": "2026 (規劃中)",
+    "date_en": "2026 (In Planning)"
+  },
+  {
+    "id": "banking-system",
+    "title_zh": "銀行網站",
+    "title_en": "Banking System Website",
+    "category": "fullstack",
+    "featured": false,
+    "order": 12,
+    "image": "/assets/images/proj-placeholder.webp",
+    "desc": "專案規劃與開發中，內容即將推出。",
+    "desc_en": "Project planning and development in progress. Coming soon.",
+    "tags": [],
+    "date": "2026 (規劃中)",
+    "date_en": "2026 (In Planning)"
+  },
+  {
+    "id": "ecommerce-platform",
+    "title_zh": "電商網站",
+    "title_en": "E-Commerce Website",
+    "category": "fullstack",
+    "featured": false,
+    "order": 13,
+    "image": "/assets/images/proj-placeholder.webp",
+    "desc": "專案規劃與開發中，內容即將推出。",
+    "desc_en": "Project planning and development in progress. Coming soon.",
+    "tags": [],
+    "date": "2026 (規劃中)",
+    "date_en": "2026 (In Planning)"
+  },
+  {
+    "id": "survey-flow",
+    "title_zh": "動態問卷網站",
+    "title_en": "Dynamic Survey Website",
+    "category": "fullstack",
+    "featured": false,
+    "order": 14,
+    "image": "/assets/images/proj-placeholder.webp",
+    "desc": "專案規劃與開發中，內容即將推出。",
+    "desc_en": "Project planning and development in progress. Coming soon.",
+    "tags": [],
+    "date": "2026 (規劃中)",
+    "date_en": "2026 (In Planning)"
   }
 ]

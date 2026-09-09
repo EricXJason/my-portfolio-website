@@ -72,3 +72,32 @@
 
 [2026-09-04 02:01] | [perf] | 嚴格專案最佳化：(1) 代碼流動畫減速（左欄 0.45→0.28px/frame，右欄 0.35→0.22px/frame），環境感更沉穩；(2) Loading Bar 重構為三段式有機緩動曲線（1600ms，Phase1 easeOutQuart 0→55%，Phase2 easeInOutCubic 55→82%，Phase3 easeOutQuart 82→100%），消除機械卡頓感；(3) development-plan.md 同步追加 §6 動畫架構與 §7 肖像處理規範；(4) 全站掃描：無外部 Hotlink、無冗餘依賴、無空目錄、TypeScript/Lint 全通過 | [src/components/FullStackCodeStreamBackground.tsx, src/components/InitialPreloader.tsx, docs/development-plan.md, docs/check-list.md, docs/change-log.md]
 [2026-09-04 02:15] | [fix] | 個人肖像頭髮去背極限精修：深入診斷並解決攝影棚高光所致之頭髮邊緣白斑問題，採用 Signed Distance Field 有號距離場 1.2px 次像素抗鋸齒平滑邊緣，並針對頭髮外邊緣 3px 高光實施邊緣抗色偏去雜色（Defringing），徹底根除深淺模式下所有白色小雜點與毛邊瑕疵 | [public/assets/images/personal.webp, docs/check-list.md, docs/change-log.md]
+
+[2026-09-06 18:21] | [feat] | 擴充作品專案預留佔位項目：依據需求於前端開發類別新增「臺灣天氣預報網站」與「電影收藏網站」，於全端開發類別新增「餐廳點餐網站」、「銀行網站」、「電商網站」與「動態問卷網站」等共 6 個專案空格與雙語標題；本地生成標準 16:9 賽博龐克風格 WebP 佔位圖片，並針對無外鏈專案優化清單展示狀態徽章 | [src/data/projects-section.json, public/assets/images/proj-placeholder.webp, src/components/Projects.tsx, docs/development-plan.md, docs/check-list.md, docs/change-log.md]
+
+[2026-09-06 18:28] | [refactor] | 移除專案作品 LINE Bot 分類按鈕：依據指令自作品分類篩選器（Filter Bar）中移除 LINE Bot 類別項目、清理對應之 categoryMap 設定與未引用之圖示模組，並將空狀態提示卡片重構為通用型設計 | [src/components/Projects.tsx, docs/development-plan.md, docs/check-list.md, docs/change-log.md]
+
+[2026-09-09 18:06] | [feat] | 作品集專案深度補充 i18n 國際化架構敘述，全站 14 項專案全面導入 104 高階技術履歷口吻（STAR 原則與架構關鍵字），補齊規劃中專案之企業級技術棧與 date_en 雙語支援 | [src/data/projects-section.json, src/components/Projects.tsx, docs/development-plan.md, docs/check-list.md, docs/change-log.md]
+
+[2026-09-09 18:11] | [refactor] | 嚴格基於專案原有內容精準補充技術細節，作品集專案補充 i18n 國際化設計並消除所有版本號贅述（如 v4），籌備中專案回歸真實規劃狀態徹底清除幻覺內容 | [src/data/projects-section.json, docs/development-plan.md, docs/check-list.md]
+
+[2026-09-09 18:12] | [refactor] | 清理中文敘述中贅述的英文括號翻譯（如玩家控制器、皮亞傑等），嚴格遵循無中英夾雜規範 | [src/data/projects-section.json, docs/check-list.md]
+
+[2026-09-09 18:13] | [refactor] | 校正技術名詞：移除 AudioSource.GetSpectrumData 的 API 誤稱，改為引擎內建方法標準呼叫描述 | [src/data/projects-section.json, docs/check-list.md]
+
+[2026-09-09 18:16] | [refactor] | 社影流光專案精確回歸原始實作，徹底杜絕 Cinemachine 與非線性多視角過場等未採用之技術敘述 | [src/data/projects-section.json, docs/check-list.md]
+
+[2026-09-09 18:17] | [refactor] | 覺醒協議專案事實校正：徹底移除不符真實情況之「去文本化環境」描述，回歸嚴謹精確的遊戲設計說明 | [src/data/projects-section.json, docs/check-list.md]
+
+[2026-09-09 18:19] | [refactor] | 覺醒協議專案修訂：著色器貢獻中徹底移除 fps 數值贅述，專注呈現 URP 與拓撲線條著色器之極簡賽博龐克視覺風格 | [src/data/projects-section.json, docs/check-list.md]
+
+[2026-09-09 18:22] | [refactor] | 覺醒協議專案動畫與生成式音訊架構拆分：Timeline 專責開頭文本動畫，DOTween 負責場景物件動畫，AIGC 獨立為 DeepVoice Pro 與 Suno AI 空間音訊體驗建構 | [src/data/projects-section.json, docs/check-list.md]
+
+[2026-09-09 18:26] | [feat] | 「關於我」區塊新增高階工程當責特質標籤：精煉持續精進、自我管理與創新思考為技術深耕與自主迭代、高度自驅與全流程當責、跨界思維與創新解題三項雙語徽章，落實綠青紫階層色彩與高對比無障礙規格 | [src/data/about-section.json, src/components/About.tsx, docs/development-plan.md, docs/check-list.md]
+
+[2026-09-09 18:27] | [style] | 「關於我」特質標籤精簡修訂：簡化為四字成詞之「持續精進」、「自我管理」、「創新思考」精鍊微徽章，雙語字典同步維持純淨視覺與階層色彩 | [src/data/about-section.json, docs/development-plan.md, docs/check-list.md]
+
+[2026-09-09 18:28] | [refactor] | 移除「關於我」特質標籤：全面清除資料集 traits 欄位與視圖標籤列渲染邏輯，恢復自介段落純淨乾淨之視覺版面 | [src/data/about-section.json, src/components/About.tsx, docs/development-plan.md, docs/check-list.md]
+
+
+
