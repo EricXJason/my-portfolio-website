@@ -1,0 +1,202 @@
+/**
+ * ============================================================================
+ * 檔案名稱: LangSelectModal.tsx
+ * 所屬模組: Presentation Layer (全站開場語言偏好選擇視窗模組)
+ * 責任描述: 負責呈現全站開場語系選擇彈窗（正體中文與英文），並整合右上角主題即時切換。
+ * 架構分層: Presentation Layer (React UI Component)
+ 宣告式模態視窗組件結合半透明磨砂毛玻璃遮罩與鍵盤無障礙監聽。
+ * 依賴關係: 依賴 LangContext 與 ThemeContext。
+ * 邊界處理: 開啟時鎖定 body 捲動防止背景滑移、關閉時精確恢復捲動狀態。
+ * ============================================================================
+ */
+
+import React, { useEffect, useState, useCallback } from 'react';
+import { useLang, Language } from '../context/LangContext';
+import { useTheme } from '../context/ThemeContext';
+import { Sun, Moon, Globe2 } from 'lucide-react';
+
+interface LangSelectModalProps {
+  isOpen?: boolean;
+  onSelectLanguage?: () => void;
+}
+
+export const LangSelectModal: React.FC<LangSelectModalProps> = ({
+  isOpen = true,
+  onSelectLanguage,
+}) => {
+  const { lang, setLangDirect } = useLang();
+  const { theme, toggleTheme } = useTheme();
+  const isLight = theme === 'light';
+  const [closing, setClosing] = useState(false);
+
+  const choose = useCallback((l: Language) => {
+    setLangDirect(l);
+    setClosing(true);
+    if (onSelectLanguage) {
+      onSelectLanguage();
+    }
+
+    setTimeout(() => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }, 350);
+  }, [setLangDirect, onSelectLanguage]);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || closing) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' || e.code === 'Escape') {
+        choose('zh');
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+    };
+  }, [isOpen, closing, choose]);
+
+  if (!isOpen) return null;
+
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)';
+  const bracketCol = isLight ? '#0284c7' : '#00f0ff';
+
+  return (
+    <div
+      className="fixed inset-0 z-[999999] flex items-center justify-center p-6 sm:p-8 select-none"
+      style={{
+        backgroundColor: isLight ? 'rgba(248, 250, 252, 0.50)' : 'rgba(3, 7, 18, 0.65)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
+        opacity: closing ? 0 : 1,
+        transition: 'opacity 0.35s ease, background-color 0.3s ease',
+      }}
+      onClick={() => choose('zh')}
+      role="dialog"
+      aria-modal="true"
+      aria-label="選擇語言 / Select Language"
+    >
+      <div
+        className="relative w-full max-w-[calc(100%-2rem)] sm:max-w-md border cyber-cut-corner p-6 sm:p-8 shadow-2xl flex flex-col items-center gap-6 hud-corner-brackets transition-all duration-300"
+        style={{
+          backgroundColor: isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(8, 14, 26, 0.95)',
+          borderColor: borderCol,
+          boxShadow: isLight
+            ? '0 20px 50px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.8)'
+            : '0 25px 60px rgba(0, 0, 0, 0.7), 0 0 35px rgba(0, 240, 255, 0.2)',
+          '--hud-bracket-color': bracketCol,
+        } as React.CSSProperties}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="w-full flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div
+              className="w-10 h-10 border p-[2px] cyber-cut-sm flex items-center justify-center shadow-md shrink-0 transition-colors duration-300"
+              style={{
+                borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.4)',
+                backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
+              }}
+            >
+              <div className="font-hud font-black text-xs" style={{ color: cyanCol }}>
+                &lt;JP/&gt;
+              </div>
+            </div>
+            <div className="flex flex-col text-left leading-tight min-w-0">
+              <span className="font-mono text-sm sm:text-base font-extrabold tracking-wide truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                Portfolio
+              </span>
+              <span className="font-tech text-xs sm:text-sm font-bold tracking-wider truncate" style={{ color: cyanCol }}>
+                許哲誠 HSU, CHE-CHENG
+              </span>
+            </div>
+          </div>
+
+          <button
+            onClick={toggleTheme}
+            className="w-[52px] sm:w-[62px] h-[28px] sm:h-[32px] border cyber-cut-sm relative p-[2px] flex items-center transition-all duration-300 cursor-pointer active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none overflow-hidden"
+            style={{
+              backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
+              borderColor: borderCol,
+            }}
+            aria-label={isLight ? (lang === 'zh' ? '目前模式：淺色模式' : 'Current Mode: Light Mode') : (lang === 'zh' ? '目前模式：深色模式' : 'Current Mode: Dark Mode')}
+            title={isLight ? (lang === 'zh' ? '淺色模式' : 'Light Mode') : (lang === 'zh' ? '深色模式' : 'Dark Mode')}
+          >
+            <div className="w-full h-full flex items-center justify-between pointer-events-none z-0 px-1">
+              <div className="w-1/2 flex items-center justify-center">
+                <Sun size={12} className="text-amber-400 font-bold opacity-80" />
+              </div>
+              <div className="w-1/2 flex items-center justify-center">
+                <Moon size={12} className="text-cyan-400 font-bold opacity-80" />
+              </div>
+            </div>
+            <div
+              className="absolute top-[2px] bottom-[2px] left-[2px] w-[calc(50%-2px)] cyber-cut-sm flex items-center justify-center transition-transform duration-300 ease-out z-10 shadow-sm"
+              style={{
+                transform: isLight ? 'translateX(0%)' : 'translateX(100%)',
+                backgroundColor: isLight ? '#fbbf24' : '#00f0ff',
+                color: '#0f172a',
+              }}
+            >
+              {isLight ? (
+                <Sun size={13} className="fill-current text-slate-900" />
+              ) : (
+                <Moon size={13} className="fill-current text-slate-900" />
+              )}
+            </div>
+          </button>
+        </div>
+
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+            <Globe2 size={18} className="shrink-0" style={{ color: cyanCol }} />
+            <h2 className="text-base sm:text-lg font-bold font-hud uppercase tracking-wider whitespace-nowrap" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+              語言 LANGUAGE
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3.5 w-full">
+          <button
+            onClick={() => choose('zh')}
+            className="h-12 px-6 sm:px-8 border cyber-cut-corner font-bold text-sm font-tech transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.03] active:scale-[0.97] shadow-sm"
+            style={{
+              backgroundColor: isLight ? '#f0f9ff' : 'rgba(0, 240, 255, 0.15)',
+              borderColor: isLight ? '#38bdf8' : '#00f0ff',
+              color: isLight ? '#0369a1' : '#00f0ff',
+            }}
+          >
+            <span>繁體中文</span>
+          </button>
+
+          <button
+            onClick={() => choose('en')}
+            className="h-12 px-6 sm:px-8 border cyber-cut-corner font-bold text-sm font-tech transition-all cursor-pointer flex items-center justify-center gap-2 hover:scale-[1.03] active:scale-[0.97] shadow-sm"
+            style={{
+              backgroundColor: isLight ? '#faf5ff' : 'rgba(168, 85, 247, 0.15)',
+              borderColor: isLight ? '#c084fc' : '#a855f7',
+              color: isLight ? '#7e22ce' : '#c084fc',
+            }}
+          >
+            <span>English</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LangSelectModal;

@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#070b15" rx="32" />
+  
+  <!-- Cyber Bevel Cut Frame -->
+  <path 
+    d="M 64,48 L 400,48 L 464,112 L 464,464 L 112,464 L 48,400 L 48,64 Z" 
+    fill="none" 
+    stroke="#00f0ff" 
+    stroke-width="12" 
+    stroke-linejoin="miter" 
+  />
+  
+  <!-- Subtle Outer Frame Glow -->
+  <path 
+    d="M 64,48 L 400,48 L 464,112 L 464,464 L 112,464 L 48,400 L 48,64 Z" 
+    fill="none" 
+    stroke="#00f0ff" 
+    stroke-width="4" 
+    opacity="0.5" 
+  />
+
+  <!-- Center <JP/> Tech Tag Symbol -->
+  <text 
+    x="256" 
+    y="300" 
+    font-family="Chakra Petch, Orbitron, Rajdhani, Share Tech Mono, system-ui, sans-serif" 
+    font-weight="900" 
+    font-size="160" 
+    fill="#00f0ff" 
+    text-anchor="middle" 
+    letter-spacing="-2"
+  >&lt;JP/&gt;</text>
+</svg>

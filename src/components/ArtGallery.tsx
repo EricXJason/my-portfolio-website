@@ -1,0 +1,605 @@
+/**
+ * ============================================================================
+ * 檔案名稱: ArtGallery.tsx
+ * 所屬模組: Presentation Layer (美術畫廊展示模組)
+ * 責任描述: 負責呈現 3D 場景渲染、精細物件建模、2D 麥克筆設計與素描作品之輪盤與燈箱預覽。
+ * 架構分層: Presentation Layer (React UI Component)
+ 宣告式組件結合輪盤演算法 (Roulette Layout)、手勢滑動監聽與鍵盤導航。
+ * 依賴關係: 依賴 LangContext、ThemeContext、gallery-section.json、assetPath 與 useScrollReveal。
+ * 邊界處理: 觸控邊界防禦、Sketchfab 嵌入連結相容性處理、精選作品上限截斷防護。
+ * ============================================================================
+ */
+
+import React, { useState, useEffect, useCallback } from 'react';
+import { useLang } from '../context/LangContext';
+import { useTheme } from '../context/ThemeContext';
+import {
+  X,
+  Layers,
+  Box,
+  Component,
+  PenTool,
+  Paintbrush,
+  ChevronLeft,
+  ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  Download,
+  Star,
+  Palette
+} from 'lucide-react';
+import { getAssetUrl } from '../utils/assetPath';
+import artGalleryDataJson from '../data/gallery-section.json';
+import { useScrollReveal } from '../hooks/useScrollReveal';
+
+interface Artwork {
+  id: string;
+  cat: string;
+  img?: string;
+  embedUrl?: string;
+  featured?: boolean;
+  featuredOrder?: number;
+}
+
+export const ArtGallery: React.FC = () => {
+  const { t, lang } = useLang();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
+  /**
+   * TODO: [後端端點對接] 取得使用者模式藝術畫廊與多媒體作品資料
+   * 1. HTTP Method: GET
+   * 2. 預期端點: /api/v1/gallery
+   * 3. 請求參數:
+   *    - Query Params: category (string, 可選)
+   * 4. 預期回應:
+   *    - 200 OK: { success: true, data: Artwork[] }
+   *    - 500 Internal Server Error: 伺服器讀取畫廊資料失敗
+   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (gallery-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
+   */
+  const galleryItems = artGalleryDataJson as Artwork[];
+
+  const [activeTab, setActiveTab] = useState('featured');
+  const [activeImage, setActiveImage] = useState<Artwork | null>(null);
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const [rouletteIndex, setRouletteIndex] = useState(0);
+  const [isAutoPlay, setIsAutoPlay] = useState(true);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1200);
+
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const minSwipeDistance = 40;
+
+  // 精選畫廊作品：優先讀取 CMS 標記之精選作品（上限 10 項，依 featuredOrder 排序），備援方案為 3D 類別作品
+  const customFeatured = galleryItems
+    .filter((item) => item.featured)
+    .sort((a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99))
+    .slice(0, 10);
+
+  const displayFeatured = customFeatured.length > 0
+    ? customFeatured
+    : galleryItems.filter((item) => item.cat === '3d-scene' || item.cat === '3d-prop').slice(0, 10);
+
+  const filteredArt = galleryItems.filter(
+    (item) => activeTab === 'all' || item.cat === activeTab
+  );
+
+  const displayedArt = isExpanded ? filteredArt : filteredArt.slice(0, 8);
+
+  const activeIndex = activeImage
+    ? (activeTab === 'featured' ? displayFeatured : filteredArt).findIndex((item) => item.id === activeImage.id)
+    : -1;
+
+  const currentList = activeTab === 'featured' ? displayFeatured : filteredArt;
+
+  const handlePrevImage = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (currentList.length === 0) return;
+    const prevIdx = (activeIndex - 1 + currentList.length) % currentList.length;
+    setActiveImage(currentList[prevIdx]);
+  }, [activeIndex, currentList]);
+
+  const handleNextImage = useCallback((e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (currentList.length === 0) return;
+    const nextIdx = (activeIndex + 1) % currentList.length;
+    setActiveImage(currentList[nextIdx]);
+  }, [activeIndex, currentList]);
+
+  const handleCloseModal = useCallback(() => {
+    document.body.classList.remove('hide-custom-cursor');
+    setActiveImage(null);
+  }, []);
+
+  const handleRouletteTouchStart = (e: React.TouchEvent) => {
+    setIsAutoPlay(false);
+    setTouchStartX(e.targetTouches[0].clientX);
+    setTouchEndX(null);
+  };
+
+  const handleRouletteTouchMove = (e: React.TouchEvent) => {
+    setTouchEndX(e.targetTouches[0].clientX);
+  };
+
+  const handleRouletteTouchEnd = () => {
+    if (touchStartX === null || touchEndX === null) return;
+    const distance = touchStartX - touchEndX;
+    if (distance > minSwipeDistance) {
+      setRouletteIndex((prev) => (prev + 1) % displayFeatured.length);
+    } else if (distance < -minSwipeDistance) {
+      setRouletteIndex((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length);
+    }
+    setTouchStartX(null);
+    setTouchEndX(null);
+    setIsAutoPlay(true);
+  };
+
+  useEffect(() => {
+    if (activeTab !== 'featured' || !isAutoPlay || activeImage) return;
+    const interval = setInterval(() => {
+      setRouletteIndex((prev) => (prev + 1) % displayFeatured.length);
+    }, 3200);
+    return () => clearInterval(interval);
+  }, [activeTab, isAutoPlay, activeImage, displayFeatured.length]);
+
+  useEffect(() => {
+    if (!activeImage) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        handlePrevImage();
+      } else if (e.key === 'ArrowRight') {
+        handleNextImage();
+      } else if (e.key === 'Escape' || e.code === 'Escape') {
+        handleCloseModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, true);
+      document.body.classList.remove('hide-custom-cursor');
+    };
+  }, [activeImage, handlePrevImage, handleNextImage, handleCloseModal]);
+
+  const tabs = [
+    { key: 'featured', label: lang === 'zh' ? '精選作品' : 'Featured Works', icon: <Star size={14} className="text-amber-400 fill-amber-400" /> },
+    { key: 'all', label: lang === 'zh' ? '全部作品' : 'All Works', icon: <Layers size={14} /> },
+    { key: '3d-scene', label: lang === 'zh' ? '3D 場景' : '3D Environments', icon: <Box size={14} /> },
+    { key: '3d-prop', label: lang === 'zh' ? '3D 物件' : '3D Assets & Props', icon: <Component size={14} /> },
+    { key: 'sketch', label: lang === 'zh' ? '2D 素描' : '2D Sketches', icon: <PenTool size={14} /> },
+    { key: 'marker', label: lang === 'zh' ? '2D 麥克筆' : '2D Marker Art', icon: <Paintbrush size={14} /> },
+  ];
+
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
+  const cyanCol = isLight ? '#0284c7' : '#00f0ff';
+
+  const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const containerRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+
+  return (
+    <section id="gallery" className="py-20 relative select-text">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-8 sm:px-12 lg:px-16">
+
+        {/* 區塊標題列 */}
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto mb-14 space-y-3">
+
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
+            <Palette size={32} style={{ color: isLight ? '#0369a1' : '#00f0ff' }} className="shrink-0" />
+            <span>{t('gallery_title')}</span>
+          </h2>
+          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+            {t('gallery_note')}
+          </p>
+        </div>
+
+        {/* 分類篩選列 — 行動端 2 欄等寬網格 / 桌面端彈性換行 */}
+        <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => {
+                setActiveTab(tab.key);
+                setIsExpanded(false);
+              }}
+              role="tab"
+              aria-selected={activeTab === tab.key}
+              className={`h-11 px-3 sm:px-6 w-full sm:w-auto border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap ${
+                activeTab === tab.key
+                  ? 'filter-btn-active scale-[1.02] sm:scale-105 shadow-md'
+                  : 'filter-btn-inactive'
+              }`}
+            >
+              <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+                {tab.icon}
+                <span className="whitespace-nowrap">{tab.label}</span>
+              </div>
+            </button>
+          ))}
+        </div>
+
+        {/* 精選 3D 封面流展示輪播 */}
+        {activeTab === 'featured' ? (
+          <div ref={containerRef} className="relative w-full max-w-6xl mx-auto flex flex-col items-center py-6 select-none reveal-scale">
+
+            {/* 輪播外層軌道視窗 */}
+            <div
+              className="relative w-full h-[300px] sm:h-[380px] md:h-[440px] flex items-center justify-center overflow-hidden touch-pan-y"
+              onMouseEnter={() => setIsAutoPlay(false)}
+              onMouseLeave={() => setIsAutoPlay(true)}
+              onTouchStart={handleRouletteTouchStart}
+              onTouchMove={handleRouletteTouchMove}
+              onTouchEnd={handleRouletteTouchEnd}
+            >
+              {/* 方正賽博左箭頭按鈕 */}
+              <button
+                onClick={() => setRouletteIndex((prev) => (prev - 1 + displayFeatured.length) % displayFeatured.length)}
+                className="absolute left-2 sm:left-4 md:left-8 lg:left-16 xl:left-24 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-11 sm:h-11 border cyber-cut-sm rounded-none flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 shadow-2xl backdrop-blur-md"
+                style={{
+                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(8,14,26,0.85)',
+                  borderColor: isLight ? '#94a3b8' : 'rgba(0, 240, 255, 0.35)',
+                  color: isLight ? '#0284c7' : '#00f0ff',
+                  boxShadow: isLight
+                    ? '0 2px 10px rgba(0, 0, 0, 0.08)'
+                    : '0 4px 14px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 240, 255, 0.15)',
+                }}
+                aria-label="Previous Artwork"
+              >
+                <ChevronLeft size={22} className="stroke-[2.5]" />
+              </button>
+
+              {/* 五卡片 3D 景深堆疊層 */}
+              {displayFeatured.map((art, idx) => {
+                const total = displayFeatured.length;
+                let offset = idx - rouletteIndex;
+                if (offset < -Math.floor(total / 2)) offset += total;
+                if (offset > Math.floor(total / 2)) offset -= total;
+
+                const isCenter = offset === 0;
+                const absOffset = Math.abs(offset);
+
+                // 嚴格僅渲染正中與左右各兩張卡片（共 5 張：Center, Left-1, Left-2, Right-1, Right-2）
+                if (absOffset > 2) return null;
+
+                // 響應式卡片尺寸與間距設定（嚴格維持 1:1 正方形）
+                const cardSize = windowWidth < 640 ? 210 : windowWidth < 1024 ? 280 : 350;
+                const spacing = windowWidth < 640 ? 85 : windowWidth < 1024 ? 115 : 145;
+
+                const translateX = offset * spacing;
+                const scale = isCenter ? 1.0 : absOffset === 1 ? 0.85 : 0.70;
+                const opacity = isCenter ? 1.0 : absOffset === 1 ? 0.92 : 0.80;
+                const zIndex = 30 - absOffset * 10;
+
+                return (
+                  <div
+                    key={art.id}
+                    onClick={() => {
+                      if (isCenter) {
+                        setActiveImage(art);
+                      } else {
+                        setRouletteIndex(idx);
+                      }
+                    }}
+                    className={`absolute aspect-square overflow-hidden cursor-pointer transition-all duration-500 ease-out group ${
+                      isCenter
+                        ? isLight
+                          ? 'border-2 border-white shadow-[0_4px_20px_rgba(0,0,0,0.15)]'
+                          : 'border border-cyan-400/80 shadow-[0_0_12px_rgba(0,240,255,0.18)]'
+                        : isLight
+                        ? 'border border-slate-300 hover:border-sky-400'
+                        : 'border border-slate-800 hover:border-slate-700'
+                    }`}
+                    style={{
+                      width: `${cardSize}px`,
+                      height: `${cardSize}px`,
+                      minWidth: `${cardSize}px`,
+                      minHeight: `${cardSize}px`,
+                      maxWidth: `${cardSize}px`,
+                      maxHeight: `${cardSize}px`,
+                      aspectRatio: '1 / 1',
+                      borderRadius: '0px',
+                      transform: `translateX(${translateX}px) scale(${scale})`,
+                      opacity,
+                      zIndex,
+                      backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                    }}
+                  >
+                    {art.img ? (
+                      <img
+                        src={getAssetUrl(art.img)}
+                        alt={`許哲誠美術作品 - ${art.cat} (${art.id})`}
+                        width="400"
+                        height="400"
+                        loading="lazy"
+                        decoding="async"
+                        className="w-full h-full aspect-square object-cover rounded-none transition-transform duration-700 group-hover:scale-105"
+                        style={{ width: '100%', height: '100%', aspectRatio: '1 / 1', objectFit: 'cover', borderRadius: '0px' }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center p-4 text-center bg-slate-900/90 text-cyan-400 border border-cyan-500/20">
+                        <Box className="w-12 h-12 mb-2 animate-pulse text-cyan-400" />
+                        <span className="text-xs font-mono font-bold tracking-wider uppercase">3D Interactive</span>
+                        <span className="text-[10px] text-slate-400 font-mono mt-1">點擊檢視 3D 模型</span>
+                      </div>
+                    )}
+
+                    {/* 背景兩側卡片微弱暗化遮罩 */}
+                    {!isCenter && (
+                      <div
+                        className="absolute inset-0 transition-opacity duration-300 pointer-events-none rounded-none group-hover:opacity-0"
+                        style={{
+                          backgroundColor: absOffset === 1 ? 'rgba(0, 0, 0, 0.12)' : 'rgba(0, 0, 0, 0.25)',
+                          borderRadius: '0px',
+                        }}
+                      />
+                    )}
+
+                  </div>
+                );
+              })}
+
+              {/* 方正賽博右箭頭按鈕 */}
+              <button
+                onClick={() => setRouletteIndex((prev) => (prev + 1) % displayFeatured.length)}
+                className="absolute right-2 sm:right-4 md:right-8 lg:right-16 xl:right-24 top-1/2 -translate-y-1/2 z-40 w-10 h-10 sm:w-11 sm:h-11 border cyber-cut-sm rounded-none flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95 shadow-2xl backdrop-blur-md"
+                style={{
+                  backgroundColor: isLight ? 'rgba(255,255,255,0.92)' : 'rgba(8,14,26,0.85)',
+                  borderColor: isLight ? '#94a3b8' : 'rgba(0, 240, 255, 0.35)',
+                  color: isLight ? '#0284c7' : '#00f0ff',
+                  boxShadow: isLight
+                    ? '0 2px 10px rgba(0, 0, 0, 0.08)'
+                    : '0 4px 14px rgba(0, 0, 0, 0.6), 0 0 6px rgba(0, 240, 255, 0.15)',
+                }}
+                aria-label="Next Artwork"
+              >
+                <ChevronRight size={22} className="stroke-[2.5]" />
+              </button>
+            </div>
+
+            {/* 指示圓點列表 */}
+            <div className="flex items-center gap-2 mt-6">
+              {displayFeatured.map((_, dotIdx) => (
+                <button
+                  key={dotIdx}
+                  onClick={() => setRouletteIndex(dotIdx)}
+                  className={`h-1.5 transition-all cursor-pointer ${
+                    dotIdx === rouletteIndex
+                      ? 'w-8 bg-cyan-400 shadow-[0_0_8px_rgba(0,240,255,0.6)] rounded-none'
+                      : 'w-2.5 bg-slate-600 hover:bg-slate-400 rounded-none'
+                  }`}
+                  aria-label={`Go to slide ${dotIdx + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* 直接切換至「全部作品」分類之按鈕 */}
+            <div className="text-center pt-8 w-full max-w-6xl mx-auto">
+              <button
+                onClick={() => {
+                  setActiveTab('all');
+                  setIsExpanded(true);
+                }}
+                className="px-6 py-2.5 sm:px-8 sm:py-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm cursor-pointer transition-all hover:scale-105 shadow-md inline-flex items-center gap-2.5 backdrop-blur-md"
+                style={{
+                  backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                  borderColor: cyanCol,
+                  color: cyanCol,
+                  boxShadow: isLight
+                    ? '0 2px 10px rgba(2,132,199,0.1)'
+                    : '0 4px 14px rgba(0,240,255,0.15)',
+                }}
+              >
+                <span>
+                  {lang === 'zh' ? '檢視更多' : 'VIEW MORE'}
+                </span>
+                <ChevronDown size={16} className="stroke-[2.5]" />
+              </button>
+            </div>
+
+
+          </div>
+        ) : (
+          /* STANDARD GRID VIEW — CLEAN NO OVERLAY ZOOM BUTTONS */
+          <div
+            className="cyber-card p-6 border cyber-cut-corner max-w-6xl mx-auto space-y-6 shadow-xl"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)', borderColor: borderCol }}
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {displayedArt.map((art) => (
+                <div
+                  key={art.id}
+                  onClick={() => setActiveImage(art)}
+                  className="group relative overflow-hidden cyber-cut-sm border cursor-pointer aspect-square w-full shadow-md transition-all hover:-translate-y-1 hover:border-cyan-400"
+                  style={{
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)',
+                  }}
+                >
+                  {art.img ? (
+                    <img
+                      src={getAssetUrl(art.img)}
+                      alt={`許哲誠美術作品縮圖 (${art.id})`}
+                      width="300"
+                      height="300"
+                      className="w-full h-full aspect-square object-cover transition-transform duration-700 group-hover:scale-105"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center bg-slate-900/80 text-cyan-400">
+                      <Box className="w-8 h-8 mb-1.5 animate-pulse text-cyan-400" />
+                      <span className="text-[11px] font-mono font-bold tracking-wider uppercase">3D Model</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {filteredArt.length > 8 && (
+              <div className="text-center pt-2">
+                <button
+                  onClick={() => setIsExpanded(!isExpanded)}
+                  className="px-6 py-2.5 border font-tech text-xs font-bold uppercase cyber-cut-sm cursor-pointer transition-all hover:scale-105 shadow-sm inline-flex items-center gap-2"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                    borderColor: cyanCol,
+                    color: cyanCol,
+                  }}
+                >
+                  <span>
+                    {isExpanded
+                      ? (lang === 'zh' ? '收起畫廊' : 'COLLAPSE GALLERY')
+                      : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
+                  </span>
+                  {isExpanded ? <ChevronUp size={15} className="stroke-[2.5]" /> : <ChevronDown size={15} className="stroke-[2.5]" />}
+                </button>
+              </div>
+            )}
+
+          </div>
+        )}
+
+
+      </div>
+
+      {/* 燈箱預覽視窗 — 支援 3D 嵌入檢視器 */}
+      {activeImage && (
+        <div
+          className="fixed inset-0 z-[99999] flex items-center justify-center p-4 select-none"
+          style={{
+            backgroundColor: isLight ? 'rgba(248, 250, 252, 0.50)' : 'rgba(3, 7, 18, 0.65)',
+            backdropFilter: 'blur(16px)',
+            WebkitBackdropFilter: 'blur(16px)',
+          }}
+          onClick={handleCloseModal}
+        >
+          <div
+            className={`relative border cyber-cut-corner p-4 space-y-3.5 shadow-2xl hud-corner-brackets flex flex-col items-center mx-auto transition-all duration-300 ${
+              activeImage.embedUrl ? 'max-w-5xl w-full' : 'w-auto max-w-[95vw] sm:max-w-[90vw]'
+            }`}
+            style={{
+              backgroundColor: isLight ? '#ffffff' : '#080e1a',
+              borderColor: borderCol,
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 彈窗頂部工具列 */}
+            <div className="w-full flex items-center justify-end border-b pb-2" style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.2)' }}>
+              <button
+                onClick={handleCloseModal}
+                className="p-1.5 border cyber-cut-sm flex items-center justify-center transition-all cursor-pointer hover:scale-105"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(255,255,255,0.05)',
+                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.2)',
+                  color: isLight ? '#0f172a' : '#ffffff',
+                }}
+                aria-label="關閉視窗 (Close Lightbox Modal)"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* 3D 嵌入檢視器或高解析度圖片展示 */}
+            <div className="relative flex items-center justify-center overflow-hidden w-full">
+              {activeImage.embedUrl ? (
+                <div
+                  className="w-full aspect-video shadow-2xl relative border cyber-cut-sm overflow-hidden"
+                  style={{
+                    backgroundColor: isLight ? '#f1f5f9' : '#030712',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)',
+                  }}
+                >
+                  <iframe
+                    src={activeImage.embedUrl}
+                    title={`3D Model Viewer (${activeImage.id})`}
+                    className="w-full h-full border-0 absolute inset-0"
+                    allow="autoplay; fullscreen; xr-spatial-tracking"
+                    loading="lazy"
+                  />
+                </div>
+              ) : (
+                <div
+                  className="relative inline-flex items-center justify-center overflow-hidden shadow-md border cyber-cut-sm"
+                  style={{
+                    backgroundColor: isLight ? '#f8fafc' : '#080e1a',
+                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)',
+                  }}
+                >
+                  <img
+                    src={getAssetUrl(activeImage.img || '')}
+                    alt={`許哲誠美術作品預覽 (${activeImage.id})`}
+                    loading="eager"
+                    decoding="async"
+                    className="max-h-[66vh] sm:max-h-[72vh] max-w-[85vw] w-auto object-contain block"
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* 彈窗底部控制列 */}
+            <div className="w-full flex items-center justify-between font-tech text-xs font-bold pt-1 gap-2">
+              <button
+                onClick={handlePrevImage}
+                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shrink-0"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(30, 41, 59, 0.8)',
+                  borderColor: borderCol,
+                  color: cyanCol,
+                }}
+              >
+                <ChevronLeft size={16} />
+                <span>{lang === 'zh' ? '上一張' : 'PREV'}</span>
+              </button>
+
+              {activeImage.img ? (
+                <a
+                  href={getAssetUrl(activeImage.img)}
+                  download
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex items-center gap-1.5 px-4 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shadow-xs shrink-0"
+                  style={{
+                    backgroundColor: isLight ? '#fffbeb' : 'rgba(245, 158, 11, 0.15)',
+                    borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.4)',
+                    color: isLight ? '#b45309' : '#fbbf24',
+                  }}
+                >
+                  <Download size={14} />
+                  <span>{lang === 'zh' ? '下載' : 'DOWNLOAD'}</span>
+                </a>
+              ) : (
+                <span className="text-[11px] font-mono text-[var(--neon-cyan)] px-2 py-1">
+                  3D Interactive Mode
+                </span>
+              )}
+
+              <button
+                onClick={handleNextImage}
+                className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm transition-all hover:scale-105 cursor-pointer shrink-0"
+                style={{
+                  backgroundColor: isLight ? '#f1f5f9' : 'rgba(30, 41, 59, 0.8)',
+                  borderColor: borderCol,
+                  color: cyanCol,
+                }}
+              >
+                <span>{lang === 'zh' ? '下一張' : 'NEXT'}</span>
+                <ChevronRight size={16} />
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+    </section>
+  );
+};
+
+export default ArtGallery;

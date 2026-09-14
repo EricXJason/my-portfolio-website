@@ -1,0 +1,643 @@
+/**
+ * ============================================================================
+ * 檔案名稱: Education.tsx
+ * 所屬模組: Portfolio Website (學歷與經歷展示模組)
+ * 責任描述: 負責展示碩博士學位、工作經歷、原廠研習證書與國際學術論文，提供動態顏色階層與高度區別度之圖示呈現。
+ * 架構分層: Presentation Layer (React UI Component)
+ Presentational Component 搭配語意圖示對照與主題/語系雙軌適配。
+ * 依賴關係: 依賴 LangContext、ThemeContext、experience-section.json 與 CmsIconPickerModal 之 getLucideIconByName。
+ * 邊界處理: 確保即便 JSON 缺少特定 iconType，仍依語意與項次提供 100% 絕對明確區隔之圖示回退。
+ * ============================================================================
+ */
+
+import React, { useState } from 'react';
+import { useLang, Language } from '../context/LangContext';
+import { useTheme } from '../context/ThemeContext';
+import {
+  GraduationCap,
+  ExternalLink,
+  Briefcase,
+  Building2,
+  Award,
+  BookOpen,
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  School,
+  FolderGit2,
+  CheckCircle2,
+  Palette,
+  Presentation,
+  Code2,
+  Box,
+  Video,
+  Gamepad2,
+} from 'lucide-react';
+import eduData from '../data/experience-section.json';
+import { useScrollReveal } from '../hooks/useScrollReveal';
+import { getLucideIconByName } from '../cms/components/CmsIconPickerModal';
+
+interface DegreeButton {
+  key: string;
+  label: string;
+  linkKey: string;
+}
+
+interface DegreeItem {
+  id: string;
+  school: string;
+  period: string;
+  desc: string;
+  type: string;
+  iconType?: string;
+  buttons: DegreeButton[];
+}
+
+interface WorkExperienceItem {
+  company: string;
+  company_en?: string;
+  role: string;
+  role_en?: string;
+  period: string;
+  summary: string;
+  summary_en?: string;
+  iconType?: string;
+  projectsHeader: string;
+  projectsHeader_en?: string;
+  projects: string[];
+  projects_en?: string[];
+  skillsHeader: string;
+  skillsHeader_en?: string;
+  tags: string[];
+}
+
+interface WorkshopItem {
+  title: string;
+  date: string;
+  org: string;
+  iconType: string;
+  driveLinkKey: string;
+  btnText: string;
+  skillsHeader: string;
+  skills: string[];
+}
+
+interface ThesisItem {
+  title: string;
+  venue: string;
+  desc: string;
+  iconType?: string;
+  driveLinkKey: string;
+  btnText: string;
+  slidesDriveLinkKey?: string;
+  slidesBtnText?: string;
+  award?: string;
+}
+
+interface SectionData {
+  degrees: DegreeItem[];
+  workExperiences: WorkExperienceItem[];
+  workshops: WorkshopItem[];
+  theses: ThesisItem[];
+}
+
+export const Education: React.FC = () => {
+  const { t, lang } = useLang();
+  const { theme } = useTheme();
+  const isLight = theme === 'light';
+
+  /**
+   * TODO: [後端端點對接] 取得使用者模式學歷、經歷、研習與論文詳細資料
+   * 1. HTTP Method: GET
+   * 2. 預期端點: /api/v1/experience
+   * 3. 請求參數:
+   *    - Query Params: lang (string, 'zh' | 'en' | 'ja')
+   * 4. 預期回應:
+   *    - 200 OK: { success: true, data: { zh: SectionData, en: SectionData, ja: SectionData, driveLinks: Record<string, string> } }
+   *    - 500 Internal Server Error: 伺服器讀取學經歷資料失敗
+   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (experience-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
+   */
+  const dataMap = eduData as unknown as Record<Language, SectionData> & { driveLinks: Record<string, string> };
+  const currentData: SectionData = dataMap[lang] ?? dataMap.zh;
+  const driveLinks = dataMap.driveLinks || (eduData as any).driveLinks;
+
+  const [showAllWorkshops, setShowAllWorkshops] = useState(false);
+  const [showAllTheses, setShowAllTheses] = useState(false);
+
+  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
+  const cyanCol = isLight ? '#0369a1' : '#00f0ff';
+
+  const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
+  const degreesRef   = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const workRef      = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const workshopsRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const thesesRef    = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+
+  // 經歷與學歷項目色彩順序循環規範：青色 → 藍色 → 紫色
+  const sequenceAccents = [
+    // 1: 青色
+    { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.12)', border: isLight ? '#7dd3fc' : '#00f0ff' },
+    // 2: 藍色
+    { main: isLight ? '#1d4ed8' : '#60a5fa', bg: isLight ? '#dbeafe' : 'rgba(59, 130, 246, 0.12)', border: isLight ? '#93c5fd' : '#3b82f6' },
+    // 3: 紫色
+    { main: isLight ? '#6d28d9' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.12)', border: isLight ? '#c084fc' : '#a855f7' },
+  ];
+
+  // 3 distinct cyber theme colors for Degree Buttons: (1: 畢業證書 -> Cyan, 2: 歷年成績單 -> Blue, 3: 系排名證明 -> Purple)
+  const degreeButtonStyles: Record<string, { bg: string; border: string; text: string }> = {
+    cert: {
+      bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+      border: isLight ? '#0284c7' : '#00f0ff',
+      text: isLight ? '#0369a1' : '#00f0ff',
+    },
+    transcript: {
+      bg: isLight ? '#dbeafe' : 'rgba(59, 130, 246, 0.15)',
+      border: isLight ? '#2563eb' : '#60a5fa',
+      text: isLight ? '#1d4ed8' : '#93c5fd',
+    },
+    ranking: {
+      bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.15)',
+      border: isLight ? '#9333ea' : '#c084fc',
+      text: isLight ? '#6b21a8' : '#e9d5ff',
+    },
+  };
+
+  const defaultBtnStyle = {
+    bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+    border: isLight ? '#0284c7' : '#00f0ff',
+    text: isLight ? '#0369a1' : '#00f0ff',
+  };
+
+  return (
+    <section id="experience" className="py-20 relative select-text">
+      <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-8 lg:px-12 space-y-16">
+
+        {/* 章節主標題列 */}
+        <div ref={headerRef} className="text-center max-w-3xl mx-auto space-y-3">
+
+          <h2
+            className="text-3xl sm:text-5xl font-black font-hud uppercase tracking-tight flex items-center justify-center gap-3 reveal-up"
+            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+          >
+            <Briefcase size={32} className="shrink-0" style={{ color: isLight ? '#0369a1' : '#22d3ee' }} />
+            <span>{t('exp_title')}</span>
+          </h2>
+          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+            {t('exp_intro')}
+          </p>
+        </div>
+
+        {/* 學歷與經歷主容器 */}
+        <div className="max-w-6xl mx-auto space-y-12">
+
+          {/* 第一子區塊：學歷學位 */}
+          <div
+            id="education-degrees"
+            ref={degreesRef}
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+          >
+            <div className="flex items-center gap-3 border-b border-slate-700/40 pb-4">
+              <div
+                className="p-3 border cyber-cut-sm shrink-0"
+                style={{
+                  backgroundColor: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)',
+                  borderColor: isLight ? '#38bdf8' : 'rgba(0,240,255,0.35)',
+                  color: cyanCol,
+                }}
+              >
+                <GraduationCap size={22} />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                {t('degree_section_title')}
+              </h3>
+            </div>
+
+            <div className="space-y-6">
+              {currentData.degrees.map((deg, dIdx) => {
+                const accent = sequenceAccents[dIdx % sequenceAccents.length];
+
+                return (
+                  <div
+                    key={deg.id}
+                    className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                    style={{
+                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                      borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                    }}
+                  >
+                    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                      <div>
+                        {(() => {
+                          const DegIcon = deg.iconType
+                            ? getLucideIconByName(deg.iconType)
+                            : (deg.type === 'master' || deg.id === 'master' || dIdx === 0 ? GraduationCap : School);
+                          return (
+                            <h4 className="text-lg sm:text-xl font-black font-hud uppercase flex items-center gap-2.5" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                              <DegIcon size={20} className="shrink-0" style={{ color: accent.main }} />
+                              <span>{deg.school}</span>
+                            </h4>
+                          );
+                        })()}
+                        <p className="text-xs font-tech font-bold pl-7 font-mono" style={{ color: accent.main }}>
+                          {deg.period}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                      {deg.desc}
+                    </p>
+
+                    <div className="flex flex-wrap items-center gap-2.5 pt-2">
+                      {deg.buttons.map((btn, bIdx) => {
+                        const styleKey = btn.key || (bIdx === 0 ? 'cert' : bIdx === 1 ? 'transcript' : 'ranking');
+                        const btnStyle = degreeButtonStyles[styleKey] ?? defaultBtnStyle;
+                        const url = driveLinks[btn.linkKey];
+                        // URL 空白則隱藏此按鈕
+                        if (!url) return null;
+
+                        return (
+                          <a
+                            key={bIdx}
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-5 sm:px-6 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                            style={{
+                              backgroundColor: btnStyle.bg,
+                              borderColor: btnStyle.border,
+                              color: btnStyle.text,
+                            }}
+                          >
+                            <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                            <span>{btn.label}</span>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 第二子區塊：工作經歷 */}
+          <div
+            id="work-experience"
+            ref={workRef}
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+          >
+            <div className="flex items-center gap-3 border-b border-slate-700/40 pb-4">
+              <div
+                className="p-3 border cyber-cut-sm shrink-0"
+                style={{
+                  backgroundColor: isLight ? '#dbeafe' : 'rgba(59,130,246,0.12)',
+                  borderColor: isLight ? '#93c5fd' : 'rgba(59,130,246,0.35)',
+                  color: isLight ? '#1d4ed8' : '#60a5fa',
+                }}
+              >
+                <Building2 size={22} />
+              </div>
+              <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                {t('work_section_title')}
+              </h3>
+            </div>
+
+            <div className="space-y-6">
+              {currentData.workExperiences.map((job, jIdx) => {
+                const accent = sequenceAccents[jIdx % sequenceAccents.length];
+
+                return (
+                  <div
+                    key={jIdx}
+                    className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                    style={{
+                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                      borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                    }}
+                  >
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                      <div>
+                        {(() => {
+                          const defaultJobIcon = jIdx === 0 ? School : (jIdx === 1 ? Palette : Building2);
+                          const JobIcon = job.iconType ? getLucideIconByName(job.iconType) : defaultJobIcon;
+                          return (
+                            <h4 className="text-lg sm:text-xl font-black font-hud uppercase flex items-center gap-2.5" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                              <JobIcon size={20} className="shrink-0" style={{ color: accent.main }} />
+                              <span>{lang === 'zh' ? job.company : (job.company_en || job.company)} • {lang === 'zh' ? job.role : (job.role_en || job.role)}</span>
+                            </h4>
+                          );
+                        })()}
+                        <p className="text-xs font-tech font-bold pl-7 font-mono" style={{ color: accent.main }}>
+                          {job.period}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                      {lang === 'zh' ? job.summary : (job.summary_en || job.summary)}
+                    </p>
+
+                    {/* 關鍵專案貢獻與亮點清單 */}
+                    {job.projects && (
+                      <div className="space-y-2 pt-1">
+                        <p className="font-tech text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
+                          <FolderGit2 size={16} className="shrink-0" />
+                          <span>{lang === 'zh' ? job.projectsHeader : (job.projectsHeader_en || job.projectsHeader)}：</span>
+                        </p>
+                        <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1.5 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                          {(lang === 'zh' ? job.projects : (job.projects_en || job.projects)).map((proj, pIdx) => (
+                            <li key={pIdx} className="leading-relaxed">{proj}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* 技能標籤群組 */}
+                    <div className="flex flex-wrap items-center gap-2 pt-2">
+                      {job.tags.map((tg, tIdx) => (
+                        <span key={tIdx} className="tech-tag px-3 py-1 border text-xs sm:text-sm font-semibold">
+                          {tg}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 第三子區塊：原廠研習與專業進修 */}
+          <div
+            id="workshops"
+            ref={workshopsRef}
+            className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
+            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+          >
+            <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">
+              <div className="flex items-center gap-3">
+                <div
+                  className="p-3 border cyber-cut-sm shrink-0"
+                  style={{
+                    backgroundColor: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)',
+                    borderColor: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)',
+                    color: isLight ? '#7c3aed' : '#c084fc',
+                  }}
+                >
+                  <Award size={22} />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                  {t('workshop_section_title')}
+                </h3>
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {(showAllWorkshops ? currentData.workshops : currentData.workshops.slice(0, 2)).map((ws, wIdx) => {
+                const accent = sequenceAccents[wIdx % sequenceAccents.length];
+
+                return (
+                  <div
+                    key={wIdx}
+                    className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                    style={{
+                      backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                      borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                    }}
+                  >
+                    {/* 標題列 — 桌面端標題居左、按鈕居右；行動端置於標題下方 */}
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                      <div className="flex-1 min-w-0">
+                        {(() => {
+                          const defaultWsIcons = [Code2, Box, Video, Gamepad2];
+                          const WsIcon = ws.iconType
+                            ? getLucideIconByName(ws.iconType)
+                            : (defaultWsIcons[wIdx % defaultWsIcons.length] || BookOpen);
+                          return (
+                            <h4 className="text-base sm:text-lg font-hud font-bold uppercase flex items-start sm:items-center gap-2 leading-snug" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                              <WsIcon size={18} className="shrink-0 mt-0.5 sm:mt-0" style={{ color: accent.main }} />
+                              <span>{ws.title}</span>
+                            </h4>
+                          );
+                        })()}
+                        <p className="text-xs font-tech font-bold pl-6 font-mono" style={{ color: accent.main }}>
+                          {ws.date} • {ws.org}
+                        </p>
+                      </div>
+
+                      {ws.driveLinkKey && (
+                        <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 md:pt-0">
+                          <a
+                            href={driveLinks[ws.driveLinkKey]}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-1.5 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                            style={{
+                              backgroundColor: accent.bg,
+                              borderColor: accent.border,
+                              color: accent.main,
+                            }}
+                          >
+                            <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                            <span>{ws.btnText}</span>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* 研習技能詳細條列清單 */}
+                    {ws.skills && ws.skills.length > 0 && (
+                      <div className="space-y-1.5">
+                        <p className="font-tech text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
+                          <CheckCircle2 size={15} className="shrink-0" />
+                          <span>{ws.skillsHeader || (lang === 'zh' ? '專業內容與技能學習：' : 'SKILLS & KEY LEARNINGS:')}</span>
+                        </p>
+                        <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                          {ws.skills.map((sk, skIdx) => (
+                            <li key={skIdx} className="leading-relaxed">{sk}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {currentData.workshops.length > 2 && (
+              <div className="text-center pt-2">
+                <button
+                  onClick={() => setShowAllWorkshops(!showAllWorkshops)}
+                  className="px-5 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm cursor-pointer hover:scale-105 transition-all shadow-sm inline-flex items-center gap-2"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                    borderColor: cyanCol,
+                    color: cyanCol,
+                  }}
+                >
+                  <span>
+                    {showAllWorkshops
+                      ? (lang === 'zh' ? '收起研習證明' : 'COLLAPSE WORKSHOPS')
+                      : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
+                  </span>
+                  {showAllWorkshops ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* 第四子區塊：學術論文與國際期刊 */}
+          {currentData.theses && currentData.theses.length > 0 && (
+            <div
+              id="publications"
+              ref={thesesRef}
+              className="cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale"
+              style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)', borderColor: borderCol }}
+            >
+              <div className="flex items-center justify-between border-b border-slate-700/40 pb-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="p-3 border cyber-cut-sm shrink-0"
+                    style={{
+                      backgroundColor: isLight ? '#d1fae5' : 'rgba(16,185,129,0.12)',
+                      borderColor: isLight ? '#34d399' : 'rgba(16,185,129,0.35)',
+                      color: isLight ? '#047857' : '#10b981',
+                    }}
+                  >
+                    <BookOpen size={22} />
+                  </div>
+                  <h3 className="text-xl sm:text-2xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                    {t('thesis_section_title')}
+                  </h3>
+                </div>
+              </div>
+
+              <div className="space-y-6">
+                {(showAllTheses ? currentData.theses : currentData.theses.slice(0, 3)).map((th, thIdx) => {
+                  const accent = sequenceAccents[thIdx % sequenceAccents.length];
+
+                  return (
+                    <div
+                      key={thIdx}
+                      className="p-5 border cyber-cut-sm space-y-4 transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                      style={{
+                        backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                        borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                      }}
+                    >
+                      {/* 頂部列：桌面版左側標題與右側動作按鈕，行動版自動垂直排列 */}
+                      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
+                        <div className="flex-1 min-w-0">
+                          {(() => {
+                            const defaultThIcons = [FileText, Presentation];
+                            const ThIcon = th.iconType
+                              ? getLucideIconByName(th.iconType)
+                              : (defaultThIcons[thIdx % defaultThIcons.length] || FileText);
+                            return (
+                              <h4 className="text-base sm:text-lg md:text-xl font-hud font-bold uppercase flex items-start gap-2.5 leading-snug" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                                <ThIcon size={20} className="shrink-0 mt-0.5" style={{ color: accent.main }} />
+                                <span>{th.title}</span>
+                              </h4>
+                            );
+                          })()}
+                          <p className="text-xs sm:text-sm font-tech font-bold pl-7 font-mono" style={{ color: accent.main }}>
+                            {th.venue}
+                          </p>
+                        </div>
+
+                        {/* 操作按鈕 — 桌面端居右、行動端置於下方 */}
+                        <div className="flex flex-wrap items-center gap-2.5 shrink-0 pt-2 md:pt-0">
+                          {/* 「檢視論文全文」— 論文專屬綠色規範 */}
+                          {th.driveLinkKey && (
+                            <a
+                              href={driveLinks[th.driveLinkKey]}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-1.5 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                              style={{
+                                backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.15)',
+                                borderColor: isLight ? '#059669' : '#10b981',
+                                color: isLight ? '#047857' : '#34d399',
+                              }}
+                            >
+                              <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                              <span>{th.btnText}</span>
+                            </a>
+                          )}
+
+                          {/* 「檢視論文簡報」 */}
+                          {th.slidesDriveLinkKey && (
+                            <a
+                              href={driveLinks[th.slidesDriveLinkKey]}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-3.5 py-1.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center gap-1.5 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group"
+                              style={{
+                                backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+                                borderColor: isLight ? '#38bdf8' : '#00f0ff',
+                                color: isLight ? '#0369a1' : '#00f0ff',
+                              }}
+                            >
+                              <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
+                              <span>{th.slidesBtnText}</span>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* 詳細內容描述 */}
+                      <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                        {th.desc}
+                      </p>
+
+                      {th.award && (
+                        <div
+                          className="p-3.5 border font-tech text-xs sm:text-sm font-bold flex items-center gap-2 cyber-cut-sm"
+                          style={{
+                            backgroundColor: isLight ? '#d1fae5' : 'rgba(16,185,129,0.15)',
+                            borderColor: isLight ? '#34d399' : 'rgba(16,185,129,0.35)',
+                            color: isLight ? '#047857' : '#34d399',
+                          }}
+                        >
+                          <Award size={16} className="shrink-0" />
+                          <span>{th.award}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {currentData.theses.length > 3 && (
+                <div className="text-center pt-2">
+                  <button
+                    onClick={() => setShowAllTheses(!showAllTheses)}
+                    className="px-5 py-2.5 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm cursor-pointer hover:scale-105 transition-all shadow-sm inline-flex items-center gap-2"
+                    style={{
+                      backgroundColor: isLight ? '#ffffff' : '#080e1a',
+                      borderColor: cyanCol,
+                      color: cyanCol,
+                    }}
+                  >
+                    <span>
+                      {showAllTheses
+                        ? (lang === 'zh' ? '收起論文發表' : 'COLLAPSE PUBLICATIONS')
+                        : (lang === 'zh' ? '檢視更多' : 'VIEW MORE')}
+                    </span>
+                    {showAllTheses ? <ChevronUp size={15} /> : <ChevronDown size={15} />}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+        </div>
+
+      </div>
+    </section>
+  );
+};
+
+export default Education;

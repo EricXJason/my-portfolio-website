@@ -1,0 +1,241 @@
+/**
+ * ============================================================================
+ * 檔案名稱: CyberParticles.tsx
+ * 所屬模組: Presentation Layer (賽博龐克背景幾何粒子網絡模組)
+ * 責任描述: 負責於 HTML5 Canvas 渲染動態呼吸幾何粒子與雷射距離連線網格，增強科技儀表感。
+ * 架構分層: Presentation Layer (React UI Component)
+ 宣告式組件結合 requestAnimationFrame 高效動態粒子物理運算。
+ * 依賴關係: 依賴 React 原生 Hooks 與深淺主題顏色設定。
+ * 邊界處理: 行動端 (<768px) 早期返回跳過渲染以節省 GPU、分頁不可見時自動暫停 rAF 迴圈。
+ * ============================================================================
+ */
+
+import React, { useEffect, useRef } from 'react';
+
+interface CyberParticlesProps {
+  theme: string;
+  soundPlaying: boolean;
+}
+
+interface Particle {
+  x: number;
+  y: number;
+  radius: number;
+  vx: number;
+  vy: number;
+  pulsePhase: number;
+  pulseSpeed: number;
+  baseAlpha: number;
+  darkColor: string;
+  lightColor: string;
+  shape: 'circle' | 'square' | 'ring' | 'cross';
+}
+
+export const CyberParticles: React.FC<CyberParticlesProps> = ({ theme, soundPlaying }) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // 於觸控與手機螢幕完全跳過 Canvas 渲染 — 節省 O(n²) 距離計算與電量消耗
+  const isMobileDevice = typeof window !== 'undefined' && window.innerWidth < 768;
+  if (isMobileDevice) return null;
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { alpha: true, desynchronized: true });
+    if (!ctx) return;
+    let animationFrameId: number;
+    let isPaused = false;
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas, { passive: true });
+    window.addEventListener('orientationchange', resizeCanvas, { passive: true });
+
+    const mouse = { x: -1000, y: -1000, active: false };
+    const handleMouseMove = (e: MouseEvent) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      mouse.active = true;
+    };
+    const handleMouseLeave = () => {
+      mouse.active = false;
+    };
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    window.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+
+    const darkPalette = ['#00f0ff', '#ff0055', '#ffb700', '#00ff9d', '#b026ff', '#38bdf8'];
+    const lightPalette = ['#0284c7', '#2563eb', '#059669', '#d97706', '#7c3aed'];
+
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 8 : 55;
+
+    const particles: Particle[] = Array.from({ length: particleCount }, () => {
+      const darkColor = darkPalette[Math.floor(Math.random() * darkPalette.length)];
+      const lightColor = lightPalette[Math.floor(Math.random() * lightPalette.length)];
+      const r = Math.random() * 2.0 + 1.2;
+      const shapes: ('circle' | 'square' | 'ring' | 'cross')[] = ['circle', 'circle', 'ring', 'square', 'cross'];
+
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: r,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        pulsePhase: Math.random() * Math.PI * 2,
+        pulseSpeed: 0.02 + Math.random() * 0.02,
+        baseAlpha: Math.random() * 0.4 + 0.25,
+        darkColor,
+        lightColor,
+        shape: shapes[Math.floor(Math.random() * shapes.length)],
+      };
+    });
+
+    let frameCount = 0;
+
+    const render = () => {
+      if (isPaused) {
+        animationFrameId = requestAnimationFrame(render);
+        return;
+      }
+      frameCount++;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const isLight = theme === 'light' || document.documentElement.classList.contains('light');
+
+      particles.forEach((p) => {
+        p.pulsePhase += p.pulseSpeed;
+        const speedMult = soundPlaying ? 1.5 : 1.0;
+
+        if (mouse.active) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const maxDist = 180;
+          if (dist < maxDist) {
+            const force = (1 - dist / maxDist) * 0.8;
+            p.x -= (dx / dist) * force;
+            p.y -= (dy / dist) * force;
+          }
+        }
+
+        p.x += p.vx * speedMult;
+        p.y += p.vy * speedMult;
+
+        if (p.x < -20) p.x = canvas.width + 20;
+        if (p.x > canvas.width + 20) p.x = -20;
+        if (p.y < -20) p.y = canvas.height + 20;
+        if (p.y > canvas.height + 20) p.y = -20;
+
+        const soundPulse = soundPlaying ? 0.25 * Math.sin(frameCount * 0.1 + p.pulsePhase) : 0;
+        const pulseFactor = 0.8 + 0.2 * Math.sin(p.pulsePhase) + soundPulse;
+        const currentAlpha = Math.min(0.9, Math.max(0.15, p.baseAlpha * pulseFactor));
+        const particleColor = isLight ? p.lightColor : p.darkColor;
+
+        ctx.save();
+        // 精準校準不透明度：淺色模式下維持節點乾淨俐落
+        ctx.globalAlpha = isLight ? Math.min(0.35, currentAlpha * 0.45) : currentAlpha;
+
+        if (p.radius > 1.8 && !isMobile) {
+          ctx.shadowColor = particleColor;
+          ctx.shadowBlur = isLight ? 3 : 10;
+        }
+
+        ctx.fillStyle = particleColor;
+        ctx.strokeStyle = particleColor;
+
+        if (p.shape === 'circle') {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius * (soundPlaying ? 1.25 : 1.0), 0, Math.PI * 2);
+          ctx.fill();
+        } else if (p.shape === 'ring') {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius * 1.4, 0, Math.PI * 2);
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        } else if (p.shape === 'cross') {
+          const len = p.radius * 1.5;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p.x - len, p.y);
+          ctx.lineTo(p.x + len, p.y);
+          ctx.moveTo(p.x, p.y - len);
+          ctx.lineTo(p.x, p.y + len);
+          ctx.stroke();
+        } else {
+          ctx.fillRect(p.x - p.radius, p.y - p.radius, p.radius * 2, p.radius * 2);
+        }
+        ctx.restore();
+      });
+
+      // 繪製科技雷射網格遙測連線
+      const connectDist = soundPlaying ? 150 : 120;
+      for (let i = 0; i < particleCount; i++) {
+        for (let j = i + 1; j < particleCount; j++) {
+          const p1 = particles[i];
+          const p2 = particles[j];
+          const dx = p1.x - p2.x;
+          const dy = p1.y - p2.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist < connectDist) {
+            const lineFactor = 1 - dist / connectDist;
+            const lineAlpha = lineFactor * (isLight ? 0.08 : 0.20);
+            const lineStroke = isLight ? p1.lightColor : p1.darkColor;
+
+            ctx.save();
+            ctx.globalAlpha = lineAlpha;
+            ctx.beginPath();
+            ctx.moveTo(p1.x, p1.y);
+            ctx.lineTo(p2.x, p2.y);
+            ctx.strokeStyle = lineStroke;
+            ctx.lineWidth = lineFactor * 1.0;
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    // 當分頁處於背景時暫停 rAF 渲染，節省 CPU 與 GPU 資源
+    const handleVisibility = () => { isPaused = document.visibilityState === 'hidden'; };
+    document.addEventListener('visibilitychange', handleVisibility, { passive: true });
+
+    render();
+
+    return () => {
+      window.removeEventListener('resize', resizeCanvas);
+      window.removeEventListener('orientationchange', resizeCanvas);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseleave', handleMouseLeave);
+      document.removeEventListener('visibilitychange', handleVisibility);
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [theme, soundPlaying]);
+
+  const isLight = theme === 'light';
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+      <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+      {/* 賽博科技戰術格線覆蓋層 */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-500"
+        style={{
+          opacity: isLight ? 0.08 : 0.20,
+          backgroundImage: isLight
+            ? `radial-gradient(#0284c7 1px, transparent 1px), linear-gradient(to right, rgba(2, 132, 199, 0.06) 1px, transparent 1px), linear-gradient(to bottom, rgba(2, 132, 199, 0.06) 1px, transparent 1px)`
+            : `radial-gradient(#00f0ff 1px, transparent 1px), linear-gradient(to right, rgba(0, 240, 255, 0.08) 1px, transparent 1px), linear-gradient(to bottom, rgba(0, 240, 255, 0.08) 1px, transparent 1px)`,
+          backgroundSize: '40px 40px, 40px 40px, 40px 40px',
+        }}
+      />
+    </div>
+  );
+};
+
+export default CyberParticles;
