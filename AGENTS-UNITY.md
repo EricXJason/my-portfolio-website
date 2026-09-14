@@ -1,4 +1,4 @@
-# ⚡ AGENTS-UNITY.md | 全域 AI Agent Unity 遊戲引擎特化規範庫
+# AGENTS-UNITY.md | 全域 AI Agent Unity 遊戲引擎特化規範庫
 
 > **專案作者**: 許哲誠 (HSU, CHE-CHENG)  
 > **適用領域**: Unity 6+ 遊戲引擎與 C# 遊戲架構開發  

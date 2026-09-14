@@ -4,6 +4,24 @@
 
 ---
 
+[2026-09-14 19:41] | [docs] | 於 AGENTS.md 第 1.3 節正式法典化收錄開發者核心工程習慣與美學偏好：明確確立專案標題去裝飾化純粹命名（禁用 ⚡ 等裝飾符號，採用標準專業中英文並陳）、深邃黑夜 Sci-Fi HUD 沉穩美學（杜絕花綠調色盤、嚴禁白底穿透、連線直線化 linear）、全頁圖表 1:1 黃金比例對稱平衡約 750px × 360px（徹底消滅有大有小）、語法零崩潰與中英雙語對照四大核心偏好；以 0 錯誤通過 tsc 與 Vite 生產打包（271ms） | [AGENTS.md, docs/check-list.md]
+
+[2026-09-14 19:39] | [docs] | 五大協定檔案職責嚴格釐清確認、README.md 標題純化去閃電符號並達成三大圖表 1:1 絕對等大對稱：確認 AGENTS.md（母協定指揮）、AGENTS-GIT.md（版控與 README SSOT）、AGENTS-FRONT.md（前端靜態庫）、AGENTS-BACK.md（後端靜態庫）與 AGENTS-UNITY.md（Unity 靜態庫）五大文件單一職責無任何跨層越權；根目錄 README.md 標題重構為純粹專業之「My-Portfolio-Website + CMS (個人作品集網站含內容管理系統)」，並移除全專案 MD 頂部之裝飾性閃電符號；重構 README 第二章 C4 模型、UML 類別圖與雙向循序圖為 1:1 完全等大對稱平衡（約 750px × 360px），徹底杜絕圖表忽大忽小；以 0 錯誤通過 tsc 與 Vite 生產打包（282ms） | [README.md, AGENTS.md, AGENTS-GIT.md, AGENTS-FRONT.md, AGENTS-BACK.md, AGENTS-UNITY.md, docs/check-list.md]
+
+[2026-09-14 19:35] | [docs] | 根目錄 README.md 之全集架構規格、三大圖表標準與暫存前置審查完全移交 AGENTS-GIT.md 第 4 章確立唯一法定真實來源：將 README 六大核心法定章節、三大圖表（C4/UML類別圖/循序圖）1:1 黃金比例約 750px × 360px、深淺雙模式高對比度、防白底穿透、語法零崩潰與 Pre-Git-Add 一票否決審查機制完全收錄於 AGENTS-GIT.md；同步修訂 AGENTS.md 第 2 章與第 8 章，確立母協定聚焦全域架構指揮、版控協定承接 README 唯一規範之嚴格職責分工；以 0 錯誤通過 tsc 與 Vite 生產打包（282ms） | [AGENTS-GIT.md, AGENTS.md, docs/check-list.md]
+
+[2026-09-14 19:32] | [docs] | 於 AGENTS.md 增訂全域法定指令「專案系統分析重構」並將深淺雙模式高對比度、絕對風格與尺寸量體統一之全圖表通用規範寫入第 6 與第 8 章：確立全專案代碼庫深度逆向稽核機制，使 docs/system-design/ 與實際代碼 100% 吻合；於第 6 章建立五大圖表規範（五大核心圖表類型、絕對一體化風格與約 750px × 360px 黃金量體、WCAG 2.2 AA 深淺雙模式高對比清晰度與防白底穿透、連線引號包裹與 ASCII stereotype 語法硬指標、全圖表中英雙語緊鄰對照）；於第 8 章建立「專案系統分析重構」一條龍 6 大標準作業程序（SOP）；同步更新指令速查表、生命週期地圖、交叉索引與第 0.2 節前置停等確認清單；以 0 錯誤通過 tsc 與 Vite 生產打包（282ms） | [AGENTS.md, docs/check-list.md]
+
+[2026-09-14 19:27] | [fix] | 徹底根除 Subgraph 亮白底色、消除反向繞圈巨線並使全頁圖表尺寸與視覺量體 100% 絕對完全統一：修正 Mermaid 子圖未指定 clusterBkg 導致預覽器渲染出刺眼亮白底色之重大問題，於 themeVariables 與顯式 style 雙重綁定深沉暗夜灰（#060a14）與冷科技邊框（#1e293b）；精煉 C4 架構圖為單向向下流動，徹底剔除橫跨全圖外圍之反折框線；將 UML 類別圖橫向均衡展開，使 README 第二章三張核心圖表（C4 模型、UML 類別圖、雙向循序圖）尺寸長寬比均勻收斂為約 750px × 360px 黃金比例，徹底消弭圖表「有大有小」失衡問題；全專案 14 張 Mermaid 圖表深度校驗零語法錯誤，tsc 與 Vite 生產構建 296ms 順利通過 | [README.md, docs/system-design/01-overview.md, docs/system-design/03-project-structure.md, docs/system-design/07-uml-diagrams.md, docs/check-list.md]
+
+[2026-09-14 19:25] | [fix] | 全面修復 Mermaid Viewer 語法解析崩潰並絕對統一所有圖表為青黑 Sci-Fi HUD 深色風格：徹底解決括號未跳脫導致之「Parse error on line 9」與中文 Stereotype 導致 Mermaid 12.0 崩潰之「Syntax error in text」；全量以雙引號封裝所有連線字串並還原標準單詞 ASCII stereotype；依使用者滿意之循序圖樣式，將 README 與 docs 內所有流程圖（Flowchart）、類別圖（Class Diagram）與循序圖（Sequence Diagram）視覺主題 100% 絕對統一為純深色黑夜背景（#030712）、沉穩極黑卡片（#0b0f19）、賽博青高亮外框與連線（#00f0ff）及純白文字（#f8fafc）；全量 Node.js 語法驗證 100% 通過，tsc 與 Vite 生產構建 303ms 零錯誤通過 | [README.md, docs/system-design/01-overview.md, docs/system-design/03-project-structure.md, docs/system-design/05-flowcharts.md, docs/system-design/07-uml-diagrams.md, docs/check-list.md]
+
+[2026-09-14 19:19] | [style] | Mermaid 圖表全面回歸前端 Sci-Fi 黑白深色極簡風格並徹底消除扭曲與標題贅詞：徹底剔除花俏彩色大色塊與突兀紫色標籤底色，全面以專案深黑背景（#030712）為基底，結合深黑灰卡片（#0b0f19）、細緻冷灰邊框（#334155）與高科技賽博青微光（#00f0ff）呈現極致精煉之高對比 HUD 美學；連線全面改為 curve: 'linear' 消除圓角扭曲並重構層次單向垂直對齊；全專案文檔移除「正交折線與色彩分流」等自誇實作文字，以 0 錯誤通過 tsc 與 Vite 生產打包（282ms） | [README.md, docs/system-design/01-overview.md, docs/system-design/03-project-structure.md, docs/system-design/05-flowcharts.md, docs/system-design/07-uml-diagrams.md, docs/check-list.md]
+
+[2026-09-14 19:15] | [docs] | 全域 Mermaid 流程圖與 UML 圖表升級正交 90 度折線、色彩分類、雙語標註並植入 README.md：徹底消除所有圖表之抖動彎曲貝茲曲線，全面導入 curve: 'stepBefore' 正交直角折線與高辨識度主題色（角色藍、展示青、CMS紫、守衛紅、快取藍、雲端綠）；於 README.md 架構章節新增核心 UML 類別圖與雙向即時熱更新循序圖；docs/system-design/ 之 01 願景拓撲、03 依賴結構、05 業務流程圖與 07 UML 類別與循序圖全量重構為色彩分流與雙語對照標準；以 0 錯誤通過 tsc 與 Vite 生產打包（285ms） | [README.md, docs/system-design/01-overview.md, docs/system-design/03-project-structure.md, docs/system-design/05-flowcharts.md, docs/system-design/07-uml-diagrams.md, docs/check-list.md]
+
+[2026-09-14 19:05] | [feat] | 執行法定指令「git 重置化」與「push到master」徹底重構本地與 GitHub 遠端基底：銷毀本地歷史並建立單一乾淨首發 Commit（46063c2）；確立 master、development 與 feature 平級三大分支拓撲；強制推送覆蓋至 GitHub 遠端 master 與 development 分支，徹底抹殺過往歷史紀錄；工作區指針嚴格依循第 0.3 節切回 feature 沙盒分支待命 | [git, docs/check-list.md]
+
 [2026-09-14 19:04] | [docs] | 確立固定平級三層分支架構 (master / development / feature) 並修訂 AGENTS-GIT.md：全面移除斜線子分支命名規則，杜絕編輯器虛擬資料夾折疊干擾；修訂 AGENTS-GIT.md 明確規定 AI 任務執行結果強制 100% 提交至純粹之 feature 沙盒分支；本地端立即將分支重命名為純粹之 feature，確立 master、development 與 feature 平級並列之極致乾淨拓撲結構 | [AGENTS-GIT.md, docs/check-list.md]
 
 [2026-09-14 19:02] | [docs] | 強化 AGENTS-GIT.md 規範確立 AI 執行結果強制 100% Commit 至 feature 沙盒分支：於第 0.3 節新增沙盒隔離協定，嚴禁日常任務直接寫入或提交至 master 與 development；初始化與重置化流程尾端補齊強制切入沙盒步驟；強化第 3.2 節高頻原子提交歸宿原則；本地端立即遵照協定自 development 切出 feature/portfolio-dev 沙盒分支待命並執行原子存檔 | [AGENTS-GIT.md, docs/check-list.md]

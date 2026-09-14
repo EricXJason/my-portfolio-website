@@ -93,48 +93,75 @@ my-portfolio-website/
 *Illustrates cross-module invocation boundaries, unidirectional data flows, and code splitting:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'clusterBkg': '#060a14',
+    'clusterBorder': '#1e293b',
+    'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
 flowchart TB
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
     subgraph Core ["入口與全域上下文層 (Core Context Layer)"]
-        Main["main.tsx (掛載起點 / Mount Point)"] --> App["App.tsx (視圖分流路由 / Router)"]
-        App --> LangCtx["context/LangContext.tsx"]
-        App --> ThemeCtx["context/ThemeContext.tsx"]
+        Main["main.tsx (掛載起點 / Mount Point)"]:::hudCard --> App["App.tsx (視圖分流路由 / Router)"]:::hudCard
+        App --> LangCtx["context/LangContext.tsx (多語系)"]:::hudCard
+        App --> ThemeCtx["context/ThemeContext.tsx (主題態)"]:::hudCard
     end
 
     subgraph Frontend ["前臺展示層 (Public Showcase - 0ms 首屏物理載入)"]
-        App --> MainSite["MainSiteContent.tsx"]
-        MainSite --> Hero["Hero.tsx & SciFiRobotAvatar.tsx"]
-        MainSite --> About["About.tsx"]
-        MainSite --> Skills["Skills.tsx"]
-        MainSite --> Projects["Projects.tsx"]
-        MainSite --> Certs["Certifications.tsx"]
-        MainSite --> Edu["Education.tsx"]
-        MainSite --> Gallery["ArtGallery.tsx"]
-        MainSite --> BgStream["FullStackCodeStreamBackground.tsx"]
-        MainSite --> Nav["Navbar.tsx & SideNav.tsx"]
+        App --> MainSite["MainSiteContent.tsx (展示主外殼)"]:::hudCard
+        MainSite --> Hero["Hero.tsx & SciFiRobotAvatar.tsx (機甲看板)"]:::hudCard
+        MainSite --> About["About.tsx (自傳背景)"]:::hudCard
+        MainSite --> Skills["Skills.tsx (技能雷達)"]:::hudCard
+        MainSite --> Projects["Projects.tsx (作品燈箱)"]:::hudCard
+        MainSite --> Certs["Certifications.tsx (證照清單)"]:::hudCard
+        MainSite --> Edu["Education.tsx (學歷歷程)"]:::hudCard
+        MainSite --> Gallery["ArtGallery.tsx (畫廊與3D檢視)"]:::hudCard
+        MainSite --> BgStream["FullStackCodeStreamBackground.tsx (動態背景)"]:::hudCard
+        MainSite --> Nav["Navbar.tsx & SideNav.tsx (戰術導覽)"]:::hudCard
     end
 
     subgraph DataLayer ["靜態結構化資料層 (src/data/ - Baseline JSON Records)"]
-        Hero --> HeroData[("hero-section.json")]
-        About --> AboutData[("about-section.json")]
-        Skills --> SkillsData[("about-section.json")]
-        Projects --> ProjectsData[("projects-section.json")]
-        Certs --> CertsData[("about-section.json")]
-        Edu --> EduData[("experience-section.json")]
-        Gallery --> GalleryData[("gallery-section.json")]
+        Hero --> HeroData[("hero-section.json")]:::hudCard
+        About --> AboutData[("about-section.json")]:::hudCard
+        Skills --> SkillsData[("about-section.json")]:::hudCard
+        Projects --> ProjectsData[("projects-section.json")]:::hudCard
+        Certs --> CertsData[("about-section.json")]:::hudCard
+        Edu --> EduData[("experience-section.json")]:::hudCard
+        Gallery --> GalleryData[("gallery-section.json")]:::hudCard
     end
 
     subgraph CmsModule ["自研 CMS 管理系統 (chunk-cms 獨立延遲載入)"]
-        App -.->|非同步動態載入 React.lazy| CmsApp["cms/CmsApp.tsx"]
-        CmsApp --> CmsDirty["cms/context/CmsDirtyContext.tsx"]
-        CmsApp --> CmsGuard["cms/components/CmsUnsavedModal.tsx"]
-        CmsApp --> CmsDialog["cms/components/CmsConfirmDialog.tsx"]
-        CmsApp --> CmsEditors["cms/components/Cms*Editor.tsx"]
-        CmsEditors --> CmsUrlInput["cms/components/CmsUrlInput.tsx"]
+        App -.->|"非同步動態載入 / Dynamic import"| CmsApp["cms/CmsApp.tsx (後臺主入口)"]:::hudCard
+        CmsApp --> CmsDirty["cms/context/CmsDirtyContext.tsx (未存檔阻斷)"]:::hudCard
+        CmsApp --> CmsGuard["cms/components/CmsUnsavedModal.tsx (防誤觸視窗)"]:::hudCard
+        CmsApp --> CmsDialog["cms/components/CmsConfirmDialog.tsx (刪除二次確認)"]:::hudCard
+        CmsApp --> CmsEditors["cms/components/Cms*Editor.tsx (各模組編輯器)"]:::hudCard
+        CmsEditors --> CmsUrlInput["cms/components/CmsUrlInput.tsx (URL 測試器)"]:::hudCard
     end
 
     subgraph Storage ["資料持久化與同步防線 (Persistence & Sync Layer)"]
-        CmsEditors --> LocalStorage[("瀏覽器 localStorage 本機快取")]
-        CmsEditors -.->|可選雲端儲存| Firebase[("Firebase Storage / Auth (BaaS)")]
-        LocalStorage -->|CustomEvent 跨層廣播| MainSite
+        CmsEditors --> LocalStorage[("localStorage 本機快取")]:::hudCard
+        CmsEditors -.->|"可選雲端上傳 / Optional Sync"| Firebase[("Firebase BaaS (Auth/Storage)")]:::hudCard
+        LocalStorage -->|"CustomEvent 跨層熱重載 / Hot Sync Broadcast"| MainSite
     end
+
+    style Core fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style Frontend fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style DataLayer fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style CmsModule fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style Storage fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
 ```

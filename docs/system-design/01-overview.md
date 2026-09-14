@@ -56,40 +56,90 @@ This project establishes the personal official portfolio website for **HSU, CHE-
 ### 2.1 系統情境圖 (System Context Diagram - Level 1)
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
 flowchart TD
-    User["訪客 / 招募專家 / 評審<br>Visitors / Recruiters / Reviewers"] -->|HTTPS 瀏覽展示<br>HTTPS Browse & Inspect| Portfolio["個人作品集系統<br>Portfolio Web Application"]
-    Admin["網站作者 (許哲誠)<br>Author: HSU, CHE-CHENG"] -->|模式切換 & 認證登入<br>Mode Switch & Auth| CMS["自研視覺化 CMS 管理後臺<br>In-House Visual CMS Suite"]
-    Crawler["AI 代理人 / 搜尋引擎爬蟲<br>AI Agents & Web Crawlers"] -->|讀取 llms.txt & SEO Meta<br>Parse llms.txt & JSON-LD| Portfolio
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
+    User["訪客 / 招募專家 / 評審<br>Visitors / Recruiters / Reviewers"]:::hudCard
+    Admin["網站作者 (許哲誠)<br>Author: HSU, CHE-CHENG"]:::hudCard
+    Crawler["AI 代理人 / 搜尋引擎爬蟲<br>AI Agents & Web Crawlers"]:::hudCard
+
+    Portfolio["個人作品集前端系統<br>Portfolio Web Application (React 19)"]:::hudCard
+    CMS["自研視覺化 CMS 管理後臺<br>In-House Visual CMS Suite"]:::hudCard
+
+    Firebase["Firebase Storage & Auth (BaaS)<br>雲端儲存與身分驗證"]:::hudCard
+    Cloudflare["Cloudflare Pages (Anycast CDN)<br>全球邊緣快取節點"]:::hudCard
+
+    User -->|"HTTPS 瀏覽展示 / HTTPS Browse"| Portfolio
+    Admin -->|"模式切換與認證 / Auth Mode"| CMS
+    Crawler -->|"讀取 llms.txt & JSON-LD"| Portfolio
     
-    CMS -->|多媒體與資料儲存<br>Cloud Storage API| Firebase["Firebase Storage (BaaS)"]
-    Portfolio -->|靜態分發 & 邊緣運算<br>Edge Distribution & Cache| Cloudflare["Cloudflare Pages (Anycast CDN)"]
+    CMS -->|"多媒體與資料儲存 / Cloud API"| Firebase
+    Portfolio -->|"靜態分發與快取 / Edge CDN"| Cloudflare
 ```
 
 ### 2.2 容器服務圖 (Container Diagram - Level 2)
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'clusterBkg': '#060a14',
+    'clusterBorder': '#1e293b',
+    'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
 flowchart TD
-    subgraph ClientBrowser ["用戶端瀏覽器環境 (Client Browser Environment)"]
-        Preloader["開場預載引擎<br>InitialPreloader (Audio/Asset Gate)"]
-        MainApp["前臺展示系統<br>MainSiteContent (8 Core Sections)"]
-        CMSApp["CMS 管理後臺系統<br>CmsApp (Lazy Loaded Admin Chunks)"]
-        StateGuard["未儲存阻斷防護<br>CmsDirtyContext (Navigation Interceptor)"]
-        LocalStorage["本機資料快取<br>localStorage (Offline Cache Fallback)"]
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
+    subgraph TierBrowser ["用戶端環境 (Client Environment - React 19 SPA)"]
+        Preloader["開場門禁引擎<br>InitialPreloader"]:::hudCard
+        MainApp["前臺八大模組展示系統<br>MainSiteContent"]:::hudCard
+        CMSApp["CMS 管理後臺系統<br>CmsApp (Lazy Chunk)"]:::hudCard
+        StateGuard["未存檔狀態阻斷防護<br>CmsDirtyContext"]:::hudCard
     end
 
-    subgraph ExternalServices ["外部雲端與服務相依 (Cloud Infrastructure & Services)"]
-        CFPages["Cloudflare Pages 全球邊緣快取<br>Global Edge CDN Network"]
-        FBAuth["Firebase Authentication 鑑別中心<br>Identity & Session Gate"]
-        FBStorage["Firebase Storage 多媒體儲存庫<br>Cloud Multimedia Assets"]
-        Drive["Google Drive 雲端證明存檔<br>External Certificate Verification"]
+    subgraph TierServices ["資料快取與雲端基礎設施 (Persistence & Cloud Services)"]
+        LocalStorage["本機離線優先快取<br>localStorage"]:::hudCard
+        FBAuth["Firebase Auth 鑑別中心<br>Identity & Session Gate"]:::hudCard
+        FBStorage["Firebase Storage 多媒體庫<br>Cloud Multimedia Assets"]:::hudCard
+        CFPages["Cloudflare Pages 邊緣快取<br>Global Anycast CDN"]:::hudCard
     end
 
-    Preloader --> MainApp
-    MainApp --> LocalStorage
-    CMSApp --> StateGuard
-    CMSApp --> LocalStorage
-    CMSApp --> FBAuth
-    CMSApp --> FBStorage
-    MainApp --> Drive
-    ClientBrowser --> CFPages
+    Preloader -->|"進入展示主頁 / Mount View"| MainApp
+    MainApp -->|"讀取快取複寫 / Read Cache"| LocalStorage
+    CMSApp -->|"變更防護攔截 / Dirty Guard"| StateGuard
+    CMSApp -->|"持久化寫入 / Write Cache"| LocalStorage
+    CMSApp -->|"會話校驗 / Verify Session"| FBAuth
+    CMSApp -->|"非同步媒體儲存 / Cloud Upload"| FBStorage
+    MainApp -->|"靜態資產快取分發 / Edge CDN"| CFPages
+
+    style TierBrowser fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style TierServices fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
 ```

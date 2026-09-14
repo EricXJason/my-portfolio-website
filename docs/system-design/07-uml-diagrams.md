@@ -8,10 +8,23 @@
 
 ## 1. 前臺展示系統類別關聯圖 | Public Showcase Class Diagram
 
-本圖定義前臺展示視圖之元件階層、全域狀態 Context 與底層工具依賴關係，在 VS Code 內建預覽器中支援原生即時渲染。  
+本圖定義前臺展示視圖之元件階層、全域狀態 Context 與底層工具依賴關係。  
 *Visualizes component composition, context injection, and utility dependencies across public showcase views:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  }
+}}%%
 classDiagram
     direction TB
 
@@ -91,18 +104,32 @@ classDiagram
         +toggleBgm() void
     }
 
-    App *-- LangProvider : wraps
-    App *-- ThemeProvider : wraps
     ILangContext <|.. LangProvider : implements
     IThemeContext <|.. ThemeProvider : implements
-    App o-- MainSiteContent : renders when !isCmsRoute
+    App *-- LangProvider : injects
+    App *-- ThemeProvider : injects
+    App o-- MainSiteContent : renders
     MainSiteContent *-- HeroSection : composite
     MainSiteContent *-- ProjectsSection : composite
     MainSiteContent *-- ArtGallerySection : composite
     HeroSection *-- SciFiRobotAvatar : composite
     ProjectsSection *-- ProjectLightbox : modal
-    ProjectsSection ..> TechIconRenderer : renders tags
-    MainSiteContent ..> WebAudioSynthEngine : audio feedback
+    ProjectsSection ..> TechIconRenderer : renders
+    MainSiteContent ..> WebAudioSynthEngine : audio
+
+    style App fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ILangContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style LangProvider fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style IThemeContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ThemeProvider fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style MainSiteContent fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style HeroSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style SciFiRobotAvatar fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ProjectsSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ProjectLightbox fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ArtGallerySection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style TechIconRenderer fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style WebAudioSynthEngine fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
 ```
 
 ---
@@ -113,6 +140,19 @@ classDiagram
 *Illustrates abstract base editors, unsaved state interceptors, modal portals, and persistence adapters:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  }
+}}%%
 classDiagram
     direction TB
 
@@ -155,7 +195,7 @@ classDiagram
     }
 
     class BaseCmsEditor {
-        <<Abstract>>
+        <<abstract>>
         #boolean isDirty
         #boolean hasLoaded
         +loadInitialData()* void
@@ -202,17 +242,30 @@ classDiagram
     }
 
     ICmsDirtyContext <|.. CmsDirtyProvider : implements
-    CmsApp *-- CmsDirtyProvider : manages state
-    CmsApp *-- CmsUnsavedModal : delegates guard
-    CmsApp *-- CmsConfirmDialog : delegates deletion guard
+    CmsApp *-- CmsDirtyProvider : manages
+    CmsApp *-- CmsUnsavedModal : delegates
+    CmsApp *-- CmsConfirmDialog : delegates
     CmsApp o-- BaseCmsEditor : active editor
     BaseCmsEditor <|-- CmsHeroEditor : extends
     BaseCmsEditor <|-- CmsProjectsEditor : extends
     BaseCmsEditor <|-- CmsGalleryEditor : extends
-    BaseCmsEditor *-- CmsUrlInput : safe visit testing
-    BaseCmsEditor ..> ICmsDirtyContext : notifies changes
+    BaseCmsEditor *-- CmsUrlInput : safe visit
+    BaseCmsEditor ..> ICmsDirtyContext : notifies
     BaseCmsEditor ..> LocalStorageCacheManager : persists
     BaseCmsEditor ..> FirebaseSyncAdapter : cloud sync
+
+    style CmsApp fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ICmsDirtyContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsDirtyProvider fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsUnsavedModal fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsConfirmDialog fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style BaseCmsEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsHeroEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsProjectsEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsGalleryEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsUrlInput fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style LocalStorageCacheManager fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style FirebaseSyncAdapter fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
 ```
 
 ---
@@ -223,6 +276,25 @@ classDiagram
 *Demonstrates instant state synchronization between admin mutations and public views via CustomEvent and LocalStorage:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'actorBkg': '#0b0f19',
+    'actorBorder': '#00f0ff',
+    'actorTextColor': '#f8fafc',
+    'actorLineColor': '#334155',
+    'signalColor': '#00f0ff',
+    'signalTextColor': '#f8fafc',
+    'labelBoxBkgColor': '#0b0f19',
+    'labelBoxBorderColor': '#00f0ff',
+    'labelTextColor': '#f8fafc',
+    'noteBorderColor': '#00f0ff',
+    'noteBkgColor': '#08131e',
+    'noteTextColor': '#f8fafc'
+  }
+}}%%
 sequenceDiagram
     autonumber
     actor Admin as 網站管理者 / Admin
@@ -258,6 +330,25 @@ sequenceDiagram
 *Detailed chronological trace of dirty state interception and graceful recovery actions:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'actorBkg': '#0b0f19',
+    'actorBorder': '#00f0ff',
+    'actorTextColor': '#f8fafc',
+    'actorLineColor': '#334155',
+    'signalColor': '#00f0ff',
+    'signalTextColor': '#f8fafc',
+    'labelBoxBkgColor': '#0b0f19',
+    'labelBoxBorderColor': '#00f0ff',
+    'labelTextColor': '#f8fafc',
+    'noteBorderColor': '#00f0ff',
+    'noteBkgColor': '#08131e',
+    'noteTextColor': '#f8fafc'
+  }
+}}%%
 sequenceDiagram
     autonumber
     actor Admin as 系統管理者 / Admin

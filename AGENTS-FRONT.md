@@ -1,4 +1,4 @@
-# ⚡ AGENTS-FRONT.md | 全域 AI Agent 前端、UI/UX 與 SEO 特化規範庫
+# AGENTS-FRONT.md | 全域 AI Agent 前端、UI/UX 與 SEO 特化規範庫
 
 > **專案作者**: 許哲誠 (HSU, CHE-CHENG)  
 > **適用領域**: Web 前端 (React, Vue, Next.js, Nuxt, Angular, Svelte, HTML/SCSS/TS)、跨裝置 UI/UX 設計與語意化 SEO 工程  

@@ -1,4 +1,4 @@
-# ⚡ AGENTS-BACK.md | 全域 AI Agent 後端與資料庫特化規範庫
+# AGENTS-BACK.md | 全域 AI Agent 後端與資料庫特化規範庫
 
 > **專案作者**: 許哲誠 (HSU, CHE-CHENG)  
 > **適用領域**: 後端伺服端 (Java / Spring Boot, Node.js / NestJS / Express, Go, Python)、資料庫 (SQL / NoSQL / Redis) 與微服務架構  

@@ -1,37 +1,27 @@
 # 本次任務清單 (Session Check-List)
 
-本文件依據《AGENTS.md》全域最高工業級工程協定規範，進行本次對話「AGENTS-GIT.md 修正為固定三層平級分支 (master / development / feature) 與分支乾淨純化」之單次點收全量重寫刷新，詳實記錄使用者提出之指令與具體執行細節。
+本文件依據《AGENTS.md》全域最高工業級工程協定規範，進行本次對話「將開發者工程習慣與美學偏好正式收錄於《AGENTS.md》第 1.3 節，並準備執行法定指令『push到dev』之停等二次確認」之單次點收全量重寫刷新，詳實記錄使用者提出之指令與具體執行細節。
 
 ---
 
 ## 使用者明確請求
 
-1. **分支結構極致乾淨純粹**：
-   - 杜絕任何斜線命名造成的 VS Code 虛擬資料夾折疊干擾。
-   - 確立平級、乾淨、純粹的三大分支：
-     - `master`
-     - `development`
-     - `feature`
-2. **同步修訂 AGENTS-GIT.md 規範**：
-   - 全文移除 `feature/*` 或子分支斜線語法。
-   - 明確確立固定三層分支體系與 AI 執行結果強制 Commit 到 `feature` 分支之規則。
+1. **將開發者工程習慣收錄至協定 MD 中**：
+   - 專案標題與命名去裝飾化（禁用 `⚡` 或浮誇前綴，採純粹標準命名 `# My-Portfolio-Website + CMS (個人作品集網站含內容管理系統)`）。
+   - 圖表視覺美學偏好：沉穩深邃黑夜 Sci-Fi HUD 風格，杜絕花俏調色盤大色塊，絕對禁止刺眼白底穿透，杜絕抖動彎曲扭曲繞線（一律 `curve: 'linear'`）。
+   - 圖表尺寸量體絕對 1:1 黃金比例對稱平衡（約 750px × 360px），徹底消滅「上一張大、下一張小」。
+   - 語法零崩潰與中英雙語緊鄰對照。
+2. **指示執行法定指令：「push到dev」**：
+   - 觸發《AGENTS.md》與《AGENTS-GIT.md》第 0.2 節全域指令前置停等二次確認機制。
 
 ---
 
 ## AI 實際執行細節
 
-1. **AGENTS-GIT.md 全文校準**：
-   - **協定定位與拓撲更新**：全面確立三層分支為 `master`、`development` 與 `feature`。
-   - **分支職責與沙盒條款（第 0.3 節 & 第 3 章）**：
-     - 確立平級單一沙盒 `feature`，嚴禁使用斜線命名。
-     - AI 每次任務的所有代碼、文檔與產出，強制 100% Commit 在 `feature` 分支中。
-   - **發布指令 SOP 校準（第 5.1 & 5.2 節）**：
-     - `push到dev`：執行 `git merge --squash feature` 壓平合併至 `development` 並推送，完成後切回 `feature` 待命。
-     - `push到master`：將 `development` 合併推送至 `master`，完成後切回 `feature` 待命。
-2. **本地 Git 分支即刻純化**：
-   - 執行 `git branch -m feature/portfolio-dev feature`。
-   - 本地分支結構完全恢復為乾淨平級之：
-     - `master`
-     - `development`
-     - `feature`
-   - 本次所有修訂 100% 於 `feature` 分支內執行原子 Commit。
+1. **《AGENTS.md》新增第 1.3 節「開發者專案命名與工程偏好習慣」**：
+   - 將上述四大核心偏好與習慣正式法典化，成為所有 Agent 於專案交付時必須嚴格恪遵的最高原則。
+2. **專案建置與代碼庫驗收**：
+   - 執行 `pnpm run build`，TypeScript 0 型別錯誤，Vite 生產打包確定性通過（271ms）。
+   - 本地 `feature` 分支完成乾淨存檔。
+3. **依法觸發法定指令二次確認**：
+   - 針對使用者「push 到 dev」請求，嚴格依據第 0.2 節向使用者發起二次確認提問，未獲確認前絕不擅自推送。

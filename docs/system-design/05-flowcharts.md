@@ -12,14 +12,32 @@
 *Defines the progressive hydration sequence, asset preloading, and dual-language preference initialization upon first visit:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
 flowchart TD
-    Start([用戶發起 HTTP 造訪<br>User Initiates Visit]) --> Step1[階段一: InitialPreloader 0%~100% 科技載入動畫<br>Phase 1: Preloader HUD Progress]
-    Step1 --> Preload[非同步預載關鍵 WebP 圖片、SVG 圖標與字體<br>Async Preload Media, Icons & Fonts]
-    Preload --> Step2[階段二: LangSelectModal 語言偏好設定彈窗<br>Phase 2: Language Preference Modal]
-    Step2 --> UserChoice{使用者選定語系?<br>Language Chosen?}
-    UserChoice -- 選擇 zh 或 en --> SetLang[寫入 LangContext & 派發 HTML lang 屬性<br>Update LangContext & HTML Attributes]
-    SetLang --> Step3[階段三: siteEntered = true 全站平滑淡入<br>Phase 3: Smooth Scene Fade-in]
-    Step3 --> MainView([呈現前臺首頁 MainSiteContent<br>Public Showcase Rendered])
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
+    Start([用戶發起 HTTP 造訪<br>User Initiates Visit]):::hudCard --> Step1[階段一: InitialPreloader 0%~100% 科技載入動畫<br>Phase 1: Preloader HUD Progress]:::hudCard
+    Step1 --> Preload[非同步預載關鍵 WebP 圖片、SVG 圖標與字體<br>Async Preload Media, Icons & Fonts]:::hudCard
+    Preload --> Step2[階段二: LangSelectModal 語言偏好設定彈窗<br>Phase 2: Language Preference Modal]:::hudCard
+    Step2 --> UserChoice{使用者選定語系?<br>Language Chosen?}:::hudCard
+    UserChoice -->|"選擇 zh 或 en / Choose zh or en"| SetLang[寫入 LangContext & 派發 HTML lang 屬性<br>Update LangContext & HTML Attributes]:::hudCard
+    SetLang --> Step3[階段三: siteEntered = true 全站平滑淡入<br>Phase 3: Smooth Scene Fade-in]:::hudCard
+    Step3 --> MainView([呈現前臺首頁 MainSiteContent<br>Public Showcase Rendered]):::hudCard
 ```
 
 ---
@@ -30,19 +48,37 @@ flowchart TD
 *Specifies security gates, mode toggles, and fallback paths when transitioning into the admin environment:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
 flowchart TD
-    ClickGear[點擊導覽列 CMS 入口按鈕<br>Click CMS Switch in Navbar] --> OpenDialog[彈出 CmsModeSelectDialog 模式選擇視窗<br>Open Mode Selection Dialog]
-    OpenDialog --> Choice{選擇登入模式<br>Select Mode}
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
+    ClickGear[點擊導覽列 CMS 入口按鈕<br>Click CMS Switch in Navbar]:::hudCard --> OpenDialog[彈出 CmsModeSelectDialog 模式選擇視窗<br>Open Mode Selection Dialog]:::hudCard
+    OpenDialog --> Choice{選擇登入模式<br>Select Mode}:::hudCard
     
-    Choice -- 快速測試登入 (訪客沙盒)<br>Sandbox Guest Mode --> GrantGuest[設定本地管理態 & 解鎖本地編輯<br>Unlock Local Storage Sandbox]
-    Choice -- Firebase 雲端認證<br>Firebase Cloud Auth --> OpenFB[彈出 Firebase 認證對話框<br>Open Auth Credentials Modal]
+    Choice -->|"快速測試登入 / 訪客沙盒"| GrantGuest[設定本地管理態 & 解鎖本地編輯<br>Unlock Local Storage Sandbox]:::hudCard
+    Choice -->|"Firebase 雲端認證 / Cloud Auth"| OpenFB[彈出 Firebase 認證對話框<br>Open Auth Credentials Modal]:::hudCard
     
-    OpenFB --> InputCreds[輸入管理者 Email 與密碼<br>Input Admin Credentials]
-    InputCreds --> Validating{Firebase 認證是否成功?<br>Authentication Passed?}
-    Validating -- 認證失敗 / Failed --> ShowErr[顯示錯誤提示 & 阻斷進入<br>Display Error & Intercept Access]
-    Validating -- 認證成功 / Passed --> GrantAdmin[寫入 Firebase Auth Token & 解鎖完整雲端權限<br>Grant Full Cloud Storage Rights]
+    OpenFB --> InputCreds[輸入管理者 Email 與密碼<br>Input Admin Credentials]:::hudCard
+    InputCreds --> Validating{Firebase 認證是否成功?<br>Authentication Passed?}:::hudCard
+    Validating -->|"認證失敗 / Failed"| ShowErr[顯示錯誤提示 & 阻斷進入<br>Display Error & Intercept Access]:::hudCard
+    Validating -->|"認證成功 / Passed"| GrantAdmin[寫入 Firebase Auth Token & 解鎖完整雲端權限<br>Grant Full Cloud Storage Rights]:::hudCard
     
-    GrantGuest --> CMSView([進入 CmsApp 管理後臺主畫面<br>Mount CmsApp View])
+    GrantGuest --> CMSView([進入 CmsApp 管理後臺主畫面<br>Mount CmsApp View]):::hudCard
     GrantAdmin --> CMSView
 ```
 
@@ -54,6 +90,13 @@ flowchart TD
 *State transition model for preventing accidental data loss during active editing sessions:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712'
+  }
+}}%%
 stateDiagram-v2
     [*] --> Pristine: 載入模組初始資料 / Load Pristine State (isDirty = false)
     
@@ -61,14 +104,14 @@ stateDiagram-v2
     Dirty --> Pristine: 點擊「儲存設定」寫入快取 / Save Changes (isDirty = false)
     
     state Dirty {
-        [*] --> Editing: 編輯進行中 / Active Editing (HUD Indicator Red)
+        [*] --> Editing: 編輯進行中 / Active Editing
         Editing --> TriggerExit: 觸發切換模組或外部導覽 / Attempt Navigation
     }
     
     TriggerExit --> InterceptModal: 攔截跳轉並彈出 CmsUnsavedModal 三選項視窗 / Intercept & Prompt Modal
     
     state InterceptModal {
-        [*] --> AwaitingUserChoice
+        [*] --> AwaitingUserChoice: 等待決策 / Awaiting Decision
         AwaitingUserChoice --> Option1: 點擊「放棄變更並離開」/ Discard & Exit
         AwaitingUserChoice --> Option2: 點擊「儲存變更並離開」/ Save & Exit
         AwaitingUserChoice --> Option3: 點擊「取消並留在本頁」/ Stay on Page
@@ -87,18 +130,36 @@ stateDiagram-v2
 *Defines multi-category filtering, 2D media lightboxes, and 3D WebGL runtime lifecycle:*
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
 flowchart TD
-    GalleryEnter[進入美術作品專區 ArtGallery<br>Navigate to Art Gallery] --> CategorySelect[選擇分類: 3D 場景 / 3D 物件 / 2D 素描 / 2D 麥克筆<br>Select Category: 3D / 2D Concept Art]
-    CategorySelect --> RenderCards[響應式網格渲染作品卡片<br>Render Responsive Card Grid]
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
+    GalleryEnter[進入美術作品專區 ArtGallery<br>Navigate to Art Gallery]:::hudCard --> CategorySelect[選擇分類: 3D 場景 / 3D 物件 / 2D 素描 / 2D 麥克筆<br>Select Category: 3D / 2D Concept Art]:::hudCard
+    CategorySelect --> RenderCards[響應式網格渲染作品卡片<br>Render Responsive Card Grid]:::hudCard
     
-    RenderCards --> CardClick{使用者點擊作品卡片<br>Click Card}
-    CardClick -- 2D 平面作品 / 2D Artwork --> Open2DModal[開啟高解析度 2D 燈箱視窗<br>Open High-Res 2D Lightbox Modal]
-    CardClick -- 3D 立體作品 / 3D Model --> Open3DViewer[非同步掛載 3D 互動檢視器<br>Async Mount 3D Interactive Viewer]
+    RenderCards --> CardClick{使用者點擊作品卡片<br>Click Card}:::hudCard
+    CardClick -->|"2D 平面作品 / 2D Artwork"| Open2DModal[開啟高解析度 2D 燈箱視窗<br>Open High-Res 2D Lightbox Modal]:::hudCard
+    CardClick -->|"3D 立體作品 / 3D Model"| Open3DViewer[非同步掛載 3D 互動檢視器<br>Async Mount 3D Interactive Viewer]:::hudCard
     
-    Open3DViewer --> LoadModel[載入 GLB / 3D 模型與貼圖資產<br>Stream GLB Assets & PBR Textures]
-    LoadModel --> OrbitControls[解鎖滑鼠 360 度旋轉軌道控制器<br>Enable 360 Orbit Controls]
+    Open3DViewer --> LoadModel[載入 GLB / 3D 模型與貼圖資產<br>Stream GLB Assets & PBR Textures]:::hudCard
+    LoadModel --> OrbitControls[解鎖滑鼠 360 度旋轉軌道控制器<br>Enable 360 Orbit Controls]:::hudCard
     
-    Open2DModal --> CloseModal[點擊關閉 / 背景遮罩 / ESC 鍵<br>Dismiss Modal]
-    OrbitControls --> Close3D[點擊關閉 3D 檢視器<br>Close 3D Viewer]
-    Close3D --> DisposeWebGL[卸載組件並安全釋放 WebGL 記憶體資源<br>Dispose Geometry & Release WebGL Context]
+    Open2DModal --> CloseModal[點擊關閉 / 背景遮罩 / ESC 鍵<br>Dismiss Modal]:::hudCard
+    OrbitControls --> Close3D[點擊關閉 3D 檢視器<br>Close 3D Viewer]:::hudCard
+    Close3D --> DisposeWebGL[卸載組件並安全釋放 WebGL 記憶體資源<br>Dispose Geometry & Release WebGL Context]:::hudCard
 ```

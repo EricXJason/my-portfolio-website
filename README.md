@@ -1,4 +1,4 @@
-# ⚡ Tactical Cyberpunk Web Portfolio & In-House CMS (個人作品集與自研內容管理系統)
+# My-Portfolio-Website + CMS (個人作品集網站含內容管理系統)
 
 > An enterprise-grade, high-performance web portfolio and proprietary visual CMS engineered with React 19, TypeScript, Vite, and Tailwind CSS under a Tactical Cyberpunk HUD design system.  
 > 採用 React 19、TypeScript、Vite 與 Tailwind CSS 建置，融合賽博龐克戰術 HUD 設計體系之企業級高效能作品集與自研視覺化內容管理系統（CMS）。
@@ -31,41 +31,191 @@ The application adheres to strict Single Responsibility and High Cohesion / Low 
 ### 2.1 C4 Model Architecture (C4 容器級架構模型)
 
 ```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'clusterBkg': '#060a14',
+    'clusterBorder': '#1e293b',
+    'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
 flowchart TD
-    subgraph Actors ["Actors & Clients (操作角色與存取客戶端)"]
-        Visitor["Public Visitors / Reviewers (一般訪客 / 評審)"]
-        Admin["System Administrator (系統管理者)"]
-        Crawler["AI Agents / Crawlers (AI 代理與爬蟲)"]
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
+    subgraph Tier1 ["層級 1：存取角色端 (Clients & Access Layer)"]
+        Visitor["一般訪客 / 評審專家<br>Public Visitors / Reviewers"]:::hudCard
+        Admin["系統管理者 (許哲誠)<br>System Administrator"]:::hudCard
     end
 
-    subgraph ClientApp ["Client Browser Environment (用戶端瀏覽器環境 - React 19 SPA)"]
-        Preloader["InitialPreloader (資源預載與音效引擎門禁)"]
-        PublicViews["MainSiteContent (前臺八大模組展示系統)"]
-        CMSApp["CmsApp (自研 CMS 管理後臺 - 獨立代碼分割)"]
-        DirtyGuard["CmsDirtyContext (未存檔狀態阻斷防護)"]
-        LocalCache[("localStorage (離線優先本機資料快取)")]
+    subgraph Tier2 ["層級 2：應用核心層 (React 19 SPA Core)"]
+        Showcase["前臺八大模組展示視圖<br>MainSiteContent (Showcase)"]:::hudCard
+        CmsSuite["自研 CMS 視覺化後臺<br>CmsApp & DirtyGuard (Admin)"]:::hudCard
     end
 
-    subgraph CloudEdge ["Cloud Infrastructure & Edge (雲端邊緣基礎設施)"]
-        CFPages["Cloudflare Pages (全球 Anycast CDN 快取節點)"]
-        FBAuth["Firebase Auth (管理員身分鑑別中心)"]
-        FBStorage["Firebase Storage (多媒體雲端 BaaS 儲存庫)"]
+    subgraph Tier3 ["層級 3：持久化與雲端設施 (Persistence & Cloud Infrastructure)"]
+        Cache["本機離線優先快取<br>localStorage"]:::hudCard
+        Cloud["雲端託管與多媒體庫<br>Cloudflare Pages & Firebase"]:::hudCard
     end
 
-    Visitor -->|HTTPS 瀏覽展示| Preloader
-    Preloader --> PublicViews
-    Admin -->|模式切換與認證| CMSApp
-    Crawler -->|讀取 llms.txt 與 JSON-LD| PublicViews
-    
-    CMSApp --> DirtyGuard
-    CMSApp --> LocalCache
-    CMSApp -->|非同步雲端上傳| FBStorage
-    CMSApp -->|鑑別 Session| FBAuth
-    LocalCache -->|CustomEvent 廣播熱重載| PublicViews
-    ClientApp --> CFPages
+    Visitor -->|"HTTPS 瀏覽首屏展示 / HTTPS Browse"| Showcase
+    Admin -->|"模式切換與身分鑑別 / Auth Mode"| CmsSuite
+    Showcase -->|"載入結構化快取 / Hydrate Cache"| Cache
+    CmsSuite -->|"持久化與未存檔防衛 / Guard & Sync"| Cache
+    Showcase -->|"靜態邊緣分發 / Edge Distribution"| Cloud
+    CmsSuite -->|"多媒體非同步上傳 / Cloud Upload"| Cloud
+
+    style Tier1 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style Tier2 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style Tier3 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
 ```
 
-### 2.2 Physical Code Splitting & Performance Defense (物理代碼分割與效能防禦)
+### 2.2 Core UML Class Diagram (核心架構 UML 類別關聯圖)
+
+```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  }
+}}%%
+classDiagram
+    direction TB
+
+    class App {
+        -boolean isCmsRoute
+        -boolean isSiteEntered
+        +render() JSX.Element
+    }
+
+    class MainSiteContent {
+        -string activeSection
+        +render() JSX.Element
+    }
+
+    class HeroSection {
+        -HeroData heroData
+        +render() JSX.Element
+    }
+
+    class ProjectsSection {
+        -string filterCategory
+        +handleCategoryChange() void
+    }
+
+    class ILangContext {
+        <<interface>>
+        +LangType lang
+        +setLang() void
+        +t(key) string
+    }
+
+    class LangProvider {
+        -LangType currentLang
+        +setLang() void
+        +t(key) string
+    }
+
+    class CmsApp {
+        -string activeTab
+        -boolean isPreviewMode
+        +switchTab() void
+    }
+
+    class ICmsDirtyContext {
+        <<interface>>
+        +boolean isDirty
+        +markDirty() void
+        +markPristine() void
+    }
+
+    class LocalStorageCacheManager {
+        +saveSectionData(k, d)$ void
+        +loadSectionData(k, f)$ any
+    }
+
+    App *-- LangProvider : injects
+    ILangContext <|.. LangProvider : implements
+    App o-- MainSiteContent : renders
+    MainSiteContent *-- HeroSection : composite
+    MainSiteContent *-- ProjectsSection : composite
+    App o-- CmsApp : lazy load
+    CmsApp *-- ICmsDirtyContext : injects
+    CmsApp ..> LocalStorageCacheManager : persists
+    LocalStorageCacheManager ..> MainSiteContent : syncs
+
+    style App fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style MainSiteContent fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style HeroSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ProjectsSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ILangContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style LangProvider fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style CmsApp fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style ICmsDirtyContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style LocalStorageCacheManager fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+```
+
+### 2.3 Bi-Directional Hot Sync Sequence Diagram (雙向即時熱更新循序圖)
+
+```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'actorBkg': '#0b0f19',
+    'actorBorder': '#00f0ff',
+    'actorTextColor': '#f8fafc',
+    'actorLineColor': '#334155',
+    'signalColor': '#00f0ff',
+    'signalTextColor': '#f8fafc',
+    'labelBoxBkgColor': '#0b0f19',
+    'labelBoxBorderColor': '#334155',
+    'labelTextColor': '#f8fafc',
+    'noteBorderColor': '#00f0ff',
+    'noteBkgColor': '#08131e',
+    'noteTextColor': '#f8fafc'
+  }
+}}%%
+sequenceDiagram
+    autonumber
+    actor Admin as 系統管理者 / Admin
+    participant CMS as CMS 模組編輯器 / Cms*Editor
+    participant DirtyCtx as 未存檔防護 / CmsDirtyContext
+    participant Cache as 本地快取層 / LocalStorage
+    participant Bus as 全域事件匯流排 / CustomEvent Bus
+    participant View as 前臺展示組件 / MainSiteContent
+
+    Admin->>CMS: 編輯專案欄位或拖曳排序 / Mutate item or order
+    CMS->>DirtyCtx: markDirty() (標記 isDirty = true)
+    Note over DirtyCtx,CMS: 點亮頂部戰術紅點警示 / Red Alert Active
+    
+    Admin->>CMS: 點擊「儲存變更」按鈕 / Click "Save Changes"
+    CMS->>Cache: 寫入結構化 JSON / Write LocalStorage
+    CMS->>DirtyCtx: markPristine() (重設 isDirty = false)
+    CMS->>Bus: 派發自訂事件 / Dispatch "cms-data-updated"
+    Bus->>View: 捕捉事件並熱載入最新快取 / Capture & Hydrate
+    View-->>Admin: 前臺展示視圖即時 0ms 更新呈現 / 0ms Instant Render
+```
+
+### 2.4 Physical Code Splitting & Performance Defense (物理代碼分割與效能防禦)
 - **Zero-Waterfall Showcase (首屏展示零瀑布流)**: Public showcase components and critical CSS are bundled into the core entrypoint, ensuring instant render without secondary network waterfalls.  
   前臺展示組件與核心 HUD 樣式編譯於初始主 Bundle，確保首屏渲染無需經歷次級網路請求瀑布流。
 - **Lazy Loaded Admin Chunk (CMS 管理模組非同步延遲載入)**: The entire CMS module (`CmsApp`, Markdown editors, drag-and-drop algorithms, and Firebase adapters) is compiled into a separate chunk (`chunk-cms.js`) via dynamic `import()`, keeping the public bundle footprint under ~67 kB.  
