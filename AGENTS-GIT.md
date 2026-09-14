@@ -201,8 +201,9 @@
 
 本章節為專案根目錄 **`README.md` 之唯一法定權威規範庫**。所有涉及 `README.md` 的章節拓撲、核心架構圖表、中英雙語對照標準與暫存前置審查，一律 100% 以本章節為唯一真實來源（SSOT），執行任何 `git add` 進入暫存區前強制完成全量稽核。
 
-### 4.1 雙語 README 唯一同步原則 (SSOT Bilingual Sync)
-於執行任何 `git add` 前，必須確保根目錄之 **`README.md`** 已完全同步並更新為**精確的中英雙語自然緊鄰對照 (English & Traditional Chinese)**。嚴禁出現繁簡混雜、純英文留白或僅有單一語言的狀況。
+### 4.1 雙語 README 唯一同步與日常凍結原則 (SSOT Bilingual Sync & Routine Freeze)
+* **日常任務凍結防線**: **日常開發任務中，AI 絕對禁止頻繁修改或重寫 `README.md`**！`README.md` **只有在使用者下達 Push（push到dev 或 push到master）且經確認需要時，才進行建立與更新**，杜絕每次微小改動都耗時重建全域圖表。
+* **發布同步標準**: 於執行發布前，確保根目錄之 **`README.md`** 已完全同步並更新為**精確的中英雙語自然緊鄰對照 (English & Traditional Chinese)**。嚴禁出現繁簡混雜、純英文留白或僅有單一語言的狀況。
 
 ### 4.2 README 六大核心法定章節架構
 根目錄 `README.md` 必須強制具備以下 6 大標準章節，各章節得依專案特徵深度展開，嚴禁空殼：
@@ -250,8 +251,15 @@
 
 本章節規範成果推送至遠端之標準 SOP，執行前必須強制通過第 0.2 節二次確認。
 
+> [!IMPORTANT]
+> **發布前置文檔與 README 提問防禦 (Pre-Push Documentation Interception)**:
+> 當使用者下達 `push到dev` 或 `push到master` 指令時，AI 在執行任何合併推送前，**強制必須主動向使用者詢問**：
+> > 「檢測到您即將執行遠端發布推送。請問本次推送是否需要同步建立/更新系統分析文檔 (`docs/system-design/`) 與 `README.md`？[Y/N]」
+> - **回覆「Y」**：啟動《AGENTS.md》第 8 章 SOP 進行全量系統設計與 README 同步更新。
+> - **回覆「N」**：完全略過文檔重構，直接進入下方極速推送流程！
+
 ### 5.1 指令：push到dev (Squash Merge SOP)
-當接收到指令：「**push到dev**」並獲二次確認後，將開發成果壓平整合至測試環境：
+當接收到指令：「**push到dev**」並獲二次確認（及上述文檔提問回應）後，將開發成果壓平整合至測試環境：
 1. **狀態驗收**: 確保當前 `feature` 分支所有改動已完成原子提交。
 2. **壓平合併**:
    - 切換至 development 分支：`git checkout development`。
@@ -263,7 +271,7 @@
 4. **切回沙盒**: 執行 `git checkout feature` 返回開發沙盒分支待命。
 
 ### 5.2 指令：push到master (Production Release SOP - 一條龍同步保證)
-當接收到指令：「**push到master**」並獲二次確認後，執行正式生產發布。本流程內建「前置分支差異自動防呆卡控」，確保 `development` 與 `master` 雙基準分支 100% 保持最新：
+當接收到指令：「**push到master**」並獲二次確認（及上述文檔提問回應）後，執行正式生產發布。本流程內建「前置分支差異自動防呆卡控」，確保 `development` 與 `master` 雙基準分支 100% 保持最新：
 
 1. **二度授權與邊界提示**:
    - 強制警示該操作將發布至正式生產環境（GitHub Pages / 生產部署節點）。
@@ -293,11 +301,17 @@
 
 本章節統一提交紀錄格式，確保歷史線圖具備高度可讀性。
 
-### 6.1 格式標準
-所有 Commit 訊息強制採用標準英文與 Conventional Commits 格式：
+### 6.1 格式標準 (Strict 100% English Conventional Commits)
+**⚠️ 絕對禁令條款：所有 Git Commit 訊息強制 100% 使用專業純英文，絕對嚴禁出現任何中文字元！**
+
+所有日常原子提交、分支壓平合併與釋出訊息，必須嚴格遵循 Conventional Commits 格式：
+```text
+<type>(<scope>): <imperative English description>
 ```
-<type>(<scope>): <short imperative description>
-```
+* 正確範例：`feat(auth): add firebase auth guard dialog`
+* 正確範例：`docs(system-design): prune unneeded backend files and align sequential 01-07 flow`
+* 正確範例：`refactor(components): streamline art gallery embed player`
+* 錯誤範例：`docs(system-design): 移除多餘檔案` (⚠️ 嚴格禁止包含中文！)
 
 ### 6.2 允許類型清單
 提交類型嚴格限定於以下項目：

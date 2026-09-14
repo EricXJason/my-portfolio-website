@@ -1,7 +1,7 @@
 # 設計體系與全裝置相容標準 | UI/UX Design System & Accessibility Standards
 
 > **專案作者 / Author**: 許哲誠 (HSU, CHE-CHENG)  
-> **規範標準 / Compliance**: 依據《AGENTS.md》全域最高工業級工程協定第 6.10 節規範建置。定義 Cyber HUD 設計體系、跨裝置 RWD 響應式佈局矩陣、WCAG 2.2 AAA/AA 對比度規範與多媒體資材分流標準。  
+> **規範標準 / Compliance**: 依據《AGENTS.md》全域最高工業級工程協定第 6 章規範建置。本文件為系統架構唯一真實來源 (SSOT) 之視覺核心，定義 Cyber HUD 設計體系、跨裝置 RWD 響應式佈局矩陣、WCAG 2.2 AAA/AA 對比度規範與多媒體資材分流標準。  
 > *Release: 2026-09-14*
 
 ---
@@ -58,5 +58,6 @@
 *Enforces localized asset delivery, modern compression, and zero external dependency risk:*
 
 - **技術與品牌 Logo / UI 圖示 (Tech & Brand Logos)**：強制採用 **SVG** 向量格式，存放於 `public/tech-icons/` 或整合於 `TechIcon` 組件，保證無損縮放與在地化離線可用性。
-- **專案展示圖片與美術作品 (Content Showcase Images)**：強制採用 **WebP** 高效壓縮格式，存放於 `public/assets/images/` 與 `public/assets/gallery/`。**嚴禁使用不可控之外部圖床 Hotlinking**，確保生產環境穩定與永久留存。
-- **互動 3D 模型 (Interactive 3D Assets)**：3D 物件專屬採用嵌入式檢視器（如 Sketchfab 3D Viewer），無需上傳笨重之二維靜態圖片，大幅節省頻寬。
+- **高解析度作品截圖 (Showcase Media)**：採用現代 **WebP / AVIF** 格式，壓縮率高且保留細節。
+- **3D 互動美術作品 (3D Art Interactive)**：採用 ArtStation 3D 嵌入檢視器（`embedUrl`），免除昂貴的本機 3D 渲染資源開銷與 GPU 記憶體洩漏風險。
+- **影音示範 (Video Demos)**：採用 YouTube Iframe 延遲載入（Lazy-load），確保首屏加載極速響應。

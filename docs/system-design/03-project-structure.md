@@ -14,16 +14,16 @@
 ```text
 my-portfolio-website/
 ├── docs/                      # 全域動態追蹤與系統設計文檔庫 / Dynamic Engineering & System Design Docs
-│   ├── check-list.md          # 單次對話點收清單 / Single-Session Verification Checklist
-│   ├── change-log.md          # 全中文修訂歷程 / Pure Chinese Append-Only Changelog
+│   ├── checklist.md           # 單次對話點收清單 / Single-Session Verification Checklist
+│   ├── log.md                 # 全中文修訂歷程 (Push 永久保留，上限 50 筆) / Chinese Log with Retention Policy
 │   └── system-design/         # 系統架構設計唯一真實來源 (SSOT) / Architecture Design Suite
 │       ├── 01-overview.md     # 願景、承載力與 C4 模型 / Vision, Capacity & C4 Diagrams
 │       ├── 02-tech-stack.md   # 技術選型與依賴庫規範 / Tech Stack Matrix & Trade-offs
 │       ├── 03-project-structure.md # 目錄結構與模組拓撲 / Directory Tree & Topology
 │       ├── 04-functional-specs.md  # 八大模組與 CMS 規格 / Functional Specifications
 │       ├── 05-flowcharts.md   # 核心操作流程與狀態機 / Core Business Flowcharts
-│       ├── 07-uml-diagrams.md # UML 類別圖與跨層循序圖 / UML Class & Sequence Diagrams
-│       └── 10-ui-ux-standards.md # Cyber HUD 與無障礙標準 / UI/UX & Accessibility Standards
+│       ├── 06-uml-diagrams.md # UML 類別圖與跨層循序圖 / UML Class & Sequence Diagrams
+│       └── 07-ui-ux-standards.md # Cyber HUD 與無障礙標準 / UI/UX & Accessibility Standards
 ├── public/                    # 靜態公開資產與 SEO 規範檔案 / Static Public Assets & SEO Artifacts
 │   ├── assets/                # 本地 WebP 圖片與畫廊多媒體 / Compressed WebP Media Assets
 │   ├── tech-icons/            # 實體 SVG 技術圖示庫 / Localized Vector Brand Icons
@@ -68,22 +68,20 @@ my-portfolio-website/
 *Establishes strict Single Responsibility Principles (SRP) and structural decoupling:*
 
 ### 2.1 資料層 (`src/data/`) | Data Layer
-- **繁體中文**：存放全域預設之結構化 JSON 檔案，定義各模組之資料模型 Schema，做為前臺與 CMS 初始化之原生資料基準（Single Source of Truth）。
-- **English**: Houses baseline structured JSON records defining module schemas, serving as the immutable Single Source of Truth (SSOT) for initial application hydration.
+存放全域預設之結構化 JSON 檔案，定義各模組之資料模型 Schema，做為前臺與 CMS 初始化之原生資料基準（Single Source of Truth）。  
+*Houses baseline structured JSON records defining module schemas, serving as the immutable Single Source of Truth (SSOT) for initial application hydration.*
 
 ### 2.2 狀態與上下文層 (`src/context/`, `src/cms/context/`) | Context & State Layer
-- **繁體中文**：
-  - `LangContext`: 管理雙語狀態 (`zh` / `en`)，即時同步 HTML lang 屬性與全域翻譯詞庫。
-  - `ThemeContext`: 管理深淺主題切換 (`dark` / `light`)，派發 class 與 CSS 色彩變數。
-  - `CmsDirtyContext`: 追蹤 CMS 編輯器表單之異動狀態（`isDirty`），為路由跳轉、關閉視窗與模式切換提供嚴密安全阻斷攔截。
-- **English**:
-  - `LangContext`: Manages dual-language state (`zh` / `en`) and synchronizes dynamic document language tags.
-  - `ThemeContext`: Toggles dual HUD visual palettes (`dark` / `light`) with seamless token swapping.
-  - `CmsDirtyContext`: Tracks form mutation dirty states (`isDirty`) to provide intercepting guards against accidental navigation or tab closure.
+- `LangContext`：管理雙語狀態 (`zh` / `en`)，即時同步 HTML lang 屬性與全域翻譯詞庫。  
+  *Manages dual-language state (`zh` / `en`) and synchronizes dynamic document language tags.*
+- `ThemeContext`：管理深淺主題切換 (`dark` / `light`)，派發 class 與 CSS 色彩變數。  
+  *Toggles dual HUD visual palettes (`dark` / `light`) with seamless token swapping.*
+- `CmsDirtyContext`：追蹤 CMS 編輯器表單之異動狀態（`isDirty`），為路由跳轉、關閉視窗與模式切換提供嚴密安全阻斷攔截。  
+  *Tracks form mutation dirty states (`isDirty`) to provide intercepting guards against accidental navigation or tab closure.*
 
 ### 2.3 呈現層 (`src/components/`, `src/cms/components/`) | Presentation Layer
-- **繁體中文**：前臺組件專注於次秒級載入、流暢 60fps 動效與 WCAG AAA 無障礙展示；CMS 編輯器專注於純粹直覺的內容編輯，提供排序、刪除二次確認對話框（`CmsConfirmDialog`）與即時本機/雲端同步。
-- **English**: Public components prioritize sub-second rendering, 60fps fluid micro-interactions, and WCAG AAA compliance. Admin components provide tactile editing, reordering controls, deletion confirmation dialogs, and instant persistence.
+前臺組件專注於次秒級載入、流暢 60fps 動效與 WCAG AAA 無障礙展示；CMS 編輯器專注於純粹直覺的內容編輯，提供排序、刪除二次確認對話框（`CmsConfirmDialog`）與即時本機/雲端同步。  
+*Public components prioritize sub-second rendering, 60fps fluid micro-interactions, and WCAG AAA compliance. Admin components provide tactile editing, reordering controls, deletion confirmation dialogs, and instant persistence.*
 
 ---
 

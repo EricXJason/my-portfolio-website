@@ -1,7 +1,7 @@
 # 核心業務流程圖與狀態轉移 | Flowcharts & State Machine Specifications
 
 > **專案作者 / Author**: 許哲誠 (HSU, CHE-CHENG)  
-> **規範標準 / Compliance**: 依據《AGENTS.md》全域最高工業級工程協定第 6 章規範建置。定義系統之**使用者操作路徑、業務邏輯流程 (Flowchart) 與核心狀態機轉移 (State Diagram)**。本文件不包含 UML 類別圖與循序圖（由 `07-uml-diagrams.md` 獨立專職承擔），落實嚴格分責分離。  
+> **規範標準 / Compliance**: 依據《AGENTS.md》全域最高工業級工程協定第 6 章規範建置。定義系統之**使用者操作路徑、業務邏輯流程 (Flowchart) 與核心狀態機轉移 (State Diagram)**。本文件不包含 UML 類別圖與循序圖（由 `06-uml-diagrams.md` 獨立專職承擔），落實嚴格分責分離。  
 > *Release: 2026-09-14*
 
 ---

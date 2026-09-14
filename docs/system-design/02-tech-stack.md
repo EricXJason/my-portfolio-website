@@ -25,27 +25,22 @@
 
 ## 2. 選型理由與權衡取捨 | Architectural Trade-offs & Rationales
 
-### 繁體中文
-#### 2.1 為何選擇 React + Vite SPA 而非 Next.js SSR？
-- **效能極限化**：本專案為個人作品集與展示型 SPA，靜態資產可 100% 預先編譯並部署至 Cloudflare Pages 邊緣快取，無需 Node.js 伺服器常駐維護，杜絕 SSR 冷啟動延遲。
-- **邊緣分發成本**：Cloudflare Pages 提供無限頻寬與零伺服器維護成本，具備全球 Anycast 邊緣網絡即時加速。
-- **CMS 架構吻合**：自研視覺化 CMS 核心著重於客戶端狀態管理與本機持久化，搭配 Firebase Storage 即可達成完整閉環，免除複雜的伺服器端渲染負擔。
+本節深入探討本專案核心架構決策之權衡取捨（Trade-offs）與技術選型依據。  
+*This section analyzes architectural trade-offs and rationale behind key technology selections.*
 
-#### 2.2 為何選擇 Firebase Storage BaaS 而非自行架設 Express / NestJS？
-- **架構簡約與零負擔**：個人作品集之後臺以多媒體上傳（高解析度圖檔、3D 作品連結）與 JSON 結構管理為主，BaaS 提供開箱即用之身分鑑別與雲端儲存，免除實體資料庫維運與後端漏洞修補。
-- **安全攻擊面收斂**：客戶端僅透過安全金鑰或本地沙盒操作，大幅降低暴露於公網之伺服端攻擊面。
+### 2.1 為何選擇 React + Vite SPA 而非 Next.js SSR？ | Why React + Vite SPA over Next.js SSR?
+- **效能極限化 (Maximized Performance)**：本專案為個人作品集與展示型 SPA，靜態資產可 100% 預先編譯並部署至 Cloudflare Pages 邊緣快取，無需 Node.js 伺服器常駐維護，杜絕 SSR 冷啟動延遲。  
+  *As an interactive portfolio SPA, all static bundles are pre-compiled and edge-cached on Cloudflare Pages, eliminating Node.js server overhead and SSR cold-start latency.*
+- **邊緣分發成本 (Edge Zero-Maintenance)**：Cloudflare Pages 提供無限頻寬與零伺服器維護成本，具備全球 Anycast 邊緣網絡即時加速。  
+  *Cloudflare Pages delivers unlimited bandwidth and globally distributed Anycast edge routing with zero maintenance overhead.*
+- **CMS 架構吻合 (CMS Alignment)**：自研視覺化 CMS 核心著重於客戶端狀態管理與本機持久化，搭配 Firebase Storage 即可達成完整閉環，免除複雜的伺服器端渲染負擔。  
+  *The in-house visual CMS focuses on client-side state manipulation and local-first persistence paired with Firebase Storage, avoiding unnecessary server-side rendering complexity.*
 
----
-
-### English
-#### 2.1 Why React + Vite SPA instead of Next.js SSR?
-- **Maximized Performance**: As an interactive portfolio SPA, all static bundles are pre-compiled and edge-cached on Cloudflare Pages, eliminating Node.js server overhead and SSR cold-start latency.
-- **Edge Zero-Maintenance**: Cloudflare Pages delivers unlimited bandwidth and globally distributed Anycast edge routing with zero maintenance overhead.
-- **CMS Alignment**: The in-house visual CMS focuses on client-side state manipulation and local-first persistence paired with Firebase Storage, avoiding unnecessary server-side rendering complexity.
-
-#### 2.2 Why Firebase Storage BaaS over Custom Express / NestJS Backend?
-- **Architectural Simplicity**: The admin workflow emphasizes media asset staging and structured JSON management. A BaaS model delivers battle-tested authentication and cloud storage without server patching or database maintenance.
-- **Attack Surface Minimization**: Confining external state mutations to authenticated client-side sandboxes drastically narrows the public network attack surface.
+### 2.2 為何選擇 Firebase Storage BaaS 而非自行架設 Express / NestJS？ | Why Firebase Storage BaaS over Custom Backend?
+- **架構簡約與零負擔 (Architectural Simplicity)**：個人作品集之後臺以多媒體上傳（高解析度圖檔、3D 作品連結）與 JSON 結構管理為主，BaaS 提供開箱即用之身分鑑別與雲端儲存，免除實體資料庫維運與後端漏洞修補。  
+  *The admin workflow emphasizes media asset staging and structured JSON management. A BaaS model delivers battle-tested authentication and cloud storage without server patching or database maintenance.*
+- **安全攻擊面收斂 (Attack Surface Minimization)**：客戶端僅透過安全金鑰或本地沙盒操作，大幅降低暴露於公網之伺服端攻擊面。  
+  *Confining external state mutations to authenticated client-side sandboxes drastically narrows the public network attack surface.*
 
 ---
 
