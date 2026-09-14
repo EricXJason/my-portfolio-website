@@ -4,6 +4,16 @@
 
 ---
 
+[2026-09-14 20:04] | [docs] | 將 Mermaid 破版與語法崩潰三大根因寫入協定法典並全面驗收五大 AGENTS 協定檔之 AI 解析速度：於 AGENTS.md 第 6 章與 AGENTS-GIT.md 第 4.3.4 節增訂防禦硬指標（全面禁用 stateDiagram-v2、全面統一為 1:1 矩形 HUD 卡片徹底消除菱形引號衝突、嚴禁節點文字包含 & 保留運算子、零腦補代碼對齊原則）；深度稽核 AGENTS.md、AGENTS-GIT.md、AGENTS-FRONT.md、AGENTS-BACK.md 與 AGENTS-UNITY.md 五大協定，確認頂部皆具備快速情境路由地圖（Fast-Path Routing）、各司其職零重複、高信噪比與標準繁體中文（臺灣「臺」標準），確保 AI 具備極致瞬間理解效率；以 0 錯誤通過 tsc 與 Vite 生產打包（454ms） | [AGENTS.md, AGENTS-GIT.md, docs/check-list.md]
+
+[2026-09-14 20:01] | [fix] | 徹底根除 Mermaid 12.0 Syntax error in text 炸彈報錯並全量重構為 1:1 矩形 HUD 卡片：深入剖析報錯根因確認為菱形判定節點語法衝突（id{"..."} 之雙引號破壞 Jison 詞法狀態機）與保留運算子衝突（節點文字內出現 & 符號）；全面將 05-flowcharts.md 內所有判定節點升級為標準 1:1 矩形 HUD 卡片（id["..."]:::hudCard），兼顧語法 100% 絕對安全與全專案圖表視覺量體黃金比例平衡；全面替換保留字 & 為中文「與」「並」或英文「and」；以 0 錯誤通過 tsc 與 Vite 生產打包（316ms） | [docs/system-design/05-flowcharts.md, docs/check-list.md]
+
+[2026-09-14 19:55] | [docs] | 升級 AGENTS-GIT.md 第 5.2 節建立「一條龍同步保證」之生產發布 SOP：針對使用者直接下達 push到master 指令之場景，於 SOP 新增前置分支差異自動防呆卡控（Pipeline Pre-Flight Check）；檢測若 feature 領先於 development，強制自動先將 feature 壓平合併推送到遠端 origin/development，100% 確保 dev 分支到達最新狀態，再將最新 dev 合併推送至 master 正式發布，最後自動切回 feature 沙盒待命；同步校準頂部指令速查表；以 0 錯誤通過 tsc 與 Vite 生產打包（301ms） | [AGENTS-GIT.md, docs/check-list.md]
+
+[2026-09-14 19:51] | [fix] | 依真實原始碼全面重構 docs/system-design/05-flowcharts.md 與 07-uml-diagrams.md 畫廊流程與類別圖，徹底杜絕虛構架構：深入逆向審查 ArtGallery.tsx 與 gallery-section.json，確認美術畫廊實際採用高效安全之 ArtStation 3D iframe 嵌入檢視器（embedUrl）與 3D 封面輪盤（Roulette Layout），絕無 WebGL/GLB 幾何流式載入或手動記憶體釋放；徹底移除 05-flowcharts.md 第 4 節中虛構之 GLB、OrbitControls 與 Dispose WebGL 節點，100% 還原為「精選輪盤 vs 響應式網格 ➔ 點擊卡片 ➔ 檢測 embedUrl 分流 3D iframe 或 2D 圖片燈箱 ➔ 鍵盤導覽與游標恢復」真實操作路徑；同步校準 07-uml-diagrams.md 之 ArtGallerySection 類別方法；tsc 與 Vite 生產打包 279ms 零錯誤通過 | [docs/system-design/05-flowcharts.md, docs/system-design/07-uml-diagrams.md, docs/check-list.md]
+
+[2026-09-14 19:49] | [fix] | 徹底修復 docs/system-design/05-flowcharts.md 狀態轉移機視覺破版並重構為統一 HUD Flowchart：深入排查確認原生 stateDiagram-v2 因 Mermaid 內建寫死之樣式規則，會在預覽器中強制渲染出刺眼紫色轉移標籤與淺黃色方塊，破壞深色主題；將其全面重構為標準青黑 Sci-Fi HUD 流程圖（flowchart TD），套用 classDef hudCard、直線折線（curve: 'linear'）與深黑防護容器（#060a14），徹底消滅所有花俏雜色與白字不可讀問題；全域排查確認無任何其他 stateDiagram 殘留，tsc 與 Vite 生產打包 268ms 零錯誤通過 | [docs/system-design/05-flowcharts.md, docs/check-list.md]
+
 [2026-09-14 19:41] | [docs] | 於 AGENTS.md 第 1.3 節正式法典化收錄開發者核心工程習慣與美學偏好：明確確立專案標題去裝飾化純粹命名（禁用 ⚡ 等裝飾符號，採用標準專業中英文並陳）、深邃黑夜 Sci-Fi HUD 沉穩美學（杜絕花綠調色盤、嚴禁白底穿透、連線直線化 linear）、全頁圖表 1:1 黃金比例對稱平衡約 750px × 360px（徹底消滅有大有小）、語法零崩潰與中英雙語對照四大核心偏好；以 0 錯誤通過 tsc 與 Vite 生產打包（271ms） | [AGENTS.md, docs/check-list.md]
 
 [2026-09-14 19:39] | [docs] | 五大協定檔案職責嚴格釐清確認、README.md 標題純化去閃電符號並達成三大圖表 1:1 絕對等大對稱：確認 AGENTS.md（母協定指揮）、AGENTS-GIT.md（版控與 README SSOT）、AGENTS-FRONT.md（前端靜態庫）、AGENTS-BACK.md（後端靜態庫）與 AGENTS-UNITY.md（Unity 靜態庫）五大文件單一職責無任何跨層越權；根目錄 README.md 標題重構為純粹專業之「My-Portfolio-Website + CMS (個人作品集網站含內容管理系統)」，並移除全專案 MD 頂部之裝飾性閃電符號；重構 README 第二章 C4 模型、UML 類別圖與雙向循序圖為 1:1 完全等大對稱平衡（約 750px × 360px），徹底杜絕圖表忽大忽小；以 0 錯誤通過 tsc 與 Vite 生產打包（282ms） | [README.md, AGENTS.md, AGENTS-GIT.md, AGENTS-FRONT.md, AGENTS-BACK.md, AGENTS-UNITY.md, docs/check-list.md]

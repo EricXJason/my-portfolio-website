@@ -249,8 +249,9 @@ docs/
    - 明確繪製 Class 間的四大核心關係：繼承（`<|--`）、實作（`<|..`）、組合（`*--`）、聚合（`o--`）與依賴（`..>`）。
 2. **模組與檔案依賴拓撲圖 (`03-project-structure.md` / `flowchart`)**:
    - 使用 Mermaid `flowchart` 展示系統檔案間之引用階層與呼叫流向，呈現高內聚低耦合之架構防線。
-3. **業務操作流程圖與狀態轉移機 (`05-flowcharts.md` / `flowchart` & `stateDiagram-v2`)**:
-   - 明確描繪使用者操作流程、身分驗證門禁、非同步加載與未存檔狀態阻斷狀態轉移（State Machine）。
+3. **業務操作流程圖與狀態轉移機 (`05-flowcharts.md` / `flowchart TD`)**:
+   - 明確描繪使用者操作流程、身分驗證門禁與未存檔狀態阻斷狀態轉移（State Machine）。
+   - **⚠️ 嚴禁使用原生 stateDiagram-v2**：Mermaid 原生 `stateDiagram-v2` 內部寫死高飽和紫色標籤（`#8a2be2`）與淺黃色狀態方塊（`#ffffcc`），無視深色主題並嚴重破版；全專案所有狀態轉移機強制採用標準 `flowchart TD` 實作。
 4. **跨層資料交互循序圖 (`07-uml-diagrams.md` / `sequenceDiagram`)**:
    - 使用 Mermaid `sequenceDiagram` 完整展示使用者觸發事件、前端 Component、狀態 Context、自研 CMS 與遠端 API / BaaS 之間的資料同步、狀態轉移與錯誤回滾流程。
 5. **C4 容器級架構模型 (`01-overview.md` & `README.md` / C4 Model)**:
@@ -282,6 +283,13 @@ docs/
    - 在 `classDiagram` 中，嚴格僅允許使用標準單詞 ASCII stereotype（如 `<<interface>>`、`<<abstract>>`、`<<service>>`）。**絕對禁止在 stereotype 內包含中文字元或空格**（如 `<<interface 語言合約>>`），避免觸發 Mermaid 12.0+ 核心語法分析器崩潰。
 3. **消除跨層反向繞圈線條**:
    - 圖表連線一律遵循由上而下（TD/TB）或由左而右（LR）之單向階層流動。嚴禁自最底層節點反向跨越全圖外圍大繞圈折回上層，折線一律配置 `curve: 'linear'`，杜絕怪異圓弧與外圍包框線條。
+4. **統一採用標準 1:1 矩形 HUD 卡片 (`id["..."]:::hudCard`) 杜絕菱形詞法崩潰**:
+   - 菱形判斷節點詞法為 `id{text}`，若寫成 `id{"..."}` 會直接破壞 Mermaid Jison 詞法狀態機，拋出 `Syntax error in text` 炸彈崩潰；若不加引號，標籤內的括號又會拋出 `Parse error`。
+   - 全域流程圖之判斷節點一律統一採用 **標準 1:1 矩形 HUD 卡片 `id["..."]:::hudCard`**，並以清晰肯定句描述決策分支（例如 `CheckType["判斷作品是否含 3D 嵌入連結"]`），達成 100% 語法安全與卡片尺寸絕對等大平衡。
+5. **嚴禁節點文字包含保留運算子 (`&`)**:
+   - Mermaid 流程圖中 `&` 為多節點平行連接保留運算子。節點文字中嚴禁出現裸露之 `&`，一律以繁體中文「與」、「並」或英文「and」取代，防止剖析器誤判。
+6. **零腦補真實代碼對齊原則 (Zero-Hallucination Code-First Principle)**:
+   - 系統設計圖表必須 100% 依據真實原始碼逆向繪製（例如美術畫廊 3D 檢視以沙盒 `iframe` 嵌入 ArtStation / Sketchfab 播放器與本地 JSON 驅動之 3D 封面輪盤）。嚴禁脫離代碼庫自行腦補不存在的技術框架（如 WebGL 手動記憶體釋放、Three.js OrbitControls、GLB 資產流）。
 
 ### 6.5 全圖表中英雙語對照標準 (Bilingual Annotation Standard)
 本條款規範圖表之國際化專業交付標準：

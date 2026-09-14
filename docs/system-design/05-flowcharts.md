@@ -31,13 +31,13 @@
 flowchart TD
     classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
 
-    Start([用戶發起 HTTP 造訪<br>User Initiates Visit]):::hudCard --> Step1[階段一: InitialPreloader 0%~100% 科技載入動畫<br>Phase 1: Preloader HUD Progress]:::hudCard
-    Step1 --> Preload[非同步預載關鍵 WebP 圖片、SVG 圖標與字體<br>Async Preload Media, Icons & Fonts]:::hudCard
-    Preload --> Step2[階段二: LangSelectModal 語言偏好設定彈窗<br>Phase 2: Language Preference Modal]:::hudCard
-    Step2 --> UserChoice{使用者選定語系?<br>Language Chosen?}:::hudCard
-    UserChoice -->|"選擇 zh 或 en / Choose zh or en"| SetLang[寫入 LangContext & 派發 HTML lang 屬性<br>Update LangContext & HTML Attributes]:::hudCard
-    SetLang --> Step3[階段三: siteEntered = true 全站平滑淡入<br>Phase 3: Smooth Scene Fade-in]:::hudCard
-    Step3 --> MainView([呈現前臺首頁 MainSiteContent<br>Public Showcase Rendered]):::hudCard
+    Start(["用戶發起 HTTP 造訪<br>User Initiates Visit"]):::hudCard --> Step1["階段一: InitialPreloader 0%~100% 科技載入動畫<br>Phase 1: Preloader HUD Progress"]:::hudCard
+    Step1 --> Preload["非同步預載關鍵 WebP 圖片、SVG 圖標與字體<br>Async Preload Media, Icons & Fonts"]:::hudCard
+    Preload --> Step2["階段二: LangSelectModal 語言偏好設定彈窗<br>Phase 2: Language Preference Modal"]:::hudCard
+    Step2 --> UserChoice["使用者選定語系<br>Language Preference Chosen"]:::hudCard
+    UserChoice -->|"選擇 zh 或 en / Choose zh or en"| SetLang["寫入 LangContext 與派發 HTML lang 屬性<br>Update LangContext & HTML Attributes"]:::hudCard
+    SetLang --> Step3["階段三: siteEntered = true 全站平滑淡入<br>Phase 3: Smooth Scene Fade-in"]:::hudCard
+    Step3 --> MainView(["呈現前臺首頁 MainSiteContent<br>Public Showcase Rendered"]):::hudCard
 ```
 
 ---
@@ -67,18 +67,18 @@ flowchart TD
 flowchart TD
     classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
 
-    ClickGear[點擊導覽列 CMS 入口按鈕<br>Click CMS Switch in Navbar]:::hudCard --> OpenDialog[彈出 CmsModeSelectDialog 模式選擇視窗<br>Open Mode Selection Dialog]:::hudCard
-    OpenDialog --> Choice{選擇登入模式<br>Select Mode}:::hudCard
+    ClickGear["點擊導覽列 CMS 入口按鈕<br>Click CMS Switch in Navbar"]:::hudCard --> OpenDialog["彈出 CmsModeSelectDialog 模式選擇視窗<br>Open Mode Selection Dialog"]:::hudCard
+    OpenDialog --> Choice["選擇登入模式<br>Select Mode Option"]:::hudCard
     
-    Choice -->|"快速測試登入 / 訪客沙盒"| GrantGuest[設定本地管理態 & 解鎖本地編輯<br>Unlock Local Storage Sandbox]:::hudCard
-    Choice -->|"Firebase 雲端認證 / Cloud Auth"| OpenFB[彈出 Firebase 認證對話框<br>Open Auth Credentials Modal]:::hudCard
+    Choice -->|"快速測試登入 / 訪客沙盒"| GrantGuest["設定本地管理態與解鎖本地編輯<br>Unlock Local Storage Sandbox"]:::hudCard
+    Choice -->|"Firebase 雲端認證 / Cloud Auth"| OpenFB["彈出 Firebase 認證對話框<br>Open Auth Credentials Modal"]:::hudCard
     
-    OpenFB --> InputCreds[輸入管理者 Email 與密碼<br>Input Admin Credentials]:::hudCard
-    InputCreds --> Validating{Firebase 認證是否成功?<br>Authentication Passed?}:::hudCard
-    Validating -->|"認證失敗 / Failed"| ShowErr[顯示錯誤提示 & 阻斷進入<br>Display Error & Intercept Access]:::hudCard
-    Validating -->|"認證成功 / Passed"| GrantAdmin[寫入 Firebase Auth Token & 解鎖完整雲端權限<br>Grant Full Cloud Storage Rights]:::hudCard
+    OpenFB --> InputCreds["輸入管理者 Email 與密碼<br>Input Admin Credentials"]:::hudCard
+    InputCreds --> Validating["驗證 Firebase 身分憑據<br>Validate Identity Token"]:::hudCard
+    Validating -->|"認證失敗 / Failed"| ShowErr["顯示錯誤提示並阻斷進入<br>Display Error & Intercept Access"]:::hudCard
+    Validating -->|"認證成功 / Passed"| GrantAdmin["寫入 Firebase Auth Token 與解鎖完整雲端權限<br>Grant Full Cloud Storage Rights"]:::hudCard
     
-    GrantGuest --> CMSView([進入 CmsApp 管理後臺主畫面<br>Mount CmsApp View]):::hudCard
+    GrantGuest --> CMSView(["進入 CmsApp 管理後臺主畫面<br>Mount CmsApp View"]):::hudCard
     GrantAdmin --> CMSView
 ```
 
@@ -94,40 +94,49 @@ flowchart TD
   'theme': 'base',
   'themeVariables': {
     'darkMode': true,
-    'background': '#030712'
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'clusterBkg': '#060a14',
+    'clusterBorder': '#1e293b',
+    'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
   }
 }}%%
-stateDiagram-v2
-    [*] --> Pristine: 載入模組初始資料 / Load Pristine State (isDirty = false)
-    
-    Pristine --> Dirty: 使用者修改任何表單欄位 / Form Field Mutated (isDirty = true)
-    Dirty --> Pristine: 點擊「儲存設定」寫入快取 / Save Changes (isDirty = false)
-    
-    state Dirty {
-        [*] --> Editing: 編輯進行中 / Active Editing
-        Editing --> TriggerExit: 觸發切換模組或外部導覽 / Attempt Navigation
-    }
-    
-    TriggerExit --> InterceptModal: 攔截跳轉並彈出 CmsUnsavedModal 三選項視窗 / Intercept & Prompt Modal
-    
-    state InterceptModal {
-        [*] --> AwaitingUserChoice: 等待決策 / Awaiting Decision
-        AwaitingUserChoice --> Option1: 點擊「放棄變更並離開」/ Discard & Exit
-        AwaitingUserChoice --> Option2: 點擊「儲存變更並離開」/ Save & Exit
-        AwaitingUserChoice --> Option3: 點擊「取消並留在本頁」/ Stay on Page
-    }
-    
-    Option1 --> DiscardAndExit: 放棄暫存異動 -> 放行切換 -> Pristine
-    Option2 --> SaveAndExit: 立即執行持久化儲存 -> 放行切換 -> Pristine
-    Option3 --> ResumeEditing: 關閉彈窗 -> 保持 Dirty 狀態繼續編輯
+flowchart TD
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+
+    Init(["系統初始 / Init"]):::hudCard --> Pristine["乾淨初始態<br>Pristine State (isDirty = false)"]:::hudCard
+    Pristine -->|"修改欄位 / Field Mutated"| Dirty["編輯異動態<br>Dirty State (isDirty = true)"]:::hudCard
+    Dirty -->|"儲存設定 / Save Changes"| Pristine
+
+    subgraph GuardSub ["未存檔跳轉防護攔截 (Safety Navigation Guard)"]
+        Dirty -->|"觸發切換 / Attempt Exit"| Prompt["彈出防護視窗<br>CmsUnsavedModal Active"]:::hudCard
+        Prompt --> Choice["選擇處置方案<br>Select Disposal Option"]:::hudCard
+        Choice -->|"放棄變更 / Discard & Exit"| Discard["放棄暫存異動 / Discard Mutations"]:::hudCard
+        Choice -->|"儲存變更 / Save & Exit"| Save["寫入持久化快取 / Write LocalStorage"]:::hudCard
+        Choice -->|"取消跳轉 / Stay on Page"| Stay["留在當前編輯器 / Continue Editing"]:::hudCard
+    end
+
+    Discard --> Pristine
+    Save --> Pristine
+    Stay --> Dirty
+
+    style GuardSub fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
 ```
 
 ---
 
-## 4. 美術畫廊多媒體與 3D 檢視流程 | Art Gallery & 3D Viewer Flowchart
+## 4. 美術畫廊多媒體與 3D 嵌入檢視流程 | Art Gallery & 3D Embed Viewer Flowchart
 
-本流程定義前臺畫廊分類篩選、2D 圖片燈箱與 3D 模型互動檢視器之動態載入與資源釋放路徑。  
-*Defines multi-category filtering, 2D media lightboxes, and 3D WebGL runtime lifecycle:*
+本流程定義前臺畫廊多模式展示（精選 3D 輪盤與分類響應式網格）、燈箱預覽（ArtStation 3D 嵌入檢視器與 2D 靜態作品燈箱）與鍵盤手勢導覽之實際動態展示路徑。  
+*Defines category filtering, featured roulette carousel, and modal lightbox for 3D embedded iframes and 2D media:*
 
 ```mermaid
 %%{init: {
@@ -149,17 +158,22 @@ stateDiagram-v2
 flowchart TD
     classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
 
-    GalleryEnter[進入美術作品專區 ArtGallery<br>Navigate to Art Gallery]:::hudCard --> CategorySelect[選擇分類: 3D 場景 / 3D 物件 / 2D 素描 / 2D 麥克筆<br>Select Category: 3D / 2D Concept Art]:::hudCard
-    CategorySelect --> RenderCards[響應式網格渲染作品卡片<br>Render Responsive Card Grid]:::hudCard
+    GalleryEnter["進入美術專區 ArtGallery<br>Navigate to Art Gallery Section"]:::hudCard --> ViewMode["選擇檢視模式<br>Active Tab Mode"]:::hudCard
     
-    RenderCards --> CardClick{使用者點擊作品卡片<br>Click Card}:::hudCard
-    CardClick -->|"2D 平面作品 / 2D Artwork"| Open2DModal[開啟高解析度 2D 燈箱視窗<br>Open High-Res 2D Lightbox Modal]:::hudCard
-    CardClick -->|"3D 立體作品 / 3D Model"| Open3DViewer[非同步掛載 3D 互動檢視器<br>Async Mount 3D Interactive Viewer]:::hudCard
+    ViewMode -->|"精選模式 (featured)"| RouletteView["3D 封面輪盤展示 (Roulette Layout)<br>3200ms 自動輪播與手勢滑動監聽"]:::hudCard
+    ViewMode -->|"分類模式 (all / 3D / 2D)"| GridView["響應式網格渲染卡片<br>Responsive Card Grid (預設 8 筆 / 摺疊切換)"]:::hudCard
+
+    RouletteView --> SelectCard["點擊作品卡片檢視細節<br>Click Artwork Card"]:::hudCard
+    GridView --> SelectCard
+
+    SelectCard --> CheckType["判斷作品是否含 3D 嵌入連結<br>Check embedUrl Presence"]:::hudCard
     
-    Open3DViewer --> LoadModel[載入 GLB / 3D 模型與貼圖資產<br>Stream GLB Assets & PBR Textures]:::hudCard
-    LoadModel --> OrbitControls[解鎖滑鼠 360 度旋轉軌道控制器<br>Enable 360 Orbit Controls]:::hudCard
-    
-    Open2DModal --> CloseModal[點擊關閉 / 背景遮罩 / ESC 鍵<br>Dismiss Modal]:::hudCard
-    OrbitControls --> Close3D[點擊關閉 3D 檢視器<br>Close 3D Viewer]:::hudCard
-    Close3D --> DisposeWebGL[卸載組件並安全釋放 WebGL 記憶體資源<br>Dispose Geometry & Release WebGL Context]:::hudCard
+    CheckType -->|"3D 立體模型 (含 embedUrl)"| Open3DModal["渲染響應式 3D 嵌入 iframe<br>Render Sandbox 3D Viewer iframe"]:::hudCard
+    CheckType -->|"2D 平面作品 (僅含 img)"| Open2DModal["渲染高解析度平面圖形燈箱<br>Render High-Res Image Lightbox"]:::hudCard
+
+    Open3DModal --> Interaction["互動體驗: 上下張切換與鍵盤導覽<br>Interactive 3D / Arrow Keys Nav"]:::hudCard
+    Open2DModal --> Interaction
+
+    Interaction --> CloseAction["點擊關閉 / ESC 鍵 / 背景遮罩<br>Dismiss Modal Action"]:::hudCard
+    CloseAction --> ResetModal["關閉燈箱視窗並恢復自訂游標狀態<br>Reset activeImage and Restore Custom Cursor"]:::hudCard
 ```

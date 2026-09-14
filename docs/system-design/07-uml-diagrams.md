@@ -89,8 +89,11 @@ classDiagram
 
     class ArtGallerySection {
         -string _activeTab
+        -Artwork _activeImage
+        -number _rouletteIndex
         +switchTab(tab) void
-        +open3DViewer(modelUrl) void
+        +openLightbox(artwork) void
+        +handlePrevNext() void
     }
 
     class TechIconRenderer {

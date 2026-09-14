@@ -19,7 +19,7 @@
 | **`切回 master`** | 非破壞性 | 未提交改動自動原子暫存存檔後安全切換至 master | 檢查工作區 ➔ 自動暫存 commit ➔ `checkout master` |
 | **`pull 最新`** | 非破壞性 | 本地進度快照存檔後拉取遠端最新進度並合併 | 自動暫存 commit ➔ `pull origin development` |
 | **`push到dev`** | 階段發布 | feature 分支壓平合併 (Squash) 至 development 並推送 | 檢查工作區 ➔ 切至 dev ➔ `merge --squash feature` ➔ 語意 commit ➔ 推送 ➔ 切回 feature |
-| **`push到master`** | ⚠️ 生產發布 | 二度授權確認後將 development 合併推送到 master | 強制確認 ➔ 切至 master ➔ 合併 dev ➔ 推送 ➔ 切回 feature |
+| **`push到master`** | ⚠️ 生產發布 | 二度授權確認後啟動一條龍發布：自動確保 dev 同步至最新，再合併推送到 master | 強制確認 ➔ 防呆檢驗 feature/dev ➔ 自動同步 dev ➔ 合併 master ➔ 推送 ➔ 切回 feature |
 
 ---
 
@@ -231,6 +231,9 @@
    - **連線標籤強制雙引號包裹**: 凡連線文字含有半形括號 `()`、斜線 `/`、冒號等特殊字元者，強制 100% 使用雙引號包裹（如 `-->|"快速測試登入 / 訪客沙盒"|`），徹底杜絕 `Parse error`。
    - **Stereotype 國際標準單詞化**: `classDiagram` 嚴禁包含中文字元或空格，一律嚴格使用標準單詞 ASCII 標籤（如 `<<interface>>`、`<<abstract>>`），防止剖析器崩潰。
    - **折線演算法**: 一律強制宣告 `curve: 'linear'`，筆直俐落，杜絕多餘圓角與繞圈扭曲。
+   - **統一採用標準 1:1 矩形 HUD 卡片 (`id["..."]:::hudCard`) 杜絕菱形詞法崩潰**: 菱形語法 `id{"..."}` 之雙引號會破壞 Mermaid Jison 詞法狀態機引發 `Syntax error in text`；全域流程圖之節點一律統一採用標準 1:1 矩形 HUD 卡片 `id["..."]:::hudCard`，並以清晰肯定句描述決策分支。
+   - **嚴禁節點文字包含保留運算子 (`&`)**: 流程圖中 `&` 為多節點平行連接保留運算子。節點文字中嚴禁出現裸露之 `&`，一律以繁體中文「與」、「並」或英文「and」取代。
+   - **零腦補真實代碼對齊原則 (Zero-Hallucination Code-First Principle)**: 系統圖表必須 100% 依據真實原始碼逆向繪製（例如以沙盒 `iframe` 嵌入 ArtStation / Sketchfab 3D 檢視器與本地 JSON 驅動之 3D 封面輪盤）。嚴禁脫離代碼庫自行腦補不存在的技術框架（如 WebGL 手動記憶體釋放、Three.js OrbitControls、GLB 資產流）。
 
 ### 4.4 中英雙語自然緊鄰排版規範 (Bilingual Inline Flow)
 本條款規範文字表達之排版美學：
@@ -259,15 +262,30 @@
    - 推送至遠端：`git push origin development`。
 4. **切回沙盒**: 執行 `git checkout feature` 返回開發沙盒分支待命。
 
-### 5.2 指令：push到master (Production Release SOP)
-當接收到指令：「**push到master**」並獲二次確認後，執行正式生產發布：
-1. **二度授權提示**: 強制警示該操作將影響正式生產環境。
-2. **生產發布序列**:
+### 5.2 指令：push到master (Production Release SOP - 一條龍同步保證)
+當接收到指令：「**push到master**」並獲二次確認後，執行正式生產發布。本流程內建「前置分支差異自動防呆卡控」，確保 `development` 與 `master` 雙基準分支 100% 保持最新：
+
+1. **二度授權與邊界提示**:
+   - 強制警示該操作將發布至正式生產環境（GitHub Pages / 生產部署節點）。
+2. **前置防呆檢驗與一條龍同步 (Pipeline Pre-Flight Check)**:
+   - **檢測 feature 領先狀態**: 執行 `git log development..feature --oneline` 檢測 `feature` 沙盒是否含有尚未壓平至 `development` 的最新成果。
+   - **若 feature 領先（有未同步改動）**:
+     - 立即啟動一條龍串聯同步（無需人類重複下達指令）：
+       1. 確保 `feature` 工作區完全乾淨（未存檔則原子提交）。
+       2. 切換至 `development`：`git checkout development`。
+       3. 同步遠端測試分支：`git pull origin development`。
+       4. 執行壓平合併：`git merge --squash feature`。
+       5. 提交語意節點：`git commit -m "feat: integrate feature changes into development"`。
+       6. 推送更新至遠端：`git push origin development`。
+       - **至此已 100% 保證 dev 分支完全到達最新狀態！**
+   - **若 feature 與 dev 同步**: 直接推進至正式發布。
+3. **生產發布序列 (Release Sequence)**:
    - 切換至 master 分支：`git checkout master`。
    - 同步遠端狀態：`git pull origin master`。
-   - 合併 development 成果：`git merge development`。
-   - 推送至正式環境：`git push origin master`。
-3. **防禦性切離**: 推送完畢後立即執行 `git checkout development` 切回測試環境，並切換回 `feature` 沙盒待命，嚴防在 master 分支遺留未授權改動。
+   - 合併最新 development 成果：`git merge development`。
+   - 推送至正式生產環境：`git push origin master`。
+4. **防禦性切離 (Return to Sandbox)**:
+   - 正式發布完成後，**立即執行 `git checkout feature` 返回日常開發沙盒分支待命**，嚴禁逗留於 master 或 development 主幹分支。
 
 ---
 
