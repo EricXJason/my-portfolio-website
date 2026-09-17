@@ -38,7 +38,6 @@ let storageInstance: FirebaseStorage | null = null;
 if (isFirebaseConfigured) {
   try {
     appInstance = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-    authInstance = getAuth(appInstance);
     dbInstance = getFirestore(appInstance);
     storageInstance = getStorage(appInstance);
   } catch (error) {
@@ -48,8 +47,29 @@ if (isFirebaseConfigured) {
   console.warn('[Firebase Warning]: Firebase credentials not found or unconfigured. Running in static fallback mode.');
 }
 
+// 惰性載入 Firebase Auth：僅在 CMS 後臺真正調用身分驗證時才初始化，避免前臺首頁被注入 150KB Auth iframe
+let _auth: Auth | null = null;
+export const getFirebaseAuth = (): Auth | null => {
+  if (!_auth && appInstance) {
+    try {
+      _auth = getAuth(appInstance);
+    } catch (e) {
+      console.error('[Firebase Auth Lazy Init Error]:', e);
+    }
+  }
+  return _auth;
+};
+
+export const auth = new Proxy({} as Auth, {
+  get(_target, prop) {
+    const realAuth = getFirebaseAuth();
+    if (!realAuth) return undefined;
+    const val = (realAuth as any)[prop];
+    return typeof val === 'function' ? val.bind(realAuth) : val;
+  },
+});
+
 export const app = appInstance;
-export const auth = authInstance;
 export const db = dbInstance;
 export const storage = storageInstance;
 

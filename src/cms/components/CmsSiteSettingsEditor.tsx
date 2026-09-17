@@ -200,6 +200,20 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
 
+  // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
+  const isFirstSettingsSync = useRef(true);
+  useEffect(() => {
+    if (isFirstSettingsSync.current) {
+      isFirstSettingsSync.current = false;
+      return;
+    }
+    updateDocument('site_settings', formData, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_site_settings_data', JSON.stringify(formData));
+      window.dispatchEvent(new Event('portfolio_site_settings_data_updated'));
+    } catch {}
+  }, [formData, updateDocument]);
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
 

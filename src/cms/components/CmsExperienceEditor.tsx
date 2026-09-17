@@ -241,6 +241,30 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
 
+  // 聆聽全域一鍵還原預設值事件
+  useEffect(() => {
+    const handleResetAll = () => {
+      setFormData(defaultExpData as unknown as ExperienceFullData);
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [setIsDirty]);
+
+  // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
+  const isFirstExpSync = useRef(true);
+  useEffect(() => {
+    if (isFirstExpSync.current) {
+      isFirstExpSync.current = false;
+      return;
+    }
+    updateDocument('experience', formData, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_experience_data', JSON.stringify(formData));
+      window.dispatchEvent(new Event('portfolio_experience_data_updated'));
+    } catch {}
+  }, [formData, updateDocument]);
+
   const [expMeta, setExpMeta] = useState<Record<'zh' | 'en', ExpMetaTitles>>(() => {
     if (data.site_translations) {
       const trans = data.site_translations as any;

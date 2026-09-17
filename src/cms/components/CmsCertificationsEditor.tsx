@@ -9,7 +9,7 @@
  * ============================================================================
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Save,
   RotateCcw,
@@ -117,7 +117,6 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
     }
   }, [data.certifications]);
 
-  // 聆聽廣播存檔事件
   useEffect(() => {
     const handleTriggerSave = async () => {
       if (!isPreview) {
@@ -131,6 +130,30 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
     window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
+
+  // 聆聽全域一鍵還原預設值事件
+  useEffect(() => {
+    const handleResetAll = () => {
+      setFormData(defaultCertsData as unknown as CertificationsFullData);
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [setIsDirty]);
+
+  // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
+  const isFirstCertsSync = useRef(true);
+  useEffect(() => {
+    if (isFirstCertsSync.current) {
+      isFirstCertsSync.current = false;
+      return;
+    }
+    updateDocument('certifications', formData, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_certifications_data', JSON.stringify(formData));
+      window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
+    } catch {}
+  }, [formData, updateDocument]);
 
   const [awardsMeta, setAwardsMeta] = useState<Record<'zh' | 'en', AwardsMeta>>(() => {
     if (data.site_translations) {

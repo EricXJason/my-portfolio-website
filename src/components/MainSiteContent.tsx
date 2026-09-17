@@ -14,9 +14,6 @@ import React, { useState, lazy, Suspense } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
-import { About } from './About';
-import { Skills } from './Skills';
-import { Projects } from './Projects';
 import { Footer } from './Footer';
 import { BackToTop } from './BackToTop';
 import { SideNav } from './SideNav';
@@ -26,7 +23,10 @@ import { FullStackCodeStreamBackground } from './FullStackCodeStreamBackground';
 import { GlobalAmbientNeon } from './GlobalAmbientNeon';
 import { YoutubeModal } from './YoutubeModal';
 
-// 首屏以下區塊：採動態延遲載入 (Lazy Load) 以大幅縮減首屏 JS 解析時間
+// 首屏以下區塊：全面採動態延遲載入 (Lazy Load) 以極限縮減首屏 JS 解析與 Style & Layout 重排時間
+const About          = lazy(() => import('./About'));
+const Skills         = lazy(() => import('./Skills'));
+const Projects       = lazy(() => import('./Projects'));
 const Certifications = lazy(() => import('./Certifications'));
 const Education      = lazy(() => import('./Education'));
 const ArtGallery     = lazy(() => import('./ArtGallery'));
@@ -79,11 +79,23 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
       case 'home':
         return <Hero key="home" soundPlaying={soundPlaying} />;
       case 'about':
-        return <About key="about" />;
+        return (
+          <Suspense key="about" fallback={null}>
+            <About />
+          </Suspense>
+        );
       case 'skills':
-        return <Skills key="skills" />;
+        return (
+          <Suspense key="skills" fallback={null}>
+            <Skills />
+          </Suspense>
+        );
       case 'projects':
-        return <Projects key="projects" onOpenYoutube={handleOpenYoutube} />;
+        return (
+          <Suspense key="projects" fallback={null}>
+            <Projects onOpenYoutube={handleOpenYoutube} />
+          </Suspense>
+        );
       case 'awards':
         return (
           <Suspense key="awards" fallback={null}>
@@ -127,7 +139,7 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
         }`}
       >
         {/* 背景動態氛圍層 */}
-        <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="fixed inset-0 pointer-events-none z-0" aria-hidden="true">
           <GlobalAmbientNeon />
           <div className="absolute inset-0 light-aurora-bg" />
           <div className="absolute inset-0 tactical-grid-bg opacity-40" />

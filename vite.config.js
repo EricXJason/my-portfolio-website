@@ -66,6 +66,12 @@ export default defineConfig({
           if (id.includes("/components/Projects")) {
             return "section-projects";
           }
+          if (id.includes("/components/Skills")) {
+            return "section-skills";
+          }
+          if (id.includes("/components/About")) {
+            return "section-about";
+          }
           // ── App: decorative background (desktop-only, large file) ───────
           if (id.includes("/components/FullStackCodeStreamBackground")) {
             return "bg-code-stream";

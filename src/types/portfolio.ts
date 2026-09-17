@@ -68,37 +68,24 @@ export interface HeroSectionData {
   showArtstation?: boolean;
 }
 
-/** 3. 關於我區塊 (About Section) */
-export interface AboutMetricItem {
-  value: string;
-  label: string;
-}
-
-export interface AboutCardData {
+export interface AboutStatItem {
+  id: string;
   title: string;
-  tag: string;
-  body: string;
-  iconName?: string;
+  label: string;
+  icon: string;
   visible?: boolean;
 }
 
 export interface AboutLocaleData {
   title: string;
-  subtitle: string;
-  quote: string;
-  cards: {
-    engineering: AboutCardData;
-    fullstack: AboutCardData;
-    gameplay: AboutCardData;
-  };
-  metrics: {
-    experience: AboutMetricItem;
-    skills: AboutMetricItem;
-    projects: AboutMetricItem;
-  };
+  intro: string;
+  heading: string;
+  p1: string;
+  stats: AboutStatItem[];
 }
 
 export interface AboutSectionData {
+  avatarUrl?: string;
   zh: AboutLocaleData;
   en: AboutLocaleData;
 }

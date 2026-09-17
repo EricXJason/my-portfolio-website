@@ -18,7 +18,7 @@ import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database
 import skillsData from '../data/skills-section.json';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { splitSkillTokens } from '../utils/skillsHelper';
-import { getLucideIconByName } from '../cms/components/CmsIconPickerModal';
+import { getLucideIconByName } from '../utils/iconHelper';
 
 interface SkillItem {
   label: string;

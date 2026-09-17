@@ -1,4 +1,5 @@
 {
+  "avatarUrl": "/assets/images/personal.webp",
   "zh": {
     "title": "關於我",
     "intro": "具備新媒體藝術碩士背景，專注於互動應用開發、全端網頁與多媒體設計。",
@@ -9,19 +10,22 @@
         "id": "exp",
         "title": "臺藝大碩士",
         "label": "新媒體藝術碩士畢業",
-        "icon": "graduation"
+        "icon": "graduation",
+        "visible": true
       },
       {
         "id": "projects",
         "title": "多種核心專案",
         "label": "涵蓋多種專案類型的開發經驗",
-        "icon": "briefcase"
+        "icon": "briefcase",
+        "visible": true
       },
       {
         "id": "toeic",
         "title": "TOEIC 755",
         "label": "英文多益檢定成績",
-        "icon": "award"
+        "icon": "award",
+        "visible": true
       }
     ]
   },
@@ -35,19 +39,22 @@
         "id": "exp",
         "title": "NTUA Master",
         "label": "M.A. in New Media Art",
-        "icon": "graduation"
+        "icon": "graduation",
+        "visible": true
       },
       {
         "id": "projects",
         "title": "Diverse Core Projects",
         "label": "Extensive Experience Across Multiple Project Domains",
-        "icon": "briefcase"
+        "icon": "briefcase",
+        "visible": true
       },
       {
         "id": "toeic",
         "title": "TOEIC 755",
         "label": "English Proficiency Score",
-        "icon": "award"
+        "icon": "award",
+        "visible": true
       }
     ]
   }

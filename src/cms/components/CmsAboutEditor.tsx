@@ -29,6 +29,7 @@ import {
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
 import { usePortfolioData } from '../../context/PortfolioDataContext';
+import { CmsImagePicker } from './CmsImagePicker';
 import defaultAboutData from '../../data/about-section.json';
 
 interface StatItem {
@@ -36,6 +37,7 @@ interface StatItem {
   title: string;
   label: string;
   icon: string;
+  visible?: boolean;
 }
 
 interface AboutLangData {
@@ -47,6 +49,7 @@ interface AboutLangData {
 }
 
 interface AboutFullData {
+  avatarUrl?: string;
   zh: AboutLangData;
   en: AboutLangData;
 }
@@ -119,7 +122,6 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     return { zhTitle: '關於我', enTitle: 'About' };
   });
 
-  // 聆聽廣播存檔事件
   useEffect(() => {
     const handleTriggerSave = async () => {
       if (!isPreview) {
@@ -133,6 +135,30 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
+
+  // 聆聽全域一鍵還原預設值事件
+  useEffect(() => {
+    const handleResetAll = () => {
+      setFormData(defaultAboutData as unknown as AboutFullData);
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [setIsDirty]);
+
+  // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
+  const isFirstAboutSync = useRef(true);
+  useEffect(() => {
+    if (isFirstAboutSync.current) {
+      isFirstAboutSync.current = false;
+      return;
+    }
+    updateDocument('about', formData, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_about_data', JSON.stringify(formData));
+      window.dispatchEvent(new Event('portfolio_about_data_updated'));
+    } catch {}
+  }, [formData, updateDocument]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
@@ -157,11 +183,27 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
 
   const handleStatChange = (
     index: number,
-    field: 'title' | 'label' | 'icon' | 'id',
-    value: string
+    field: 'title' | 'label' | 'icon' | 'id' | 'visible',
+    value: any
   ) => {
     setIsDirty(true);
     setFormData((prev) => {
+      // 跨語系結構同步欄位：icon, id, visible
+      if (field === 'icon' || field === 'id' || field === 'visible') {
+        const updateList = (list: StatItem[]) => {
+          const copy = [...list];
+          if (copy[index]) {
+            copy[index] = { ...copy[index], [field]: value };
+          }
+          return copy;
+        };
+        return {
+          ...prev,
+          zh: { ...prev.zh, stats: updateList(prev.zh.stats) },
+          en: { ...prev.en, stats: updateList(prev.en.stats) },
+        };
+      }
+
       const updatedStats = [...prev[lang].stats];
       updatedStats[index] = { ...updatedStats[index], [field]: value };
       return { ...prev, [lang]: { ...prev[lang], stats: updatedStats } };
@@ -384,6 +426,21 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
             {isEn ? 'Profile Overview' : '個人自介設定'}
           </h2>
         </div>
+
+        {/* 個人形象照上傳器 (1:1 比例預覽，串接 Firebase Storage) */}
+        <div className="p-4 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-inner)]">
+          <CmsImagePicker
+            label={isEn ? 'Personal Portrait Image' : '個人形象照'}
+            value={formData.avatarUrl || '/assets/images/personal.webp'}
+            onChange={(url) => {
+              setIsDirty(true);
+              setFormData((p) => ({ ...p, avatarUrl: url }));
+            }}
+            aspectRatio="1:1"
+            folder="about"
+          />
+        </div>
+
         <div className="space-y-4">
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
@@ -490,6 +547,27 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
                     <span className="text-xs font-mono font-bold px-2 py-0.5 border cyber-cut-sm bg-[var(--neon-cyan)]/15 text-[var(--neon-cyan)] border-[var(--neon-cyan)]/30">
                       #{idx + 1} {isEn ? 'Highlight' : '核心亮點'}
                     </span>
+
+                    {/* 卡片前臺顯示/隱藏開關 */}
+                    <label
+                      className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono px-2 py-0.5 border cyber-cut-sm transition-colors ml-1"
+                      style={{
+                        backgroundColor: stat.visible !== false ? 'rgba(0, 240, 255, 0.08)' : 'rgba(100, 116, 139, 0.1)',
+                        borderColor: stat.visible !== false ? 'rgba(0, 240, 255, 0.3)' : 'rgba(100, 116, 139, 0.25)',
+                      }}
+                      title={stat.visible !== false ? (isEn ? 'Visible on showcase — click to hide' : '點擊於前臺隱藏此卡片') : (isEn ? 'Hidden — click to show' : '點擊於前臺顯示此卡片')}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={stat.visible !== false}
+                        disabled={isPreview}
+                        onChange={(e) => handleStatChange(idx, 'visible', e.target.checked)}
+                        className="accent-[var(--neon-cyan)] cursor-pointer w-3 h-3"
+                      />
+                      <span className={stat.visible !== false ? 'text-[var(--neon-cyan)] font-bold' : 'text-slate-500'}>
+                        {stat.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
+                      </span>
+                    </label>
                   </div>
 
                   {/* 向上/向下移動排序按鈕組 */}

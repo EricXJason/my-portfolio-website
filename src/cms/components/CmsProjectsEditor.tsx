@@ -118,8 +118,8 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
         if (Array.isArray(parsed) && parsed.length > 0) {
           // 檢查本地暫存是否具備有效的精選專案，若為舊暫存（精選數為 0）則強制繼承前臺 defaults 的精選專案設定
           const hasSavedFeatured = parsed.some((p) => !!p.featured);
-          // 以前臺最新 defaultProjectsData 為基準進行深度合併，確保前臺最新設定（如 isFullAi: true、category 等）作為預設基準
-          return defaults.map((defaultProj) => {
+          const defaultIds = new Set(defaults.map((d) => d.id));
+          const mergedDefaults = defaults.map((defaultProj) => {
             const savedProj = parsed.find((p) => p.id === defaultProj.id);
             if (!savedProj) return defaultProj;
             return {
@@ -157,6 +157,10 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
               })(),
             };
           });
+
+          // 保留所有非預設清單內的自訂新增專案
+          const customProjects = parsed.filter((p) => !defaultIds.has(p.id));
+          return [...mergedDefaults, ...customProjects];
         }
       }
     } catch {
@@ -170,6 +174,16 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       setProjects(data.projects as ProjectItem[]);
     }
   }, [data.projects]);
+
+  // 聆聽全域一鍵還原預設值廣播事件
+  useEffect(() => {
+    const handleResetAll = () => {
+      setProjects(defaultProjectsData as ProjectItem[]);
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [setIsDirty]);
 
   // 聆聽廣播存檔事件
   useEffect(() => {
@@ -185,6 +199,24 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [projects, isPreview, updateDocument]);
+
+  // ── 本地全域即時連動效應 ──
+  // 無論處於管理員模式還是預覽模式，專案作品的任何變更（visible 開關、精選順序、拖曳排序、欄位編輯）
+  // 均立即同步至全域 Context 與本地快取，並廣播通知前臺 0 毫秒即時刷新渲染。
+  const isFirstProjectsSync = useRef(true);
+  useEffect(() => {
+    if (isFirstProjectsSync.current) {
+      isFirstProjectsSync.current = false;
+      return;
+    }
+    updateDocument('projects', projects, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_projects_data', JSON.stringify(projects));
+      window.dispatchEvent(new Event('portfolio_projects_data_updated'));
+    } catch (e) {
+      console.warn('[CMS Projects] Local sync error:', e);
+    }
+  }, [projects, updateDocument]);
 
   const [projectsMeta, setProjectsMeta] = useState<Record<'zh' | 'en', ProjectsMeta>>(() => {
     try {
@@ -368,6 +400,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       title_en: 'New Project Title',
       category: 'interactive',
       featured: false,
+      visible: true,
       order: projects.length + 1,
       image: '/assets/images/proj-placeholder.webp',
       ytId: '',
@@ -1044,7 +1077,6 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                 <input
                   type="checkbox"
                   checked={activeProject.visible !== false}
-                  disabled={isPreview}
                   onChange={(e) => handleFieldChange('visible', e.target.checked)}
                   className="sr-only peer"
                 />
@@ -1059,7 +1091,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                   <input
                     type="checkbox"
                     checked={activeProject.featured}
-                    disabled={isPreview || activeProject.visible === false || (!activeProject.featured && currentCatFeaturedCount >= 3)}
+                    disabled={activeProject.visible === false || (!activeProject.featured && currentCatFeaturedCount >= 3)}
                     onChange={(e) => handleToggleFeatured(e.target.checked)}
                     className="w-4 h-4 rounded-none text-[var(--neon-cyan)] focus:ring-0 focus:outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   />
@@ -1144,6 +1176,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                 aspectRatio="16:9"
                 previewHeight="h-auto"
                 presetGroupFilter="專案封面"
+                folder="projects"
               />
             </div>
 

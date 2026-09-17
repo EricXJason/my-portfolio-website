@@ -128,6 +128,30 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     }
   }, [data.skills]);
 
+  // 聆聽全域一鍵還原預設值事件
+  useEffect(() => {
+    const handleResetAll = () => {
+      setFormData(defaultSkillsData as unknown as SkillsFullData);
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [setIsDirty]);
+
+  // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照
+  const isFirstSkillsSync = useRef(true);
+  useEffect(() => {
+    if (isFirstSkillsSync.current) {
+      isFirstSkillsSync.current = false;
+      return;
+    }
+    updateDocument('skills', formData, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_skills_data', JSON.stringify(formData));
+      window.dispatchEvent(new Event('portfolio_skills_data_updated'));
+    } catch {}
+  }, [formData, updateDocument]);
+
   // 區塊標題與引言中繼資料（儲存於 portfolio_custom_translations）
   const [skillsMeta, setSkillsMeta] = useState<Record<'zh' | 'en', SkillsMeta>>(() => {
     if (data.site_translations) {
@@ -234,9 +258,43 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
   };
 
 
+  const handleCategoryVisibleToggle = (catIdx: number, visible: boolean) => {
+    setIsDirty(true);
+    setFormData((prev) => {
+      const updateList = (list: SkillCategory[]) => {
+        const copy = [...list];
+        if (copy[catIdx]) {
+          copy[catIdx] = { ...copy[catIdx], visible };
+        }
+        return copy;
+      };
+      return {
+        zh: updateList(prev.zh),
+        en: updateList(prev.en),
+      };
+    });
+  };
+
   const handleItemChange = (catIdx: number, itemIdx: number, field: 'label' | 'content' | 'visible', value: any) => {
     setIsDirty(true);
     setFormData((prev) => {
+      // 跨語系同步 visible
+      if (field === 'visible') {
+        const updateCats = (cats: SkillCategory[]) => {
+          const copy = [...cats];
+          if (copy[catIdx] && copy[catIdx].items[itemIdx]) {
+            const itemsCopy = [...copy[catIdx].items];
+            itemsCopy[itemIdx] = { ...itemsCopy[itemIdx], visible: value };
+            copy[catIdx] = { ...copy[catIdx], items: itemsCopy };
+          }
+          return copy;
+        };
+        return {
+          zh: updateCats(prev.zh),
+          en: updateCats(prev.en),
+        };
+      }
+
       const updatedCats = [...prev[lang]];
       const updatedItems = [...updatedCats[catIdx].items];
       updatedItems[itemIdx] = { ...updatedItems[itemIdx], [field]: value };
@@ -529,6 +587,11 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
                   <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
                   <span>{cat.category}</span>
                   <span className="text-[10px] font-mono opacity-70">({cat.items.length})</span>
+                  {cat.visible === false && (
+                    <span className="text-[9px] font-mono px-1.5 py-0.5 border cyber-cut-sm bg-rose-500/15 text-rose-400 border-rose-500/30">
+                      {isEn ? 'HIDDEN' : '隱藏'}
+                    </span>
+                  )}
                 </button>
               </div>
             );
@@ -550,8 +613,29 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
                   </h2>
                 </div>
               </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {/* 分類前臺顯示/隱藏開關 */}
+                <label
+                  className="flex items-center gap-1.5 cursor-pointer select-none text-xs font-mono px-2.5 py-1 border cyber-cut-sm transition-colors"
+                  style={{
+                    backgroundColor: currentCategory.visible !== false ? 'rgba(0, 240, 255, 0.08)' : 'rgba(100, 116, 139, 0.1)',
+                    borderColor: currentCategory.visible !== false ? 'rgba(0, 240, 255, 0.4)' : 'rgba(100, 116, 139, 0.3)',
+                  }}
+                  title={currentCategory.visible !== false ? (isEn ? 'Category visible on showcase — click to hide' : '點擊於前臺隱藏此分類') : (isEn ? 'Category hidden — click to show' : '點擊於前臺顯示此分類')}
+                >
+                  <input
+                    type="checkbox"
+                    checked={currentCategory.visible !== false}
+                    disabled={isPreview}
+                    onChange={(e) => handleCategoryVisibleToggle(activeCategoryIndex, e.target.checked)}
+                    className="accent-[var(--neon-cyan)] cursor-pointer w-3.5 h-3.5"
+                  />
+                  <span className={currentCategory.visible !== false ? 'text-[var(--neon-cyan)] font-bold' : 'text-slate-500'}>
+                    {currentCategory.visible !== false ? (isEn ? 'CATEGORY VISIBLE' : '前臺顯示此分類') : (isEn ? 'CATEGORY HIDDEN' : '前臺隱藏此分類')}
+                  </span>
+                </label>
 
-              <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   disabled={isPreview || activeCategoryIndex === 0}
@@ -572,6 +656,7 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
                   <ArrowDown className="w-3 h-3 -rotate-90" />
                   <span className="hidden sm:inline">{isEn ? 'Move Later' : '後移分類'}</span>
                 </button>
+                </div>
               </div>
             </div>
 

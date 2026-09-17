@@ -9,7 +9,7 @@
  * ============================================================================
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Save,
   RotateCcw,
@@ -106,6 +106,30 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
     window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
+
+  // 聆聽全域一鍵還原預設值事件
+  useEffect(() => {
+    const handleResetAll = () => {
+      setFormData(defaultHeroData as unknown as HeroSectionFullData);
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [setIsDirty]);
+
+  // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
+  const isFirstHeroSync = useRef(true);
+  useEffect(() => {
+    if (isFirstHeroSync.current) {
+      isFirstHeroSync.current = false;
+      return;
+    }
+    updateDocument('hero', formData, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_hero_data', JSON.stringify(formData));
+      window.dispatchEvent(new Event('portfolio_hero_data_updated'));
+    } catch {}
+  }, [formData, updateDocument]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
@@ -363,9 +387,6 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
               {isEn ? 'External Links & Buttons' : '外部網站與社群按鈕'}
             </h2>
           </div>
-          <span className="text-[10px] text-[var(--text-sub)]">
-            {isEn ? 'Each button can be toggled on/off' : '各按鈕均可獨立切換顯示或隱藏'}
-          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -382,7 +403,6 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
                 <input
                   type="checkbox"
                   checked={formData.showGithub !== false}
-                  disabled={isPreview}
                   onChange={(e) => handleToggleSwitch('showGithub', e.target.checked)}
                   className="sr-only peer"
                 />
@@ -390,7 +410,6 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
               </label>
             </div>
             <CmsUrlInput
-              label={isEn ? 'Target URL' : '目標網址'}
               value={formData.links.github}
               onChange={(val) => handleLinkChange('github', val)}
               placeholder="https://github.com/..."
@@ -413,7 +432,6 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
                 <input
                   type="checkbox"
                   checked={formData.showArtstation !== false}
-                  disabled={isPreview}
                   onChange={(e) => handleToggleSwitch('showArtstation', e.target.checked)}
                   className="sr-only peer"
                 />
@@ -421,7 +439,6 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
               </label>
             </div>
             <CmsUrlInput
-              label={isEn ? 'Target URL' : '目標網址'}
               value={formData.links.artstation}
               onChange={(val) => handleLinkChange('artstation', val)}
               placeholder="https://www.artstation.com/..."

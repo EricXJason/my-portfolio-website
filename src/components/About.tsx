@@ -53,8 +53,10 @@ export const About: React.FC = () => {
   const headerRef = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const cardRef   = useScrollReveal(0.08) as React.RefObject<HTMLDivElement>;
 
-  const dataMap = (data.about || aboutData) as unknown as Record<Language, AboutSectionData>;
+  const rawAbout = data.about || aboutData;
+  const dataMap = rawAbout as unknown as Record<Language, AboutSectionData>;
   const currentData: AboutSectionData = dataMap[lang] ?? dataMap.zh;
+  const avatarSrc = (rawAbout as any)?.avatarUrl || getAssetUrl('/assets/images/personal.webp');
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
   const cyanCol = isLight ? '#0369a1' : '#00f0ff';
@@ -119,9 +121,9 @@ export const About: React.FC = () => {
                   }}
                 >
                   <div className="relative w-full h-full overflow-hidden cyber-cut-sm">
-                    {/* 個人形象照 — 自然填滿且頭部完整可見 */}
+                    {/* 個人形象照 — 支援 CMS 雲端自訂與預設資源 */}
                     <img
-                      src={getAssetUrl('/assets/images/personal.webp')}
+                      src={avatarSrc}
                       alt="許哲誠 (Che-Cheng Hsu) Portrait"
                       width="288"
                       height="288"
@@ -181,9 +183,21 @@ export const About: React.FC = () => {
                 </p>
               </div>
 
-              {/* 核心成就指標卡（合理化三維科技色彩體系：藝術青、架構藍、認證金） */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                {currentData.stats.map((st, idx) => {
+              {/* 核心成就指標卡（支援 CMS visible 開關與自適應三維科技色彩體系） */}
+              {(() => {
+                const visibleStats = (currentData.stats || []).filter((st: any) => st.visible !== false);
+                if (visibleStats.length === 0) return null;
+
+                const gridColsClass =
+                  visibleStats.length === 1
+                    ? 'grid-cols-1 max-w-sm'
+                    : visibleStats.length === 2
+                    ? 'grid-cols-1 sm:grid-cols-2'
+                    : 'grid-cols-1 sm:grid-cols-3';
+
+                return (
+                  <div className={`grid ${gridColsClass} gap-4 pt-2`}>
+                    {visibleStats.map((st: any, idx: number) => {
                   const IconComponent = iconMap[st.icon] ?? Award;
 
                   // 還原為早期版本配色：idx 0 (青) / idx 1 (紫) / idx 2 (金)
@@ -249,6 +263,8 @@ export const About: React.FC = () => {
                   );
                 })}
               </div>
+            );
+          })()}
 
             </div>
           </div>

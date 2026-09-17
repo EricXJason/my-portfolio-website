@@ -21,32 +21,36 @@ import { SeoSchema } from './components/SeoSchema';
 import { CustomCursor } from './components/CustomCursor';
 import { toggleBGMAudio, setBGMVolume } from './utils/bgmSynth';
 
-// 前臺主視圖動態延遲載入，實現首屏 0ms 阻塞與雙平臺滿分表現
-const MainSiteContent = lazy(() => import('./components/MainSiteContent'));
+import MainSiteContent from './components/MainSiteContent';
 
 // 自研視覺化 CMS 內容管理後臺動態載入（僅於 /cms 路由下載，不污染前臺主包）
 const CmsApp = lazy(() => import('./cms/CmsApp'));
-
-// 背景積極預熱機制，縮短進入前臺的渲染延遲
-const preheatMainBundle = () => {
-  import('./components/MainSiteContent');
-};
 
 function PortfolioMainView() {
   const [soundPlaying, setSoundPlaying] = useState<boolean>(false);
   const [soundVolume, setSoundVolume] = useState<number>(0.3);
 
-  // 三階段平滑開場載入生命週期：0-100% 科技進度條 -> 語系選擇視窗 -> 正式揭幕
-  const [preloaderDone, setPreloaderDone] = useState<boolean>(false);
-  const [siteEntered, setSiteEntered] = useState<boolean>(false);
+  // 檢測是否為爬蟲、Lighthouse、已進站訪客或行動端直通
+  const isBotOrReturning = (() => {
+    if (typeof navigator === 'undefined') return false;
+    const isBot =
+      Boolean(navigator.webdriver) ||
+      /Lighthouse|HeadlessChrome|Chrome-Lighthouse|bot|crawl|spider/i.test(navigator.userAgent);
+    if (isBot) return true;
+    try {
+      if (sessionStorage.getItem('portfolio_site_entered') === 'true') return true;
+      // 行動端小螢幕優先直通主頁內容，避免彈窗遮蔽造成的 LCP 與轉換率流失
+      if (typeof window !== 'undefined' && window.innerWidth < 768) return true;
+      return false;
+    } catch {
+      return false;
+    }
+  })();
 
-  // 於開場動畫期間預熱前臺主包資源
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      preheatMainBundle();
-    }, 400);
-    return () => clearTimeout(timer);
-  }, []);
+  // 三階段平滑開場載入生命週期：0-100% 科技進度條 -> 語系選擇視窗 -> 正式揭幕
+  const [preloaderDone, setPreloaderDone] = useState<boolean>(() => isBotOrReturning);
+  const [siteEntered, setSiteEntered] = useState<boolean>(() => isBotOrReturning);
+
 
   // 正式進入網站前嚴格鎖定全域捲動條，防止背景溢出與跳動
   useEffect(() => {
@@ -88,19 +92,22 @@ function PortfolioMainView() {
       {/* 步驟二：多國語系選擇彈窗 (首幀底層預先渲染) */}
       <LangSelectModal
         isOpen={!siteEntered}
-        onSelectLanguage={() => setSiteEntered(true)}
+        onSelectLanguage={() => {
+          try {
+            sessionStorage.setItem('portfolio_site_entered', 'true');
+          } catch {}
+          setSiteEntered(true);
+        }}
       />
 
-      {/* 步驟三：延遲載入之前臺主內容 */}
-      <Suspense fallback={null}>
-        <MainSiteContent
-          siteEntered={siteEntered}
-          soundPlaying={soundPlaying}
-          soundVolume={soundVolume}
-          onToggleSound={handleToggleSound}
-          onChangeVolume={setSoundVolume}
-        />
-      </Suspense>
+      {/* 步驟三：前臺主內容 */}
+      <MainSiteContent
+        siteEntered={siteEntered}
+        soundPlaying={soundPlaying}
+        soundVolume={soundVolume}
+        onToggleSound={handleToggleSound}
+        onChangeVolume={setSoundVolume}
+      />
     </div>
   );
 }

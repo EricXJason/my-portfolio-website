@@ -261,29 +261,21 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
       return allProjectsSorted;
     }
     return projects.filter((p) => p.category === filter && p.visible !== false).sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
-  }, [filter, showAllProjects, projects, allProjectsSorted]);
+  }, [filter, showAllProjects, projects, allProjectsSorted, rawProjects]);
 
-  // 左右雙旗艦領域資料集：互動應用與遊戲引擎 (左 3) vs 現代全端與雲端架構 (右 3)（嚴格排除隱藏項目）
+  // 左右雙旗艦領域資料集：互動應用與遊戲引擎 (左最多 3) vs 現代全端與雲端架構 (右最多 3)（嚴格依 CMS 精選與 visible 過濾）
   const featuredInteractiveProjects = useMemo(() => {
-    const list = projects
+    return projects
       .filter((p) => p.category === 'interactive' && p.featured && p.visible !== false)
-      .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999));
-    if (list.length >= 3) return list.slice(0, 3);
-    const fallbacks = projects
-      .filter((p) => p.category === 'interactive' && p.visible !== false)
-      .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
-    return fallbacks.slice(0, 3);
+      .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999))
+      .slice(0, 3);
   }, [projects]);
 
   const featuredFullstackProjects = useMemo(() => {
-    const list = projects
+    return projects
       .filter((p) => (p.category === 'fullstack' || p.category === 'frontend') && p.featured && p.visible !== false)
-      .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999));
-    if (list.length >= 3) return list.slice(0, 3);
-    const fallbacks = projects
-      .filter((p) => (p.category === 'fullstack' || p.category === 'frontend') && p.visible !== false)
-      .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
-    return fallbacks.slice(0, 3);
+      .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999))
+      .slice(0, 3);
   }, [projects]);
 
   const visibleProjects = useMemo(() => {
@@ -600,6 +592,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             {[0, 1, 2].map((idx) => {
               const leftProject = featuredInteractiveProjects[idx];
               const rightProject = featuredFullstackProjects[idx];
+              if (!leftProject && !rightProject) return null;
 
               const renderCompactCard = (project: ProjectItem | undefined, domain: 'interactive' | 'fullstack', pIdx: number) => {
                 if (!project) return <div className="hidden lg:block" />;

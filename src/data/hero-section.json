@@ -8,6 +8,11 @@
     "email": "user46972@gmail.com",
     "line": "ericxjason"
   },
+  "showGithub": true,
+  "showArtstation": true,
+  "showPhone": true,
+  "showEmail": true,
+  "showLine": true,
   "zh": {
     "title": "許哲誠",
     "subtitle": "互動應用開發／全端開發／多媒體設計",

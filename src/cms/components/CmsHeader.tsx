@@ -12,10 +12,11 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Sun, Moon, User, Shield, Eye } from 'lucide-react';
+import { Menu, Sun, Moon, User, Shield, Eye, RotateCcw } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLang } from '../../context/LangContext';
 import { useCmsMode } from '../context/CmsModeContext';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { CmsConfirmDialog, CmsConfirmDialogState, EMPTY_DIALOG } from './CmsConfirmDialog';
 
 interface CmsHeaderProps {
@@ -28,9 +29,10 @@ interface CmsHeaderProps {
 /**
  * CmsHeader
  * CMS 頂部導覽列：
- * 1. 「管理者模式」徽章可點擊 → 若有未儲存則觸發三選項對話框，否則返回模式選擇畫面。
- * 2. 「返回使用者模式」按鈕附 User icon，點擊後回到前臺（支援未儲存防護）。
- * 3. 雙語（EN/中）與深淺色即時切換開關。
+ * 1. 「一鍵還原全模組」按鈕，快速重置全站為原始預設資料。
+ * 2. 「管理者模式」徽章可點擊 → 若有未儲存則觸發三選項對話框，否則返回模式選擇畫面。
+ * 3. 「返回使用者模式」按鈕附 User icon，點擊後回到前臺（支援未儲存防護）。
+ * 4. 雙語（EN/中）與深淺色即時切換開關。
  */
 export const CmsHeader: React.FC<CmsHeaderProps> = ({
   currentTabName,
@@ -41,7 +43,10 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
   const { theme, toggleTheme } = useTheme();
   const { lang, toggleLang } = useLang();
   const { mode, signOut } = useCmsMode();
+  const { resetAllToDefaults } = usePortfolioData();
   const [modeExitDialog, setModeExitDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
+  const [resetAllDialog, setResetAllDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
+  const [isResetting, setIsResetting] = useState(false);
   const navigate = useNavigate();
 
   const isLight = theme === 'light';
@@ -78,6 +83,34 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
     });
   };
 
+  // 點擊一鍵還原全模組按鈕 → 彈出高警示確認對話框
+  const handleTriggerResetAll = () => {
+    setResetAllDialog({
+      isOpen: true,
+      type: 'reset',
+      title: isEn ? 'Reset All Modules to Defaults' : '一鍵還原全模組預設值',
+      message: isEn
+        ? 'Are you sure you want to reset ALL 9 modules to the original static JSON defaults? This will overwrite all current edits and restore Firestore to initial clean data.'
+        : '確定要將全站所有 9 大模組一鍵還原至專案最原始的預設資料嗎？這將覆蓋所有目前的編輯內容並將雲端資料庫同步還原為最初資料。',
+      confirmText: isEn ? 'Confirm Reset All' : '確定還原全模組',
+      cancelText: isEn ? 'Cancel' : '取消',
+      onConfirm: async () => {
+        setIsResetting(true);
+        setResetAllDialog(EMPTY_DIALOG);
+        try {
+          await resetAllToDefaults();
+          alert(isEn ? 'All modules have been restored to initial defaults!' : '已成功將全站所有模組一鍵還原至最原始預設資料！');
+          window.location.reload();
+        } catch (e) {
+          console.error('Reset all error:', e);
+          alert(isEn ? 'Failed to reset modules.' : '還原模組失敗，請檢查網路連線。');
+        } finally {
+          setIsResetting(false);
+        }
+      },
+    });
+  };
+
   return (
     <header className="sticky top-0 z-30 h-16 border-b border-[var(--border-color)] bg-[var(--header-bg)] backdrop-blur-xl px-4 sm:px-6 flex items-center justify-between">
       {/* 左側：行動端開關與導覽階層 */}
@@ -103,6 +136,13 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
       <CmsConfirmDialog
         dialog={modeExitDialog}
         onClose={() => setModeExitDialog(EMPTY_DIALOG)}
+        isEn={isEn}
+      />
+
+      {/* 一鍵還原全模組預設值二次確認對話框 */}
+      <CmsConfirmDialog
+        dialog={resetAllDialog}
+        onClose={() => setResetAllDialog(EMPTY_DIALOG)}
         isEn={isEn}
       />
 
@@ -215,6 +255,18 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
             <span>{isEn ? 'Admin Mode (Preview)' : '管理者模式 預覽'}</span>
           </button>
         )}
+
+        {/* 一鍵還原全模組按鈕 */}
+        <button
+          type="button"
+          onClick={handleTriggerResetAll}
+          disabled={isResetting}
+          className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 border-rose-500/30 transition-all cursor-pointer hover:scale-105 active:scale-95 shadow-xs disabled:opacity-50"
+          title={isEn ? 'Reset all 9 modules to initial static defaults' : '一鍵還原全模組至專案最原始資料'}
+        >
+          <RotateCcw className={`w-3.5 h-3.5 ${isResetting ? 'animate-spin' : ''}`} />
+          <span className="hidden sm:inline">{isEn ? 'Reset All' : '一鍵還原預設'}</span>
+        </button>
 
         {/* 返回使用者模式按鈕（具備使用者圖示） */}
         <button

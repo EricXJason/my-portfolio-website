@@ -126,7 +126,6 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
     }
   }, [data.gallery]);
 
-  // 聆聽廣播存檔事件
   useEffect(() => {
     const handleTriggerSave = async () => {
       if (!isPreview) {
@@ -140,6 +139,30 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
     window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [items, isPreview, updateDocument]);
+
+  // 聆聽全域一鍵還原預設值事件
+  useEffect(() => {
+    const handleResetAll = () => {
+      setItems(defaultGalleryData as GalleryItem[]);
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [setIsDirty]);
+
+  // 本地全域即時同步效應：開關或項目變更時即時同步至本地 Context 與快照，前臺立即反應
+  const isFirstGallerySync = useRef(true);
+  useEffect(() => {
+    if (isFirstGallerySync.current) {
+      isFirstGallerySync.current = false;
+      return;
+    }
+    updateDocument('gallery', items, true).catch(() => {});
+    try {
+      localStorage.setItem('portfolio_gallery_data', JSON.stringify(items));
+      window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
+    } catch {}
+  }, [items, updateDocument]);
 
   const [galleryMeta, setGalleryMeta] = useState<Record<'zh' | 'en', GalleryMeta>>(() => {
     if (data.site_translations) {
@@ -842,6 +865,7 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
                     aspectRatio="16:9"
                     previewHeight="h-auto"
                     presetGroupFilter="美術畫廊"
+                    folder="gallery"
                   />
                 </div>
 

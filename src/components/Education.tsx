@@ -33,10 +33,11 @@ import {
   Box,
   Video,
   Gamepad2,
+  Calendar,
 } from 'lucide-react';
 import eduData from '../data/experience-section.json';
 import { useScrollReveal } from '../hooks/useScrollReveal';
-import { getLucideIconByName } from '../cms/components/CmsIconPickerModal';
+import { getLucideIconByName } from '../utils/iconHelper';
 
 interface DegreeButton {
   key: string;
@@ -329,13 +330,13 @@ export const Education: React.FC = () => {
 
                   return (
                     <div key={deg.id} className="relative flex items-center gap-2 sm:gap-4 md:gap-6 group py-4 sm:py-5 first:pt-2 last:pb-2">
-                      {/* 左欄：HUD 時間數據膠囊徽章（雙行優雅防邊緣擠壓） */}
-                      <div className="w-24 sm:w-28 md:w-32 shrink-0 flex items-center justify-end select-none">
+                      {/* 左欄：HUD 時間數據膠囊徽章（雙行優雅防邊緣擠壓，窄螢幕 < md 隱藏） */}
+                      <div className="hidden md:flex w-24 sm:w-28 md:w-32 shrink-0 items-center justify-end select-none">
                         {renderChronoCapsule(deg.period, accent)}
                       </div>
 
-                      {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點 */}
-                      <div className="relative flex items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
+                      {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點（窄螢幕 < md 隱藏） */}
+                      <div className="hidden md:flex relative items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
                         {/* 垂直連貫導軌：零粗斑物理無縫對接 */}
                         <div
                           className={`absolute w-[2px] pointer-events-none ${
@@ -399,14 +400,23 @@ export const Education: React.FC = () => {
                             : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 12px 30px rgba(0, 0, 0, 0.45)',
                         }}
                       >
-                        {/* 左側微型連接口指示標 (HUD Port Indicator) */}
+                        {/* 左側微型連接口指示標 (HUD Port Indicator，窄螢幕 < md 隱藏) */}
                         <div
-                          className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
+                          className="hidden md:block absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
                           style={{
                             backgroundColor: isLight ? '#f8fafc' : '#0a1426',
                             borderColor: accent.main,
                           }}
                         />
+
+                        {/* 行動端清晰日期徽章 (寬度 < md 放棄左側導軌，直接於卡片內部清晰標示) */}
+                        <div
+                          className="md:hidden flex items-center gap-1.5 px-2.5 py-1 w-fit border cyber-cut-sm font-tech text-xs font-bold tracking-wider mb-2"
+                          style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.main }}
+                        >
+                          <Calendar size={13} className="shrink-0" />
+                          <span>{deg.period}</span>
+                        </div>
 
                         <div className="border-b border-slate-700/30 pb-3">
                           {(() => {
@@ -503,13 +513,13 @@ export const Education: React.FC = () => {
 
                   return (
                     <div key={(job as any).id || job.company || jIdx} className="relative flex items-center gap-2 sm:gap-4 md:gap-6 group py-4 sm:py-5 first:pt-2 last:pb-2">
-                      {/* 左欄：HUD 時間數據膠囊徽章（雙行優雅防邊緣擠壓） */}
-                      <div className="w-24 sm:w-28 md:w-32 shrink-0 flex items-center justify-end select-none">
+                      {/* 左欄：HUD 時間數據膠囊徽章（雙行優雅防邊緣擠壓，窄螢幕 < md 隱藏） */}
+                      <div className="hidden md:flex w-24 sm:w-28 md:w-32 shrink-0 items-center justify-end select-none">
                         {renderChronoCapsule(job.period, accent)}
                       </div>
 
-                      {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點 */}
-                      <div className="relative flex items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
+                      {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點（窄螢幕 < md 隱藏） */}
+                      <div className="hidden md:flex relative items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
                         {/* 垂直連貫導軌：零粗斑物理無縫對接 */}
                         <div
                           className={`absolute w-[2px] pointer-events-none ${
@@ -573,14 +583,23 @@ export const Education: React.FC = () => {
                             : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 12px 30px rgba(0, 0, 0, 0.45)',
                         }}
                       >
-                        {/* 左側微型連接口指示標 (HUD Port Indicator) */}
+                        {/* 左側微型連接口指示標 (HUD Port Indicator，窄螢幕 < md 隱藏) */}
                         <div
-                          className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
+                          className="hidden md:block absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
                           style={{
                             backgroundColor: isLight ? '#f8fafc' : '#0a1426',
                             borderColor: accent.main,
                           }}
                         />
+
+                        {/* 行動端清晰日期徽章 (寬度 < md 放棄左側導軌，直接於卡片內部清晰標示) */}
+                        <div
+                          className="md:hidden flex items-center gap-1.5 px-2.5 py-1 w-fit border cyber-cut-sm font-tech text-xs font-bold tracking-wider mb-2"
+                          style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.main }}
+                        >
+                          <Calendar size={13} className="shrink-0" />
+                          <span>{job.period}</span>
+                        </div>
                         <div className="border-b border-slate-700/30 pb-3">
                           {(() => {
                             const defaultJobIcon = jIdx === 0 ? School : (jIdx === 1 ? Palette : Building2);
@@ -667,13 +686,13 @@ export const Education: React.FC = () => {
 
                   return (
                     <div key={(ws as any).id || ws.title || wIdx} className="relative flex items-center gap-2 sm:gap-4 md:gap-6 group py-4 sm:py-5 first:pt-2 last:pb-2">
-                      {/* 左欄：HUD 時間數據膠囊徽章（雙行優雅防邊緣擠壓） */}
-                      <div className="w-24 sm:w-28 md:w-32 shrink-0 flex items-center justify-end select-none">
+                      {/* 左欄：HUD 時間數據膠囊徽章（雙行優雅防邊緣擠壓，窄螢幕 < md 隱藏） */}
+                      <div className="hidden md:flex w-24 sm:w-28 md:w-32 shrink-0 items-center justify-end select-none">
                         {renderChronoCapsule(ws.date, accent)}
                       </div>
 
-                      {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點 */}
-                      <div className="relative flex items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
+                      {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點（窄螢幕 < md 隱藏） */}
+                      <div className="hidden md:flex relative items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
                         {/* 垂直連貫導軌：零粗斑物理無縫對接 */}
                         <div
                           className={`absolute w-[2px] pointer-events-none ${
@@ -737,14 +756,23 @@ export const Education: React.FC = () => {
                             : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 12px 30px rgba(0, 0, 0, 0.45)',
                         }}
                       >
-                        {/* 左側微型連接口指示標 (HUD Port Indicator) */}
+                        {/* 左側微型連接口指示標 (HUD Port Indicator，窄螢幕 < md 隱藏) */}
                         <div
-                          className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
+                          className="hidden md:block absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
                           style={{
                             backgroundColor: isLight ? '#f8fafc' : '#0a1426',
                             borderColor: accent.main,
                           }}
                         />
+
+                        {/* 行動端清晰日期徽章 (寬度 < md 放棄左側導軌，直接於卡片內部清晰標示) */}
+                        <div
+                          className="md:hidden flex items-center gap-1.5 px-2.5 py-1 w-fit border cyber-cut-sm font-tech text-xs font-bold tracking-wider mb-2"
+                          style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.main }}
+                        >
+                          <Calendar size={13} className="shrink-0" />
+                          <span>{ws.date}</span>
+                        </div>
                         {/* 標題列 */}
                         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
                           <div className="flex-1 min-w-0">
@@ -868,13 +896,13 @@ export const Education: React.FC = () => {
 
                     return (
                       <div key={(th as any).id || th.title || thIdx} className="relative flex items-center gap-2 sm:gap-4 md:gap-6 group py-4 sm:py-5 first:pt-2 last:pb-2">
-                        {/* 左欄：HUD 雙行時間數據膠囊（Chrono Capsule: 兩行排版，徹底杜絕文字往左爆出切穿外框） */}
-                        <div className="w-20 sm:w-24 md:w-28 shrink-0 flex items-center justify-end select-none">
+                        {/* 左欄：HUD 雙行時間數據膠囊（Chrono Capsule，窄螢幕 < md 隱藏） */}
+                        <div className="hidden md:flex w-20 sm:w-24 md:w-28 shrink-0 items-center justify-end select-none">
                           {renderChronoCapsule(pubDate, accent, true)}
                         </div>
 
-                        {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點 */}
-                        <div className="relative flex items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
+                        {/* 中欄：連續垂直導軌線 + 雙向水平微光連接臂 + 雙環同心發光節點（窄螢幕 < md 隱藏） */}
+                        <div className="hidden md:flex relative items-center justify-center shrink-0 w-8 sm:w-10 self-stretch">
                           {/* 垂直連貫導軌：零粗斑物理無縫對接 */}
                           <div
                             className={`absolute w-[2px] pointer-events-none ${
@@ -938,14 +966,23 @@ export const Education: React.FC = () => {
                               : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 12px 30px rgba(0, 0, 0, 0.45)',
                           }}
                         >
-                          {/* 左側微型連接口指示標 (HUD Port Indicator) */}
+                          {/* 左側微型連接口指示標 (HUD Port Indicator，窄螢幕 < md 隱藏) */}
                           <div
-                            className="absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
+                            className="hidden md:block absolute -left-1.5 top-1/2 -translate-y-1/2 w-3 h-3 rotate-45 border-l border-b transition-colors duration-300 pointer-events-none"
                             style={{
                               backgroundColor: isLight ? '#f8fafc' : '#0a1426',
                               borderColor: accent.main,
                             }}
                           />
+
+                          {/* 行動端清晰日期徽章 (寬度 < md 放棄左側導軌，直接於卡片內部清晰標示) */}
+                          <div
+                            className="md:hidden flex items-center gap-1.5 px-2.5 py-1 w-fit border cyber-cut-sm font-tech text-xs font-bold tracking-wider mb-2"
+                            style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.main }}
+                          >
+                            <Calendar size={13} className="shrink-0" />
+                            <span>{pubDate}</span>
+                          </div>
                           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 border-b border-slate-700/30 pb-3">
                             <div className="flex-1 min-w-0">
                               {(() => {
