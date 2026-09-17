@@ -8,11 +8,10 @@
       "items": [
         { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
         { "label": "設計模式與架構", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
-        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / AI Navigation" },
+        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
         { "label": "動畫與相機", "rowType": "text", "content": "Timeline / Cinemachine / DOTween Pro" },
-        { "label": "資料儲存", "rowType": "text", "content": "PlayerPrefs / JSON" },
         { "label": "XR 實境開發", "rowType": "text", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
-        { "label": "多人連線開發", "rowType": "text", "content": "Netcode / Photon Pun" }
+        { "label": "多人連線框架", "rowType": "text", "content": "Netcode / Photon Pun" }
       ]
     },
     {
@@ -21,12 +20,12 @@
       "catColor": "#2563eb",
       "catType": "fullstack",
       "items": [
-        { "label": "程式語言", "rowType": "tech", "content": "Java / Python / HTML / CSS / JavaScript / TypeScript" },
-        { "label": "前端框架與樣式", "rowType": "tech", "content": "Vue / React / Angular / SCSS / Tailwind CSS / Bootstrap" },
-        { "label": "後端框架與技術", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / JDBC / Hibernate / Django / FastAPI" },
-        { "label": "資料庫與服務", "rowType": "tech", "content": "MySQL / PostgreSQL" },
-        { "label": "雲端服務", "rowType": "tech", "content": "Linux Server (Ubuntu) / AWS / GCP / Firebase / Cloudflare Pages" },
-        { "label": "開發與建構工具", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI / CD) / Sourcetree / JUnit (Unit Test) / Swagger / Docker / Vite" }
+        { "label": "程式語言", "rowType": "tech", "content": "TypeScript / JavaScript / Java / Python / HTML / CSS" },
+        { "label": "前端框架與樣式", "rowType": "tech", "content": "React / Angular / Vue / Tailwind CSS / SCSS / Bootstrap" },
+        { "label": "後端框架與技術", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / Hibernate / Node.js / Express / FastAPI / Django" },
+        { "label": "資料庫與服務", "rowType": "tech", "content": "PostgreSQL / MySQL / Firebase Firestore" },
+        { "label": "雲端與邊緣部署", "rowType": "tech", "content": "Cloudflare (Workers / Pages) / Firebase / Linux Server (Ubuntu) / AWS / GCP" },
+        { "label": "開發與維運工具", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Docker / Vite / Swagger / Sourcetree / JUnit" }
       ]
     },
     {
@@ -35,11 +34,11 @@
       "catColor": "#a855f7",
       "catType": "media",
       "items": [
-        { "label": "視覺設計與 UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
-        { "label": "影片剪輯與後製", "rowType": "tech", "content": "Premiere / DaVinci" },
-        { "label": "流程圖設計與文書", "rowType": "tech", "content": "draw.io / Mermaid / Notion / Word / Excel / PowerPoint" },
-        { "label": "AI 內容創作", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
-        { "label": "3D 建模與材質", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3ds Max / RizomUV / Zbrush / Substance Painter / Marmoset Toolbag" }
+        { "label": "3D 建模與材質", "rowType": "tech", "content": "Blender / Maya / 3ds Max / ZBrush / Substance Painter / RizomUV / Marmoset Toolbag / AutoCAD" },
+        { "label": "視覺設計與 UI/UX", "rowType": "tech", "content": "Figma / Photoshop / Illustrator / Canva" },
+        { "label": "影音剪輯與後製", "rowType": "tech", "content": "Premiere / DaVinci Resolve / Suno AI" },
+        { "label": "AI 輔助創作工程", "rowType": "tech", "content": "Claude Code / Antigravity / Cursor / OpenAI Codex" },
+        { "label": "系統分析與架構圖表", "rowType": "tech", "content": "Mermaid / draw.io / Notion / Markdown / Office Suite" }
       ]
     }
   ],
@@ -52,11 +51,10 @@
       "items": [
         { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
         { "label": "Design Patterns & Architecture", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
-        { "label": "Core Technologies", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / AI Navigation" },
+        { "label": "Core Technologies", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
         { "label": "Animation & Camera", "rowType": "text", "content": "Timeline / Cinemachine / DOTween Pro" },
-        { "label": "Data Persistence", "rowType": "text", "content": "PlayerPrefs / JSON" },
         { "label": "XR Development", "rowType": "text", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
-        { "label": "Multiplayer Networking", "rowType": "text", "content": "Netcode / Photon Pun" }
+        { "label": "Multiplayer Frameworks", "rowType": "text", "content": "Netcode / Photon Pun" }
       ]
     },
     {
@@ -65,12 +63,12 @@
       "catColor": "#2563eb",
       "catType": "fullstack",
       "items": [
-        { "label": "Programming Languages", "rowType": "tech", "content": "Java / Python / HTML / CSS / JavaScript / TypeScript" },
-        { "label": "Frontend Frameworks & Styling", "rowType": "tech", "content": "Vue / React / Angular / SCSS / Tailwind CSS / Bootstrap" },
-        { "label": "Backend Frameworks & Tech", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / JDBC / Hibernate / Django / FastAPI" },
-        { "label": "Databases & Services", "rowType": "tech", "content": "MySQL / PostgreSQL" },
-        { "label": "Cloud Services", "rowType": "tech", "content": "Linux Server (Ubuntu) / AWS / GCP / Firebase / Cloudflare Pages" },
-        { "label": "Dev & Build Tools", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI / CD) / Sourcetree / JUnit (Unit Test) / Swagger / Docker / Vite" }
+        { "label": "Programming Languages", "rowType": "tech", "content": "TypeScript / JavaScript / Java / Python / HTML / CSS" },
+        { "label": "Frontend Frameworks & Styling", "rowType": "tech", "content": "React / Angular / Vue / Tailwind CSS / SCSS / Bootstrap" },
+        { "label": "Backend Frameworks & Tech", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / Hibernate / Node.js / Express / FastAPI / Django" },
+        { "label": "Databases & Services", "rowType": "tech", "content": "PostgreSQL / MySQL / Firebase Firestore" },
+        { "label": "Cloud & Edge Deployment", "rowType": "tech", "content": "Cloudflare (Workers / Pages) / Firebase / Linux Server (Ubuntu) / AWS / GCP" },
+        { "label": "Dev & DevOps Tools", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Docker / Vite / Swagger / Sourcetree / JUnit" }
       ]
     },
     {
@@ -79,11 +77,11 @@
       "catColor": "#a855f7",
       "catType": "media",
       "items": [
-        { "label": "Visual Design & UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
-        { "label": "Video Editing", "rowType": "tech", "content": "Premiere / DaVinci" },
-        { "label": "Flowcharts & Docs", "rowType": "tech", "content": "draw.io / Mermaid / Notion / Word / Excel / PowerPoint" },
-        { "label": "AI Creation", "rowType": "tech", "content": "Codex / Antigravity / Claude Code / Cursor / Suno" },
-        { "label": "3D Modeling & Materials", "rowType": "tech", "content": "AutoCAD / Blender / Maya / 3ds Max / RizomUV / Zbrush / Substance Painter / Marmoset Toolbag" }
+        { "label": "3D Modeling & Materials", "rowType": "tech", "content": "Blender / Maya / 3ds Max / ZBrush / Substance Painter / RizomUV / Marmoset Toolbag / AutoCAD" },
+        { "label": "Visual Design & UI/UX", "rowType": "tech", "content": "Figma / Photoshop / Illustrator / Canva" },
+        { "label": "Video & Audio Production", "rowType": "tech", "content": "Premiere / DaVinci Resolve / Suno AI" },
+        { "label": "AI-Assisted Engineering", "rowType": "tech", "content": "Claude Code / Antigravity / Cursor / OpenAI Codex" },
+        { "label": "System Architecture & Docs", "rowType": "tech", "content": "Mermaid / draw.io / Notion / Markdown / Office Suite" }
       ]
     }
   ]

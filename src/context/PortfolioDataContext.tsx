@@ -57,7 +57,7 @@ const MODULE_KEY_MAP: Record<PortfolioDocId, string> = {
 };
 
 /**
- * 讀取本機快取優先資料（支援 preview 與一般持久化快取）
+ * 讀取本機快取優先資料（支援 preview 與一般持久化快取，並具備舊版快取智慧平滑升級）
  */
 const getInitialModuleData = <T,>(docId: PortfolioDocId): T => {
   if (typeof window === 'undefined') {
@@ -69,6 +69,31 @@ const getInitialModuleData = <T,>(docId: PortfolioDocId): T => {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed !== null && parsed !== undefined) {
+        // 舊版 skills 快取檢測：若舊快取未包含最新「多人連線框架」項目，自動升級為最新預設值
+        if (docId === 'skills') {
+          const rawStr = JSON.stringify(parsed);
+          if (!rawStr.includes('多人連線框架')) {
+            try {
+              localStorage.setItem(primaryKey, JSON.stringify(LOCAL_FALLBACKS.skills));
+            } catch {}
+            return LOCAL_FALLBACKS.skills as unknown as T;
+          }
+        }
+        // 舊版 projects 快取檢測：若舊快取中社影流光未包含 ScriptableObject，自動升級
+        if (docId === 'projects' && Array.isArray(parsed)) {
+          const temporal = parsed.find((p: any) => p.id === 'temporal-shrine');
+          if (temporal && (!temporal.tags || !temporal.tags.includes('ScriptableObject'))) {
+            const defaults = LOCAL_FALLBACKS.projects as any[];
+            const merged = defaults.map((defP) => {
+              const userP = parsed.find((p: any) => p.id === defP.id);
+              return userP ? { ...defP, ...userP, tags: defP.tags, desc: defP.desc, desc_en: defP.desc_en, contributions: defP.contributions, contributions_en: defP.contributions_en } : defP;
+            });
+            try {
+              localStorage.setItem(primaryKey, JSON.stringify(merged));
+            } catch {}
+            return merged as unknown as T;
+          }
+        }
         if (Array.isArray(parsed) ? parsed.length > 0 : Object.keys(parsed).length > 0) {
           return parsed as T;
         }
