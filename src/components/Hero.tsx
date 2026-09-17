@@ -13,22 +13,12 @@
 import React, { useState } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import { Mail, Phone, MessageSquare, Copy, Check } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { SciFiRobotAvatar } from './SciFiRobotAvatar';
 import heroData from '../data/hero-section.json';
 
-/**
- * TODO: [後端端點對接] 取得使用者模式首頁看板簡介與聯絡資訊
- * 1. HTTP Method: GET
- * 2. 預期端點: /api/v1/hero
- * 3. 請求參數:
- *    - Query Params: lang (string, 'zh' | 'en' | 'ja')
- * 4. 預期回應:
- *    - 200 OK: { success: true, data: { zh: HeroSectionData, en: HeroSectionData, contacts: object, links: object } }
- *    - 500 Internal Server Error: 伺服器讀取首頁資料失敗
- * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (hero-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
- */
 interface HeroProps {
   soundPlaying: boolean;
 }
@@ -52,18 +42,27 @@ interface HeroSectionData {
 export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
   const { lang } = useLang();
   const { theme } = useTheme();
+  const { data } = usePortfolioData();
   const isLight = theme === 'light';
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
-  const dataMap = heroData as unknown as {
+  const dataMap = (data.hero || heroData) as unknown as {
     links: { github: string; artstation: string };
     contacts: { phone: string; email: string; line: string };
     zh: HeroSectionData;
     en: HeroSectionData;
+    showGithub?: boolean;
+    showArtstation?: boolean;
+    showPhone?: boolean;
+    showEmail?: boolean;
+    showLine?: boolean;
   };
   const currentData: HeroSectionData = dataMap[lang] ?? dataMap.zh;
   const links = dataMap.links;
   const contacts = dataMap.contacts;
+
+  const showGithub = dataMap.showGithub !== false && !!links?.github;
+  const showArtstation = dataMap.showArtstation !== false && !!links?.artstation;
 
   const handleCopy = (text: string, key: string) => {
     navigator.clipboard.writeText(text);
@@ -80,6 +79,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       Icon: Phone,
       color: isLight ? '#0369a1' : '#00f0ff',
       bgColor: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)',
+      visible: dataMap.showPhone !== false,
     },
     {
       key: 'email',
@@ -89,6 +89,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       Icon: Mail,
       color: isLight ? '#6d28d9' : '#a855f7',
       bgColor: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)',
+      visible: dataMap.showEmail !== false,
     },
     {
       key: 'line',
@@ -98,8 +99,9 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       Icon: MessageSquare,
       color: isLight ? '#047857' : '#10b981',
       bgColor: isLight ? '#d1fae5' : 'rgba(16,185,129,0.12)',
+      visible: dataMap.showLine !== false,
     },
-  ];
+  ].filter((item) => item.visible);
 
   // 次要資訊卡片邊框（收斂強度，確保主要操作按鈕維持視覺焦點，建立明確層次感）
   const contactBorderCol = isLight ? '#e2e8f0' : 'rgba(56, 189, 248, 0.2)';
@@ -163,45 +165,52 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
           </p>
 
           {/* 操作按鈕組 (雙層 Focus Visible 焦點指示) */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-xs sm:max-w-none pt-1 hero-stagger hero-stagger-5">
-            {/* GitHub 個人主頁按鈕 */}
-            <a
-              href={links.github}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full sm:w-[230px] lg:w-[245px] h-11 sm:h-12 px-4 sm:px-5 cyber-cut-corner font-hud font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer border group shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-              style={{
-                backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.95)',
-                borderColor: isLight ? '#0f172a' : 'rgba(255, 255, 255, 0.65)',
-                color: isLight ? '#0f172a' : '#ffffff',
-                boxShadow: isLight ? '0 2px 10px rgba(15, 23, 42, 0.08)' : '0 0 15px rgba(255,255,255,0.1)',
-              }}
-            >
-              <TechIcon name="github" size={16} className="shrink-0 fill-current" color={isLight ? '#0f172a' : '#ffffff'} />
-              <span className="whitespace-nowrap">{lang === 'zh' ? 'GitHub 專頁' : 'GitHub Profile'}</span>
-            </a>
+          {(showGithub || showArtstation) && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 w-full max-w-xs sm:max-w-none pt-1 hero-stagger hero-stagger-5">
+              {/* GitHub 個人主頁按鈕 */}
+              {showGithub && (
+                <a
+                  href={links.github}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full sm:w-[230px] lg:w-[245px] h-11 sm:h-12 px-4 sm:px-5 cyber-cut-corner font-hud font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer border group shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                  style={{
+                    backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.95)',
+                    borderColor: isLight ? '#0f172a' : 'rgba(255, 255, 255, 0.65)',
+                    color: isLight ? '#0f172a' : '#ffffff',
+                    boxShadow: isLight ? '0 2px 10px rgba(15, 23, 42, 0.08)' : '0 0 15px rgba(255,255,255,0.1)',
+                  }}
+                >
+                  <TechIcon name="github" size={16} className="shrink-0 fill-current" color={isLight ? '#0f172a' : '#ffffff'} />
+                  <span className="whitespace-nowrap">{lang === 'zh' ? 'GitHub 專頁' : 'GitHub Profile'}</span>
+                </a>
+              )}
 
-            {/* ArtStation 藝術畫廊按鈕 */}
-            <a
-              href={links.artstation}
-              target="_blank"
-              rel="noreferrer"
-              className="w-full sm:w-[230px] lg:w-[245px] h-11 sm:h-12 px-4 sm:px-5 cyber-cut-corner font-hud font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer border group shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-              style={{
-                backgroundColor: isLight ? '#0284c7' : 'rgba(7, 20, 38, 0.95)',
-                borderColor: isLight ? '#0284c7' : '#38bdf8',
-                color: '#ffffff',
-                boxShadow: isLight ? '0 4px 14px rgba(2, 132, 199, 0.25)' : '0 0 15px rgba(19,172,254,0.25)',
-              }}
-            >
-              <TechIcon name="artstation" size={16} className="shrink-0 fill-current" color="#ffffff" />
-              <span className="font-extrabold whitespace-nowrap">{lang === 'zh' ? 'ArtStation 作品集' : 'ArtStation Portfolio'}</span>
-            </a>
-          </div>
+              {/* ArtStation 藝術畫廊按鈕 */}
+              {showArtstation && (
+                <a
+                  href={links.artstation}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="w-full sm:w-[230px] lg:w-[245px] h-11 sm:h-12 px-4 sm:px-5 cyber-cut-corner font-hud font-bold text-xs uppercase tracking-wider transition-all duration-300 hover:-translate-y-0.5 active:scale-95 flex items-center justify-center gap-2 sm:gap-2.5 cursor-pointer border group shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                  style={{
+                    backgroundColor: isLight ? '#0284c7' : 'rgba(7, 20, 38, 0.95)',
+                    borderColor: isLight ? '#0284c7' : '#38bdf8',
+                    color: '#ffffff',
+                    boxShadow: isLight ? '0 4px 14px rgba(2, 132, 199, 0.25)' : '0 0 15px rgba(19,172,254,0.25)',
+                  }}
+                >
+                  <TechIcon name="artstation" size={16} className="shrink-0 fill-current" color="#ffffff" />
+                  <span className="font-extrabold whitespace-nowrap">{lang === 'zh' ? 'ArtStation 作品集' : 'ArtStation Portfolio'}</span>
+                </a>
+              )}
+            </div>
+          )}
 
           {/* 聯絡資訊卡片矩陣 */}
-          <div className="w-full max-w-xs md:max-w-none mx-auto mt-2 sm:mt-3 select-text hero-stagger hero-stagger-6">
-            <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full select-text">
+          {contactList.length > 0 && (
+            <div className="w-full max-w-xs md:max-w-none mx-auto mt-2 sm:mt-3 select-text hero-stagger hero-stagger-6">
+              <div className="flex flex-col md:flex-row items-center justify-center gap-3 w-full select-text">
               {contactList.map((item) => {
                 const label = lang === 'zh' ? item.labelZh : item.labelEn;
                 const isCopied = copiedKey === item.key;
@@ -265,8 +274,9 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
                   </div>
                 );
               })}
+              </div>
             </div>
-          </div>
+          )}
 
         </div>
       </div>

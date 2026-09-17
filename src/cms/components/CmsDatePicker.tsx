@@ -139,15 +139,9 @@ export const CmsDatePicker: React.FC<CmsDatePickerProps> = ({
   const handleEndNativeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value;
     if (!raw) return;
-    const formatted = raw.replace(/-/g, '.');
+    const formatted = raw.replace(/-/g, '/');
     setEndVal(formatted);
     updateCombined(startVal, formatted);
-  };
-
-  const handleSetPresent = () => {
-    const presentLabel = isEn ? 'Present' : '至今';
-    setEndVal(presentLabel);
-    updateCombined(startVal, presentLabel);
   };
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
@@ -276,7 +270,7 @@ export const CmsDatePicker: React.FC<CmsDatePickerProps> = ({
               setEndVal(e.target.value);
               updateCombined(startVal, e.target.value);
             }}
-            placeholder={isEn ? 'YYYY.MM / Present' : 'YYYY.MM / 至今'}
+            placeholder="YYYY/MM"
             disabled={disabled}
             className="w-full min-w-0 px-2.5 py-1.5 text-xs font-mono bg-transparent outline-none text-[var(--text-main)]"
           />
@@ -300,19 +294,8 @@ export const CmsDatePicker: React.FC<CmsDatePickerProps> = ({
           />
         </div>
 
-        {/* 3. 至今快速按鍵與自由編輯切換 */}
+        {/* 3. 自由文字編輯切換按鈕 */}
         <div className="flex items-center gap-1.5 shrink-0">
-          <button
-            type="button"
-            onClick={handleSetPresent}
-            disabled={disabled}
-            className="px-2.5 py-2 border cyber-cut-sm text-[10px] font-['Noto_Sans_TC'] font-bold text-[var(--neon-cyan)] bg-[var(--card-inner)] hover:bg-[var(--neon-cyan)]/15 border-[var(--border-color)] hover:border-[var(--neon-cyan)] transition-colors cursor-pointer disabled:opacity-40 whitespace-nowrap"
-            title={isEn ? 'Set End Date as Present' : '快速設為「至今」'}
-          >
-            <Clock className="w-3 h-3 sm:hidden" />
-            <span className="hidden sm:inline">{isEn ? 'Present' : '至今'}</span>
-          </button>
-
           <button
             type="button"
             onClick={() => setIsManualMode(true)}

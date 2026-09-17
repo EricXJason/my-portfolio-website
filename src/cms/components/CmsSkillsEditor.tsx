@@ -21,6 +21,8 @@ import {
   GripVertical,
   ArrowUp,
   ArrowDown,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -30,6 +32,7 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { CmsTagListEditor } from './CmsTagListEditor';
 import { getLucideIconByName } from './CmsIconPickerModal';
 import defaultSkillsData from '../../data/skills-section.json';
@@ -39,6 +42,7 @@ interface SkillItem {
   label: string;
   rowType: string;
   content: string;
+  visible?: boolean;
 }
 
 interface SkillCategory {
@@ -47,6 +51,7 @@ interface SkillCategory {
   catColor?: string;
   catType: string;
   icon?: string;
+  visible?: boolean;
   items: SkillItem[];
 }
 
@@ -75,9 +80,9 @@ const DEFAULT_SKILLS_META: Record<'zh' | 'en', SkillsMeta> = {
 /** Automatic CIS category dot color indicator */
 const getCategoryDotColor = (catType: string, idx: number): string => {
   if (catType === 'game') return '#00f0ff';
-  if (catType === 'fullstack') return '#a855f7';
-  if (catType === 'media') return '#10b981';
-  const palette = ['#00f0ff', '#a855f7', '#10b981', '#3b82f6'];
+  if (catType === 'fullstack') return '#2563eb';
+  if (catType === 'media') return '#a855f7';
+  const palette = ['#00f0ff', '#2563eb', '#a855f7', '#10b981'];
   return palette[idx % palette.length];
 };
 
@@ -89,12 +94,16 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
   }, [setIsDirty]);
 
   const [formData, setFormData] = useState<SkillsFullData>(() => {
+    if (data.skills) {
+      return data.skills as unknown as SkillsFullData;
+    }
     const defaults = defaultSkillsData as SkillsFullData;
     try {
       const saved = localStorage.getItem('portfolio_skills_data');
@@ -113,7 +122,29 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     return defaults;
   });
 
+  useEffect(() => {
+    if (data.skills) {
+      setFormData(data.skills as unknown as SkillsFullData);
+    }
+  }, [data.skills]);
+
+  // 區塊標題與引言中繼資料（儲存於 portfolio_custom_translations）
   const [skillsMeta, setSkillsMeta] = useState<Record<'zh' | 'en', SkillsMeta>>(() => {
+    if (data.site_translations) {
+      const trans = data.site_translations as any;
+      if (trans.zh?.skills_title || trans.en?.skills_title) {
+        return {
+          zh: {
+            skills_title: trans.zh?.skills_title ?? DEFAULT_SKILLS_META.zh.skills_title,
+            skills_intro: trans.zh?.skills_intro ?? DEFAULT_SKILLS_META.zh.skills_intro,
+          },
+          en: {
+            skills_title: trans.en?.skills_title ?? DEFAULT_SKILLS_META.en.skills_title,
+            skills_intro: trans.en?.skills_intro ?? DEFAULT_SKILLS_META.en.skills_intro,
+          },
+        };
+      }
+    }
     try {
       const saved = localStorage.getItem('portfolio_custom_translations');
       if (saved) {
@@ -130,10 +161,25 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
         };
       }
     } catch {
-      // 解析失敗回退至預設值
+      // 忽略
     }
     return DEFAULT_SKILLS_META;
   });
+
+  // 聆聽廣播存檔事件
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('skills', formData);
+        } catch (e) {
+          console.error('[CMS Skills] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [formData, isPreview, updateDocument]);
 
   const [activeCategoryIndex, setActiveCategoryIndex] = useState<number>(0);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -188,7 +234,7 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
   };
 
 
-  const handleItemChange = (catIdx: number, itemIdx: number, field: 'label' | 'content', value: string) => {
+  const handleItemChange = (catIdx: number, itemIdx: number, field: 'label' | 'content' | 'visible', value: any) => {
     setIsDirty(true);
     setFormData((prev) => {
       const updatedCats = [...prev[lang]];
@@ -330,9 +376,9 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
       isOpen: true,
       type: 'save',
       title: isEn ? 'Confirm Save' : '確認存檔',
-      message: isEn ? 'Are you sure you want to save the changes for the "Skills" module?' : '確定要儲存「專業技能」模組目前的修改內容嗎？',
+      message: isEn ? 'Are you sure you want to save the changes for the "Skills" module to cloud and local cache?' : '確定要儲存「專業技能」模組目前的修改內容至雲端資料庫嗎？',
       confirmText: isEn ? 'Confirm Save' : '確定存檔',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
         try {
           localStorage.setItem('portfolio_skills_data', JSON.stringify(formData));
@@ -343,8 +389,18 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
           customObj.en = { ...(customObj.en || {}), ...skillsMeta.en };
           localStorage.setItem('portfolio_custom_translations', JSON.stringify(customObj));
           window.dispatchEvent(new Event('portfolio_translations_updated'));
-        } catch { /* ignore */ }
-        showToast(isEn ? '"Skills" module saved successfully!' : '「專業技能」模組資料已成功存檔！');
+
+          await updateDocument('skills', formData);
+          await updateDocument('site_translations', {
+            ...(data.site_translations as any || {}),
+            zh: { ...(data.site_translations as any)?.zh, ...skillsMeta.zh },
+            en: { ...(data.site_translations as any)?.en, ...skillsMeta.en },
+          });
+
+          showToast(isEn ? '"Skills" module saved to cloud successfully!' : '「專業技能」模組資料已成功存檔至雲端！');
+        } catch {
+          showToast(isEn ? 'Failed to save to cloud' : '存檔至雲端失敗');
+        }
       },
     });
   };
@@ -356,8 +412,9 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn ? 'Are you sure you want to reset the "Skills" module to default?' : '確定要將「專業技能」模組還原為初始預設值嗎？',
       confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
+        const resetData = defaultSkillsData as SkillsFullData;
         try {
           localStorage.removeItem('portfolio_skills_data');
           window.dispatchEvent(new Event('portfolio_skills_data_updated'));
@@ -369,11 +426,14 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
             localStorage.setItem('portfolio_custom_translations', JSON.stringify(customObj));
             window.dispatchEvent(new Event('portfolio_translations_updated'));
           }
-        } catch { /* ignore */ }
-        setFormData(defaultSkillsData as SkillsFullData);
-        setSkillsMeta(DEFAULT_SKILLS_META);
-        setActiveCategoryIndex(0);
-        showToast(isEn ? '"Skills" module restored to defaults!' : '「專業技能」模組已還原為初始預設資料！');
+          setFormData(resetData);
+          setSkillsMeta(DEFAULT_SKILLS_META);
+          setActiveCategoryIndex(0);
+          await updateDocument('skills', resetData);
+          showToast(isEn ? '"Skills" module restored to defaults!' : '「專業技能」模組已還原為初始預設資料！');
+        } catch {
+          showToast(isEn ? 'Restored locally' : '已重設本地資料');
+        }
       },
     });
   };
@@ -482,11 +542,13 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
           {/* 技能類別頂部標題列 */}
           <div className="flex flex-col gap-4 border-b border-[var(--border-color)] pb-5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Layers className="w-4 h-4 text-[var(--neon-cyan)]" />
-                <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
-                  {isEn ? 'Category Settings' : '分類設定'}
-                </h2>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-[var(--neon-cyan)]" />
+                  <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+                    {isEn ? 'Category Settings' : '分類設定'}
+                  </h2>
+                </div>
               </div>
 
               <div className="flex items-center gap-1.5">
@@ -583,7 +645,32 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
 
                     {/* 技能細項名稱輸入框 */}
                     <div className={`space-y-1 ${isPreview ? 'md:col-span-3' : 'md:col-span-3'}`}>
-                      <label className="text-[11px] font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)]">{isEn ? 'Skill Field' : '技能領域'}</label>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <label className="text-[11px] font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)]">
+                            {isEn ? 'Skill Field' : '技能領域'}
+                          </label>
+                          {item.visible === false && (
+                            <span className="inline-flex items-center gap-0.5 px-1 py-0.2 border cyber-cut-sm text-[9px] font-mono font-bold bg-rose-500/10 text-rose-400 border-rose-500/30">
+                              <EyeOff className="w-2.5 h-2.5" />
+                              <span>{isEn ? 'HIDDEN' : '已隱藏'}</span>
+                            </span>
+                          )}
+                        </div>
+                        <label className="flex items-center gap-1 cursor-pointer select-none text-[10px] font-mono" title={item.visible !== false ? '點擊於前臺隱藏此項目' : '點擊於前臺顯示此項目'}>
+                          <input
+                            type="checkbox"
+                            checked={item.visible !== false}
+                            disabled={isPreview}
+                            onChange={(e) => handleItemChange(activeCategoryIndex, itemIdx, 'visible' as any, e.target.checked)}
+                            className="sr-only peer"
+                          />
+                          <div className="w-6.5 h-3.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
+                          <span className={item.visible !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
+                            {item.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
+                          </span>
+                        </label>
+                      </div>
                       <input type="text" value={item.label} disabled={isPreview} onChange={(e) => handleItemChange(activeCategoryIndex, itemIdx, 'label', e.target.value)}
                         className={`w-full px-3 py-2 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-xs font-bold text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`} />
                     </div>

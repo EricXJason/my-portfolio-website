@@ -401,30 +401,6 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
         </div>
       </div>
 
-      {/* 浮動 HUD 狀態徽章 (WCAG 1.4.3 & 1.4.11 邊框與文字對比度強化) */}
-      <div
-        className="mt-2.5 px-3.5 py-1 border cyber-cut-sm font-tech text-xs font-bold uppercase tracking-wider flex items-center gap-2 shadow-sm backdrop-blur-md transition-all hover:scale-105 whitespace-nowrap shrink-0 z-20"
-        style={{
-          backgroundColor: isLight ? '#ffffff' : 'rgba(8, 14, 26, 0.95)',
-          borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.70)',
-          color: isLight ? '#0369a1' : '#00f0ff',
-          boxShadow: isLight ? '0 2px 8px rgba(2, 132, 199, 0.12)' : '0 0 10px rgba(0, 240, 255, 0.15)',
-        }}
-      >
-        <Sparkles
-          size={15}
-          className="animate-pulse shrink-0"
-          style={{
-            color: isLight ? '#0284c7' : '#00f0ff',
-            filter: isLight
-              ? 'drop-shadow(0 1px 3px rgba(2, 132, 199, 0.35))'
-              : 'drop-shadow(0 0 8px rgba(0, 240, 255, 0.85))',
-          }}
-        />
-        <span className={`arcade-badge whitespace-nowrap ${isLight ? 'text-sky-800 font-extrabold' : 'text-cyan-300 font-extrabold'}`}>
-          {lang === 'zh' ? 'AI 前沿技術跟進中' : 'AI ADVANCEMENT TRACKING'}
-        </span>
-      </div>
     </div>
   );
 };

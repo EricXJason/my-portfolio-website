@@ -182,12 +182,6 @@ export const SectionTitleEditor: React.FC<SectionTitleEditorProps> = ({
           </div>
         )}
       </div>
-
-      <p className="text-[10px] text-[var(--text-sub)]/60 font-['Share_Tech_Mono']">
-        {isEn
-          ? 'These bilingual titles directly reflect on your live portfolio navigation and section headers.'
-          : '此處設定的雙語主標題與引言將即時反映在前臺作品集的錨點導覽與區塊頂端。'}
-      </p>
     </div>
   );
 };

@@ -13,6 +13,7 @@
 import React from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import { Award, GraduationCap, Briefcase, LucideIcon, UserCheck } from 'lucide-react';
 import { getAssetUrl } from '../utils/assetPath';
 import aboutData from '../data/about-section.json';
@@ -35,30 +36,24 @@ interface AboutSectionData {
 
 const iconMap: Record<string, LucideIcon> = {
   graduation: GraduationCap,
-  briefcase: Briefcase,
-  award: Award,
+  briefcase:  Briefcase,
+  award:      Award,
 };
 
 /**
- * TODO: [後端端點對接] 取得使用者模式關於我核心簡介與統計資訊
- * 1. HTTP Method: GET
- * 2. 預期端點: /api/v1/about
- * 3. 請求參數:
- *    - Query Params: lang (string, 'zh' | 'en' | 'ja')
- * 4. 預期回應:
- *    - 200 OK: { success: true, data: { zh: AboutSectionData, en: AboutSectionData, ja: AboutSectionData } }
- *    - 500 Internal Server Error: 伺服器讀取關於我資料失敗
- * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (about-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
+ * About (關於我模組)
+ * 遵循極致科技風 (Sci-Fi Cyber) 與高對比度規範。
  */
 export const About: React.FC = () => {
   const { lang } = useLang();
   const { theme } = useTheme();
+  const { data } = usePortfolioData();
   const isLight = theme === 'light';
 
   const headerRef = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const cardRef   = useScrollReveal(0.08) as React.RefObject<HTMLDivElement>;
 
-  const dataMap = aboutData as unknown as Record<Language, AboutSectionData>;
+  const dataMap = (data.about || aboutData) as unknown as Record<Language, AboutSectionData>;
   const currentData: AboutSectionData = dataMap[lang] ?? dataMap.zh;
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
@@ -83,23 +78,40 @@ export const About: React.FC = () => {
           </p>
         </div>
 
-        {/* 關於我主內容容器 */}
+        {/* 關於我主內容容器 — 頂級科幻毛玻璃面板 (Sci-Fi Glassmorphism HUD Panel) */}
         <div
           ref={cardRef}
-          className="cyber-card p-6 sm:p-10 cyber-cut-corner max-w-6xl mx-auto border shadow-xl"
-          style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)', borderColor: borderCol }}
+          className="cyber-card p-6 sm:p-10 cyber-cut-corner max-w-6xl mx-auto border shadow-2xl relative overflow-hidden backdrop-blur-xl"
+          style={{
+            background: isLight
+              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.90) 0%, rgba(241, 245, 249, 0.80) 100%)'
+              : 'linear-gradient(135deg, rgba(10, 18, 34, 0.52) 0%, rgba(5, 10, 20, 0.62) 100%)',
+            borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)',
+            boxShadow: isLight
+              ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 20px 40px rgba(15, 23, 42, 0.08)'
+              : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.18), inset 0 0 24px rgba(0, 240, 255, 0.05), 0 25px 50px -12px rgba(0, 0, 0, 0.75)',
+          }}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* 微弱 HUD 科技微網紋裝飾 */}
+          <div
+            className="absolute inset-0 pointer-events-none opacity-25 dark:opacity-15"
+            style={{
+              backgroundImage: 'radial-gradient(rgba(0, 240, 255, 0.18) 1px, transparent 1px)',
+              backgroundSize: '24px 24px',
+            }}
+          />
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
 
             {/* 個人形象照容器 */}
             <div className="lg:col-span-5 flex justify-center reveal-left">
               <div className="relative group w-60 h-60 sm:w-64 sm:h-64 lg:w-72 lg:h-72 select-none">
                 <div
-                  className="relative w-full h-full border cyber-cut-corner p-2 shadow-xl hud-corner-brackets flex items-center justify-center overflow-hidden transition-all duration-500 group-hover:scale-[1.02]"
+                  className="relative w-full h-full border cyber-cut-corner p-2 shadow-xl hud-corner-brackets flex items-center justify-center overflow-hidden transition-all duration-500 backdrop-blur-md"
                   style={{
                     backgroundColor: isLight
-                      ? 'rgba(248, 250, 252, 0.95)'
-                      : 'rgba(5, 10, 22, 0.92)',
+                      ? 'rgba(248, 250, 252, 0.88)'
+                      : 'rgba(5, 10, 22, 0.45)',
                     borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.45)',
                     boxShadow: isLight
                       ? '0 10px 30px rgba(2, 132, 199, 0.14), 0 0 0 1px #e2e8f0'
@@ -169,41 +181,67 @@ export const About: React.FC = () => {
                 </p>
               </div>
 
-              {/* 核心成就指標卡（具備明確色彩層次） */}
+              {/* 核心成就指標卡（合理化三維科技色彩體系：藝術青、架構藍、認證金） */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
                 {currentData.stats.map((st, idx) => {
                   const IconComponent = iconMap[st.icon] ?? Award;
 
-                  // 依序套用色彩層次階級（青色、紫色、金色）
-                  const cardAccents = [
-                    { border: isLight ? '#7dd3fc' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.1)', text: isLight ? '#0369a1' : '#00f0ff' },
-                    { border: isLight ? '#c084fc' : '#a855f7', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.1)', text: isLight ? '#6d28d9' : '#c084fc' },
-                    { border: isLight ? '#fcd34d' : '#f59e0b', bg: isLight ? '#fef3c7' : 'rgba(245,158,11,0.1)', text: isLight ? '#92400e' : '#fbbf24' },
-                  ];
-                  const accent = cardAccents[idx % cardAccents.length];
+                  // 還原為早期版本配色：idx 0 (青) / idx 1 (紫) / idx 2 (金)
+                  const getAccentTheme = (index: number) => {
+                    if (index === 0) {
+                      return {
+                        border: isLight ? '#7dd3fc' : 'rgba(0, 240, 255, 0.5)',
+                        bg: isLight ? '#f0f9ff' : 'rgba(0, 240, 255, 0.12)',
+                        cardBorder: isLight ? '#bae6fd' : 'rgba(0, 240, 255, 0.35)',
+                        text: isLight ? '#0284c7' : '#00f0ff',
+                        glow: isLight ? 'none' : '0 0 16px rgba(0, 240, 255, 0.1)',
+                      };
+                    }
+                    if (index === 1) {
+                      return {
+                        border: isLight ? '#d8b4fe' : 'rgba(192, 132, 252, 0.5)',
+                        bg: isLight ? '#faf5ff' : 'rgba(168, 85, 247, 0.12)',
+                        cardBorder: isLight ? '#e9d5ff' : 'rgba(192, 132, 252, 0.35)',
+                        text: isLight ? '#7e22ce' : '#c084fc',
+                        glow: isLight ? 'none' : '0 0 16px rgba(168, 85, 247, 0.1)',
+                      };
+                    }
+                    return {
+                      border: isLight ? '#fde047' : 'rgba(234, 179, 8, 0.5)',
+                      bg: isLight ? '#fefce8' : 'rgba(234, 179, 8, 0.12)',
+                      cardBorder: isLight ? '#fef08a' : 'rgba(234, 179, 8, 0.35)',
+                      text: isLight ? '#ca8a04' : '#eab308',
+                      glow: isLight ? 'none' : '0 0 16px rgba(234, 179, 8, 0.1)',
+                    };
+                  };
+
+                  const cardAccent = getAccentTheme(idx);
 
                   return (
                     <div
                       key={idx}
-                      className={`p-4 border cyber-cut-sm flex flex-col justify-between gap-3 backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-sm stat-reveal reveal-d${(idx + 1) as 1 | 2 | 3}`}
+                      className={`p-4 border cyber-cut-sm flex flex-col justify-between gap-3 backdrop-blur-xl transition-all duration-300 shadow-sm stat-reveal reveal-d${(idx + 1) as 1 | 2 | 3}`}
                       style={{
-                        backgroundColor: isLight ? '#ffffff' : 'rgba(3,7,18,0.8)',
-                        borderColor: isLight ? accent.border : borderCol,
+                        background: isLight
+                          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 250, 252, 0.80) 100%)'
+                          : 'linear-gradient(135deg, rgba(14, 23, 42, 0.50) 0%, rgba(8, 14, 26, 0.60) 100%)',
+                        borderColor: cardAccent.cardBorder,
+                        boxShadow: `${cardAccent.glow}, inset 0 1px 0 0 rgba(255, 255, 255, 0.1)`,
                       }}
                     >
                       <div className="space-y-2">
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2.5">
                           <div
-                            className="p-1.5 border cyber-cut-sm"
-                            style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.text }}
+                            className="p-1.5 border cyber-cut-sm shrink-0 transition-transform duration-300 group-hover:scale-105"
+                            style={{ backgroundColor: cardAccent.bg, borderColor: cardAccent.border, color: cardAccent.text }}
                           >
                             <IconComponent size={16} />
                           </div>
-                          <span className="font-hud font-bold text-xs uppercase tracking-wider" style={{ color: accent.text }}>
+                          <span className="font-hud font-bold text-xs uppercase tracking-wider truncate" style={{ color: cardAccent.text }}>
                             {st.title}
                           </span>
                         </div>
-                        <p className="text-xs font-tech font-bold leading-tight" style={{ color: isLight ? '#0f172a' : '#cbd5e1' }}>
+                        <p className="text-xs font-tech font-bold leading-tight" style={{ color: isLight ? '#0f172a' : '#e2e8f0' }}>
                           {st.label}
                         </p>
                       </div>

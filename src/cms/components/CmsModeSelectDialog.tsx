@@ -16,6 +16,8 @@ import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCmsMode } from '../context/CmsModeContext';
 import { CmsConfirmDialog, CmsConfirmDialogState, EMPTY_DIALOG } from './CmsConfirmDialog';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, isFirebaseConfigured } from '../../services/firebase';
 
 /**
  * CmsModeSelectDialog
@@ -99,18 +101,37 @@ export const CmsModeSelectDialog: React.FC = () => {
    */
   const handleAdminLogin = async () => {
     if (!username.trim() || !password.trim()) {
-      setLoginError(isEn ? 'Username and password are required.' : '帳號與密碼均為必填。');
+      setLoginError(isEn ? 'Email and password are required.' : '管理員信箱與密碼均為必填。');
       return;
     }
 
     setIsLoading(true);
     setLoginError(null);
 
-    // 模擬網路非同步認證延遲
-    await new Promise((r) => setTimeout(r, 900));
+    // 嚴格模式：Firebase 必須已正確初始化
+    if (!auth || !isFirebaseConfigured) {
+      setIsLoading(false);
+      setLoginError(isEn ? 'Firebase Auth service is not ready. Please check connection.' : 'Firebase 雲端認證服務未連線，無法驗證管理員身分。');
+      return;
+    }
 
-    setIsLoading(false);
-    setMode('admin');
+    try {
+      await signInWithEmailAndPassword(auth, username.trim(), password);
+      setIsLoading(false);
+      setMode('admin');
+    } catch (err: any) {
+      setIsLoading(false);
+      const code = err?.code || '';
+      if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+        setLoginError(isEn ? 'Invalid email or password.' : '帳號或密碼錯誤，請確認後重新輸入。');
+      } else if (code === 'auth/invalid-email') {
+        setLoginError(isEn ? 'Invalid email address format.' : '帳號格式需為有效的電子郵件地址。');
+      } else if (code === 'auth/too-many-requests') {
+        setLoginError(isEn ? 'Too many failed attempts. Please try again later.' : '登入嘗試次數過多，帳戶已暫時鎖定，請稍後再試。');
+      } else {
+        setLoginError(err?.message || (isEn ? 'Authentication failed.' : '登入認證失敗，請檢查網路連線。'));
+      }
+    }
   };
 
   // 支援表單輸入框內按 Enter 鍵自動送出登入
@@ -121,14 +142,6 @@ export const CmsModeSelectDialog: React.FC = () => {
   // 直接進入唯讀預覽模式（無須認證憑證）
   const handlePreviewClick = () => {
     setMode('preview');
-  };
-
-  /**
-   * TODO: [開發測試捷徑] 直接略過帳密驗證進入管理者模式
-   * 僅供前端開發與 UI 測試使用，後端 API 完成後此捷徑應鎖定或移除。
-   */
-  const handleTestLogin = () => {
-    setMode('admin');
   };
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
@@ -522,22 +535,6 @@ export const CmsModeSelectDialog: React.FC = () => {
                       <Lock className="w-3.5 h-3.5" />
                       <span>{isEn ? 'ENTER ADMIN MODE' : '進入管理者模式'}</span>
                       <ChevronRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-                    </button>
-
-                    {/* 次要動作：測試登入（開發環境快速旁路） */}
-                    <button
-                      type="button"
-                      onClick={handleTestLogin}
-                      className="w-full flex items-center justify-center gap-2 px-4 py-2 border cyber-cut-sm text-[11px] font-['Share_Tech_Mono'] font-bold transition-all cursor-pointer hover:opacity-80 active:scale-[0.98]"
-                      style={{
-                        backgroundColor: isLight ? 'rgba(245,158,11,0.08)' : 'rgba(245,158,11,0.1)',
-                        color: isLight ? '#b45309' : '#fbbf24',
-                        borderColor: isLight ? 'rgba(245,158,11,0.4)' : 'rgba(245,158,11,0.35)',
-                      }}
-                      title={isEn ? 'Bypass authentication for development testing' : '略過帳密驗證，直接進入管理者模式（開發測試用）'}
-                    >
-                      <FlaskConical className="w-3.5 h-3.5" />
-                      <span>{isEn ? 'TEST LOGIN (Dev Only)' : '測試登入（開發用）'}</span>
                     </button>
                   </div>
                 )}

@@ -13,6 +13,7 @@
 import React from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, Box, LucideIcon, Zap, Layers } from 'lucide-react';
 import skillsData from '../data/skills-section.json';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -23,14 +24,15 @@ interface SkillItem {
   label: string;
   rowType: string;
   content: string;
+  visible?: boolean;
 }
 
 interface SkillCategory {
   category: string;
-  catTier: string;
-  catColor: string;
   catType: string;
+  catTier?: 'primary' | 'secondary';
   icon?: string;
+  visible?: boolean;
   items: SkillItem[];
 }
 
@@ -72,10 +74,17 @@ const getLabelIcon = (label: string, catColor: string) => {
 export const Skills: React.FC = () => {
   const { t, lang } = useLang();
   const { theme } = useTheme();
+  const { data } = usePortfolioData();
   const isLight = theme === 'light';
 
-  const dataMap = skillsData as unknown as Record<Language, SkillCategory[]>;
-  const currentSkills: SkillCategory[] = dataMap[lang] ?? dataMap.zh;
+  const dataMap = (data.skills || skillsData) as unknown as Record<Language, SkillCategory[]>;
+  const rawSkills: SkillCategory[] = dataMap[lang] ?? dataMap.zh;
+  const currentSkills: SkillCategory[] = rawSkills
+    .filter((s) => s.visible !== false)
+    .map((s) => ({
+      ...s,
+      items: s.items.filter((item) => item.visible !== false),
+    }));
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
 
   const primarySkills = currentSkills.filter((s) => s.catTier === 'primary');
@@ -83,12 +92,12 @@ export const Skills: React.FC = () => {
 
   const catAccents: Record<string, { main: string; bg: string; border: string }> = {
     game:      { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)', border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)' },
-    fullstack: { main: isLight ? '#6d28d9' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' },
-    media:     { main: isLight ? '#047857' : '#34d399', bg: isLight ? '#d1fae5' : 'rgba(16,185,129,0.12)', border: isLight ? '#34d399' : 'rgba(16,185,129,0.35)' },
+    fullstack: { main: isLight ? '#0284c7' : '#38bdf8', bg: isLight ? '#e0f2fe' : 'rgba(56,189,248,0.15)', border: isLight ? '#38bdf8' : 'rgba(56,189,248,0.5)' },
+    media:     { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' },
   };
 
   const primaryColor = isLight ? '#0369a1' : '#00f0ff';
-  const secondaryColor = isLight ? '#047857' : '#34d399';
+  const secondaryColor = isLight ? '#7c3aed' : '#c084fc';
 
   const headerRef   = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const primaryRef  = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
@@ -130,10 +139,15 @@ export const Skills: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-xl relative reveal-scale reveal-d${(idx + 1) as 1 | 2}`}
+                  className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-xl relative reveal-scale reveal-d${(idx + 1) as 1 | 2}`}
                   style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
+                    background: isLight
+                      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
+                      : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
                     borderColor: isLight ? accent.border : borderCol,
+                    boxShadow: isLight
+                      ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
+                      : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
                   }}
                 >
                   <div className="space-y-6">
@@ -175,9 +189,9 @@ export const Skills: React.FC = () => {
                         return (
                           <div
                             key={iIdx}
-                            className="p-4 border cyber-cut-sm space-y-2.5 transition-all duration-300 hover:-translate-y-0.5 shadow-xs"
+                            className="p-4 border cyber-cut-sm space-y-2.5 transition-all duration-300 shadow-xs"
                             style={{
-                              backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                              backgroundColor: isLight ? 'rgba(248, 250, 252, 0.85)' : 'rgba(8, 14, 28, 0.45)',
                               borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
                             }}
                           >
@@ -232,10 +246,15 @@ export const Skills: React.FC = () => {
               return (
                 <div
                   key={sIdx}
-                  className="cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-xl space-y-6 reveal-scale reveal-d1"
+                  className="cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-xl space-y-6 reveal-scale reveal-d1"
                   style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
+                    background: isLight
+                      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
+                      : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
                     borderColor: isLight ? accent.border : borderCol,
+                    boxShadow: isLight
+                      ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
+                      : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
                   }}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3 border-b border-slate-700/40 pb-4">
@@ -277,9 +296,9 @@ export const Skills: React.FC = () => {
                       return (
                         <div
                           key={iIdx}
-                          className={`${spanClass} p-4 border cyber-cut-sm flex flex-col justify-start space-y-2.5 transition-all duration-300 hover:-translate-y-0.5 shadow-xs`}
+                          className={`${spanClass} p-4 border cyber-cut-sm flex flex-col justify-start space-y-2.5 transition-all duration-300 shadow-xs`}
                           style={{
-                            backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                            backgroundColor: isLight ? 'rgba(248, 250, 252, 0.85)' : 'rgba(8, 14, 28, 0.45)',
                             borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
                           }}
                         >

@@ -242,7 +242,7 @@ sequenceDiagram
 | **設計體系樣式 (Frontend: Styling)** | Tailwind CSS 4 + CSS3 | 原子化樣式編譯器結合自研 Cyber HUD 幾何切角標記 / Atomic utility classes combined with custom Cyber HUD design tokens |
 | **自動化整合 (DevOps: CI Pipeline)** | GitHub Actions (CI) | 持續整合自動化構建校驗與型別安全閘門 / Continuous automated build checks, TypeScript verification, and lint enforcement |
 | **全球邊緣分發 (DevOps: CD & Edge)** | Cloudflare Pages (CD) | 全球 300+ Anycast 邊緣節點極速分發與無限頻寬 / Infinite bandwidth and instant edge distribution across 300+ global Anycast edge locations |
-| **雲端無伺服器 (Backend: Cloud BaaS)** | Firebase Storage & Auth | 無伺服器多媒體資產儲存庫與管理員身分鑑別 / Serverless asset pipeline for media uploads and authenticated admin session management |
+| **雲端無伺服器 (Backend: Cloud BaaS)** | Firebase Firestore, Auth & Storage (v12) | 無伺服器資料庫 (Offline-First SWR 雙向即時串流同步)、管理員身分安全鑑別與雲端多媒體資產庫 / Serverless database with offline-first real-time SWR sync, admin authentication, and cloud media storage |
 
 ---
 
@@ -285,19 +285,19 @@ sequenceDiagram
 
 ```text
 my-portfolio-website/
-├── docs/                      # 全域動態工程文檔庫 (SSOT - 系統文檔唯一真實來源)
-│   ├── checklist.md           # 單次對話點收清單 (每次對話完全覆寫刷新)
-│   ├── log.md                 # 全中文修訂歷程 (Push 永久保留，日常上限 50 筆，分支與 Git 標色) / Chinese Log with Branch Colors
-│   └── system-design/         # 系統架構設計專案文檔全集 (連續 01~07 閉環)
-│       ├── 01-overview.md     # 系統願景與 C4 拓撲 (Vision & C4 Diagrams)
-│       ├── 02-tech-stack.md   # 技術選型與依賴庫規範 (Tech Stack & Trade-offs)
-│       ├── 03-project-structure.md # 目錄結構與模組拓撲 (Project Structure & Topology)
-│       ├── 04-functional-specs.md  # 展示模組與 CMS 規格 (Functional Specifications)
-│       ├── 05-flowcharts.md   # 核心操作流程與狀態機 (Flowcharts & State Machines)
-│       ├── 06-uml-diagrams.md # UML 類別圖與跨層循序圖 (UML Class & Sequence Diagrams)
-│       └── 07-ui-ux-standards.md  # Cyber HUD 與無障礙標準 (UI/UX & WCAG Standards)
+├── docs/                      # 全域系統設計文檔庫 (SSOT)
+│   └── system-design/         # 系統分析規格清單 (遵循 AGENTS.md 條款 3.2 拓撲)
+│       ├── 01-overview.md     # 願景、承載力與 C4 模型 / Vision, Capacity & C4 Diagrams
+│       ├── 02-tech-stack.md   # 技術選型與依賴庫規範 / Tech Stack Matrix & Trade-offs
+│       ├── 03-architecture.md # 代碼庫結構與模組拓撲 / Architecture & Module Topology
+│       ├── 04-specs-frontend.md # 前端展示模組與 UI 規格 / Frontend & CMS Specifications
+│       ├── 05-specs-database.md # 資料庫集合與 SWR 快取 / Database ERD & SWR Cache
+│       ├── 06-flowcharts.md   # 核心操作流程與狀態機 / Core Business Flowcharts
+│       ├── 07-uml-diagrams.md # UML 類別圖與循序圖 / UML Class & Sequence Diagrams
+│       ├── 08-ui-ux-standards.md # Cyber HUD 與無障礙標準 / UI/UX & Accessibility Standards
+│       └── 09-devops-deployment.md # 邊緣運算部署與 CI/CD / Edge Deployment & CI/CD
 ├── public/                    # 靜態公開資產與 SEO 規範檔案
-│   ├── assets/                # 本地壓縮 WebP 圖片與畫廊多媒體
+│   ├── assets/                # 本地壓縮 WebP 圖片與多媒體
 │   ├── tech-icons/            # 實體向量圖示庫 (SVG)
 │   ├── favicon.svg            # 向量網站圖標
 │   ├── llms.txt               # AI 爬蟲標準規格檔
@@ -308,15 +308,20 @@ my-portfolio-website/
 │   │   ├── context/           # 表單異動追蹤防護 (CmsDirtyContext 未存檔攔截)
 │   │   └── CmsApp.tsx         # CMS 管理後臺主入口
 │   ├── components/            # 前臺展示核心組件 (PascalCase.tsx)
-│   ├── context/               # 全域狀態上下文 (LangContext, ThemeContext)
+│   ├── context/               # 全域狀態上下文 (PortfolioDataContext, LangContext, ThemeContext)
 │   ├── data/                  # 靜態結構化 JSON 資料庫基準
 │   ├── hooks/                 # 可複用 React 自定義 Hooks
+│   ├── services/              # 雲端與外部服務層 (firebase.ts, portfolioDataService.ts)
+│   ├── types/                 # 全域型別契約 (portfolio.ts)
 │   ├── utils/                 # 音訊合成、格式化與 SEO 工具函式庫
 │   ├── App.tsx                # 視圖分流路由與版面外殼
 │   ├── index.css              # Cyber HUD 戰術美學變數與全域動效
 │   └── main.tsx               # 客戶端 DOM 渲染入口
+├── CHANGELOG.md               # 唯一全域修訂歷程紀錄 (SSOT)
 ├── package.json
-└── vite.config.js
+├── tsconfig.json
+├── vite.config.js
+└── wrangler.json
 ```
 
 ---

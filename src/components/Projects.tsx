@@ -12,6 +12,7 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import projectsData from '../data/projects-section.json';
 import {
   Trophy,
@@ -26,6 +27,7 @@ import {
   ChevronUp,
   Cpu,
   LayoutDashboard,
+  Code2,
 } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
 import { getAssetUrl } from '../utils/assetPath';
@@ -58,7 +60,72 @@ interface ProjectItem {
   tags: string[];
   date: string;
   date_en?: string;
+  visible?: boolean;
+  actions?: {
+    custom1?: { label?: string; url: string; icon?: string };
+    custom2?: { label?: string; url: string; icon?: string };
+  };
 }
+
+/** 3D 視差傾斜卡片元件 (Cyberpunk 3D Tilt Card with dynamic light glare) */
+const Tilt3DCard: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  isInteractive?: boolean;
+}> = ({ children, className = '', style = {}, isInteractive }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [transform, setTransform] = useState('');
+  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+
+    // 舒適且不失震撼的 ±7 度 3D 視差旋轉
+    const rotateX = ((0.5 - y) * 14).toFixed(2);
+    const rotateY = ((x - 0.5) * 14).toFixed(2);
+
+    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`);
+    setGlare({ x: x * 100, y: y * 100, opacity: 0.16 });
+  };
+
+  const handleMouseLeave = () => {
+    setTransform('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)');
+    setGlare((prev) => ({ ...prev, opacity: 0 }));
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className={className}
+      style={{
+        ...style,
+        transform: transform || undefined,
+        transition: transform ? 'transform 0.12s ease-out' : 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
+        transformStyle: 'preserve-3d',
+        willChange: 'transform',
+      }}
+    >
+      {children}
+      {/* 3D 滑鼠跟隨光斑反射 */}
+      <div
+        className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300"
+        style={{
+          opacity: glare.opacity,
+          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, ${
+            isInteractive ? 'rgba(0, 240, 255, 0.45)' : 'rgba(56, 189, 248, 0.45)'
+          } 0%, transparent 65%)`,
+          mixBlendMode: 'screen',
+        }}
+      />
+    </div>
+  );
+};
 
 interface ProjectsProps {
   onOpenYoutube: (ytId: string, title: string) => void;
@@ -80,35 +147,35 @@ const categoryMap: Record<string, CategoryStyle> = {
   interactive: {
     zh: '互動應用開發',
     en: 'Interactive App',
-    darkBg: 'rgba(0, 240, 255, 0.18)',
-    darkBorder: '#00f0ff',
+    darkBg: 'rgba(0, 240, 255, 0.12)',
+    darkBorder: 'rgba(0, 240, 255, 0.45)',
     darkText: '#00f0ff',
     lightBg: '#e0f2fe',
     lightBorder: '#0284c7',
     lightText: '#0369a1',
     iconName: 'interactive',
   },
-  frontend: {
-    zh: '前端開發',
-    en: 'Frontend Dev',
-    darkBg: 'rgba(99, 102, 241, 0.22)',
-    darkBorder: '#818cf8',
-    darkText: '#a5b4fc',
-    lightBg: '#e0e7ff',
-    lightBorder: '#4338ca',
-    lightText: '#3730a3',
-    iconName: 'frontend',
-  },
   fullstack: {
     zh: '全端開發',
     en: 'Fullstack Dev',
+    darkBg: 'rgba(59, 130, 246, 0.16)',
+    darkBorder: 'rgba(96, 165, 250, 0.55)',
+    darkText: '#93c5fd',
+    lightBg: '#eff6ff',
+    lightBorder: '#3b82f6',
+    lightText: '#1d4ed8',
+    iconName: 'fullstack',
+  },
+  frontend: {
+    zh: '前端開發',
+    en: 'Frontend Dev',
     darkBg: 'rgba(168, 85, 247, 0.20)',
     darkBorder: '#a855f7',
     darkText: '#c084fc',
     lightBg: '#f3e8ff',
     lightBorder: '#7c3aed',
     lightText: '#6b21a8',
-    iconName: 'fullstack',
+    iconName: 'frontend',
   },
 };
 
@@ -149,7 +216,9 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
    *    - 500 Internal Server Error: 伺服器讀取專案列表失敗
    * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (projects-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
    */
-  const projects = projectsData as ProjectItem[];
+  const { data } = usePortfolioData();
+  const rawProjects = ((data.projects || projectsData) as ProjectItem[]);
+  const projects = rawProjects.filter((p) => p.visible !== false);
 
   // 鍵盤按下 Escape 鍵時關閉專案詳細資訊彈窗
   useEffect(() => {
@@ -177,12 +246,12 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const targetProjectsList = useMemo(() => {
     if (filter === 'featured') {
-      const featuredItems = projects.filter((p) => p.featured);
-      // 確保精選專案永不消失：若當前資料沒有標記 featured，自動回退使用預設之三大精選專案
+      const featuredItems = projects.filter((p) => p.featured && p.visible !== false);
+      // 確保精選專案永不消失：若當前資料沒有標記 featured，自動回退使用預設之三大精選專案（且嚴格排除隱藏項目）
       const activeFeatured =
         featuredItems.length > 0
           ? featuredItems
-          : (projectsData as ProjectItem[]).filter((p) => p.featured);
+          : rawProjects.filter((p) => p.featured && p.visible !== false);
 
       return showAllProjects
         ? allProjectsSorted
@@ -191,12 +260,35 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     if (filter === 'all') {
       return allProjectsSorted;
     }
-    return projects.filter((p) => p.category === filter).sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+    return projects.filter((p) => p.category === filter && p.visible !== false).sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
   }, [filter, showAllProjects, projects, allProjectsSorted]);
+
+  // 左右雙旗艦領域資料集：互動應用與遊戲引擎 (左 3) vs 現代全端與雲端架構 (右 3)（嚴格排除隱藏項目）
+  const featuredInteractiveProjects = useMemo(() => {
+    const list = projects
+      .filter((p) => p.category === 'interactive' && p.featured && p.visible !== false)
+      .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999));
+    if (list.length >= 3) return list.slice(0, 3);
+    const fallbacks = projects
+      .filter((p) => p.category === 'interactive' && p.visible !== false)
+      .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+    return fallbacks.slice(0, 3);
+  }, [projects]);
+
+  const featuredFullstackProjects = useMemo(() => {
+    const list = projects
+      .filter((p) => (p.category === 'fullstack' || p.category === 'frontend') && p.featured && p.visible !== false)
+      .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999));
+    if (list.length >= 3) return list.slice(0, 3);
+    const fallbacks = projects
+      .filter((p) => (p.category === 'fullstack' || p.category === 'frontend') && p.visible !== false)
+      .sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
+    return fallbacks.slice(0, 3);
+  }, [projects]);
 
   const visibleProjects = useMemo(() => {
     if (filter === 'featured') {
-      return targetProjectsList.slice(0, 3);
+      return targetProjectsList.slice(0, 6);
     }
     if (filter === 'all') {
       return showAllProjects ? targetProjectsList : targetProjectsList.slice(0, 4);
@@ -206,13 +298,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const isFeaturedSideBySideView = filter === 'featured';
 
-  // 專案類別篩選順序：精選作品 -> 全部作品 -> 互動應用 -> 前端網頁 -> 全端架構
+  // 專案類別篩選順序：精選作品 -> 全部作品 -> 互動應用 (青) -> 全端開發 (藍) -> 前端開發 (紫)
   const filters = [
     { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
     { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
     { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
-    { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={15} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
+    { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={15} /> },
   ];
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
@@ -253,7 +345,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
    *   - 3 個按鈕：上列左右雙欄並排，下列單一滿寬橫幅（寬版按鈕美學）
    *   - 4 個按鈕：四等分 2x2 方正網格
    */
-  const renderProjectActionButtons = (project: ProjectItem) => {
+  const renderProjectActionButtons = (project: ProjectItem, isCompact = false) => {
     const orderList = project.buttonOrder && project.buttonOrder.length > 0
       ? project.buttonOrder
       : ['video', 'live', 'admin', 'github'];
@@ -287,7 +379,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     if (availableKeys.length === 0) {
       return (
         <div
-          className="w-full py-2.5 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 opacity-80"
+          className={`w-full ${isCompact ? 'py-1 px-2 text-[11px] h-8' : 'py-2.5 px-3 text-xs sm:text-sm'} border font-tech font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 opacity-80`}
           style={{
             backgroundColor: isLight ? '#f1f5f9' : 'rgba(148, 163, 184, 0.1)',
             borderColor: isLight ? '#cbd5e1' : 'rgba(148, 163, 184, 0.25)',
@@ -300,7 +392,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     }
 
     const renderSingleBtn = (key: ButtonKey, colSpanClass: string) => {
-      const baseClass = `${colSpanClass} py-2.5 px-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all hover:scale-[1.02] shadow-xs`;
+      const baseClass = `${colSpanClass} ${isCompact ? 'py-1.5 px-3 text-xs h-8.5' : 'py-2.5 px-3 text-xs sm:text-sm h-10'} border font-tech font-bold uppercase cyber-cut-sm flex items-center justify-center gap-1.5 transition-all hover:scale-[1.01] shadow-xs whitespace-nowrap overflow-hidden`;
 
       if (key === 'video') {
         const vid = project.videoUrl || project.ytId || '';
@@ -309,15 +401,15 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             key="btn-video"
             type="button"
             onClick={() => handleWatchVideo(vid)}
-            className={`${baseClass} cursor-pointer`}
+            className={`${baseClass} cursor-pointer group/vidbtn`}
             style={{
-              backgroundColor: isLight ? '#ffe4e6' : 'rgba(225, 29, 72, 0.25)',
-              borderColor: isLight ? '#f43f5e' : '#e11d48',
-              color: isLight ? '#be123c' : '#fda4af',
+              backgroundColor: isLight ? '#ffe4e6' : 'rgba(225, 29, 72, 0.16)',
+              borderColor: isLight ? '#f43f5e' : 'rgba(244, 63, 94, 0.65)',
+              color: isLight ? '#be123c' : '#fecdd3',
             }}
           >
-            <TechIcon name="youtube" size={15} className="text-rose-500 shrink-0 fill-current" />
-            <span>{lang === 'zh' ? '展示影片' : 'VIDEO'}</span>
+            <TechIcon name="youtube" size={isCompact ? 14 : 15} className="shrink-0 fill-current text-red-500 transition-transform duration-300 group-hover/vidbtn:scale-110" />
+            <span className="whitespace-nowrap transition-colors duration-200 group-hover/vidbtn:text-white">{lang === 'zh' ? '展示影片' : 'VIDEO'}</span>
           </button>
         );
       }
@@ -337,8 +429,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               color: isLight ? '#0369a1' : '#00f0ff',
             }}
           >
-            <Globe size={14} className="shrink-0" />
-            <span>{lang === 'zh' ? '前往前臺' : 'LIVE DEMO'}</span>
+            <Globe size={isCompact ? 13 : 14} className="shrink-0" />
+            <span className="whitespace-nowrap">{lang === 'zh' ? '前往前臺' : 'LIVE DEMO'}</span>
           </a>
         );
       }
@@ -357,8 +449,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               color: isLight ? '#6b21a8' : '#e9d5ff',
             }}
           >
-            <LayoutDashboard size={14} className="shrink-0" />
-            <span>{lang === 'zh' ? '前往後臺' : 'ADMIN CMS'}</span>
+            <LayoutDashboard size={isCompact ? 13 : 14} className="shrink-0" />
+            <span className="whitespace-nowrap">{lang === 'zh' ? '前往後臺' : 'ADMIN CMS'}</span>
           </a>
         );
       }
@@ -377,8 +469,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               color: isLight ? '#0f172a' : '#ffffff',
             }}
           >
-            <TechIcon name="github" size={15} className="shrink-0 fill-current" style={{ color: isLight ? '#0f172a' : '#ffffff' }} />
-            <span>{lang === 'zh' ? '專案原始碼' : 'SOURCE'}</span>
+            <TechIcon name="github" size={isCompact ? 14 : 15} className="shrink-0 fill-current" style={{ color: isLight ? '#0f172a' : '#ffffff' }} />
+            <span className="whitespace-nowrap">{lang === 'zh' ? '專案代碼' : 'SOURCE'}</span>
           </a>
         );
       }
@@ -390,15 +482,15 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
     if (count === 1) {
       return (
-        <div className="w-full">
-          {renderSingleBtn(availableKeys[0], 'w-full')}
+        <div className="w-full flex justify-center">
+          {renderSingleBtn(availableKeys[0], isCompact ? 'w-1/2 min-w-[160px]' : 'w-full')}
         </div>
       );
     }
 
     if (count === 2) {
       return (
-        <div className="grid grid-cols-2 gap-2 sm:gap-2.5 w-full">
+        <div className={`grid grid-cols-2 ${isCompact ? 'gap-2.5' : 'gap-2 sm:gap-2.5'} w-full`}>
           {renderSingleBtn(availableKeys[0], 'col-span-1')}
           {renderSingleBtn(availableKeys[1], 'col-span-1')}
         </div>
@@ -406,19 +498,18 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     }
 
     if (count === 3) {
-      // 3 Buttons: Top row 2 buttons, Bottom row 1 full-width button
       return (
-        <div className="grid grid-cols-2 gap-2 sm:gap-2.5 w-full">
+        <div className={`grid grid-cols-3 ${isCompact ? 'gap-2 sm:gap-2.5' : 'gap-2 sm:gap-2.5'} w-full`}>
           {renderSingleBtn(availableKeys[0], 'col-span-1')}
           {renderSingleBtn(availableKeys[1], 'col-span-1')}
-          {renderSingleBtn(availableKeys[2], 'col-span-2 w-full')}
+          {renderSingleBtn(availableKeys[2], 'col-span-1')}
         </div>
       );
     }
 
-    // 4 Buttons: 2x2 grid
+    // 4 Buttons: 2x2 or 4x1 grid
     return (
-      <div className="grid grid-cols-2 gap-2 sm:gap-2.5 w-full">
+      <div className={`grid grid-cols-2 sm:grid-cols-4 ${isCompact ? 'gap-2' : 'gap-2 sm:gap-2.5'} w-full`}>
         {availableKeys.map((k) => renderSingleBtn(k, 'col-span-1'))}
       </div>
     );
@@ -473,57 +564,127 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           })}
         </div>
 
-        {/* 精選作品模式：3 大核心代表作品並排網格 */}
+        {/* 精選作品模式：雙領域左右對稱 3+3 雙旗艦緊湊排版 (Dual-Domain Compact Symmetrical Showcase) */}
         {isFeaturedSideBySideView ? (
-          <div ref={gridRef} className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {visibleProjects.map((project, pIdx) => {
-              const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
-              const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
-              const categoryObj = categoryMap[project.category] ?? fallbackCategoryStyle;
-              const categoryLabel = lang === 'zh' ? categoryObj.zh : categoryObj.en;
-
-              return (
-                <article
-                  key={project.id}
-                  className={`cyber-card p-6 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-lg relative flex flex-col justify-between reveal-scale reveal-d${((pIdx % 3) + 1) as 1 | 2 | 3}`}
-                  style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
-                    borderColor: borderCol,
-                  }}
+          <div ref={gridRef} className="max-w-6xl mx-auto space-y-4 sm:space-y-5">
+            {/* 領域對等標頭 (Equal-Status Pillar Headers) — 乾淨俐落、居中正中、官方分類名稱 */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-center pt-2">
+              {/* 左側：互動應用開發 (青色 #00f0ff) */}
+              <div
+                className="flex items-center justify-center pb-2.5 border-b-2 relative"
+                style={{ borderColor: isLight ? '#38bdf8' : 'rgba(0, 240, 255, 0.45)' }}
+              >
+                <h3
+                  className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
+                  style={{ color: isLight ? '#0369a1' : '#00f0ff' }}
                 >
-                  <div className="flex-1 flex flex-col justify-between">
-                    <div className="space-y-4">
-                      {/* 封面縮圖 — 點擊開啟完整詳細資訊彈窗 */}
-                      <div
-                        className="relative group overflow-hidden cyber-cut-corner border shadow-md cursor-pointer aspect-video w-full"
-                        style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0,240,255,0.35)' }}
-                        onClick={() => setSelectedProjectModal(project)}
-                      >
-                        <img
-                          src={getAssetUrl(project.image)}
-                          alt={title}
-                          width="640"
-                          height="360"
-                          className="w-full h-full aspect-video object-cover object-center transition-transform duration-700 group-hover:scale-105"
-                          loading="lazy"
-                          decoding="async"
+                  {lang === 'zh' ? categoryMap.interactive.zh : categoryMap.interactive.en}
+                </h3>
+              </div>
+
+              {/* 右側：全端開發 (極光電光天藍 #38bdf8 - 高對比清晰透亮) */}
+              <div
+                className="flex items-center justify-center pb-2.5 border-b-2 relative"
+                style={{ borderColor: isLight ? '#0284c7' : 'rgba(56, 189, 248, 0.6)' }}
+              >
+                <h3
+                  className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
+                  style={{ color: isLight ? '#0284c7' : '#38bdf8' }}
+                >
+                  {lang === 'zh' ? categoryMap.fullstack.zh : categoryMap.fullstack.en}
+                </h3>
+              </div>
+            </div>
+
+            {/* 3 列雙欄等高卡片配對 (Symmetrical Row-By-Row Grid) */}
+            {[0, 1, 2].map((idx) => {
+              const leftProject = featuredInteractiveProjects[idx];
+              const rightProject = featuredFullstackProjects[idx];
+
+              const renderCompactCard = (project: ProjectItem | undefined, domain: 'interactive' | 'fullstack', pIdx: number) => {
+                if (!project) return <div className="hidden lg:block" />;
+
+                const isInteractive = domain === 'interactive';
+                const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
+                const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
+                const categoryObj = categoryMap[project.category] ?? fallbackCategoryStyle;
+                const categoryLabel = lang === 'zh' ? categoryObj.zh : categoryObj.en;
+                const isPlaceholder = !project.image || project.image.includes('placeholder');
+
+                return (
+                  <Tilt3DCard
+                    key={project.id}
+                    isInteractive={isInteractive}
+                    className={`cyber-card border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-lg relative flex flex-col overflow-hidden group reveal-scale reveal-d${((pIdx % 3) + 1) as 1 | 2 | 3}`}
+                    style={{
+                      background: isInteractive
+                        ? (isLight
+                            ? 'linear-gradient(145deg, #f0fdfa 0%, #ffffff 60%, #f8fafc 100%)'
+                            : 'linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)')
+                        : (isLight
+                            ? 'linear-gradient(145deg, #eff6ff 0%, #ffffff 60%, #f8fafc 100%)'
+                            : 'linear-gradient(145deg, rgba(59, 130, 246, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)'),
+                      borderColor: isInteractive
+                        ? (isLight ? '#7dd3fc' : 'rgba(0, 240, 255, 0.35)')
+                        : (isLight ? '#93c5fd' : 'rgba(96, 165, 250, 0.38)'),
+                      boxShadow: isLight
+                        ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 4px 20px rgba(0,0,0,0.04)'
+                        : isInteractive
+                          ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 240, 255, 0.1)'
+                          : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(59, 130, 246, 0.1)',
+                    }}
+                  >
+                    {/* 1. 頂部通欄 Header：作品名稱（左）＋ 右邊標籤（右，嚴格單行絕對不折行） */}
+                    <div
+                      className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between gap-3 min-w-0"
+                      style={{
+                        backgroundColor: isLight
+                          ? (isInteractive ? 'rgba(240, 253, 250, 0.9)' : 'rgba(239, 246, 255, 0.9)')
+                          : (isInteractive ? 'rgba(0, 240, 255, 0.05)' : 'rgba(59, 130, 246, 0.05)'),
+                        borderColor: isInteractive
+                          ? (isLight ? '#bae6fd' : 'rgba(0, 240, 255, 0.22)')
+                          : (isLight ? '#bfdbfe' : 'rgba(96, 165, 250, 0.22)'),
+                      }}
+                    >
+                      <div className="flex items-center gap-2 min-w-0 flex-1">
+                        <div
+                          className="w-1.5 h-4 rounded-xs shrink-0 transition-all duration-300 group-hover:scale-y-125"
+                          style={{
+                            backgroundColor: isInteractive ? '#00f0ff' : '#3b82f6',
+                            boxShadow: isInteractive
+                              ? '0 0 8px rgba(0, 240, 255, 0.7)'
+                              : '0 0 8px rgba(59, 130, 246, 0.7)',
+                          }}
                         />
-                        <div className="card-scanline-laser opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
+                        <h4
+                          className={`text-sm sm:text-base font-black font-hud uppercase tracking-tight cursor-pointer transition-colors leading-tight truncate ${
+                            isInteractive ? 'hover:text-cyan-400' : 'hover:text-blue-400'
+                          }`}
+                          style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+                          onClick={() => setSelectedProjectModal(project)}
+                          title={title}
+                        >
+                          {title}
+                        </h4>
                       </div>
 
-                      {/* 專案名稱 */}
-                      <h3
-                        className="text-xl sm:text-2xl font-black font-hud uppercase tracking-tight cursor-pointer hover:text-cyan-400 transition-colors"
-                        style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-                        onClick={() => setSelectedProjectModal(project)}
-                      >
-                        {title}
-                      </h3>
-
-                      {/* 專案分類徽章與 AI 標籤橫列 */}
-                      <div className="flex items-center flex-wrap gap-2 pt-0.5">
+                      <div className="flex items-center gap-2 shrink-0">
+                        {(project.isFullAi || project.aiAssisted) && (
+                          <span
+                            className="px-2.5 py-1 border font-tech text-xs font-extrabold uppercase cyber-cut-sm flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap tracking-wide"
+                            style={{
+                              backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.15)',
+                              borderColor: isLight ? '#34d399' : '#10b981',
+                              color: isLight ? '#065f46' : '#34d399',
+                            }}
+                            title="AI-Assisted Dev"
+                          >
+                            <Cpu size={13} className="shrink-0 text-emerald-400" />
+                            <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
+                          </span>
+                        )}
                         <span
-                          className="px-3 py-1 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm shadow-xs w-fit flex items-center gap-1.5"
+                          className="px-2.5 py-1 border font-tech text-xs font-extrabold uppercase cyber-cut-sm flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap tracking-wide"
                           style={{
                             backgroundColor: isLight ? categoryObj.lightBg : categoryObj.darkBg,
                             borderColor: isLight ? categoryObj.lightBorder : categoryObj.darkBorder,
@@ -533,42 +694,87 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           {renderCategoryIcon(categoryObj.iconName, 13, "shrink-0")}
                           <span>{categoryLabel}</span>
                         </span>
-                        {(project.isFullAi || project.aiAssisted) && (
-                          <span className="px-2.5 py-1 border border-solid rounded-none font-tech text-xs font-bold uppercase tracking-wider shrink-0 flex items-center gap-1 shadow-xs transition-shadow"
-                            style={{
-                              backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.12)',
-                              borderColor: isLight ? '#34d399' : '#10b981',
-                              color: isLight ? '#065f46' : '#a7f3d0',
-                              boxShadow: isLight ? 'none' : '0 0 6px rgba(16, 185, 129, 0.35)',
-                            }}
-                          >
-                            <Cpu size={12} className="shrink-0" />
-                            <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
-                          </span>
+                      </div>
+                    </div>
+
+                    {/* 2. 中間主體：左側 16:9 圖片 vs 右側 敘述容器 (完全符合手繪示意圖 50/50 左右配置) */}
+                    <div className="p-3.5 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 items-stretch flex-1">
+                      {/* 左側：圖片 保持 16 比 9 */}
+                      <div
+                        className="w-full aspect-video rounded-sm relative overflow-hidden bg-slate-950 border cyber-cut-sm cursor-pointer flex items-center justify-center group/thumb self-center"
+                        style={{
+                          borderColor: isInteractive
+                            ? (isLight ? '#bae6fd' : 'rgba(0,240,255,0.25)')
+                            : (isLight ? '#bfdbfe' : 'rgba(96,165,250,0.3)'),
+                        }}
+                        onClick={() => setSelectedProjectModal(project)}
+                      >
+                        {isPlaceholder ? (
+                          <div className="w-full h-full aspect-video p-3 flex flex-col items-center justify-center text-center space-y-1 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 select-none">
+                            <div className="w-7 h-7 rounded-sm flex items-center justify-center border border-slate-700/80 bg-slate-800/60 text-slate-400 group-hover/thumb:text-blue-400 transition-colors">
+                              <Code2 size={15} />
+                            </div>
+                            <span className="font-tech text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+                              {lang === 'zh' ? '即將推出' : 'IN DEV'}
+                            </span>
+                            <span className="font-tech text-[8px] text-slate-500 uppercase tracking-widest">
+                              PROTOTYPE
+                            </span>
+                          </div>
+                        ) : (
+                          <>
+                            <img
+                              src={getAssetUrl(project.image)}
+                              alt={title}
+                              width="640"
+                              height="360"
+                              className="w-full h-full aspect-video object-cover object-center transition-transform duration-500 group-hover/thumb:scale-105"
+                              loading="lazy"
+                              decoding="async"
+                            />
+                            <div className="card-scanline-laser opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
+                          </>
                         )}
                       </div>
 
-                      {/* 完整專案介紹 */}
-                      <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
-                        {desc}
-                      </p>
+                      {/* 右側：敘述 (手繪圖黃色區塊：帶舒適背景與邊框的敘述專用區塊) */}
+                      <div
+                        className="p-3 sm:p-3.5 rounded-sm border flex items-center transition-colors"
+                        style={{
+                          backgroundColor: isLight ? '#f1f5f9' : 'rgba(15, 23, 42, 0.45)',
+                          borderColor: isLight ? '#e2e8f0' : 'rgba(51, 65, 85, 0.5)',
+                        }}
+                      >
+                        <p
+                          className="text-xs sm:text-[13px] font-tech leading-relaxed"
+                          style={{ color: isLight ? '#334155' : '#cbd5e1' }}
+                        >
+                          {desc}
+                        </p>
+                      </div>
                     </div>
 
-                    {/* 技術標籤晶片組（固定於底部保持水平對齊） */}
-                    <div className="flex flex-wrap items-center gap-1.5 pt-3 mt-auto">
-                      {project.tags.map((tTag, idx) => (
-                        <span key={idx} className="tech-tag px-2.5 py-1 border text-xs font-semibold inline-flex items-center">
-                          <span>{tTag}</span>
-                        </span>
-                      ))}
+                    {/* 3. 底部通欄：按鈕區域 (手繪圖紫色底層：整行滿寬排開，絕無窄欄擠壓) */}
+                    <div
+                      className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-t mt-auto"
+                      style={{
+                        backgroundColor: isLight ? '#f8fafc' : 'rgba(3, 7, 18, 0.6)',
+                        borderColor: isInteractive
+                          ? (isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.18)')
+                          : (isLight ? '#eff6ff' : 'rgba(96, 165, 250, 0.18)'),
+                      }}
+                    >
+                      {renderProjectActionButtons(project, true)}
                     </div>
-                  </div>
+                  </Tilt3DCard>
+                );
+              };
 
-                  {/* 動作按鈕組 — 依設定動態排版 */}
-                  <div className="pt-4 mt-2 border-t border-slate-700/30">
-                    {renderProjectActionButtons(project)}
-                  </div>
-                </article>
+              return (
+                <div key={idx} className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-stretch">
+                  {renderCompactCard(leftProject, 'interactive', idx)}
+                  {renderCompactCard(rightProject, 'fullstack', idx)}
+                </div>
               );
             })}
           </div>
@@ -587,10 +793,15 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               return (
                 <article
                   key={project.id}
-                  className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 shadow-lg relative reveal-left reveal-d${((lIdx % 3) + 1) as 1 | 2 | 3}`}
+                  className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-lg relative reveal-left reveal-d${((lIdx % 3) + 1) as 1 | 2 | 3}`}
                   style={{
-                    backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
+                    background: isLight
+                      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
+                      : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
                     borderColor: borderCol,
+                    boxShadow: isLight
+                      ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
+                      : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
                   }}
                 >
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
@@ -652,7 +863,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                                 }}
                               >
                                 <Cpu size={12} className="shrink-0" />
-                                <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
+                                <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
                               </span>
                             )}
                             <span className="text-xs sm:text-sm font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>
@@ -720,8 +931,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           <div
             className="max-w-3xl mx-auto p-10 sm:p-12 text-center border cyber-cut-corner backdrop-blur-xl space-y-4 my-8 shadow-lg reveal-scale"
             style={{
-              backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
+              background: isLight
+                ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
+                : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
               borderColor: borderCol,
+              boxShadow: isLight
+                ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
+                : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
             }}
           >
             <div className="flex justify-center text-slate-500">
@@ -912,7 +1128,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                             }}
                           >
                             <Cpu size={12} className="shrink-0" />
-                            <span>{lang === 'zh' ? '100% AI 開發' : '100% AI DEV'}</span>
+                            <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
                           </span>
                         )}
                         <span className="text-xs sm:text-sm font-tech font-bold font-mono whitespace-nowrap" style={{ color: isLight ? '#334155' : '#a5f3fc' }}>

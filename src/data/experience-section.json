@@ -130,7 +130,7 @@
     "workshops": [
       {
         "title": "2026 AI 賦能：Java & Angular 全端整合開發實戰養成班",
-        "date": "2026/7 ~ 2026/12",
+        "date": "2026/07 ~ 2026/12",
         "org": "主辦單位：勞動部高屏澎東分署 × 高雄市電腦商業同業公會",
         "iconType": "code",
         "driveLinkKey": "taiwanLaborJavaAngularBootcampProofDriveUrl",
@@ -146,7 +146,7 @@
       },
       {
         "title": "2023 T大使計畫-PBR流程的次世代3D模型製作",
-        "date": "2023/6 ~ 2023/10",
+        "date": "2023/06 ~ 2023/10",
         "org": "主辦單位：數位發展部 T大使計畫 × 樂美館股份有限公司",
         "iconType": "box",
         "driveLinkKey": "tAmbassadorPbr3dModelingWorkshopProofDriveUrl",
@@ -160,7 +160,7 @@
       },
       {
         "title": "2023 VTuber 虛擬網紅快速開發應用研習課程",
-        "date": "2023/4 ~ 2023/4",
+        "date": "2023/04 ~ 2023/04",
         "org": "主辦單位：國立虎尾科技大學多媒體設計系 × 愛迪斯科技股份有限公司",
         "iconType": "video",
         "driveLinkKey": "nfuVtuberMoCapWorkshopProofDriveUrl",
@@ -174,7 +174,7 @@
       },
       {
         "title": "2022 冒險者必學UE遊戲工程課研習",
-        "date": "2022/9 ~ 2022/11",
+        "date": "2022/09 ~ 2022/11",
         "org": "主辦單位：夢想方舟",
         "iconType": "gamepad-2",
         "driveLinkKey": "dreamArkUnrealEngineWorkshopProofDriveUrl",
@@ -190,6 +190,7 @@
     ],
     "theses": [
       {
+        "date": "2026/07",
         "title": "《覺醒協議》：基於認知發展理論的虛擬實境遊戲設計",
         "venue": "國立臺灣藝術大學設計學院 碩士論文",
         "desc": "採實踐本位研究，以 Piaget 認知發展四階段為設計架構，將感知探索至抽象推理轉譯為 VR 遞進關卡。獲設計學院畢業創作影片補助。",
@@ -200,6 +201,7 @@
         "slidesBtnText": "檢視論文簡報"
       },
       {
+        "date": "2025/04",
         "title": "跑酷遊戲的創新策略：行動遊戲市場的案例研究",
         "venue": "2025 臺北數位圖像國際學術研討會",
         "desc": "運用文獻分析與案例研究，深入探討行動跑酷遊戲之多層次關卡、隨機生成與角色成長機制，提出遊戲市場創新與盈利改進建議。",
@@ -327,7 +329,7 @@
     "workshops": [
       {
         "title": "2026 AI-Enabled Java & Angular Fullstack Bootcamp",
-        "date": "2026/7 ~ 2026/12",
+        "date": "2026/07 ~ 2026/12",
         "org": "Organizer: Ministry of Labor & Kaohsiung Computer Association",
         "iconType": "code",
         "driveLinkKey": "taiwanLaborJavaAngularBootcampProofDriveUrl",
@@ -343,7 +345,7 @@
       },
       {
         "title": "2023 T-Ambassador Program - Next-Gen PBR 3D Modeling",
-        "date": "2023/6 ~ 2023/10",
+        "date": "2023/06 ~ 2023/10",
         "org": "Organizer: Ministry of Digital Affairs × Melody Co., Ltd.",
         "iconType": "box",
         "driveLinkKey": "tAmbassadorPbr3dModelingWorkshopProofDriveUrl",
@@ -357,7 +359,7 @@
       },
       {
         "title": "2023 VTuber Rapid Development & MoCap Workshop",
-        "date": "2023/4 ~ 2023/4",
+        "date": "2023/04 ~ 2023/04",
         "org": "Organizer: NFU Multimedia Design × Axis 3D Technology",
         "iconType": "video",
         "driveLinkKey": "nfuVtuberMoCapWorkshopProofDriveUrl",
@@ -371,7 +373,7 @@
       },
       {
         "title": "2022 UE Game Engineering Workshop for Adventurers",
-        "date": "2022/9 ~ 2022/11",
+        "date": "2022/09 ~ 2022/11",
         "org": "Organizer: Dream Ark",
         "iconType": "gamepad-2",
         "driveLinkKey": "dreamArkUnrealEngineWorkshopProofDriveUrl",
@@ -387,6 +389,7 @@
     ],
     "theses": [
       {
+        "date": "2026/07",
         "title": "Awakening Protocol: Virtual Reality Game Design Based on Cognitive Development Theory",
         "venue": "NTUA Design College — Master's Thesis",
         "desc": "Practice-based research translating Piaget's cognitive development stages into progressive VR gameplay. Awarded NTUA Graduation Film Grant.",
@@ -397,6 +400,7 @@
         "slidesBtnText": "View Presentation Slides"
       },
       {
+        "date": "2025/04",
         "title": "Innovative Strategies of Parkour Games: A Case Study in Mobile Gaming Market",
         "venue": "2025 Taipei Digital Image International Symposium",
         "desc": "Explores level design, procedural generation, and monetization in mobile runner games, proposing innovative frameworks for modern game design.",

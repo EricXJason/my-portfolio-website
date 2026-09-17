@@ -17,8 +17,8 @@
   --header-bg:    rgba(3, 7, 18, 0.94);
   --text-main:    #f8fafc;      /* High contrast AAA white */
   --text-sub:     #cbd5e1;      /* Slate-300 readable secondary */
-  --card-bg:      rgba(8, 14, 26, 0.96);
-  --card-inner:   rgba(3, 7, 18, 0.90);
+  --card-bg:      rgba(13, 23, 42, 0.52);   /* Frosted Sci-Fi Acrylic Glass */
+  --card-inner:   rgba(6, 12, 24, 0.45);
   --border-color: rgba(0, 240, 255, 0.22);
 
   /* Cyber Neon Accents */
@@ -274,25 +274,21 @@ body {
   transition: all 0.3s ease;
 }
 
-.glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)),
-.cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)) {
-  border-color: var(--neon-cyan) !important;
-  box-shadow: 0 0 15px rgba(0, 240, 255, 0.16), 0 8px 24px rgba(0, 0, 0, 0.35);
+.glass-card:hover,
+.cyber-card:hover {
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.14), 0 12px 30px rgba(0, 0, 0, 0.45);
 }
 
-.glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::before,
-.cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::before {
-  opacity: 1;
-}
-
-.glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::after,
-.cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover))::after {
+.glass-card:hover::before,
+.cyber-card:hover::before,
+.glass-card:hover::after,
+.cyber-card:hover::after {
   opacity: 1;
 }
 
 /* ── Light Mode Independent Styling ── */
 :root.light .glass-card, :root.light .cyber-card {
-  background-color: #ffffff !important;
+  background-color: rgba(255, 255, 255, 0.88) !important;
   border-color: #cbd5e1 !important;
   box-shadow: 0 4px 20px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.04) !important;
 }
@@ -305,10 +301,9 @@ body {
   border-color: #0284c7 !important;
 }
 
-:root.light .glass-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)),
-:root.light .cyber-card:hover:not(:has(a:hover, button:hover, .cyber-cut-sm:hover, .cyber-card:hover, .glass-card:hover, [role="button"]:hover, input:hover)) {
-  border-color: #0284c7 !important;
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.14) !important;
+:root.light .glass-card:hover,
+:root.light .cyber-card:hover {
+  box-shadow: 0 8px 25px rgba(2, 132, 199, 0.12) !important;
 }
 
 /* ════════════════════════════════════════════════════════════
