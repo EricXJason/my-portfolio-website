@@ -23,6 +23,8 @@ import {
   Cpu,
   FileText,
   Link as LinkIcon,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -34,6 +36,7 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 
 interface HeroBilingualContent {
   badge: string;
@@ -58,6 +61,11 @@ export interface HeroSectionFullData {
   contacts: HeroContacts;
   zh: HeroBilingualContent;
   en: HeroBilingualContent;
+  showGithub?: boolean;
+  showArtstation?: boolean;
+  showPhone?: boolean;
+  showEmail?: boolean;
+  showLine?: boolean;
 }
 
 interface CmsHeroEditorProps {
@@ -68,12 +76,37 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
+
+  const [formData, setFormData] = useState<HeroSectionFullData>(
+    (data.hero as HeroSectionFullData) || (defaultHeroData as HeroSectionFullData)
+  );
+
+  useEffect(() => {
+    if (data.hero) {
+      setFormData(data.hero as HeroSectionFullData);
+    }
+  }, [data.hero]);
 
   useEffect(() => {
     return () => setIsDirty(false);
   }, [setIsDirty]);
 
-  const [formData, setFormData] = useState<HeroSectionFullData>(defaultHeroData as HeroSectionFullData);
+  // 聆聽廣播存檔事件（例如未儲存變更離開時）
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('hero', formData);
+        } catch (e) {
+          console.error('[CMS Hero] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [formData, isPreview, updateDocument]);
+
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
 
@@ -118,30 +151,35 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
     }));
   };
 
-  /**
-   * TODO: [後端端點對接] 儲存首頁英雄看板個人簡介與聯絡資訊
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/hero
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: HeroSectionFullData
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "首頁英雄看板更新成功" }
-   *    - 401 Unauthorized: 憑證無效
-   * 5. 當前狀態: 暫時採用本地狀態模擬更新，待後端 API 上線後切換為 apiClient.put()。
-   */
+  const handleToggleSwitch = (
+    field: 'showGithub' | 'showArtstation' | 'showPhone' | 'showEmail' | 'showLine',
+    checked: boolean
+  ) => {
+    setIsDirty(true);
+    setFormData((prev) => ({
+      ...prev,
+      [field]: checked,
+    }));
+  };
+
   const triggerSaveDialog = () => {
     setDialog({
       isOpen: true,
       type: 'save',
       title: isEn ? 'Confirm Save' : '確認存檔',
       message: isEn
-        ? 'Are you sure you want to save the changes for the "Home" module?'
-        : '確定要儲存「首頁」模組目前的修改內容嗎？',
+        ? 'Are you sure you want to save the changes for the "Home" module to cloud and local cache?'
+        : '確定要將「首頁」模組目前的修改內容儲存至雲端資料庫嗎？',
       confirmText: isEn ? 'Save' : '確定存檔',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
-        showToast(isEn ? '"Home" module saved successfully!' : '「首頁」模組資料已成功存檔！');
+        try {
+          await updateDocument('hero', formData);
+          showToast(isEn ? '"Home" module saved to cloud successfully!' : '「首頁」模組資料已成功存檔至雲端！');
+        } catch (err) {
+          console.error(err);
+          showToast(isEn ? 'Failed to save to cloud' : '存檔失敗，請檢查網路連線');
+        }
       },
     });
   };
@@ -155,10 +193,17 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
         ? 'Are you sure you want to reset the "Home" module to default? This will only reset this module and will not affect others.'
         : '確定要將「首頁」模組還原為初始預設值嗎？此操作僅會重置首頁模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
-        setFormData(defaultHeroData as HeroSectionFullData);
-        showToast(isEn ? '"Home" module restored to defaults!' : '「首頁」模組已還原為初始預設資料！');
+        const resetData = defaultHeroData as HeroSectionFullData;
+        setFormData(resetData);
+        try {
+          await updateDocument('hero', resetData);
+          showToast(isEn ? '"Home" module restored to defaults!' : '「首頁」模組已還原為初始預設資料！');
+        } catch (err) {
+          console.error(err);
+          showToast(isEn ? 'Restored locally' : '已重設本地資料');
+        }
       },
     });
   };
@@ -311,90 +356,179 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
 
       {/* ── 第二表單分區：外部網站與社群連結 ── */}
       <div className="border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] p-6 sm:p-8 backdrop-blur-xl space-y-5">
-        <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-          <LinkIcon className="w-4 h-4 text-[var(--neon-cyan)]" />
-          <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
-            {isEn ? 'External Links' : '外部網站連結'}
-          </h2>
+        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+          <div className="flex items-center gap-2">
+            <LinkIcon className="w-4 h-4 text-[var(--neon-cyan)]" />
+            <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+              {isEn ? 'External Links & Buttons' : '外部網站與社群按鈕'}
+            </h2>
+          </div>
+          <span className="text-[10px] text-[var(--text-sub)]">
+            {isEn ? 'Each button can be toggled on/off' : '各按鈕均可獨立切換顯示或隱藏'}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* GitHub 個人主頁連結 */}
-          <CmsUrlInput
-            label={isEn ? 'GitHub Link' : 'GitHub 連結'}
-            value={formData.links.github}
-            onChange={(val) => handleLinkChange('github', val)}
-            placeholder="https://github.com/..."
-            disabled={isPreview}
-            isEn={isEn}
-            icon={<TechIcon name="github" size={13} className="shrink-0 fill-current" />}
-          />
+          {/* GitHub 個人主頁連結與開關 */}
+          <div className="p-4 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TechIcon name="github" size={15} className="shrink-0 fill-current" />
+                <span className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+                  {isEn ? 'GitHub Profile Button' : 'GitHub 專頁按鈕'}
+                </span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={formData.showGithub !== false}
+                  disabled={isPreview}
+                  onChange={(e) => handleToggleSwitch('showGithub', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--neon-cyan)]"></div>
+              </label>
+            </div>
+            <CmsUrlInput
+              label={isEn ? 'Target URL' : '目標網址'}
+              value={formData.links.github}
+              onChange={(val) => handleLinkChange('github', val)}
+              placeholder="https://github.com/..."
+              disabled={isPreview || formData.showGithub === false}
+              isEn={isEn}
+              icon={<TechIcon name="github" size={13} className="shrink-0 fill-current" />}
+            />
+          </div>
 
-          {/* ArtStation 藝術作品集連結 */}
-          <CmsUrlInput
-            label={isEn ? 'ArtStation Link' : 'ArtStation 連結'}
-            value={formData.links.artstation}
-            onChange={(val) => handleLinkChange('artstation', val)}
-            placeholder="https://www.artstation.com/..."
-            disabled={isPreview}
-            isEn={isEn}
-            icon={<TechIcon name="artstation" size={13} className="shrink-0 fill-current" />}
-          />
+          {/* ArtStation 藝術作品集連結與開關 */}
+          <div className="p-4 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TechIcon name="artstation" size={15} className="shrink-0 fill-current" />
+                <span className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+                  {isEn ? 'ArtStation Portfolio Button' : 'ArtStation 作品集按鈕'}
+                </span>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={formData.showArtstation !== false}
+                  disabled={isPreview}
+                  onChange={(e) => handleToggleSwitch('showArtstation', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[var(--neon-cyan)]"></div>
+              </label>
+            </div>
+            <CmsUrlInput
+              label={isEn ? 'Target URL' : '目標網址'}
+              value={formData.links.artstation}
+              onChange={(val) => handleLinkChange('artstation', val)}
+              placeholder="https://www.artstation.com/..."
+              disabled={isPreview || formData.showArtstation === false}
+              isEn={isEn}
+              icon={<TechIcon name="artstation" size={13} className="shrink-0 fill-current" />}
+            />
+          </div>
         </div>
       </div>
 
       {/* ── 第三表單分區：聯絡資訊（固定於最下方與前臺版面完全一致）── */}
       <div className="border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] p-6 sm:p-8 backdrop-blur-xl space-y-5">
-        <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-          <Phone className="w-4 h-4 text-[var(--neon-cyan)]" />
-          <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
-            {isEn ? 'Contact Information' : '聯絡資訊'}
-          </h2>
+        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+          <div className="flex items-center gap-2">
+            <Phone className="w-4 h-4 text-[var(--neon-cyan)]" />
+            <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+              {isEn ? 'Contact Information Fields' : '聯絡資訊卡片欄位'}
+            </h2>
+          </div>
+          <span className="text-[10px] text-[var(--text-sub)]">
+            {isEn ? 'Each contact card can be toggled on/off' : '三組通訊欄位皆可自由開關顯示'}
+          </span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* 聯絡電話 */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[var(--text-sub)] flex items-center gap-1.5 font-['Noto_Sans_TC']">
-              <Phone className="w-3 h-3 text-[var(--neon-cyan)]" />
-              {isEn ? 'Phone Number' : '電話號碼'}
-            </label>
+          {/* 聯絡電話與開關 */}
+          <div className="p-3.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5 font-['Noto_Sans_TC']">
+                <Phone className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
+                {isEn ? 'Phone' : '聯絡電話'}
+              </label>
+              <label className="relative inline-flex items-center cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={formData.showPhone !== false}
+                  disabled={isPreview}
+                  onChange={(e) => handleToggleSwitch('showPhone', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-8 h-4.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-[var(--neon-cyan)]"></div>
+              </label>
+            </div>
             <input
               type="text"
               value={formData.contacts.phone}
               onChange={(e) => handleContactChange('phone', e.target.value)}
               placeholder=""
-              className="w-full px-3.5 py-2.5 border cyber-cut-sm bg-[var(--card-inner)] text-xs text-[var(--text-main)] border-[var(--border-color)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono']"
+              disabled={isPreview || formData.showPhone === false}
+              className="w-full px-3 py-2 border cyber-cut-sm bg-slate-950/60 text-xs text-[var(--text-main)] border-[var(--border-color)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono'] disabled:opacity-40"
             />
           </div>
 
-          {/* 聯絡電子郵件 */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[var(--text-sub)] flex items-center gap-1.5 font-['Noto_Sans_TC']">
-              <Mail className="w-3 h-3 text-purple-400" />
-              Email
-            </label>
+          {/* 聯絡電子郵件與開關 */}
+          <div className="p-3.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5 font-['Noto_Sans_TC']">
+                <Mail className="w-3.5 h-3.5 text-purple-400" />
+                Email
+              </label>
+              <label className="relative inline-flex items-center cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={formData.showEmail !== false}
+                  disabled={isPreview}
+                  onChange={(e) => handleToggleSwitch('showEmail', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-8 h-4.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-[var(--neon-cyan)]"></div>
+              </label>
+            </div>
             <input
               type="email"
               value={formData.contacts.email}
               onChange={(e) => handleContactChange('email', e.target.value)}
               placeholder=""
-              className="w-full px-3.5 py-2.5 border cyber-cut-sm bg-[var(--card-inner)] text-xs text-[var(--text-main)] border-[var(--border-color)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono']"
+              disabled={isPreview || formData.showEmail === false}
+              className="w-full px-3 py-2 border cyber-cut-sm bg-slate-950/60 text-xs text-[var(--text-main)] border-[var(--border-color)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono'] disabled:opacity-40"
             />
           </div>
 
-          {/* LINE 快速聯絡連結 */}
-          <div className="space-y-1.5">
-            <label className="text-xs font-medium text-[var(--text-sub)] flex items-center gap-1.5 font-['Noto_Sans_TC']">
-              <MessageSquare className="w-3 h-3 text-emerald-400" />
-              LINE
-            </label>
+          {/* LINE 快速聯絡連結與開關 */}
+          <div className="p-3.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5 font-['Noto_Sans_TC']">
+                <MessageSquare className="w-3.5 h-3.5 text-emerald-400" />
+                LINE ID
+              </label>
+              <label className="relative inline-flex items-center cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={formData.showLine !== false}
+                  disabled={isPreview}
+                  onChange={(e) => handleToggleSwitch('showLine', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-8 h-4.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-[var(--neon-cyan)]"></div>
+              </label>
+            </div>
             <input
               type="text"
               value={formData.contacts.line}
               onChange={(e) => handleContactChange('line', e.target.value)}
               placeholder=""
-              className="w-full px-3.5 py-2.5 border cyber-cut-sm bg-[var(--card-inner)] text-xs text-[var(--text-main)] border-[var(--border-color)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono']"
+              disabled={isPreview || formData.showLine === false}
+              className="w-full px-3 py-2 border cyber-cut-sm bg-slate-950/60 text-xs text-[var(--text-main)] border-[var(--border-color)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono'] disabled:opacity-40"
             />
           </div>
         </div>

@@ -28,6 +28,7 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 import defaultAboutData from '../../data/about-section.json';
 
 interface StatItem {
@@ -58,12 +59,16 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
   }, [setIsDirty]);
 
   const [formData, setFormData] = useState<AboutFullData>(() => {
+    if (data.about) {
+      return data.about as unknown as AboutFullData;
+    }
     const defaults = defaultAboutData as unknown as AboutFullData;
     try {
       const saved = localStorage.getItem('portfolio_about_data');
@@ -82,8 +87,23 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     return defaults;
   });
 
+  useEffect(() => {
+    if (data.about) {
+      setFormData(data.about as unknown as AboutFullData);
+    }
+  }, [data.about]);
+
   // 區塊標題中繼資料（儲存於 portfolio_custom_translations）
   const [aboutMeta, setAboutMeta] = useState<{ zhTitle: string; enTitle: string }>(() => {
+    if (data.site_translations) {
+      const trans = data.site_translations as any;
+      if (trans.zh?.about_section_title || trans.en?.about_section_title) {
+        return {
+          zhTitle: trans.zh?.about_section_title ?? '關於我',
+          enTitle: trans.en?.about_section_title ?? 'About',
+        };
+      }
+    }
     try {
       const saved = localStorage.getItem('portfolio_custom_translations');
       if (saved) {
@@ -98,6 +118,21 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     }
     return { zhTitle: '關於我', enTitle: 'About' };
   });
+
+  // 聆聽廣播存檔事件
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('about', formData);
+        } catch (e) {
+          console.error('[CMS About] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [formData, isPreview, updateDocument]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
@@ -207,10 +242,10 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
       type: 'save',
       title: isEn ? 'Confirm Save' : '確認存檔',
       message: isEn
-        ? 'Are you sure you want to save the changes for the "About" module?'
-        : '確定要儲存「關於我」模組目前的修改內容嗎？',
+        ? 'Are you sure you want to save the changes for the "About" module to cloud and local cache?'
+        : '確定要將「關於我」模組目前的修改內容儲存至雲端資料庫嗎？',
       confirmText: isEn ? 'Confirm Save' : '確定存檔',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
         try {
           localStorage.setItem('portfolio_about_data', JSON.stringify(formData));
@@ -223,10 +258,18 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
           localStorage.setItem('portfolio_custom_translations', JSON.stringify(existing));
           window.dispatchEvent(new Event('portfolio_about_data_updated'));
           window.dispatchEvent(new Event('portfolio_translations_updated'));
+
+          await updateDocument('about', formData);
+          await updateDocument('site_translations', {
+            ...(data.site_translations as any || {}),
+            zh: { ...(data.site_translations as any)?.zh, about_section_title: aboutMeta.zhTitle },
+            en: { ...(data.site_translations as any)?.en, about_section_title: aboutMeta.enTitle },
+          });
+
+          showToast(isEn ? '"About" module saved to cloud successfully!' : '「關於我」模組資料已成功存檔至雲端！');
         } catch {
-          // 忽略例外
+          showToast(isEn ? 'Failed to save to cloud' : '存檔至雲端失敗');
         }
-        showToast(isEn ? '"About" module saved successfully!' : '「關於我」模組資料已成功存檔！');
       },
     });
   };
@@ -240,17 +283,19 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
         ? 'Are you sure you want to reset the "About" module to default?'
         : '確定要將「關於我」模組還原為初始預設值嗎？此操作僅會重置關於我模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
+        const resetData = defaultAboutData as unknown as AboutFullData;
         try {
           localStorage.removeItem('portfolio_about_data');
           window.dispatchEvent(new Event('portfolio_about_data_updated'));
+          setFormData(resetData);
+          setAboutMeta({ zhTitle: '關於我', enTitle: 'About' });
+          await updateDocument('about', resetData);
+          showToast(isEn ? '"About" module restored to defaults!' : '「關於我」模組已還原為初始預設資料！');
         } catch {
-          // 忽略例外
+          showToast(isEn ? 'Restored locally' : '已重設本地資料');
         }
-        setFormData(defaultAboutData as unknown as AboutFullData);
-        setAboutMeta({ zhTitle: '關於我', enTitle: 'About' });
-        showToast(isEn ? '"About" module restored to defaults!' : '「關於我」模組已還原為初始預設資料！');
       },
     });
   };

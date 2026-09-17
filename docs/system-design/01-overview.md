@@ -1,59 +1,67 @@
 # 系統願景與全域拓撲 | System Vision & Global Topology
 
 > **專案作者 / Author**: 許哲誠 (HSU, CHE-CHENG)  
-> **規範標準 / Compliance**: 依據《AGENTS.md》全域最高工業級工程協定第 6.1 節規範建置。本文件為系統架構唯一真實來源 (SSOT) 之首要核心，定義個人官方作品集網站（Portfolio）之全域願景、業務承載目標、SLA 與 C4 Model 架構拓撲。  
-> *Release: 2026-09-14*
+> **協定標準 / Compliance**: 依據《AGENTS.md》全域最高工程中樞協定規範建置。本文件為系統架構唯一真實來源 (SSOT) 之首要核心，定義個人官方作品集網站（Portfolio）之全域願景、業務承載目標、SLA 與 C4 Model 架構拓撲。  
+> *Release: 2026-09*
 
 ---
 
 ## 1. 業務痛點與預期承載能力 | Business Pain Points & System Capacity
 
-### 繁體中文
-本專案旨在為 **許哲誠（HSU, CHE-CHENG）**（國立臺灣藝術大學多媒體動畫藝術學系碩士）建置具備極致科技美學與頂級工程標準的個人官方作品集網站，提供全球招募主管、技術專家、AI 代理爬蟲與一般訪客卓越的互動體驗。
+本節闡明作品集網站建置之核心背景、目標受眾痛點、預期承載能力與對應之工程品質服務水準協定（SLA）。
 
-#### 1.1 業務核心目標
-- **跨領域專業展現**：深度整合 VR/AR 互動應用開發 (Unity / Unreal Engine)、全端網頁工程 (React 19 / TypeScript / Vite / Tailwind CSS / Firebase BaaS) 與新媒體藝術美學。
-- **自研視覺化 CMS 內容管理**：提供涵蓋首頁看板、技能矩陣、專案作品、經歷學歷與美術畫廊等八大模組之即時可視化後臺，具備未儲存狀態阻斷防護（Unsaved State Guard）與安全門禁。
-- **雙向即時熱更新與持久化**：CMS 編輯結果即時反映於本地快取與前臺視圖，並整合 Firebase Storage 作為 BaaS 雲端儲存中心。
+> [!NOTE]
+> **系統目標與核心 SLA 基準 | Strategic Vision & Benchmark Targets**:
+> - **極致邊緣快取**: 預編譯靜態邊緣架構，首屏渲染延遲壓制於 `< 800ms`，全站累積版面位移 `CLS = 0`。
+> - **高對比無障礙**: 深色主題對比度達 `18.7:1`、淺色模式達 `17.9:1`，全面超標符合 `WCAG 2.2 AAA` 標準。
+> - **型別與構建安全**: TypeScript 靜態編譯 `0 型別錯誤`，Vite 生產打包確定性控制於 `< 400ms`。
+> - **即時雲端同步**: 架構「本地離線優先（SWR）+ Firestore onSnapshot」毫秒級熱更新管線。
 
-#### 1.2 系統承載與工程指標
-- **初始首屏載入延遲 (FCP / LCP)**：預編譯靜態邊緣快取，首屏渲染延遲壓制於 < 800ms。
-- **累積版面位移 (CLS)**：嚴格為 0（全站零版面跳動與位移）。
-- **互動就緒延遲 (INP / TBT)**：組件輕量化與事件優化，主線程阻塞時間 < 50ms。
-- **無障礙對比度實測 (WCAG 2.2)**：深色主題文字對比度達 18.7:1，淺色主題達 17.9:1，符合 AAA 規範。
-- **型別與構建安全閘門 (Build Gates)**：TypeScript 靜態編譯 0 型別錯誤，Vite 生產打包時間穩定壓制於 < 400ms。
+本專案旨在為 **許哲誠（HSU, CHE-CHENG）**（國立臺灣藝術大學多媒體動畫藝術學系碩士）建置具備極致科技美學與頂級工程標準的個人官方作品集網站，提供全球招募主管、技術專家、AI 代理爬蟲與一般訪客卓越的互動體驗。  
+*This project establishes the personal official portfolio website for **HSU, CHE-CHENG** (MFA, Department of Multimedia and Animation Arts, National Taiwan University of Arts). Engineered to the highest software engineering standards under a Tactical Cyberpunk HUD aesthetic, it delivers an uncompromising interactive experience for global hiring managers, technical experts, AI agent crawlers, and general visitors.*
 
-#### 1.3 服務可用性 SLA
-- **目標可用性**：99.99%（依託 Cloudflare Pages 全球 Anycast 邊緣網絡與高可用性 CDN 快取）。
+### 1.1 業務核心目標 | Core Business Objectives
 
----
+業務目標涵蓋跨領域技術的精準呈現、自主研發的內容管理系統，以及毫秒級的雲端雙向串流同步機制。
 
-### English
-This project establishes the personal official portfolio website for **HSU, CHE-CHENG** (MFA, Department of Multimedia and Animation Arts, National Taiwan University of Arts). Engineered to the highest software engineering standards under a Tactical Cyberpunk HUD aesthetic, it delivers an uncompromising interactive experience for global hiring managers, technical experts, AI agent crawlers, and general visitors.
+- **跨領域專業展現**：深度整合 VR/AR 互動應用開發 (Unity / Unreal Engine)、全端網頁工程 (React 19 / TypeScript / Vite / Tailwind CSS / Firebase BaaS) 與新媒體藝術美學。  
+  *Cross-Disciplinary Showcase: Seamlessly integrates interactive VR/AR engineering (Unity / Unreal Engine), modern full-stack web architecture (React 19 / TypeScript / Vite / Tailwind CSS / Firebase BaaS), and contemporary new media aesthetics.*
+- **自研視覺化 CMS 內容管理**：提供涵蓋首頁看板、技能矩陣、專案作品、經歷學歷、證照榮譽與美術畫廊等八大模組之即時視覺化後臺，具備未儲存狀態阻斷防護（Unsaved State Guard）與官方安全門禁。  
+  *In-House Visual CMS Suite: Houses a dedicated, visual CMS covering eight core modules (Hero, Skills, Projects, Experience, Certifications, Art Gallery, etc.) equipped with a robust Unsaved State Guard and official auth security gates.*
+- **雙向即時熱更新與持久化**：CMS 編輯結果即時反映於本地快取與前臺視圖，並整合 Firebase Firestore 與 Storage 達成「本地 JSON 0ms 首屏 + Firestore onSnapshot 即時監聽」雙向同步。  
+  *Bi-Directional Hot Sync & Persistence: CMS edits synchronize instantly with local state and public views, backed by Firebase Firestore & Storage for real-time streaming and cloud persistence.*
 
-#### 1.1 Core Business Objectives
-- **Cross-Disciplinary Showcase**: Seamlessly integrates interactive VR/AR engineering (Unity / Unreal Engine), modern full-stack web architecture (React 19 / TypeScript / Vite / Tailwind CSS / Firebase BaaS), and contemporary new media aesthetics.
-- **In-House Visual CMS Suite**: Houses a dedicated, zero-framework visual CMS covering eight core modules (Hero, Skills, Projects, Education, Art Gallery, etc.) equipped with a robust Unsaved State Guard and mode selection security gates.
-- **Bi-Directional Hot Sync & Persistence**: CMS edits synchronize instantly with local state and public views, backed by Firebase Storage for asynchronous multimedia cloud persistence.
+### 1.2 系統承載與工程指標 | System Capacity & Engineering Benchmarks
 
-#### 1.2 System Capacity & Engineering Benchmarks
-- **First Contentful / Largest Contentful Paint (FCP / LCP)**: Edge-cached static delivery ensuring initial render < 800ms.
-- **Cumulative Layout Shift (CLS)**: Strictly 0 (zero visual displacement).
-- **Interaction to Next Paint (INP / TBT)**: Lightweight component tree ensuring main-thread blocking < 50ms.
-- **WCAG 2.2 Contrast Verification**: Measured text contrast ratios of 18.7:1 (Dark Mode) and 17.9:1 (Light Mode), meeting AAA criteria.
-- **Type Safety & Build Gates**: Zero TypeScript compile errors, sub-second deterministic Vite build (< 400ms).
+本系統設定嚴格的工程效能與無障礙驗收門檻，確保高流量與各類極端網路環境下的穩定表現。
 
-#### 1.3 Service Level Agreement (SLA)
-- **Target Availability**: 99.99% (backed by Cloudflare Pages Anycast global edge network and high-performance CDN caching).
+- **初始首屏載入延遲 (FCP / LCP)**：預編譯靜態邊緣快取，首屏渲染延遲壓制於 < 800ms。  
+  *First Contentful / Largest Contentful Paint (FCP / LCP): Edge-cached static delivery ensuring initial render < 800ms.*
+- **累積版面位移 (CLS)**：嚴格為 0（全站零版面跳動與位移）。  
+  *Cumulative Layout Shift (CLS): Strictly 0 (zero visual displacement).*
+- **互動就緒延遲 (INP / TBT)**：組件輕量化與事件優化，主線程阻塞時間 < 50ms。  
+  *Interaction to Next Paint (INP / TBT): Lightweight component tree ensuring main-thread blocking < 50ms.*
+- **無障礙對比度實測 (WCAG 2.2)**：深色主題文字對比度達 18.7:1，淺色主題達 17.9:1，符合 AAA 規範。  
+  *WCAG 2.2 Contrast Verification: Measured text contrast ratios of 18.7:1 (Dark Mode) and 17.9:1 (Light Mode), meeting AAA criteria.*
+- **型別與構建安全閘門 (Build Gates)**：TypeScript 靜態編譯 0 型別錯誤，Vite 生產打包時間穩定壓制於 < 400ms。  
+  *Type Safety & Build Gates: Zero TypeScript compile errors, sub-second deterministic Vite build (< 400ms).*
+
+### 1.3 服務可用性 SLA | Service Level Agreement
+
+系統透過邊緣運算網絡達成高可用性標準，確保全球使用者皆能隨時穩定存取。
+
+- **目標可用性**：99.99%（依託 Cloudflare Workers 全球 Anycast 邊緣網絡與高可用性 CDN 快取）。  
+  *Target Availability: 99.99% (backed by Cloudflare Workers Anycast global edge network and high-performance CDN caching).*
 
 ---
 
 ## 2. C4 Model 架構圖 | C4 Model Architecture Diagrams
 
-本節以 C4 Model 標準呈現系統與外部使用者及周邊雲端服務之上下文邊界與容器級拓撲。  
-*This section presents the System Context and Container diagrams using the C4 Model methodology.*
+本節以 C4 Model 標準呈現系統與外部使用者及周邊雲端服務之上下文邊界與容器級拓撲。
 
 ### 2.1 系統情境圖 (System Context Diagram - Level 1)
+
+系統情境圖描述作品集平臺與訪客、管理者、AI 爬蟲以及底層雲端服務之間的互動邊界。
 
 ```mermaid
 %%{init: {
@@ -79,21 +87,24 @@ flowchart TD
     Admin["網站作者 (許哲誠)<br>Author: HSU, CHE-CHENG"]:::hudCard
     Crawler["AI 代理人 / 搜尋引擎爬蟲<br>AI Agents & Web Crawlers"]:::hudCard
 
-    Portfolio["個人作品集前端系統<br>Portfolio Web Application (React 19)"]:::hudCard
+    Portfolio["個人作品集前端展示系統<br>Portfolio Web Application (React 19)"]:::hudCard
     CMS["自研視覺化 CMS 管理後臺<br>In-House Visual CMS Suite"]:::hudCard
 
-    Firebase["Firebase Storage & Auth (BaaS)<br>雲端儲存與身分驗證"]:::hudCard
-    Cloudflare["Cloudflare Pages (Anycast CDN)<br>全球邊緣快取節點"]:::hudCard
+    Firebase["Firebase BaaS (Firestore & Auth & Storage)<br>雲端資料庫與身分驗證"]:::hudCard
+    Cloudflare["Cloudflare Workers (Anycast CDN)<br>全球邊緣運算與快取節點"]:::hudCard
 
     User -->|"HTTPS 瀏覽展示 / HTTPS Browse"| Portfolio
-    Admin -->|"模式切換與認證 / Auth Mode"| CMS
-    Crawler -->|"讀取 llms.txt & JSON-LD"| Portfolio
+    Admin -->|"官方金鑰認證管理 / Auth Gate"| CMS
+    Crawler -->|"讀取 llms.txt 與 JSON-LD"| Portfolio
     
-    CMS -->|"多媒體與資料儲存 / Cloud API"| Firebase
-    Portfolio -->|"靜態分發與快取 / Edge CDN"| Cloudflare
+    CMS -->|"資料持久化與即時串流 / Cloud API"| Firebase
+    Portfolio -->|"即時串流同步 / onSnapshot"| Firebase
+    Portfolio -->|"靜態分發與邊緣運算 / Edge Workers"| Cloudflare
 ```
 
 ### 2.2 容器服務圖 (Container Diagram - Level 2)
+
+容器服務圖深入說明前端 SPA 運行環境、雙層狀態資料中樞與雲端持久化基礎設施間的實體通訊路徑。
 
 ```mermaid
 %%{init: {
@@ -120,25 +131,27 @@ flowchart TD
 
     subgraph TierBrowser ["用戶端環境 (Client Environment - React 19 SPA)"]
         Preloader["開場門禁引擎<br>InitialPreloader"]:::hudCard
-        MainApp["前臺八大模組展示系統<br>MainSiteContent"]:::hudCard
+        MainApp["前臺展示系統<br>PortfolioDataContext 驅動"]:::hudCard
         CMSApp["CMS 管理後臺系統<br>CmsApp (Lazy Chunk)"]:::hudCard
         StateGuard["未存檔狀態阻斷防護<br>CmsDirtyContext"]:::hudCard
     end
 
     subgraph TierServices ["資料快取與雲端基礎設施 (Persistence & Cloud Services)"]
-        LocalStorage["本機離線優先快取<br>localStorage"]:::hudCard
-        FBAuth["Firebase Auth 鑑別中心<br>Identity & Session Gate"]:::hudCard
+        LocalJSON["本地預載靜態 JSON<br>0ms 首屏防抖快取"]:::hudCard
+        FBFrestore["Firebase Firestore<br>portfolio_content 集合"]:::hudCard
+        FBAuth["Firebase Auth 鑑別中心<br>官方認證門禁"]:::hudCard
         FBStorage["Firebase Storage 多媒體庫<br>Cloud Multimedia Assets"]:::hudCard
-        CFPages["Cloudflare Pages 邊緣快取<br>Global Anycast CDN"]:::hudCard
+        CFWorkers["Cloudflare Workers 邊緣節點<br>Global Anycast CDN"]:::hudCard
     end
 
     Preloader -->|"進入展示主頁 / Mount View"| MainApp
-    MainApp -->|"讀取快取複寫 / Read Cache"| LocalStorage
+    MainApp -->|"首屏即刻加載 / Initial Fallback"| LocalJSON
+    MainApp -->|"即時串流監聽 / onSnapshot"| FBFrestore
     CMSApp -->|"變更防護攔截 / Dirty Guard"| StateGuard
-    CMSApp -->|"持久化寫入 / Write Cache"| LocalStorage
-    CMSApp -->|"會話校驗 / Verify Session"| FBAuth
+    CMSApp -->|"資料持久化寫入 / setDoc"| FBFrestore
+    CMSApp -->|"官方金鑰認證 / signIn"| FBAuth
     CMSApp -->|"非同步媒體儲存 / Cloud Upload"| FBStorage
-    MainApp -->|"靜態資產快取分發 / Edge CDN"| CFPages
+    MainApp -->|"邊緣運算與路由快取 / Edge Deploy"| CFWorkers
 
     style TierBrowser fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
     style TierServices fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff

@@ -26,6 +26,8 @@ import {
   Cpu,
   Video,
   Bot,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -41,6 +43,7 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 import defaultProjectsData from '../../data/projects-section.json';
 
 interface ProjectItem {
@@ -70,6 +73,7 @@ interface ProjectItem {
   tags: string[];
   date: string;
   date_en: string;
+  visible?: boolean;
 }
 
 export interface ProjectsMeta {
@@ -96,12 +100,16 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
   }, [setIsDirty]);
 
   const [projects, setProjects] = useState<ProjectItem[]>(() => {
+    if (data.projects && Array.isArray(data.projects)) {
+      return data.projects as ProjectItem[];
+    }
     const defaults = defaultProjectsData as ProjectItem[];
     try {
       const saved = localStorage.getItem('portfolio_projects_data');
@@ -122,6 +130,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
               category: (savedProj.category && savedProj.category !== 'linebot') ? savedProj.category : defaultProj.category,
               featured: hasSavedFeatured ? (savedProj.featured ?? defaultProj.featured ?? false) : (defaultProj.featured ?? false),
               featuredOrder: hasSavedFeatured ? (savedProj.featuredOrder ?? defaultProj.featuredOrder) : defaultProj.featuredOrder,
+              visible: savedProj.visible !== undefined ? savedProj.visible : (defaultProj.visible ?? true),
               desc: (savedProj.desc && !savedProj.desc.includes('整合自研視覺化 CMS 內容管理後臺系統')) ? savedProj.desc : defaultProj.desc,
               desc_en: (savedProj.desc_en && !savedProj.desc_en.includes('TypeScript, Vite, and Tailwind CSS. Integrates a custom visual CMS admin dashboard')) ? savedProj.desc_en : defaultProj.desc_en,
               contributions: (savedProj.contributions && savedProj.contributions.length > 0) ? savedProj.contributions : defaultProj.contributions,
@@ -155,6 +164,27 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     }
     return defaults;
   });
+
+  useEffect(() => {
+    if (data.projects && Array.isArray(data.projects)) {
+      setProjects(data.projects as ProjectItem[]);
+    }
+  }, [data.projects]);
+
+  // 聆聽廣播存檔事件
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('projects', projects);
+        } catch (e) {
+          console.error('[CMS Projects] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [projects, isPreview, updateDocument]);
 
   const [projectsMeta, setProjectsMeta] = useState<Record<'zh' | 'en', ProjectsMeta>>(() => {
     try {
@@ -202,19 +232,41 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
   const activeProjectIndex = projects.findIndex((p) => p.id === activeProjectId);
   const activeProject = projects[activeProjectIndex] || projects[0];
 
-  const featuredCount = projects.filter((p) => p.featured).length;
+  const isInteractive = activeProject.category === 'interactive';
+  const interactiveFeaturedCount = projects.filter(
+    (p) => p.featured && p.category === 'interactive'
+  ).length;
+  const fullstackFeaturedCount = projects.filter(
+    (p) => p.featured && (p.category === 'fullstack' || p.category === 'frontend')
+  ).length;
+  const currentCatFeaturedCount = isInteractive
+    ? interactiveFeaturedCount
+    : fullstackFeaturedCount;
 
   const handleToggleFeatured = (checked: boolean) => {
     if (activeProjectIndex === -1) return;
 
     if (checked) {
-      if (featuredCount >= 3 && !activeProject.featured) {
-        showToast(isEn ? 'Maximum of 3 featured projects allowed. Uncheck another project first.' : '精選作品最多僅能設定 3 項，請先取消其他專案的精選標記。');
+      if (currentCatFeaturedCount >= 3 && !activeProject.featured) {
+        showToast(
+          isEn
+            ? (isInteractive
+                ? 'Maximum of 3 featured Interactive projects allowed. Uncheck another first.'
+                : 'Maximum of 3 featured Fullstack projects allowed. Uncheck another first.')
+            : (isInteractive
+                ? '精選互動作品最多僅能設定 3 項，請先取消同分類其他專案的精選標記。'
+                : '精選全端作品最多僅能設定 3 項，請先取消同分類其他專案的精選標記。')
+        );
         return;
       }
-      // 自動挑選 [1, 2, 3] 順位中尚未被使用的最小序號
+      // 自動挑選同分類中 [1, 2, 3] 順位中尚未被使用的最小序號
+      const sameCatProjects = projects.filter((p) =>
+        isInteractive
+          ? p.category === 'interactive'
+          : p.category === 'fullstack' || p.category === 'frontend'
+      );
       const usedOrders = new Set(
-        projects
+        sameCatProjects
           .filter((p) => p.featured && p.id !== activeProject.id && p.featuredOrder != null)
           .map((p) => p.featuredOrder)
       );
@@ -260,9 +312,15 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     setIsDirty(true);
     setProjects((prev) => {
       const updated = [...prev];
-      // 檢查順位衝突並自動互換兩者順序
+      // 檢查同分類順位衝突並自動互換兩者順序
       const conflictIdx = updated.findIndex(
-        (p) => p.id !== activeProject.id && p.featured && p.featuredOrder === newOrder
+        (p) =>
+          p.id !== activeProject.id &&
+          p.featured &&
+          (isInteractive
+            ? p.category === 'interactive'
+            : p.category === 'fullstack' || p.category === 'frontend') &&
+          p.featuredOrder === newOrder
       );
       if (conflictIdx !== -1) {
         updated[conflictIdx] = {
@@ -284,10 +342,19 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     setIsDirty(true);
     setProjects((prev) => {
       const updated = [...prev];
-      updated[activeProjectIndex] = {
-        ...updated[activeProjectIndex],
-        [field]: value,
-      };
+      const curProj = { ...updated[activeProjectIndex], [field]: value };
+      // 關鍵規則：所有被隱藏的物件必須脫離精選作品
+      if (field === 'visible' && value === false) {
+        curProj.featured = false;
+        curProj.featuredOrder = undefined;
+      }
+      // 跨語系開發期程自動同步
+      if (field === 'date') {
+        curProj.date_en = value as string;
+      } else if (field === 'date_en') {
+        curProj.date = value as string;
+      }
+      updated[activeProjectIndex] = curProj;
       return updated;
     });
   };
@@ -415,10 +482,10 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       type: 'save',
       title: isEn ? 'Confirm Save' : '確認存檔',
       message: isEn
-        ? 'Are you sure you want to save the changes for the "Projects" module?'
-        : '確定要儲存「專案作品」模組目前的修改內容嗎？',
+        ? 'Are you sure you want to save the changes for the "Projects" module to cloud and local cache?'
+        : '確定要將「專案作品」模組目前的修改內容儲存至雲端資料庫嗎？',
       confirmText: isEn ? 'Confirm Save' : '確定存檔',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
         try {
           localStorage.setItem('portfolio_projects_data', JSON.stringify(projects));
@@ -430,10 +497,18 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
           customObj.en = { ...(customObj.en || {}), ...projectsMeta.en };
           localStorage.setItem('portfolio_custom_translations', JSON.stringify(customObj));
           window.dispatchEvent(new Event('portfolio_translations_updated'));
+
+          await updateDocument('projects', projects);
+          await updateDocument('site_translations', {
+            ...(data.site_translations as any || {}),
+            zh: { ...(data.site_translations as any)?.zh, ...projectsMeta.zh },
+            en: { ...(data.site_translations as any)?.en, ...projectsMeta.en },
+          });
+
+          showToast(isEn ? '"Projects" module saved to cloud successfully!' : '「專案作品」模組資料已成功存檔至雲端！');
         } catch {
-          // 忽略例外
+          showToast(isEn ? 'Failed to save to cloud' : '存檔至雲端失敗');
         }
-        showToast(isEn ? '"Projects" module saved successfully!' : '「專案作品」模組資料已成功存檔！');
       },
     });
   };
@@ -447,8 +522,9 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
         ? 'Are you sure you want to reset the "Projects" module to default? This will only reset this module and will not affect others.'
         : '確定要將「專案作品」模組還原為初始預設值嗎？此操作僅會重置專案作品模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
-      onConfirm: () => {
+      onConfirm: async () => {
         setIsDirty(false);
+        const defaultList = defaultProjectsData as ProjectItem[];
         try {
           localStorage.removeItem('portfolio_projects_data');
           window.dispatchEvent(new Event('portfolio_projects_data_updated'));
@@ -470,11 +546,15 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
         } catch {
           // 忽略例外
         }
-        const defaults = defaultProjectsData as ProjectItem[];
-        setProjects(defaults);
+        setProjects(defaultList);
         setProjectsMeta(DEFAULT_PROJECTS_META);
-        setActiveProjectId(defaults[0]?.id || '');
-        showToast(isEn ? '"Projects" module restored to defaults!' : '「專案作品」模組已還原為初始預設資料！');
+        setActiveProjectId(defaultList[0]?.id || '');
+        try {
+          await updateDocument('projects', defaultList);
+          showToast(isEn ? '"Projects" module restored to defaults!' : '「專案作品」模組已還原為初始預設資料！');
+        } catch {
+          showToast(isEn ? 'Restored locally' : '已重設本地資料');
+        }
       },
     });
   };
@@ -527,7 +607,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       color: '#f43f5e',
     },
     github: {
-      label_zh: '專案原始碼',
+      label_zh: '專案代碼',
       label_en: 'Source Code',
       icon: <TechIcon name="github" size={14} className="text-slate-300 shrink-0 fill-current" />,
       color: '#94a3b8',
@@ -793,6 +873,14 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                               <span>AI</span>
                             </span>
                           )}
+
+                          {/* 隱藏狀態徽章 */}
+                          {proj.visible === false && (
+                            <span className="inline-flex items-center gap-0.5 text-[9px] text-rose-400 font-mono font-bold px-1 py-0.2 bg-rose-400/10 border border-rose-400/30 cyber-cut-sm">
+                              <EyeOff className="w-2.5 h-2.5" />
+                              <span>{isEn ? 'HIDDEN' : '隱藏'}</span>
+                            </span>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -910,11 +998,11 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                 />
                 <Cpu className="w-4 h-4 text-emerald-400 shrink-0" />
                 <span className="text-xs sm:text-sm font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] whitespace-nowrap">
-                  {isEn ? '100% AI Developed' : '100% AI 開發'}
+                  {isEn ? 'AI-Assisted Dev' : 'AI 輔助開發'}
                 </span>
                 {activeProject.isFullAi && (
                   <span className="ml-auto text-[10px] font-mono px-1.5 py-0.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/30 text-emerald-400 font-bold whitespace-nowrap">
-                    100% AI
+                    {isEn ? 'AI-Assisted' : 'AI 輔助'}
                   </span>
                 )}
               </label>
@@ -928,19 +1016,50 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
               <CmsDatePicker
                 value={isEn ? activeProject.date_en : activeProject.date}
                 onChange={(val) => handleFieldChange(isEn ? 'date_en' : 'date', val)}
-                placeholder="YYYY.MM - YYYY.MM"
+                placeholder="YYYY/MM ~ YYYY/MM"
                 disabled={isPreview}
               />
             </div>
 
-            {/* 精選專案設定（上限 3 個，精選排序 1-3） */}
+            {/* 專案顯示開關 (超高自由度可視性) */}
+            <div className="p-3.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] md:col-span-2 flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                {activeProject.visible !== false ? (
+                  <Eye className="w-4 h-4 text-[var(--neon-cyan)]" />
+                ) : (
+                  <EyeOff className="w-4 h-4 text-slate-500" />
+                )}
+                <div>
+                  <span className="text-xs sm:text-sm font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] block">
+                    {isEn ? 'Display Project on Website' : '於網站中顯示此專案 (可視性)'}
+                  </span>
+                  <span className="text-[10px] text-[var(--text-sub)]">
+                    {activeProject.visible !== false
+                      ? (isEn ? 'Visible on front-end website' : '前臺正常展示中')
+                      : (isEn ? 'Hidden from front-end website' : '已從前臺網站隱藏（自動脫離精選）')}
+                  </span>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={activeProject.visible !== false}
+                  disabled={isPreview}
+                  onChange={(e) => handleFieldChange('visible', e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-10 h-5.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:bg-[var(--neon-cyan)]"></div>
+              </label>
+            </div>
+
+            {/* 精選專案設定（互動 3 項、全端 3 項上限，精選排序 1-3，隱藏專案強制排除） */}
             <div className="p-4 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] md:col-span-2 space-y-3">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[var(--border-color)] pb-2.5">
                 <label className="flex items-center gap-3 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     checked={activeProject.featured}
-                    disabled={isPreview || (!activeProject.featured && featuredCount >= 3)}
+                    disabled={isPreview || activeProject.visible === false || (!activeProject.featured && currentCatFeaturedCount >= 3)}
                     onChange={(e) => handleToggleFeatured(e.target.checked)}
                     className="w-4 h-4 rounded-none text-[var(--neon-cyan)] focus:ring-0 focus:outline-none cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                   />
@@ -949,34 +1068,42 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                     <span className="text-xs sm:text-sm font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
                       {isEn ? 'Mark as Featured Project' : '標記為精選專案 (於首頁展現)'}
                     </span>
+                    {activeProject.visible === false && (
+                      <span className="text-[11px] text-rose-400 font-mono">
+                        {isEn ? '(Hidden projects cannot be featured)' : '(隱藏之專案無法設為精選)'}
+                      </span>
+                    )}
                   </div>
                 </label>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* 分類獨立計數器 */}
                   <span
                     className="text-xs font-mono px-2 py-0.5 border cyber-cut-sm font-bold"
                     style={{
                       backgroundColor:
-                        featuredCount >= 3
+                        currentCatFeaturedCount >= 3
                           ? activeProject.featured
                             ? 'rgba(245,158,11,0.12)'
                             : 'rgba(239,68,68,0.12)'
                           : 'rgba(0,240,255,0.1)',
                       borderColor:
-                        featuredCount >= 3
+                        currentCatFeaturedCount >= 3
                           ? activeProject.featured
                             ? 'rgba(245,158,11,0.35)'
                             : 'rgba(239,68,68,0.35)'
                           : 'rgba(0,240,255,0.35)',
                       color:
-                        featuredCount >= 3
+                        currentCatFeaturedCount >= 3
                           ? activeProject.featured
                             ? '#f59e0b'
                             : '#ef4444'
                           : 'var(--neon-cyan)',
                     }}
                   >
-                    {isEn ? `Featured: ${featuredCount}/3` : `已設定精選: ${featuredCount}/3 (最多 3 項)`}
+                    {isInteractive
+                      ? (isEn ? `Interactive: ${interactiveFeaturedCount}/3` : `精選互動: ${interactiveFeaturedCount}/3`)
+                      : (isEn ? `Fullstack: ${fullstackFeaturedCount}/3` : `精選全端: ${fullstackFeaturedCount}/3`)}
                   </span>
                 </div>
               </div>
@@ -1077,7 +1204,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
 
                 {/* 4. GitHub 原始碼存放庫網址 */}
                 <CmsUrlInput
-                  label={isEn ? '4. GitHub Repository URL' : '4. 專案原始碼 (GitHub 倉庫連結)'}
+                  label={isEn ? '4. GitHub Repository URL' : '4. 專案代碼 (GitHub 倉庫連結)'}
                   value={activeProject.githubUrl || ''}
                   onChange={(val) => handleFieldChange('githubUrl', val)}
                   placeholder="https://github.com/..."

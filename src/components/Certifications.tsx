@@ -13,6 +13,7 @@
 import React, { useState } from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import { CheckCircle2, ExternalLink, Trophy, Award, ChevronDown, ChevronUp, ShieldCheck } from 'lucide-react';
 import certData from '../data/certifications-section.json';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -22,36 +23,34 @@ interface CertItem {
   org: string;
   linkKey?: string;
   driveUrl?: string;
+  visible?: boolean;
 }
 
 interface CertGroup {
   group: string;
   iconType: string;
+  visible?: boolean;
   items: CertItem[];
 }
 
 export const Certifications: React.FC = () => {
   const { t, lang } = useLang();
   const { theme } = useTheme();
+  const { data } = usePortfolioData();
   const isLight = theme === 'light';
 
-  /**
-   * TODO: [後端端點對接] 取得使用者模式國際證照與專業技能認證資料
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/certifications
-   * 3. 請求參數:
-   *    - Query Params: lang (string, 'zh' | 'en' | 'ja')
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: { zh: CertGroup[], en: CertGroup[], ja: CertGroup[], toeic: object, driveFolderUrl: string, driveLinks: Record<string, string> } }
-   *    - 500 Internal Server Error: 伺服器讀取證照資訊失敗
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (certifications-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
-   */
-  const dataMap = certData as unknown as Record<Language, CertGroup[]> & {
-    toeic: { score: string; driveUrl: string };
+  const dataMap = (data.certifications || certData) as unknown as Record<Language, CertGroup[]> & {
+    toeic: { score: string; driveUrl: string; visible?: boolean };
     driveFolderUrl: string;
     driveLinks?: Record<string, string>;
   };
-  const groups: CertGroup[] = dataMap[lang] ?? dataMap.zh;
+  const rawGroups: CertGroup[] = dataMap[lang] ?? dataMap.zh;
+  const groups: CertGroup[] = rawGroups
+    .filter((g) => g.visible !== false)
+    .map((g) => ({
+      ...g,
+      items: g.items.filter((item) => item.visible !== false),
+    }));
 
   const [expandedGroups, setExpandedGroups] = useState<Record<number, boolean>>({});
 
@@ -107,61 +106,68 @@ export const Certifications: React.FC = () => {
         <div ref={containerRef} className="max-w-6xl mx-auto space-y-10">
 
           {/* 高對比金琥珀色 TOEIC 755 多益國際英語測驗證照卡片 */}
-          <div
-            className="p-6 sm:p-7 border cyber-cut-corner flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl backdrop-blur-xl reveal-scale reveal-d1"
-            style={{
-              backgroundColor: isLight ? '#fffbeb' : '#091328',
-              borderColor: isLight ? '#fcd34d' : '#f59e0b',
-            }}
-          >
-            <div className="flex items-center gap-4">
-              <div
-                className="p-3 border cyber-cut-sm shrink-0 shadow-sm"
-                style={{
-                  backgroundColor: isLight ? '#fef3c7' : 'rgba(245, 158, 11, 0.2)',
-                  borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.4)',
-                  color: isLight ? '#b45309' : '#fbbf24',
-                }}
-              >
-                <Trophy size={26} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span
-                    className="px-2 py-0.5 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm"
-                    style={{
-                      backgroundColor: isLight ? '#fef3c7' : 'rgba(245, 158, 11, 0.2)',
-                      borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.4)',
-                      color: isLight ? '#b45309' : '#fbbf24',
-                    }}
-                  >
-                    {lang === 'zh' ? '全球英檢認證' : 'GLOBAL ENGLISH PROFICIENCY'}
-                  </span>
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                  {dataMap.toeic?.score || 'TOEIC 755'}
-                </h3>
-                <p className="text-xs sm:text-sm font-tech font-bold" style={{ color: isLight ? '#334155' : '#e2e8f0' }}>
-                  {lang === 'zh' ? 'ETS 多益英語測驗成績證明' : 'ETS Test of English for International Communication'}
-                </p>
-              </div>
-            </div>
-
-            <a
-              href={dataMap.toeic.driveUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="px-6 py-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-md group shrink-0"
+          {dataMap.toeic?.visible !== false && (
+            <div
+              className="p-6 sm:p-7 border cyber-cut-corner flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xl backdrop-blur-xl reveal-scale reveal-d1"
               style={{
-                backgroundColor: isLight ? '#f59e0b' : 'rgba(245, 158, 11, 0.2)',
-                borderColor: isLight ? '#d97706' : '#f59e0b',
-                color: isLight ? '#ffffff' : '#fbbf24',
+                background: isLight
+                  ? 'linear-gradient(135deg, rgba(254, 243, 199, 0.88) 0%, rgba(255, 255, 255, 0.92) 100%)'
+                  : 'linear-gradient(135deg, rgba(245, 158, 11, 0.09) 0%, rgba(13, 23, 42, 0.52) 50%, rgba(6, 12, 24, 0.62) 100%)',
+                borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.45)',
+                boxShadow: isLight
+                  ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 10px 25px rgba(245, 158, 11, 0.08)'
+                  : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.16), 0 16px 36px rgba(0, 0, 0, 0.55), 0 0 24px rgba(245, 158, 11, 0.12)',
               }}
             >
-              <ExternalLink size={16} className="shrink-0 group-hover:scale-110 transition-transform" />
-              <span>{t('view_credential')}</span>
-            </a>
-          </div>
+              <div className="flex items-center gap-4">
+                <div
+                  className="p-3 border cyber-cut-sm shrink-0 shadow-sm"
+                  style={{
+                    backgroundColor: isLight ? '#fef3c7' : 'rgba(245, 158, 11, 0.2)',
+                    borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.4)',
+                    color: isLight ? '#b45309' : '#fbbf24',
+                  }}
+                >
+                  <Trophy size={26} />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span
+                      className="px-2 py-0.5 border font-tech text-xs font-bold uppercase tracking-wider cyber-cut-sm"
+                      style={{
+                        backgroundColor: isLight ? '#fef3c7' : 'rgba(245, 158, 11, 0.2)',
+                        borderColor: isLight ? '#fcd34d' : 'rgba(245, 158, 11, 0.4)',
+                        color: isLight ? '#b45309' : '#fbbf24',
+                      }}
+                    >
+                      {lang === 'zh' ? '全球英檢認證' : 'GLOBAL ENGLISH PROFICIENCY'}
+                    </span>
+                  </div>
+                  <h3 className="text-2xl sm:text-3xl font-black font-hud uppercase" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                    {dataMap.toeic?.score || 'TOEIC 755'}
+                  </h3>
+                  <p className="text-xs sm:text-sm font-tech font-bold" style={{ color: isLight ? '#334155' : '#e2e8f0' }}>
+                    {lang === 'zh' ? 'ETS 多益英語測驗成績證明' : 'ETS Test of English for International Communication'}
+                  </p>
+                </div>
+              </div>
+
+              <a
+                href={dataMap.toeic.driveUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="px-6 py-3 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-md group shrink-0"
+                style={{
+                  backgroundColor: isLight ? '#f59e0b' : 'rgba(245, 158, 11, 0.2)',
+                  borderColor: isLight ? '#d97706' : '#f59e0b',
+                  color: isLight ? '#ffffff' : '#fbbf24',
+                }}
+              >
+                <ExternalLink size={16} className="shrink-0 group-hover:scale-110 transition-transform" />
+                <span>{t('view_credential')}</span>
+              </a>
+            </div>
+          )}
 
           {/* 專業認證群組 — 各群組具備獨立識別強調色 */}
           {groups.map((group, gIdx) => {
@@ -174,10 +180,15 @@ export const Certifications: React.FC = () => {
             return (
               <div
                 key={gIdx}
-                className={`cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl reveal-scale reveal-d${((gIdx % 2) + 2) as 2 | 3}`}
+                className={`cyber-card p-6 sm:p-7 border cyber-cut-corner space-y-6 shadow-xl backdrop-blur-xl reveal-scale reveal-d${((gIdx % 2) + 2) as 2 | 3}`}
                 style={{
-                  backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.92)',
-                  borderColor: isLight ? accent.border : borderCol,
+                  background: isLight
+                    ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
+                    : 'linear-gradient(135deg, rgba(13, 23, 42, 0.50) 0%, rgba(6, 12, 24, 0.60) 100%)',
+                  borderColor: isLight ? accent.border : `${accent.main}55`,
+                  boxShadow: isLight
+                    ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 10px 25px rgba(15, 23, 42, 0.05)'
+                    : `inset 0 1px 0 0 rgba(255, 255, 255, 0.16), 0 16px 36px -10px rgba(0, 0, 0, 0.6), 0 0 20px ${accent.main}12`,
                 }}
               >
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-700/40 pb-4">
@@ -216,10 +227,11 @@ export const Certifications: React.FC = () => {
                       href={(cert.linkKey && dataMap.driveLinks?.[cert.linkKey]) || cert.driveUrl || dataMap.driveFolderUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="p-4 border cyber-cut-sm flex items-center justify-between group transition-all duration-300 hover:-translate-y-1 cursor-pointer shadow-xs"
+                      className="p-4 border cyber-cut-sm flex items-center justify-between group transition-all duration-300 hover:border-[var(--neon-cyan)] cursor-pointer shadow-xs backdrop-blur-md"
                       style={{
-                        backgroundColor: isLight ? '#f8fafc' : 'rgba(3,7,18,0.75)',
+                        backgroundColor: isLight ? 'rgba(248, 250, 252, 0.85)' : 'rgba(8, 14, 28, 0.45)',
                         borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                        boxShadow: isLight ? 'none' : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.06)',
                       }}
                     >
                       <div className="flex items-center gap-3 min-w-0 pr-2">

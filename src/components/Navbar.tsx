@@ -13,6 +13,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import { Volume2, VolumeX, Sun, Moon, ChevronDown } from 'lucide-react';
 import defaultSiteSettings from '../data/site-settings.json';
 
@@ -50,7 +51,8 @@ export const Navbar: React.FC<NavbarProps> = ({
    *    - 500 Internal Server Error: 伺服器讀取全域設定失敗
    * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (site-settings.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
    */
-  const siteSettings = defaultSiteSettings;
+  const { data } = usePortfolioData();
+  const siteSettings = ((data.site_settings || defaultSiteSettings) as typeof defaultSiteSettings);
 
   const currentSettings = siteSettings[lang] || defaultSiteSettings[lang] || defaultSiteSettings.zh;
   const headerTopTitle = currentSettings.headerTop || 'Portfolio';

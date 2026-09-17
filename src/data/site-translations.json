@@ -31,6 +31,7 @@
     "stat_toeic": "TOEIC 755",
     "stat_toeic_label": "英文多益檢定成績",
     "btn_toeic_proof": "多益成績證明",
+    "view_credential": "檢視成績證明",
 
     "skills_title": "專業技能",
     "skills_intro": "涵蓋互動應用開發、全端架構與多媒體美學設計，展現跨領域全方位開發實力。",
@@ -118,8 +119,9 @@
     "stat_projects": "Diverse Core Projects",
     "stat_projects_label": "Extensive Experience Across Multiple Project Domains",
     "stat_toeic": "TOEIC 755",
-    "stat_toeic_label": "English Proficiency Score",
+    "stat_toeic_label": "TOEIC English Score",
     "btn_toeic_proof": "TOEIC Certificate",
+    "view_credential": "View Credential",
 
     "skills_title": "Skills",
     "skills_intro": "Covering interactive application dev, fullstack architecture, and multimedia design aesthetics.",

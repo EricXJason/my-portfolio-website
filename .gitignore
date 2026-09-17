@@ -13,9 +13,11 @@ dist
 dist-ssr
 
 # ── Local secrets & env ───────────────────────────────────────────────────────
-*.local
+.env
+.env.local
 .env.*
 !.env.example
+*.local
 
 # ── macOS metadata ────────────────────────────────────────────────────────────
 .DS_Store

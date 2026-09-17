@@ -348,7 +348,7 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
               <h3 className="text-base font-bold font-['Noto_Sans_TC'] tracking-wide" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                 {isEn ? 'Universal Icon Selector' : '全域圖示選擇器'}
               </h3>
-              <p className="text-[11px] font-['Share_Tech_Mono'] text-[var(--text-sub)]">
+              <p className="text-[11px] font-['Noto_Sans_TC'] text-[var(--text-sub)]">
                 {isEn ? `${ICON_LIBRARY.length} PROFESSIONAL ICONS LOADED` : `已加載 ${ICON_LIBRARY.length} 款專業向量圖示庫`}
               </p>
             </div>
@@ -372,7 +372,7 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={isEn ? 'Search icons by name or keywords (e.g. code, star, award)...' : '搜尋圖示名稱或關鍵字（例如：code, star, award, 程式, 證照）...'}
+            placeholder={isEn ? 'Search icons by name or keywords (e.g. code, star, award)...' : '搜尋圖示名稱或關鍵字（例如：程式、證照、獎盃、科技、多媒體）...'}
             className="w-full pl-10 pr-9 py-2.5 text-xs border cyber-cut-sm bg-[var(--card-inner)] text-[var(--text-main)] outline-none font-['Noto_Sans_TC'] transition-colors"
             style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)' }}
             autoFocus
@@ -439,7 +439,7 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
                     ? (isLight ? '#0284c7' : '#00f0ff')
                     : (isLight ? '#e2e8f0' : 'rgba(255, 255, 255, 0.08)'),
                 }}
-                title={`${item.labelZh} (${item.name})`}
+                title={isEn ? `${item.labelEn} (${item.name})` : item.labelZh}
               >
                 {isSelected && (
                   <span
@@ -459,9 +459,11 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
                   <div className="text-[11px] font-['Noto_Sans_TC'] font-semibold truncate" style={{ color: isLight ? '#0f172a' : '#f1f5f9' }}>
                     {isEn ? item.labelEn : item.labelZh}
                   </div>
-                  <div className="text-[9px] font-['Share_Tech_Mono'] text-[var(--text-sub)]/70 truncate">
-                    {item.name}
-                  </div>
+                  {isEn && (
+                    <div className="text-[9px] font-['Share_Tech_Mono'] text-[var(--text-sub)]/70 truncate">
+                      {item.name}
+                    </div>
+                  )}
                 </div>
               </button>
             );
@@ -479,7 +481,7 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
 
         {/* 頁尾提示資訊 */}
         <div className="flex items-center justify-between pt-2 border-t text-[11px] font-['Share_Tech_Mono'] text-[var(--text-sub)]" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}>
-          <span>CURRENT: {currentIconName || 'star'}</span>
+          <span>{isEn ? `CURRENT: ${currentIconName || 'star'}` : `已選取圖示：${ICON_LIBRARY.find(i => i.name === currentIconName)?.labelZh || '標準圖示'}`}</span>
           <button
             type="button"
             onClick={onClose}

@@ -21,6 +21,8 @@ import {
   Star,
   ArrowUp,
   ArrowDown,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -34,6 +36,7 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 
 export interface GalleryItem {
   id: string;
@@ -42,6 +45,7 @@ export interface GalleryItem {
   embedUrl?: string;
   featured?: boolean;
   featuredOrder?: number;
+  visible?: boolean;
 }
 
 export interface GalleryMeta {
@@ -76,16 +80,20 @@ interface CmsGalleryEditorProps {
  */
 export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = false }) => {
   const { lang } = useLang();
+  const isEn = lang === 'en';
   const { theme } = useTheme();
   const isLight = theme === 'light';
-  const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
   }, [setIsDirty]);
 
   const [items, setItems] = useState<GalleryItem[]>(() => {
+    if (data.gallery && Array.isArray(data.gallery)) {
+      return data.gallery as GalleryItem[];
+    }
     const defaults = defaultGalleryData as GalleryItem[];
     try {
       const saved = localStorage.getItem('portfolio_gallery_data');
@@ -112,7 +120,43 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
     return defaults;
   });
 
+  useEffect(() => {
+    if (data.gallery && Array.isArray(data.gallery)) {
+      setItems(data.gallery as GalleryItem[]);
+    }
+  }, [data.gallery]);
+
+  // 聆聽廣播存檔事件
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('gallery', items);
+        } catch (e) {
+          console.error('[CMS Gallery] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [items, isPreview, updateDocument]);
+
   const [galleryMeta, setGalleryMeta] = useState<Record<'zh' | 'en', GalleryMeta>>(() => {
+    if (data.site_translations) {
+      const trans = data.site_translations as any;
+      if (trans.zh?.gallery_title || trans.en?.gallery_title) {
+        return {
+          zh: {
+            gallery_title: trans.zh?.gallery_title ?? DEFAULT_GALLERY_META.zh.gallery_title,
+            gallery_note: trans.zh?.gallery_note ?? DEFAULT_GALLERY_META.zh.gallery_note,
+          },
+          en: {
+            gallery_title: trans.en?.gallery_title ?? DEFAULT_GALLERY_META.en.gallery_title,
+            gallery_note: trans.en?.gallery_note ?? DEFAULT_GALLERY_META.en.gallery_note,
+          },
+        };
+      }
+    }
     try {
       const saved = localStorage.getItem('portfolio_custom_translations');
       if (saved) {
@@ -351,12 +395,12 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
    *    - 401 Unauthorized: 憑證無效
    * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
    */
-  const doSave = () => {
+  const doSave = async () => {
     setIsDirty(false);
-    localStorage.setItem('portfolio_gallery_data', JSON.stringify(items));
-    window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
-
     try {
+      localStorage.setItem('portfolio_gallery_data', JSON.stringify(items));
+      window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
+
       const saved = localStorage.getItem('portfolio_custom_translations');
       const translations = saved ? JSON.parse(saved) : { zh: {}, en: {} };
       if (!translations.zh) translations.zh = {};
@@ -367,20 +411,34 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
       translations.en.gallery_note = galleryMeta.en.gallery_note;
       localStorage.setItem('portfolio_custom_translations', JSON.stringify(translations));
       window.dispatchEvent(new Event('portfolio_translations_updated'));
-    } catch {
-      // 儲存中繼資料失敗回退
-    }
 
-    showToast(isEn ? '"Art Gallery" module saved successfully!' : '「美術畫廊」模組資料已成功存檔！');
+      await updateDocument('gallery', items);
+      await updateDocument('site_translations', {
+        ...(data.site_translations as any || {}),
+        zh: {
+          ...(data.site_translations as any)?.zh,
+          gallery_title: galleryMeta.zh.gallery_title,
+          gallery_note: galleryMeta.zh.gallery_note,
+        },
+        en: {
+          ...(data.site_translations as any)?.en,
+          gallery_title: galleryMeta.en.gallery_title,
+          gallery_note: galleryMeta.en.gallery_note,
+        },
+      });
+
+      showToast(isEn ? '"Art Gallery" module saved to cloud successfully!' : '「美術畫廊」模組資料已成功存檔至雲端！');
+    } catch {
+      showToast(isEn ? 'Failed to save to cloud' : '存檔至雲端失敗');
+    }
   };
 
-  const doReset = () => {
+  const doReset = async () => {
     setIsDirty(false);
-    localStorage.removeItem('portfolio_gallery_data');
-    window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
-    setItems(defaultGalleryData as GalleryItem[]);
-
     try {
+      localStorage.removeItem('portfolio_gallery_data');
+      window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
+
       const saved = localStorage.getItem('portfolio_custom_translations');
       if (saved) {
         const translations = JSON.parse(saved);
@@ -395,12 +453,13 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
         localStorage.setItem('portfolio_custom_translations', JSON.stringify(translations));
         window.dispatchEvent(new Event('portfolio_translations_updated'));
       }
+      setItems(defaultGalleryData as GalleryItem[]);
+      setGalleryMeta(DEFAULT_GALLERY_META);
+      await updateDocument('gallery', defaultGalleryData);
+      showToast(isEn ? '"Art Gallery" module restored to defaults!' : '「美術畫廊」模組已還原為初始預設資料！');
     } catch {
-      // 還原中繼資料失敗回退
+      showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
-    setGalleryMeta(DEFAULT_GALLERY_META);
-
-    showToast(isEn ? '"Art Gallery" module restored to defaults!' : '「美術畫廊」模組已還原為初始預設資料！');
   };
 
   const triggerSaveDialog = () => {
@@ -625,9 +684,42 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
                         ★ #{item.featuredOrder || 1}
                       </span>
                     )}
+                    {item.visible === false && (
+                      <span className="inline-flex items-center gap-0.5 px-2 py-0.5 border cyber-cut-sm text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border-rose-500/30">
+                        <EyeOff className="w-3 h-3" />
+                        <span>{isEn ? 'HIDDEN' : '已隱藏'}</span>
+                      </span>
+                    )}
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-1.5">
+                    {/* 作品顯示/隱藏開關 */}
+                    <label
+                      className="flex items-center gap-1 px-2 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
+                      title={item.visible !== false ? '點擊於前臺隱藏此作品' : '點擊於前臺顯示此作品'}
+                    >
+                      {item.visible !== false ? (
+                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
+                      ) : (
+                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
+                      )}
+                      <input
+                        type="checkbox"
+                        checked={item.visible !== false}
+                        disabled={isPreview}
+                        onChange={(e) => {
+                          setIsDirty(true);
+                          setItems((prev) => {
+                            const updated = [...prev];
+                            updated[actualIndex] = { ...updated[actualIndex], visible: e.target.checked };
+                            return updated;
+                          });
+                        }}
+                        className="sr-only"
+                      />
+                      <span>{item.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
+                    </label>
+
                     <button
                       type="button"
                       disabled={isPreview || actualIndex === 0}

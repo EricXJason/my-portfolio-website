@@ -45,7 +45,8 @@
     "image": "/assets/images/proj-extinction.webp",
     "videoUrl": "https://www.youtube.com/watch?v=amEg9Cjix10",
     "ytId": "https://www.youtube.com/watch?v=amEg9Cjix10",
-    "buttonOrder": ["video"],
+    "githubUrl": "https://github.com/EricXJason/planet-of-extinction",
+    "buttonOrder": ["video", "github"],
     "honors": [
       "2022 全國大專及高中職學生專題製作競賽成果展示 - 第一名",
       "2022 Unreal Engine 5 臺灣遊戲創意設計大賽 - 佳作",
@@ -90,36 +91,41 @@
     "buttonOrder": ["live", "admin", "github"],
     "honors": [],
     "honors_en": [],
-    "desc": "採用 React 與 TypeScript 打造之全端作品集網站。整合自研視覺化 CMS 內容管理後臺與未儲存狀態阻斷防護，支援 Firebase 雲端多媒體儲存、完整雙語國際化及響應式主題切換。",
-    "desc_en": "Fullstack portfolio website engineered with React and TypeScript. Integrates a custom visual CMS admin dashboard with Unsaved State Guard, Firebase cloud asset storage, full bilingual i18n support, and responsive cyberpunk themes.",
+    "desc": "採用 React 19 與 TypeScript 打造之賽博龐克科幻風格全端作品集網站。深度整合自研視覺化 CMS 內容管理後臺，架構「本地離線優先快取（SWR）+ Firebase Firestore 毫秒級即時監聽」雙向同步系統，並全面導入 Firebase Auth 官方身分驗證體系、Cloudflare Workers 邊緣運算與動態 Canvas 粒子視覺網絡。",
+    "desc_en": "Cyberpunk-aesthetic fullstack portfolio website engineered with React 19 and TypeScript. Deeply integrates an in-house visual CMS dashboard featuring an Offline-First SWR + Firebase Firestore real-time listener architecture, reinforced with Firebase Auth official credentials, Cloudflare Workers edge deployment, and dynamic Canvas particle networks.",
     "contributions": [
-      "自研模組化 CMS 內容管理後臺：自主研發涵蓋首頁、技能、專案、經歷與畫廊等八大核心模組之視覺化管理後臺，實作未儲存狀態智慧阻斷防護（Unsaved State Guard）、模式選擇安全門禁與即時資料結構驗證。",
-      "全端 BaaS 雲端架構與資產管線：整合 Firebase Storage 作為 BaaS 後端雲端儲存中心，支援非同步多媒體資材上傳、SVG 技術圖示即時庫映射與高可靠度資料持久化管理。",
-      "前端工程與 i18n 國際化設計：採用 React 搭配 TypeScript 建構模組化組件結構，結合 Vite 高效構建工具與 Context API 實作輕量化雙語系統，支援全域語言狀態切換與 HTML lang 標籤即時同步。",
-      "動態視覺與 RWD 響應式排版：設計賽博龐克風格深色主題與現代簡約淺色主題，整合 Canvas 動態粒子背景、客製化滑鼠游標、視差滾動與跨裝置自適應佈局，符合 WCAG 高對比無障礙標準。",
-      "CI/CD 自動化建構與邊緣部署：結合 GitHub Actions 自動化質量門禁檢測與 Cloudflare Pages 邊緣部署流程，自動化發布至全球 Anycast CDN 節點，實現極速載入體驗。"
+      "自研模組化視覺 CMS 內容管理後臺：自主研發涵蓋首頁、網站全域設定、個人簡歷、專業技能、精選專案、證照榮譽、工作經歷與畫廊等八大模組之視覺化管理後臺，實作未儲存狀態智慧阻斷防護（Unsaved State Guard）、跨語系資料結構自動同步與細粒度開關防禦機制。",
+      "Firebase Firestore 雙向串流同步與離線優先快取（SWR）：架構「本地 JSON 0ms 首屏極速渲染 + Firestore onSnapshot 即時串流監聽」雙層狀態中樞，達成前臺展示無須重新整理網頁即可毫秒級熱更新，CMS 儲存時自動持久化至雲端資料庫集合。",
+      "Firebase Auth 官方安全身分認證：全面接入 Firebase Authentication 官方金鑰驗證體系，徹底杜絕模擬放行與旁路漏洞，實作高強度登入安全門禁與憑證狀態生命週期管理。",
+      "全端 BaaS 與多媒體雲端管線：整合 Firebase Storage 作為 BaaS 雲端儲存中心，支援非同步多媒體資材上傳、SVG 技術圖示即時庫映射與高可靠度資料持久化管線。",
+      "賽博龐克 HUD 科幻美學與動態視覺系統：精心設計沉浸式深色賽博龐克 HUD 終端與玻璃擬態（Glassmorphism）科幻層次，整合動態 Canvas 粒子交互網絡、客製化發光游標、視差滾動與全裝置自適應排版，符合 WCAG 高對比無障礙標準。",
+      "CI/CD 自動化建構與邊緣運算部署：結合 GitHub Actions 自動化品質門禁檢測與 Cloudflare Workers 邊緣運算部署管線，自動化發布至全球 Anycast CDN 節點，實現全球極速載入體驗。"
     ],
     "contributions_en": [
-      "In-House Modular CMS Admin Suite: Engineered a proprietary visual admin dashboard spanning Hero, Skills, Projects, Experience, and Art Gallery with intelligent Unsaved State Guard, access mode security gates, and schema validation.",
-      "Fullstack BaaS Cloud Architecture & Asset Pipeline: Integrated Firebase Storage as a BaaS cloud storage hub supporting async multimedia asset uploads, live SVG icon library mapping, and robust data persistence.",
-      "Frontend Engineering & i18n Architecture: Modular React + TypeScript component design with Vite and Context API for lightweight bilingual i18n, supporting global language switching and real-time HTML lang tag sync.",
-      "Dynamic Aesthetics & Responsive Layout: Modern cyberpunk dark mode and light mode, dynamic Canvas particle background, custom cursor, parallax scrolling, and responsive layout complying with WCAG contrast standards.",
-      "Automated CI/CD Pipeline & Edge Deployment: Coupled GitHub Actions automated quality gates with Cloudflare Pages edge deployment workflow, dispatching automatically to global Anycast CDN nodes."
+      "In-House Modular Visual CMS Admin Suite: Engineered a proprietary visual admin dashboard spanning Hero, Site Settings, About, Skills, Projects, Experience, Certifications, and Art Gallery with intelligent Unsaved State Guard, cross-language automatic synchronization, and fine-grained display toggles.",
+      "Firebase Firestore Real-Time Streaming & Offline-First SWR: Designed a two-tier state hub with local JSON 0ms initial rendering and Firestore onSnapshot live listeners, enabling sub-second zero-refresh hot updates on public pages while seamlessly persisting CMS edits to cloud collections.",
+      "Firebase Auth Official Security Gateway: Integrated official Firebase Authentication credential verification, eliminating bypass vulnerabilities and enforcing strict access control with session lifecycle management.",
+      "Fullstack BaaS & Cloud Media Pipeline: Integrated Firebase Storage as a cloud asset hub supporting asynchronous multimedia uploads, live SVG icon library mapping, and robust data persistence pipelines.",
+      "Cyberpunk HUD Sci-Fi Aesthetics & Dynamic Visual System: Crafted an immersive cyberpunk HUD terminal and sci-fi glassmorphism layers, coupled with interactive Canvas particle networks, custom illuminated cursor, parallax scrolling, and responsive layouts meeting WCAG high-contrast standards.",
+      "Automated CI/CD Pipeline & Edge Deployment: Coupled GitHub Actions automated quality gates with Cloudflare Workers edge runtime deployment, dispatching automatically across global Anycast CDN edge nodes for lightning-fast worldwide delivery."
     ],
-    "tags": ["React", "TypeScript", "Tailwind CSS", "Canvas API", "Vite", "Firebase", "Cloudflare Pages", "GitHub Actions"],
-    "date": "2026.07",
-    "date_en": "2026.07"
+    "tags": ["React 19", "TypeScript", "Tailwind CSS", "Firebase Firestore", "Firebase Auth", "Cloudflare Workers", "GitHub Actions", "Canvas API", "Vite"],
+    "date": "2026.09",
+    "date_en": "2026.09"
   },
   {
     "id": "rhythmsync",
     "title_zh": "節奏同奏",
     "title_en": "RhythmSync",
     "category": "interactive",
-    "featured": false,
+    "featured": true,
+    "featuredOrder": 3,
     "order": 4,
     "image": "/assets/images/proj-rhythmsync.webp",
     "videoUrl": "https://www.youtube.com/watch?v=0h3oy0Y8f0o",
     "ytId": "https://www.youtube.com/watch?v=0h3oy0Y8f0o",
+    "githubUrl": "https://github.com/EricXJason/rhythm-sync",
+    "buttonOrder": ["video", "github"],
     "honors": [],
     "honors_en": [],
     "desc": "灰階懷舊風格之 2D 音效同步動作跑酷遊戲。透過即時音訊頻譜動態驅動 UI、視覺特效、鏡頭運動與背景變化，打造視聽高度同步之沉浸體驗。",
@@ -299,31 +305,61 @@
     "date_en": "2026 (In Planning)"
   },
   {
-    "id": "ecommerce-platform",
-    "title_zh": "電商網站",
-    "title_en": "E-Commerce Website",
+    "id": "survey-flow",
+    "title_zh": "動態問卷系統",
+    "title_en": "SurveyFlow Dynamic Survey Engine",
     "category": "fullstack",
-    "featured": false,
+    "featured": true,
+    "featuredOrder": 2,
     "order": 13,
     "image": "/assets/images/proj-placeholder.webp",
-    "desc": "專案規劃與開發中，內容即將推出。",
-    "desc_en": "Project planning and development in progress. Coming soon.",
-    "tags": [],
-    "date": "2026 (規劃中)",
-    "date_en": "2026 (In Planning)"
+    "websiteUrl": "https://survey-flow.pages.dev/",
+    "adminUrl": "https://survey-flow.pages.dev/admin",
+    "githubUrl": "https://github.com/EricXJason/survey-flow",
+    "buttonOrder": ["live", "admin", "github"],
+    "desc": "基於 Angular 與 TypeScript 架構打造之企業級動態問卷引擎。實作宣告式動態表單驗證、非同步資料串流處理、自適應響應式題型渲染與即時問卷分析儀表板。",
+    "desc_en": "Enterprise dynamic survey platform engineered with Angular and TypeScript. Features declarative reactive form validation, async data stream processing, and real-time response analytics dashboard.",
+    "contributions": [
+      "動態表單與狀態串流：運用 Angular Reactive Forms 與 RxJS 實作複雜條件題型跳轉邏輯與即時表單校驗。",
+      "模組化題型體系：採用 Angular 獨立元件架構建構可擴充題型庫，支援單複選、多階評分量表與問卷進度條快照。",
+      "RESTful API 與離線暫存：設計高可靠度 DTO 傳輸合約，結合非同步 HttpClient 實作問卷即時自動儲存防斷網保護。"
+    ],
+    "contributions_en": [
+      "Dynamic Reactive Forms & State: Engineered Angular Reactive Forms & RxJS for conditional branching logic and real-time validation.",
+      "Modular Survey Widgets: Built scalable standalone components for multi-type question matrices and progress snapshots.",
+      "RESTful DTO Contracts: Designed type-safe API communication with async auto-save pipelines and offline recovery."
+    ],
+    "tags": ["Angular", "TypeScript", "Tailwind CSS", "RxJS", "RESTful API", "Node.js"],
+    "date": "2026.08 - 2026.09",
+    "date_en": "2026.08 - 2026.09"
   },
   {
-    "id": "survey-flow",
-    "title_zh": "動態問卷網站",
-    "title_en": "Dynamic Survey Website",
+    "id": "ecommerce-platform",
+    "title_zh": "雲端電商平臺",
+    "title_en": "Cloud E-Commerce Platform",
     "category": "fullstack",
-    "featured": false,
+    "featured": true,
+    "featuredOrder": 3,
     "order": 14,
     "image": "/assets/images/proj-placeholder.webp",
-    "desc": "專案規劃與開發中，內容即將推出。",
-    "desc_en": "Project planning and development in progress. Coming soon.",
-    "tags": [],
-    "date": "2026 (規劃中)",
-    "date_en": "2026 (In Planning)"
+    "websiteUrl": "https://cloud-ecommerce.pages.dev/",
+    "adminUrl": "https://cloud-ecommerce.pages.dev/admin",
+    "githubUrl": "https://github.com/EricXJason/cloud-ecommerce",
+    "buttonOrder": ["live", "admin", "github"],
+    "desc": "現代無伺服器架構打造之全端電商平臺。具備即時商品庫存快取、購物車持久化同步、安全金流串接模擬與多維度銷售指標儀表板。",
+    "desc_en": "Modern fullstack e-commerce platform built on serverless architecture. Features real-time inventory caching, persistent cart sync, payment gateway flow, and sales analytics dashboard.",
+    "contributions": [
+      "購物車與全域狀態管理：採用 Context API 與本地快取雙軌同步機制，實現毫秒級購物車計算與併發防禦。",
+      "後端 API 與資料庫設計：設計高內聚 RESTful API 與關聯式資料庫 Schema，落實 ACID 交易隔離與防超賣防禦。",
+      "響應式商品展示介面：實作動態虛擬列表渲染海量商品資料，搭配即時多條件模糊搜尋與分類排序演算法。"
+    ],
+    "contributions_en": [
+      "Cart & Global State Management: Built dual-sync cart pipeline with Context API and local persistence.",
+      "Backend Architecture & Database: Engineered RESTful endpoints and relational schema enforcing ACID transactions.",
+      "High-Performance Catalog UI: Implemented virtualized list rendering with multi-criteria dynamic filtering."
+    ],
+    "tags": ["React", "TypeScript", "Node.js", "Express", "PostgreSQL", "Tailwind CSS"],
+    "date": "2026.06 - 2026.07",
+    "date_en": "2026.06 - 2026.07"
   }
 ]

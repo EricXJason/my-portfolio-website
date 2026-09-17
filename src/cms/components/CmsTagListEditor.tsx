@@ -120,9 +120,9 @@ export const CmsTagListEditor: React.FC<CmsTagListEditorProps> = ({
         };
       case 'blue':
         return {
-          bg: isLight ? 'rgba(59,130,246,0.08)' : 'rgba(59,130,246,0.12)',
-          border: isLight ? '#60a5fa' : 'rgba(59,130,246,0.4)',
-          text: isLight ? '#1d4ed8' : '#60a5fa',
+          bg: isLight ? 'rgba(56,189,248,0.08)' : 'rgba(56,189,248,0.15)',
+          border: isLight ? '#38bdf8' : 'rgba(56,189,248,0.5)',
+          text: isLight ? '#0284c7' : '#38bdf8',
         };
       case 'amber':
         return {
@@ -256,12 +256,6 @@ export const CmsTagListEditor: React.FC<CmsTagListEditorProps> = ({
           </div>
         )}
       </div>
-
-      <p className="text-[10px] text-[var(--text-sub)]/60 font-['Share_Tech_Mono']">
-        {isEn
-          ? 'Enter new tags above. Drag any tag to adjust order or click × to remove.'
-          : '於輸入框鍵入文字後按 Enter 或 [+] 加入。支援直接滑鼠拖曳排序與點擊 × 刪除。'}
-      </p>
     </div>
   );
 };

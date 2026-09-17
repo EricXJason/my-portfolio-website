@@ -23,6 +23,8 @@ import {
   ChevronDown,
   GripVertical,
   Pencil,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -32,6 +34,7 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { SectionTitleEditor } from './SectionTitleEditor';
 import { getLucideIconByName } from './CmsIconPickerModal';
 import { CmsUrlInput } from './CmsUrlInput';
@@ -40,16 +43,18 @@ interface CertItem {
   name: string;
   org: string;
   linkKey: string;
+  visible?: boolean;
 }
 
 interface CertGroup {
   group: string;
   iconType: string;
+  visible?: boolean;
   items: CertItem[];
 }
 
 interface CertificationsFullData {
-  toeic: { score: string; driveUrl: string };
+  toeic: { score: string; driveUrl: string; visible?: boolean };
   driveFolderUrl: string;
   driveLinks: Record<string, string>;
   zh: CertGroup[];
@@ -80,12 +85,16 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
   }, [setIsDirty]);
 
   const [formData, setFormData] = useState<CertificationsFullData>(() => {
+    if (data.certifications) {
+      return data.certifications as unknown as CertificationsFullData;
+    }
     const defaults = defaultCertsData as CertificationsFullData;
     try {
       const saved = localStorage.getItem('portfolio_certifications_data');
@@ -102,7 +111,43 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
     return defaults;
   });
 
+  useEffect(() => {
+    if (data.certifications) {
+      setFormData(data.certifications as unknown as CertificationsFullData);
+    }
+  }, [data.certifications]);
+
+  // 聆聽廣播存檔事件
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('certifications', formData);
+        } catch (e) {
+          console.error('[CMS Certifications] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [formData, isPreview, updateDocument]);
+
   const [awardsMeta, setAwardsMeta] = useState<Record<'zh' | 'en', AwardsMeta>>(() => {
+    if (data.site_translations) {
+      const trans = data.site_translations as any;
+      if (trans.zh?.awards_title || trans.en?.awards_title) {
+        return {
+          zh: {
+            awards_title: trans.zh?.awards_title ?? DEFAULT_AWARDS_META.zh.awards_title,
+            awards_intro: trans.zh?.awards_intro ?? DEFAULT_AWARDS_META.zh.awards_intro,
+          },
+          en: {
+            awards_title: trans.en?.awards_title ?? DEFAULT_AWARDS_META.en.awards_title,
+            awards_intro: trans.en?.awards_intro ?? DEFAULT_AWARDS_META.en.awards_intro,
+          },
+        };
+      }
+    }
     try {
       const saved = localStorage.getItem('portfolio_custom_translations');
       if (saved) {
@@ -416,27 +461,36 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
    *    - 401 Unauthorized: 憑證無效
    * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
    */
-  const doSave = () => {
+  const doSave = async () => {
     setIsDirty(false);
-    localStorage.setItem('portfolio_certifications_data', JSON.stringify(formData));
-    window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
     try {
+      localStorage.setItem('portfolio_certifications_data', JSON.stringify(formData));
+      window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
       const saved = localStorage.getItem('portfolio_custom_translations');
       const translations = saved ? JSON.parse(saved) : { zh: {}, en: {} };
       translations.zh = { ...(translations.zh || {}), ...awardsMeta.zh };
       translations.en = { ...(translations.en || {}), ...awardsMeta.en };
       localStorage.setItem('portfolio_custom_translations', JSON.stringify(translations));
       window.dispatchEvent(new Event('portfolio_translations_updated'));
-    } catch { /* fallback */ }
-    showToast(isEn ? '"Certifications" module saved!' : '「專業證照」模組已成功存檔！');
+
+      await updateDocument('certifications', formData);
+      await updateDocument('site_translations', {
+        ...(data.site_translations as any || {}),
+        zh: { ...(data.site_translations as any)?.zh, ...awardsMeta.zh },
+        en: { ...(data.site_translations as any)?.en, ...awardsMeta.en },
+      });
+
+      showToast(isEn ? '"Certifications" module saved to cloud successfully!' : '「專業證照」模組已成功存檔至雲端！');
+    } catch {
+      showToast(isEn ? 'Failed to save to cloud' : '存檔至雲端失敗');
+    }
   };
 
-  const doReset = () => {
+  const doReset = async () => {
     setIsDirty(false);
-    localStorage.removeItem('portfolio_certifications_data');
-    window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
-    setFormData(defaultCertsData as CertificationsFullData);
     try {
+      localStorage.removeItem('portfolio_certifications_data');
+      window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
       const saved = localStorage.getItem('portfolio_custom_translations');
       if (saved) {
         const t = JSON.parse(saved);
@@ -444,9 +498,13 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
         localStorage.setItem('portfolio_custom_translations', JSON.stringify(t));
         window.dispatchEvent(new Event('portfolio_translations_updated'));
       }
-    } catch { /* fallback */ }
-    setAwardsMeta(DEFAULT_AWARDS_META);
-    showToast(isEn ? '"Certifications" module restored!' : '「專業證照」模組已還原為預設！');
+      setFormData(defaultCertsData as CertificationsFullData);
+      setAwardsMeta(DEFAULT_AWARDS_META);
+      await updateDocument('certifications', defaultCertsData);
+      showToast(isEn ? '"Certifications" module restored to defaults!' : '「專業證照」模組已還原為預設！');
+    } catch {
+      showToast(isEn ? 'Restored locally' : '已重設本地資料');
+    }
   };
 
   const currentGroups = formData[lang] || [];
@@ -513,11 +571,32 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
 
       {/* 第一分區：語言檢定與雲端資料夾 */}
       <div className="border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] p-6 sm:p-8 backdrop-blur-xl space-y-6">
-        <div className="flex items-center gap-2 border-b border-[var(--border-color)] pb-3">
-          <FolderLock className="w-4 h-4 text-[var(--neon-cyan)]" />
-          <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
-            {isEn ? 'Language Score & Cloud Storage' : '語言檢定與雲端證照庫'}
-          </h2>
+        <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+          <div className="flex items-center gap-2">
+            <FolderLock className="w-4 h-4 text-[var(--neon-cyan)]" />
+            <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+              {isEn ? 'Language Score & Cloud Storage' : '語言檢定與雲端證照庫'}
+            </h2>
+          </div>
+          <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
+            <input
+              type="checkbox"
+              checked={formData.toeic.visible !== false}
+              disabled={isPreview}
+              onChange={(e) => {
+                setIsDirty(true);
+                setFormData((prev) => ({
+                  ...prev,
+                  toeic: { ...prev.toeic, visible: e.target.checked },
+                }));
+              }}
+              className="sr-only peer"
+            />
+            <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-400 relative"></div>
+            <span className={formData.toeic.visible !== false ? 'text-amber-400 font-bold' : 'text-slate-500'}>
+              {formData.toeic.visible !== false ? (isEn ? 'VISIBLE' : '顯示卡片') : (isEn ? 'HIDDEN' : '隱藏卡片')}
+            </span>
+          </label>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
@@ -731,15 +810,49 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
                           <span className="text-[11px] font-mono font-bold text-[var(--neon-cyan)]">
                             #{itemIdx + 1}
                           </span>
+                          {item.visible === false && (
+                            <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 border cyber-cut-sm text-[9px] font-mono font-bold bg-rose-500/10 text-rose-400 border-rose-500/30">
+                              <EyeOff className="w-2.5 h-2.5" />
+                              <span>{isEn ? 'HIDDEN' : '已隱藏'}</span>
+                            </span>
+                          )}
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => confirmDeleteCert(groupIdx, itemIdx)}
-                          className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/50 hover:bg-rose-500/10 cursor-pointer transition-colors"
-                          title={isEn ? 'Delete certification' : '刪除此證照'}
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                        <div className="flex items-center gap-2">
+                          <label
+                            className="flex items-center gap-1 cursor-pointer select-none text-[10px] font-mono"
+                            title={item.visible !== false ? '點擊於前臺隱藏此證照' : '點擊於前臺顯示此證照'}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={item.visible !== false}
+                              disabled={isPreview}
+                              onChange={(e) => {
+                                setIsDirty(true);
+                                setFormData((prev) => {
+                                  const groups = [...(prev[lang] || [])];
+                                  const items = [...groups[groupIdx].items];
+                                  items[itemIdx] = { ...items[itemIdx], visible: e.target.checked };
+                                  groups[groupIdx] = { ...groups[groupIdx], items };
+                                  return { ...prev, [lang]: groups };
+                                });
+                              }}
+                              className="sr-only peer"
+                            />
+                            <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
+                            <span className={item.visible !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
+                              {item.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
+                            </span>
+                          </label>
+
+                          <button
+                            type="button"
+                            onClick={() => confirmDeleteCert(groupIdx, itemIdx)}
+                            className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/50 hover:bg-rose-500/10 cursor-pointer transition-colors"
+                            title={isEn ? 'Delete certification' : '刪除此證照'}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="space-y-1">

@@ -1,15 +1,14 @@
 # 物件導向類別圖與系統互動循序圖 | UML Class & Sequence Diagrams
 
 > **專案作者 / Author**: 許哲誠 (HSU, CHE-CHENG)  
-> **規範標準 / Compliance**: 依據《AGENTS.md》全域最高工業級工程協定第 6 章規範建置。定義系統之**物件導向架構（Class Diagram）與跨層動態循序圖（Sequence Diagram）**。本文件不包含業務流程圖與操作狀態機（統一由 `05-flowcharts.md` 承擔），全面採用標準 **Mermaid** 語法，確保在 VS Code、GitHub 及任何 Markdown 預覽器開箱即用、免額外套件原生即時圖形渲染。  
-> *Release: 2026-09-14*
+> **協定標準 / Compliance**: 依據《AGENTS.md》全域最高工程中樞協定規範建置。定義系統之物件導向架構（Class Diagram）與跨層動態循序圖（Sequence Diagram）。全面採用標準 **Mermaid** 語法，確保沉穩科技風與防崩潰規範。  
+> *Release: 2026-09*
 
 ---
 
 ## 1. 前臺展示系統類別關聯圖 | Public Showcase Class Diagram
 
-本圖定義前臺展示視圖之元件階層、全域狀態 Context 與底層工具依賴關係。  
-*Visualizes component composition, context injection, and utility dependencies across public showcase views:*
+本圖定義前臺展示視圖之組件階層、全域狀態 Context 與底層工具依賴關係。
 
 ```mermaid
 %%{init: {
@@ -32,6 +31,19 @@ classDiagram
         -boolean isCmsRoute
         -boolean isSiteEntered
         +render() JSX.Element
+    }
+
+    class IPortfolioDataContext {
+        <<interface>>
+        +Record~string, any~ dataMap
+        +boolean isReady
+        +updateDocument(docId, data) Promise~void~
+    }
+
+    class PortfolioDataProvider {
+        -Record~string, any~ _dataMap
+        -boolean _isReady
+        +updateDocument(docId, data) Promise~void~
     }
 
     class ILangContext {
@@ -59,88 +71,53 @@ classDiagram
     }
 
     class MainSiteContent {
-        -string activeSection
         +render() JSX.Element
     }
 
-    class HeroSection {
-        -HeroData _heroData
+    class HeroComponent {
+        -HeroData heroData
         +render() JSX.Element
     }
 
-    class SciFiRobotAvatar {
-        -boolean _isHovered
-        -number _audioLevel
-        +triggerReaction() void
-    }
-
-    class ProjectsSection {
-        -string _filterCategory
-        -List~Project~ _projects
-        +handleCategoryChange(cat) void
+    class ProjectsComponent {
+        -ProjectItem[] projects
+        -string activeFilter
+        +filterProjects(category) void
         +openLightbox(projectId) void
     }
 
-    class ProjectLightbox {
-        -Project _activeProject
-        +onClose() void
-        +renderMedia() JSX.Element
+    class CertificationsComponent {
+        -CertificationItem[] certs
+        -boolean isToeicVisible
+        +render() JSX.Element
     }
 
-    class ArtGallerySection {
-        -string _activeTab
-        -Artwork _activeImage
-        -number _rouletteIndex
-        +switchTab(tab) void
-        +openLightbox(artwork) void
-        +handlePrevNext() void
+    class ArtGalleryComponent {
+        -ArtItem[] galleryItems
+        -string activeCategory
+        -string active3DModel
+        +toggleGalleryFilter(tab) void
+        +open3DModal(url) void
     }
 
-    class TechIconRenderer {
-        +renderIcon(name, size) JSX.Element
-    }
-
-    class WebAudioSynthEngine {
-        -AudioContext _ctx
-        +playCyberClick() void
-        +playWarningBeep() void
-        +toggleBgm() void
-    }
-
-    ILangContext <|.. LangProvider : implements
-    IThemeContext <|.. ThemeProvider : implements
-    App *-- LangProvider : injects
-    App *-- ThemeProvider : injects
-    App o-- MainSiteContent : renders
-    MainSiteContent *-- HeroSection : composite
-    MainSiteContent *-- ProjectsSection : composite
-    MainSiteContent *-- ArtGallerySection : composite
-    HeroSection *-- SciFiRobotAvatar : composite
-    ProjectsSection *-- ProjectLightbox : modal
-    ProjectsSection ..> TechIconRenderer : renders
-    MainSiteContent ..> WebAudioSynthEngine : audio
-
-    style App fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style ILangContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style LangProvider fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style IThemeContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style ThemeProvider fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style MainSiteContent fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style HeroSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style SciFiRobotAvatar fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style ProjectsSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style ProjectLightbox fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style ArtGallerySection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style TechIconRenderer fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style WebAudioSynthEngine fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    App --> PortfolioDataProvider : 注入 SWR 狀態中樞
+    App --> LangProvider : 注入多語系狀態
+    App --> ThemeProvider : 注入主題狀態
+    PortfolioDataProvider ..|> IPortfolioDataContext : 實作合約
+    LangProvider ..|> ILangContext : 實作合約
+    ThemeProvider ..|> IThemeContext : 實作合約
+    App --> MainSiteContent : 驅動前臺外殼
+    MainSiteContent --> HeroComponent
+    MainSiteContent --> ProjectsComponent
+    MainSiteContent --> CertificationsComponent
+    MainSiteContent --> ArtGalleryComponent
 ```
 
 ---
 
 ## 2. 自研 CMS 後臺架構類別關係圖 | In-House CMS Architecture Class Diagram
 
-本圖清楚展示自研 CMS 之抽象基礎編輯器、未存檔狀態阻斷 Context、刪除二次確認對話框以及本機/雲端資料配接器。  
-*Illustrates abstract base editors, unsaved state interceptors, modal portals, and persistence adapters:*
+本圖定義 CMS 後臺各模組編輯器、門禁控制器、未存檔攔截守衛與資料庫服務層之架構依賴。
 
 ```mermaid
 %%{init: {
@@ -161,10 +138,8 @@ classDiagram
 
     class CmsApp {
         -string activeTab
-        -boolean isPreviewMode
-        +switchTab(tab) void
-        +togglePreview() void
-        +exitCms() void
+        -boolean isAuthenticated
+        +render() JSX.Element
     }
 
     class ICmsDirtyContext {
@@ -172,111 +147,71 @@ classDiagram
         +boolean isDirty
         +markDirty() void
         +markPristine() void
-        +confirmNavigation(target) void
+        +checkCanNavigate(targetTab) boolean
     }
 
     class CmsDirtyProvider {
         -boolean _isDirty
-        -Function _pendingAction
+        -string _pendingTab
         +markDirty() void
         +markPristine() void
-        +confirmNavigation(target) void
     }
 
-    class CmsUnsavedModal {
-        -boolean isOpen
-        +onDiscardAndLeave() void
-        +onSaveAndLeave() void
-        +onCancel() void
-    }
-
-    class CmsConfirmDialog {
-        -string title
-        -string message
-        +onConfirm() void
-        +onCancel() void
+    class CmsModeSelectDialog {
+        -string email
+        -string password
+        +handleAuthLogin() Promise~void~
     }
 
     class BaseCmsEditor {
         <<abstract>>
         #boolean isDirty
-        #boolean hasLoaded
-        +loadInitialData()* void
-        +handleSave()* void
-        +handleReset()* void
+        #saveData() Promise~void~
     }
 
     class CmsHeroEditor {
-        -HeroFormData _formData
-        +updateField(key, val) void
-        +handleSave() void
+        -HeroData localData
+        +saveData() Promise~void~
     }
 
     class CmsProjectsEditor {
-        -List~ProjectItem~ _projectList
-        +addProject() void
-        +moveUp(index) void
-        +moveDown(index) void
-        +deleteProject(id) void
-    }
-
-    class CmsGalleryEditor {
-        -List~GalleryItem~ _galleryList
+        -ProjectItem[] localList
+        +toggleVisibility(id) void
         +toggleFeatured(id) void
-        +updateCoverImage(id, url) void
+        +saveData() Promise~void~
     }
 
-    class CmsUrlInput {
-        -string value
-        +handleVisitUrl() void
-        +validateProtocol() string
+    class CmsCertificationsEditor {
+        -CertificationItem[] localList
+        -boolean toeicVisible
+        +saveData() Promise~void~
     }
 
-    class LocalStorageCacheManager {
-        +saveSectionData(key, data)$ void
-        +loadSectionData(key, fallback)$ any
-        +clearAllOverrides()$ void
+    class PortfolioDataService {
+        +getPortfolioDoc(docId) Promise~any~
+        +savePortfolioDoc(docId, data) Promise~void~
+        +seedFirestoreFromLocalJson() Promise~void~
     }
 
-    class FirebaseSyncAdapter {
-        -Firestore _dbInstance
-        +syncDoc(col, id, payload) Promise
-        +fetchDoc(col, id) Promise
-    }
+    CmsApp --> CmsDirtyProvider : 注入未存檔守衛
+    CmsDirtyProvider ..|> ICmsDirtyContext : 實作合約
+    CmsApp --> CmsModeSelectDialog : 官方安全門禁
+    CmsApp --> CmsHeroEditor : 模組編輯器
+    CmsApp --> CmsProjectsEditor : 模組編輯器
+    CmsApp --> CmsCertificationsEditor : 模組編輯器
 
-    ICmsDirtyContext <|.. CmsDirtyProvider : implements
-    CmsApp *-- CmsDirtyProvider : manages
-    CmsApp *-- CmsUnsavedModal : delegates
-    CmsApp *-- CmsConfirmDialog : delegates
-    CmsApp o-- BaseCmsEditor : active editor
-    BaseCmsEditor <|-- CmsHeroEditor : extends
-    BaseCmsEditor <|-- CmsProjectsEditor : extends
-    BaseCmsEditor <|-- CmsGalleryEditor : extends
-    BaseCmsEditor *-- CmsUrlInput : safe visit
-    BaseCmsEditor ..> ICmsDirtyContext : notifies
-    BaseCmsEditor ..> LocalStorageCacheManager : persists
-    BaseCmsEditor ..> FirebaseSyncAdapter : cloud sync
+    CmsHeroEditor --|> BaseCmsEditor
+    CmsProjectsEditor --|> BaseCmsEditor
+    CmsCertificationsEditor --|> BaseCmsEditor
 
-    style CmsApp fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style ICmsDirtyContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsDirtyProvider fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsUnsavedModal fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsConfirmDialog fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style BaseCmsEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsHeroEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsProjectsEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsGalleryEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsUrlInput fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style LocalStorageCacheManager fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style FirebaseSyncAdapter fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    BaseCmsEditor --> PortfolioDataService : 持久化寫入
 ```
 
 ---
 
 ## 3. CMS 編輯至前臺即時雙向熱更新循序圖 | Bi-Directional Hot Sync Sequence Diagram
 
-本圖展示管理者在 CMS 後臺進行資料異動時，如何透過 LocalStorage、自訂 CustomEvent 事件匯流排與 Firebase BaaS 達成前端視圖之 0 延遲同步刷新。  
-*Demonstrates instant state synchronization between admin mutations and public views via CustomEvent and LocalStorage:*
+本圖展示管理者在 CMS 後臺進行資料異動時，如何透過 `PortfolioDataContext` 與 Firebase Firestore 達成前臺視圖之毫秒級無感熱更新。
 
 ```mermaid
 %%{init: {
@@ -301,36 +236,34 @@ classDiagram
 sequenceDiagram
     autonumber
     actor Admin as 網站管理者 / Admin
-    participant CMS as CMS 模組編輯器 / Cms*Editor
-    participant Cache as 本地快取層 / LocalStorage
-    participant Bus as 全域事件匯流排 / CustomEvent Bus
-    participant View as 前臺展示元件 / MainSiteContent
-    participant Cloud as 雲端資料庫 / Firebase BaaS
+    participant CMS as CMS 編輯器 / CmsProjectsEditor
+    participant DirtyCtx as 未存檔守衛 / CmsDirtyContext
+    participant Service as 資料庫服務 / portfolioDataService
+    participant Cloud as 雲端資料庫 / Firebase Firestore
+    participant DataCtx as 狀態中樞 / PortfolioDataContext
+    participant View as 前臺展示元件 / Projects
 
-    Admin->>CMS: 修改專案資料或排序 / Mutate item or order
-    CMS->>CMS: 觸發 CmsDirtyContext (標記 isDirty = true)
-    Admin->>CMS: 點擊「儲存變更」/ Click "Save Changes"
+    Admin->>CMS: 調整專案排序或可視性開關
+    CMS->>DirtyCtx: markDirty() (設定 isDirty = true)
+    Admin->>CMS: 點擊「儲存設定」按鈕
     
-    par 本地極速快取寫入 / Instant Local Cache Write
-        CMS->>Cache: 寫入序列化 JSON 至 LocalStorage
-        CMS->>Bus: 派發 window.dispatchEvent("cms-data-updated")
-        Bus->>View: 監聽器捕捉事件並重載快取資料
-        View-->>Admin: 前臺視圖即時 0ms 反映最新編輯結果
-    and 雲端非同步同步 (若已連線) / Optional Cloud Sync
-        CMS->>Cloud: 調用 Firestore API 寫入集合文檔
-        Cloud-->>CMS: 回傳成功狀態碼 200 OK
-    end
+    CMS->>Service: savePortfolioDoc("projects-section", updatedList)
+    Service->>Cloud: setDoc(doc(db, "portfolio_content", "projects-section"), data)
+    Cloud-->>Service: 寫入成功確認
     
-    CMS->>CMS: 重設 isDirty = false
-    CMS-->>Admin: 呈現「儲存成功」霓虹 HUD 反饋通知 / HUD Toast
+    Cloud-->>DataCtx: onSnapshot 即時串流推播最新文檔
+    DataCtx->>View: 狀態自動更新 (毫秒級無感熱更新)
+    View-->>Admin: 前臺展示視圖即時呈現最新排序與設定
+    
+    CMS->>DirtyCtx: markPristine() (重設 isDirty = false)
+    CMS-->>Admin: 呈現「儲存成功」霓虹 HUD 反饋通知
 ```
 
 ---
 
 ## 4. 路由切換與未存檔安全阻斷循序圖 | Unsaved State Interception Sequence Diagram
 
-本圖詳細定義管理者在未儲存狀態下觸發切換模組時，安全阻斷視窗之判斷邏輯與狀態恢復時序。  
-*Detailed chronological trace of dirty state interception and graceful recovery actions:*
+本圖詳細定義管理者在未儲存狀態下觸發切換模組時，安全阻斷視窗之判斷邏輯與狀態恢復時序。
 
 ```mermaid
 %%{init: {
@@ -355,30 +288,29 @@ sequenceDiagram
 sequenceDiagram
     autonumber
     actor Admin as 系統管理者 / Admin
-    participant Header as CmsHeader 導覽列
+    participant Sidebar as CmsSidebar 導覽側邊欄
     participant Editor as CmsProjectsEditor
     participant DirtyCtx as CmsDirtyContext
     participant Modal as CmsUnsavedModal
-    participant Storage as LocalStorage 快取
-    participant View as 前臺 Projects 組件
+    participant Service as portfolioDataService
+    participant Cloud as Firebase Firestore
 
-    Note over Admin,Editor: 階段一: 進行內容編輯 / Phase 1: Form Mutation
-    Admin->>Editor: 拖曳調整作品順序或修改專案描述
+    Note over Admin,Editor: 階段一: 進行內容編輯
+    Admin->>Editor: 修改專案描述欄位
     Editor->>DirtyCtx: markDirty() (設定 isDirty = true)
-    DirtyCtx-->>Header: 點亮「未儲存變更」戰術警示紅點
+    DirtyCtx-->>Sidebar: 點亮未儲存警示指示器
     
-    Note over Admin,Modal: 階段二: 誤觸切換模組安全阻斷 / Phase 2: Interception Guard
-    Admin->>Header: 點擊切換至「美術畫廊 (Gallery)」模組
-    Header->>DirtyCtx: checkCanNavigate(targetTab = "gallery")
+    Note over Admin,Modal: 階段二: 誤觸切換模組安全阻斷
+    Admin->>Sidebar: 點擊切換至「證照檢定庫」模組
+    Sidebar->>DirtyCtx: checkCanNavigate("certifications")
     DirtyCtx->>Modal: 檢測到 isDirty = true，阻斷切換並彈出視窗
-    Admin->>Modal: 點擊選項「儲存變更並離開 (Save & Leave)」
+    Admin->>Modal: 點擊選項「儲存變更並離開」
     
-    Note over Modal,View: 階段三: 存檔、派發與即時熱更新 / Phase 3: Save & Hydrate
-    Modal->>Editor: executePendingSave()
-    Editor->>Storage: saveSectionData("projects-section", updatedList)
+    Note over Modal,Cloud: 階段三: 存檔與路由放行
+    Modal->>Editor: 觸發儲存回呼
+    Editor->>Service: savePortfolioDoc()
+    Service->>Cloud: setDoc() 雲端持久化
     Editor->>DirtyCtx: markPristine() (重設 isDirty = false)
-    Storage->>View: 派發自訂 Event ("portfolio-data-synced")
-    View->>View: 重新讀取快取並平滑重渲染最新排序
-    Modal->>Header: 放行路由切換 -> 進入「美術畫廊 (Gallery)」
-    Header-->>Admin: 呈現「變更已妥善存檔」霓虹 HUD 反饋
+    Modal->>Sidebar: 放行路由切換 -> 進入「證照檢定庫」
+    Sidebar-->>Admin: 呈現「變更已妥善存檔」霓虹反饋
 ```

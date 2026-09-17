@@ -14,6 +14,7 @@ import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { LangProvider } from './context/LangContext';
 import { ThemeProvider } from './context/ThemeContext';
+import { PortfolioDataProvider } from './context/PortfolioDataContext';
 import { LangSelectModal } from './components/LangSelectModal';
 import { InitialPreloader } from './components/InitialPreloader';
 import { SeoSchema } from './components/SeoSchema';
@@ -107,33 +108,35 @@ function PortfolioMainView() {
 export function App() {
   return (
     <BrowserRouter>
-      <LangProvider>
-        <ThemeProvider>
-          <Routes>
-            {/* 前臺正式個人作品集首頁 */}
-            <Route path="/" element={<PortfolioMainView />} />
+      <PortfolioDataProvider>
+        <LangProvider>
+          <ThemeProvider>
+            <Routes>
+              {/* 前臺正式個人作品集首頁 */}
+              <Route path="/" element={<PortfolioMainView />} />
 
-            {/* 非同步代碼分割之 CMS 後臺管理入口 */}
-            <Route
-              path="/cms/*"
-              element={
-                <Suspense
-                  fallback={
-                    <div className="min-h-screen bg-[#030712] flex items-center justify-center">
-                      <div className="w-8 h-8 border-2 border-[var(--neon-cyan)] border-t-transparent rounded-full animate-spin" />
-                    </div>
-                  }
-                >
-                  <CmsApp />
-                </Suspense>
-              }
-            />
+              {/* 非同步代碼分割之 CMS 後臺管理入口 */}
+              <Route
+                path="/cms/*"
+                element={
+                  <Suspense
+                    fallback={
+                      <div className="min-h-screen bg-[#030712] flex items-center justify-center">
+                        <div className="w-8 h-8 border-2 border-[var(--neon-cyan)] border-t-transparent rounded-full animate-spin" />
+                      </div>
+                    }
+                  >
+                    <CmsApp />
+                  </Suspense>
+                }
+              />
 
-            {/* 未知路由回退重定向至首頁 */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </ThemeProvider>
-      </LangProvider>
+              {/* 未知路由回退重定向至首頁 */}
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </ThemeProvider>
+        </LangProvider>
+      </PortfolioDataProvider>
     </BrowserRouter>
   );
 }

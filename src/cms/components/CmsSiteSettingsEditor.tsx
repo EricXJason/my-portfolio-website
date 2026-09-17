@@ -30,6 +30,7 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 
 export interface NavNames {
   nav_home: string;
@@ -149,12 +150,16 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
   }, [setIsDirty]);
 
   const [formData, setFormData] = useState<SiteSettingsFullData>(() => {
+    if (data.site_settings) {
+      return data.site_settings as unknown as SiteSettingsFullData;
+    }
     try {
       const saved = localStorage.getItem('portfolio_site_settings');
       if (saved) {
@@ -173,6 +178,27 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
     }
     return defaultSiteSettings as unknown as SiteSettingsFullData;
   });
+
+  useEffect(() => {
+    if (data.site_settings) {
+      setFormData(data.site_settings as unknown as SiteSettingsFullData);
+    }
+  }, [data.site_settings]);
+
+  // 聆聽廣播存檔事件
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('site_settings', formData);
+        } catch (e) {
+          console.error('[CMS SiteSettings] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [formData, isPreview, updateDocument]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
@@ -202,39 +228,30 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
     }));
   };
 
-  /**
-   * TODO: [後端端點對接] 儲存全站基礎設定 (標題、姓名、背景代碼動畫速率)
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/site-settings
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: SiteSettingsFullData
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "全站設定更新成功" }
-   *    - 401 Unauthorized: 憑證無效
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
-   */
-  const doSave = () => {
+  const doSave = async () => {
     setIsDirty(false);
     try {
       localStorage.setItem('portfolio_site_settings', JSON.stringify(formData));
       window.dispatchEvent(new Event('portfolio_site_settings_updated'));
+      await updateDocument('site_settings', formData);
+      showToast(isEn ? '"Site Settings" module saved to cloud successfully!' : '「網站設定」模組資料已成功存檔至雲端！');
     } catch {
-      // 儲存設定失敗回退
+      showToast(isEn ? 'Failed to save to cloud' : '存檔至雲端失敗');
     }
-    showToast(isEn ? '"Site Settings" module saved successfully!' : '「網站設定」模組資料已成功存檔！');
   };
 
-  const doReset = () => {
+  const doReset = async () => {
     setIsDirty(false);
+    const resetData = defaultSiteSettings as unknown as SiteSettingsFullData;
     try {
       localStorage.removeItem('portfolio_site_settings');
       window.dispatchEvent(new Event('portfolio_site_settings_updated'));
+      setFormData(resetData);
+      await updateDocument('site_settings', resetData);
+      showToast(isEn ? '"Site Settings" module restored to defaults!' : '「網站設定」模組已還原為初始預設資料！');
     } catch {
-      // 還原設定失敗回退
+      showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
-    setFormData(defaultSiteSettings as unknown as SiteSettingsFullData);
-    showToast(isEn ? '"Site Settings" module restored to defaults!' : '「網站設定」模組已還原為初始預設資料！');
   };
 
   const triggerSaveDialog = () => {

@@ -16,7 +16,7 @@
     {
       "category": "全端開發",
       "catTier": "primary",
-      "catColor": "#a855f7",
+      "catColor": "#2563eb",
       "catType": "fullstack",
       "items": [
         { "label": "程式語言", "rowType": "tech", "content": "Java / Python / HTML / CSS / JavaScript / TypeScript" },
@@ -30,7 +30,7 @@
     {
       "category": "多媒體設計",
       "catTier": "secondary",
-      "catColor": "#10b981",
+      "catColor": "#a855f7",
       "catType": "media",
       "items": [
         { "label": "視覺設計與 UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },
@@ -58,7 +58,7 @@
     {
       "category": "Fullstack Web Dev",
       "catTier": "primary",
-      "catColor": "#a855f7",
+      "catColor": "#2563eb",
       "catType": "fullstack",
       "items": [
         { "label": "Programming Languages", "rowType": "tech", "content": "Java / Python / HTML / CSS / JavaScript / TypeScript" },
@@ -72,7 +72,7 @@
     {
       "category": "Multimedia Design",
       "catTier": "secondary",
-      "catColor": "#10b981",
+      "catColor": "#a855f7",
       "catType": "media",
       "items": [
         { "label": "Visual Design & UI/UX", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator" },

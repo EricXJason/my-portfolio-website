@@ -23,6 +23,8 @@ import {
   Award,
   ArrowUp,
   ArrowDown,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -30,7 +32,7 @@ import { useCmsDirty } from '../context/CmsDirtyContext';
 import defaultExpData from '../../data/experience-section.json';
 import { SectionTitleEditor } from './SectionTitleEditor';
 import { CmsDatePicker } from './CmsDatePicker';
-import { CmsIconPickerModal, getLucideIconByName } from './CmsIconPickerModal';
+import { getLucideIconByName } from './CmsIconPickerModal';
 import { CmsTagListEditor } from './CmsTagListEditor';
 import { CmsUrlInput } from './CmsUrlInput';
 import {
@@ -38,12 +40,14 @@ import {
   CmsConfirmDialogState,
   EMPTY_DIALOG,
 } from './CmsConfirmDialog';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 
 // ── 型別定義 ────────────────────────────────────────────────────────────────
 interface DegreeButton {
   key: string;
   label: string;
   linkKey: string;
+  visible?: boolean;
 }
 
 interface DegreeItem {
@@ -53,6 +57,7 @@ interface DegreeItem {
   desc: string;
   type: string;
   iconType?: string;
+  visible?: boolean;
   buttons?: DegreeButton[];
 }
 
@@ -65,6 +70,7 @@ interface WorkItem {
   summary: string;
   summary_en?: string;
   iconType?: string;
+  visible?: boolean;
   projectsHeader?: string;
   projectsHeader_en?: string;
   projects?: string[];
@@ -83,18 +89,25 @@ interface WorkshopItem {
   btnText: string;
   skillsHeader: string;
   skills: string[];
+  visible?: boolean;
+  showProof?: boolean; // [檢視研習證明] 按鈕開關
+  hasCertificate?: boolean;
 }
 
 interface ThesisItem {
   title: string;
   venue: string;
   desc: string;
+  date?: string;
   iconType?: string;
   driveLinkKey: string;
   btnText: string;
   slidesDriveLinkKey?: string;
   slidesBtnText?: string;
   award?: string;
+  visible?: boolean;
+  showFullText?: boolean; // [檢視論文全文] 按鈕開關
+  showPresentation?: boolean; // 視論文簡報按鈕開關
 }
 
 interface ExperienceFullData {
@@ -167,6 +180,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   const isLight = theme === 'light';
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -174,6 +188,9 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
 
   // ── 主要資料 State ──────────────────────────────────────────────────────────
   const [formData, setFormData] = useState<ExperienceFullData>(() => {
+    if (data.experience) {
+      return data.experience as unknown as ExperienceFullData;
+    }
     const defaults = defaultExpData as unknown as ExperienceFullData;
     try {
       const saved = localStorage.getItem('portfolio_experience_data');
@@ -203,7 +220,51 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     return defaults;
   });
 
+  useEffect(() => {
+    if (data.experience) {
+      setFormData(data.experience as unknown as ExperienceFullData);
+    }
+  }, [data.experience]);
+
+  // 聆聽廣播存檔事件
+  useEffect(() => {
+    const handleTriggerSave = async () => {
+      if (!isPreview) {
+        try {
+          await updateDocument('experience', formData);
+        } catch (e) {
+          console.error('[CMS Experience] Trigger save error:', e);
+        }
+      }
+    };
+    window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+    return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
+  }, [formData, isPreview, updateDocument]);
+
   const [expMeta, setExpMeta] = useState<Record<'zh' | 'en', ExpMetaTitles>>(() => {
+    if (data.site_translations) {
+      const trans = data.site_translations as any;
+      if (trans.zh?.exp_title || trans.en?.exp_title) {
+        return {
+          zh: {
+            exp_title: trans.zh?.exp_title ?? DEFAULT_EXP_META.zh.exp_title,
+            exp_intro: trans.zh?.exp_intro ?? DEFAULT_EXP_META.zh.exp_intro,
+            degree_section_title: trans.zh?.degree_section_title ?? DEFAULT_EXP_META.zh.degree_section_title,
+            work_section_title: trans.zh?.work_section_title ?? DEFAULT_EXP_META.zh.work_section_title,
+            workshop_section_title: trans.zh?.workshop_section_title ?? DEFAULT_EXP_META.zh.workshop_section_title,
+            thesis_section_title: trans.zh?.thesis_section_title ?? DEFAULT_EXP_META.zh.thesis_section_title,
+          },
+          en: {
+            exp_title: trans.en?.exp_title ?? DEFAULT_EXP_META.en.exp_title,
+            exp_intro: trans.en?.exp_intro ?? DEFAULT_EXP_META.en.exp_intro,
+            degree_section_title: trans.en?.degree_section_title ?? DEFAULT_EXP_META.en.degree_section_title,
+            work_section_title: trans.en?.work_section_title ?? DEFAULT_EXP_META.en.work_section_title,
+            workshop_section_title: trans.en?.workshop_section_title ?? DEFAULT_EXP_META.en.workshop_section_title,
+            thesis_section_title: trans.en?.thesis_section_title ?? DEFAULT_EXP_META.en.thesis_section_title,
+          },
+        };
+      }
+    }
     try {
       const saved = localStorage.getItem('portfolio_custom_translations');
       if (saved) {
@@ -236,15 +297,24 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   const [activeSubTab, setActiveSubTab] = useState<'degrees' | 'work' | 'workshops' | 'theses'>('degrees');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
-  const [activeWorkshopIconIdx, setActiveWorkshopIconIdx] = useState<number | null>(null);
-  const [activeDegreeIconIdx, setActiveDegreeIconIdx] = useState<number | null>(null);
-  const [activeWorkIconIdx, setActiveWorkIconIdx] = useState<number | null>(null);
-  const [activeThesisIconIdx, setActiveThesisIconIdx] = useState<number | null>(null);
 
-  // 拖曳狀態管理
-  const dragSourceIdxRef = useRef<number | null>(null);
-  const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
-  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
+  /** 解析歷程時間字串之最終結束時間數值 (由新至舊自動降序排序核心) */
+  const parseEndDateValue = (dateStr?: string): number => {
+    if (!dateStr) return 0;
+    const parts = dateStr.split(/[~–—\-至]/);
+    const endPart = parts[parts.length - 1].trim();
+    const match = endPart.match(/(\d{4})[./\-](\d{1,2})/);
+    if (match) {
+      const year = parseInt(match[1], 10);
+      const month = parseInt(match[2], 10);
+      return year * 100 + month;
+    }
+    const yearMatch = endPart.match(/(\d{4})/);
+    if (yearMatch) {
+      return parseInt(yearMatch[1], 10) * 100;
+    }
+    return 0;
+  };
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -264,15 +334,57 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     }));
   };
 
-  // ── 學歷 (Degrees) CRUD 與拖曳 ────────────────────────────────────────────
+  // ── 學歷 (Degrees) 欄位變更（支援跨語系結構同步） ─────────────────────────
   const handleDegreeChange = (idx: number, field: keyof DegreeItem, value: any) => {
     setIsDirty(true);
     setFormData((prev) => {
-      const updated = [...(prev[lang]?.degrees || [])];
-      updated[idx] = { ...updated[idx], [field]: value };
+      const syncFields: (keyof DegreeItem)[] = ['period', 'visible', 'type', 'iconType'];
+      const shouldSync = syncFields.includes(field);
+
+      const updateLang = (l: 'zh' | 'en') => {
+        const arr = [...(prev[l]?.degrees || [])];
+        if (arr[idx]) {
+          arr[idx] = { ...arr[idx], [field]: value };
+        }
+        return arr;
+      };
+
+      if (shouldSync) {
+        return {
+          ...prev,
+          zh: { ...prev.zh, degrees: updateLang('zh') },
+          en: { ...prev.en, degrees: updateLang('en') },
+        };
+      }
+
       return {
         ...prev,
-        [lang]: { ...prev[lang], degrees: updated },
+        [lang]: { ...prev[lang], degrees: updateLang(lang) },
+      };
+    });
+  };
+
+  const handleDegreeButtonToggle = (degIdx: number, btnIdx: number, checked: boolean) => {
+    setIsDirty(true);
+    setFormData((prev) => {
+      const updateLang = (l: 'zh' | 'en') => {
+        const arr = [...(prev[l]?.degrees || [])];
+        if (arr[degIdx]) {
+          const targetDeg = { ...arr[degIdx] };
+          const btns = [...(targetDeg.buttons || [])];
+          if (btns[btnIdx]) {
+            btns[btnIdx] = { ...btns[btnIdx], visible: checked };
+          }
+          targetDeg.buttons = btns;
+          arr[degIdx] = targetDeg;
+        }
+        return arr;
+      };
+
+      return {
+        ...prev,
+        zh: { ...prev.zh, degrees: updateLang('zh') },
+        en: { ...prev.en, degrees: updateLang('en') },
       };
     });
   };
@@ -334,15 +446,32 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     });
   };
 
-  // ── 工作經歷 (Work Experiences) CRUD 與拖曳 ────────────────────────────────
+  // ── 工作經歷 (Work Experiences) CRUD 與跨語系同步 ────────────────────────
   const handleWorkChange = (idx: number, field: keyof WorkItem, value: any) => {
     setIsDirty(true);
     setFormData((prev) => {
-      const updated = [...(prev[lang]?.workExperiences || [])];
-      updated[idx] = { ...updated[idx], [field]: value };
+      const syncFields: (keyof WorkItem)[] = ['period', 'visible', 'iconType'];
+      const shouldSync = syncFields.includes(field);
+
+      const updateLang = (l: 'zh' | 'en') => {
+        const arr = [...(prev[l]?.workExperiences || [])];
+        if (arr[idx]) {
+          arr[idx] = { ...arr[idx], [field]: value };
+        }
+        return arr;
+      };
+
+      if (shouldSync) {
+        return {
+          ...prev,
+          zh: { ...prev.zh, workExperiences: updateLang('zh') },
+          en: { ...prev.en, workExperiences: updateLang('en') },
+        };
+      }
+
       return {
         ...prev,
-        [lang]: { ...prev[lang], workExperiences: updated },
+        [lang]: { ...prev[lang], workExperiences: updateLang(lang) },
       };
     });
   };
@@ -397,15 +526,32 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     });
   };
 
-  // ── 研習歷程 (Workshops) CRUD ─────────────────────────────────────────────
+  // ── 研習歷程 (Workshops) CRUD 與跨語系同步 ─────────────────────────────
   const handleWorkshopChange = (idx: number, field: keyof WorkshopItem, value: any) => {
     setIsDirty(true);
     setFormData((prev) => {
-      const updated = [...(prev[lang]?.workshops || [])];
-      updated[idx] = { ...updated[idx], [field]: value };
+      const syncFields: (keyof WorkshopItem)[] = ['date', 'visible', 'iconType', 'hasCertificate', 'driveLinkKey'];
+      const shouldSync = syncFields.includes(field);
+
+      const updateLang = (l: 'zh' | 'en') => {
+        const arr = [...(prev[l]?.workshops || [])];
+        if (arr[idx]) {
+          arr[idx] = { ...arr[idx], [field]: value };
+        }
+        return arr;
+      };
+
+      if (shouldSync) {
+        return {
+          ...prev,
+          zh: { ...prev.zh, workshops: updateLang('zh') },
+          en: { ...prev.en, workshops: updateLang('en') },
+        };
+      }
+
       return {
         ...prev,
-        [lang]: { ...prev[lang], workshops: updated },
+        [lang]: { ...prev[lang], workshops: updateLang(lang) },
       };
     });
   };
@@ -413,7 +559,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   const handleAddWorkshop = () => {
     setIsDirty(true);
     const linkKey = `workshopProof_${Date.now()}`;
-    const newWs: WorkshopItem = {
+    const newWsZh: WorkshopItem = {
       title: '2026 新一代雲端架構與 AI 整合實戰工作坊',
       date: '2026/03 ~ 2026/06',
       org: '主辦單位：國際雲端科技聯盟',
@@ -423,11 +569,21 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       skillsHeader: '專業內容與技能學習',
       skills: ['掌握雲端無伺服器架構與邊緣部署流程', 'AI 代理人與端點安全性實作'],
     };
+    const newWsEn: WorkshopItem = {
+      title: '2026 Next-Gen Cloud Architecture & AI Workshop',
+      date: '2026/03 ~ 2026/06',
+      org: 'Organizer: Global Cloud Technology Alliance',
+      iconType: 'code',
+      driveLinkKey: linkKey,
+      btnText: 'View Proof',
+      skillsHeader: 'Skills & Content Mastered',
+      skills: ['Mastered cloud serverless architectures and edge deployments', 'AI agent endpoint security implementation'],
+    };
 
     setFormData((prev) => ({
       ...prev,
-      zh: { ...prev.zh, workshops: [newWs, ...(prev.zh?.workshops || [])] },
-      en: { ...prev.en, workshops: [newWs, ...(prev.en?.workshops || [])] },
+      zh: { ...prev.zh, workshops: [newWsZh, ...(prev.zh?.workshops || [])] },
+      en: { ...prev.en, workshops: [newWsEn, ...(prev.en?.workshops || [])] },
     }));
     showToast(isEn ? 'Added new workshop!' : '已成功新增一筆研習歷程！');
   };
@@ -455,56 +611,40 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     });
   };
 
-  // ── 通用點擊上移 / 下移順位 Handler ─────────────────────────────────────────
-  const handleMoveItem = (subTab: 'degrees' | 'work' | 'workshops' | 'theses', fromIdx: number, toIdx: number) => {
-    if (isPreview || fromIdx === toIdx || fromIdx < 0 || toIdx < 0) return;
-    setIsDirty(true);
-    setFormData((prev) => {
-      const reorder = <T,>(arr: T[]): T[] => {
-        if (!arr || toIdx >= arr.length) return arr;
-        const copy = [...arr];
-        const [removed] = copy.splice(fromIdx, 1);
-        copy.splice(toIdx, 0, removed);
-        return copy;
-      };
-      if (subTab === 'degrees') {
-        return {
-          ...prev,
-          zh: { ...prev.zh, degrees: reorder(prev.zh.degrees) },
-          en: { ...prev.en, degrees: reorder(prev.en.degrees) },
-        };
-      } else if (subTab === 'work') {
-        return {
-          ...prev,
-          zh: { ...prev.zh, workExperiences: reorder(prev.zh.workExperiences) },
-          en: { ...prev.en, workExperiences: reorder(prev.en.workExperiences) },
-        };
-      } else if (subTab === 'workshops') {
-        return {
-          ...prev,
-          zh: { ...prev.zh, workshops: reorder(prev.zh.workshops) },
-          en: { ...prev.en, workshops: reorder(prev.en.workshops) },
-        };
-      } else if (subTab === 'theses') {
-        return {
-          ...prev,
-          zh: { ...prev.zh, theses: reorder(prev.zh.theses) },
-          en: { ...prev.en, theses: reorder(prev.en.theses) },
-        };
-      }
-      return prev;
-    });
-  };
-
-  // ── 論文與期刊 (Theses) CRUD ─────────────────────────────────────────────
+  // ── 學術論文 (Theses) 欄位變更與跨語系同步 ────────────────────────────────
   const handleThesisChange = (idx: number, field: keyof ThesisItem, value: any) => {
     setIsDirty(true);
     setFormData((prev) => {
-      const updated = [...(prev[lang]?.theses || [])];
-      updated[idx] = { ...updated[idx], [field]: value };
+      const syncFields: (keyof ThesisItem)[] = [
+        'date',
+        'visible',
+        'iconType',
+        'showFullText',
+        'showPresentation',
+        'driveLinkKey',
+        'slidesDriveLinkKey',
+      ];
+      const shouldSync = syncFields.includes(field);
+
+      const updateLang = (l: 'zh' | 'en') => {
+        const arr = [...(prev[l]?.theses || [])];
+        if (arr[idx]) {
+          arr[idx] = { ...arr[idx], [field]: value };
+        }
+        return arr;
+      };
+
+      if (shouldSync) {
+        return {
+          ...prev,
+          zh: { ...prev.zh, theses: updateLang('zh') },
+          en: { ...prev.en, theses: updateLang('en') },
+        };
+      }
+
       return {
         ...prev,
-        [lang]: { ...prev[lang], theses: updated },
+        [lang]: { ...prev[lang], theses: updateLang(lang) },
       };
     });
   };
@@ -513,22 +653,35 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     setIsDirty(true);
     const linkKey = `thesisPaper_${Date.now()}`;
     const slidesKey = `thesisSlides_${Date.now()}`;
-    const newTh: ThesisItem = {
-      title: isEn ? 'New Research Paper Title' : '新學術論文或期刊發表標題',
-      venue: isEn ? 'International Conference / Journal' : '國際學術研討會 / 專業期刊名稱',
-      desc: isEn ? 'Research summary, methodology, and core theoretical contributions.' : '研究核心摘要、方法論與學術理論創新貢獻說明。',
+    const newThZh: ThesisItem = {
+      title: '新學術論文或期刊發表標題',
+      venue: '國際學術研討會 / 專業期刊名稱',
+      desc: '研究核心摘要、方法論與學術理論創新貢獻說明。',
+      date: '2026/06',
       iconType: 'file-text',
       driveLinkKey: linkKey,
-      btnText: isEn ? 'View Paper' : '檢視論文全文',
+      btnText: '檢視論文全文',
       slidesDriveLinkKey: slidesKey,
-      slidesBtnText: isEn ? 'View Slides' : '檢視發表簡報',
+      slidesBtnText: '檢視發表簡報',
+      award: '',
+    };
+    const newThEn: ThesisItem = {
+      title: 'New Research Paper Title',
+      venue: 'International Conference / Journal',
+      desc: 'Research summary, methodology, and core theoretical contributions.',
+      date: '2026/06',
+      iconType: 'file-text',
+      driveLinkKey: linkKey,
+      btnText: 'View Paper',
+      slidesDriveLinkKey: slidesKey,
+      slidesBtnText: 'View Slides',
       award: '',
     };
 
     setFormData((prev) => ({
       ...prev,
-      zh: { ...prev.zh, theses: [newTh, ...(prev.zh?.theses || [])] },
-      en: { ...prev.en, theses: [newTh, ...(prev.en?.theses || [])] },
+      zh: { ...prev.zh, theses: [newThZh, ...(prev.zh?.theses || [])] },
+      en: { ...prev.en, theses: [newThEn, ...(prev.en?.theses || [])] },
     }));
     showToast(isEn ? 'Added new thesis / publication!' : '已成功新增一筆論文/期刊發表！');
   };
@@ -555,99 +708,10 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       },
     });
   };
-
-  // ── 論文與期刊 (Theses) 圖示更新 ─────────────────────────────────────────
-  const handleThesisIconChange = (idx: number, iconName: string) => {
-    setIsDirty(true);
-    setFormData((prev) => {
-      const updatedZh = [...(prev.zh?.theses || [])];
-      const updatedEn = [...(prev.en?.theses || [])];
-      if (updatedZh[idx]) {
-        updatedZh[idx] = { ...updatedZh[idx], iconType: iconName };
-      }
-      if (updatedEn[idx]) {
-        updatedEn[idx] = { ...updatedEn[idx], iconType: iconName };
-      }
-      return {
-        ...prev,
-        zh: { ...prev.zh, theses: updatedZh },
-        en: { ...prev.en, theses: updatedEn },
-      };
-    });
-    showToast(isEn ? 'Thesis icon updated!' : '已更新論文項目代表圖示！');
-  };
-
-
-
-  // ── 通用拖曳排序 Handler (適用於當前選中的 sub-tab) ────────────────────────
-  const handleDragStart = (e: React.DragEvent, index: number) => {
-    dragSourceIdxRef.current = index;
-    setDraggingIdx(index);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', String(index));
-  };
-
-  const handleDragEnd = () => {
-    setDraggingIdx(null);
-    setDragOverIdx(null);
-    dragSourceIdxRef.current = null;
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    if (dragSourceIdxRef.current === index) return;
-    setDragOverIdx(index);
-  };
-
-  const handleDrop = (e: React.DragEvent, targetIdx: number) => {
-    e.preventDefault();
-    const sourceIdx = dragSourceIdxRef.current;
-    if (sourceIdx === null || sourceIdx === targetIdx) {
-      handleDragEnd();
-      return;
-    }
-
-    setIsDirty(true);
-    setFormData((prev) => {
-      const reorderArray = <T,>(arr: T[]): T[] => {
-        const next = [...(arr || [])];
-        if (sourceIdx >= next.length || targetIdx >= next.length) return next;
-        const [moved] = next.splice(sourceIdx, 1);
-        next.splice(targetIdx, 0, moved);
-        return next;
-      };
-
-      if (activeSubTab === 'degrees') {
-        return {
-          ...prev,
-          zh: { ...prev.zh, degrees: reorderArray(prev.zh?.degrees || []) },
-          en: { ...prev.en, degrees: reorderArray(prev.en?.degrees || []) },
-        };
-      } else if (activeSubTab === 'work') {
-        return {
-          ...prev,
-          zh: { ...prev.zh, workExperiences: reorderArray(prev.zh?.workExperiences || []) },
-          en: { ...prev.en, workExperiences: reorderArray(prev.en?.workExperiences || []) },
-        };
-      } else if (activeSubTab === 'workshops') {
-        return {
-          ...prev,
-          zh: { ...prev.zh, workshops: reorderArray(prev.zh?.workshops || []) },
-          en: { ...prev.en, workshops: reorderArray(prev.en?.workshops || []) },
-        };
-      } else {
-        return {
-          ...prev,
-          zh: { ...prev.zh, theses: reorderArray(prev.zh?.theses || []) },
-          en: { ...prev.en, theses: reorderArray(prev.en?.theses || []) },
-        };
-      }
-    });
-
-    handleDragEnd();
-    showToast(isEn ? 'Item reordered!' : '順序已調整！');
-  };
+  const sortDegrees = (list: DegreeItem[]) => [...(list || [])].sort((a, b) => parseEndDateValue(b.period) - parseEndDateValue(a.period));
+  const sortWork = (list: WorkItem[]) => [...(list || [])].sort((a, b) => parseEndDateValue(b.period) - parseEndDateValue(a.period));
+  const sortWorkshops = (list: WorkshopItem[]) => [...(list || [])].sort((a, b) => parseEndDateValue(b.date) - parseEndDateValue(a.date));
+  const sortTheses = (list: ThesisItem[]) => [...(list || [])].sort((a, b) => parseEndDateValue(b.date) - parseEndDateValue(a.date));
 
   // ── 儲存與重設 ─────────────────────────────────────────────────────────────
   /**
@@ -662,9 +726,27 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
    *    - 401 Unauthorized: 權限不足
    * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
    */
-  const handleSaveConfirm = () => {
+  const handleSaveConfirm = async () => {
     try {
-      localStorage.setItem('portfolio_experience_data', JSON.stringify(formData));
+      const sortedFormData = {
+        ...formData,
+        zh: {
+          ...formData.zh,
+          degrees: sortDegrees(formData.zh?.degrees || []),
+          workExperiences: sortWork(formData.zh?.workExperiences || []),
+          workshops: sortWorkshops(formData.zh?.workshops || []),
+          theses: sortTheses(formData.zh?.theses || []),
+        },
+        en: {
+          ...formData.en,
+          degrees: sortDegrees(formData.en?.degrees || []),
+          workExperiences: sortWork(formData.en?.workExperiences || []),
+          workshops: sortWorkshops(formData.en?.workshops || []),
+          theses: sortTheses(formData.en?.theses || []),
+        },
+      };
+      setFormData(sortedFormData);
+      localStorage.setItem('portfolio_experience_data', JSON.stringify(sortedFormData));
       const curTranslations = JSON.parse(localStorage.getItem('portfolio_custom_translations') || '{}');
       const updatedTranslations = {
         ...curTranslations,
@@ -675,17 +757,25 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
 
       window.dispatchEvent(new Event('portfolio_experience_data_updated'));
       window.dispatchEvent(new Event('portfolio_custom_translations_updated'));
+
+      await updateDocument('experience', sortedFormData);
+      await updateDocument('site_translations', {
+        ...(data.site_translations as any || {}),
+        zh: { ...(data.site_translations as any)?.zh, ...expMeta.zh },
+        en: { ...(data.site_translations as any)?.en, ...expMeta.en },
+      });
+
       setIsDirty(false);
-      showToast(isEn ? 'Experience changes saved successfully!' : '經歷與學術資料已成功儲存並同步至前臺！');
+      showToast(isEn ? 'Experience changes saved to cloud successfully!' : '經歷與學術資料已儲存至雲端資料庫！');
     } catch {
-      showToast(isEn ? 'Failed to save data' : '儲存失敗，請檢查儲存空間');
+      showToast(isEn ? 'Failed to save to cloud' : '存檔失敗，請檢查網路連線');
     }
     setDialog(EMPTY_DIALOG);
   };
 
-  const handleResetConfirm = () => {
-    localStorage.removeItem('portfolio_experience_data');
+  const handleResetConfirm = async () => {
     try {
+      localStorage.removeItem('portfolio_experience_data');
       const savedTrans = localStorage.getItem('portfolio_custom_translations');
       if (savedTrans) {
         const transObj = JSON.parse(savedTrans);
@@ -697,12 +787,18 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     } catch {
       // 忽略例外
     }
-    setFormData(defaultExpData as unknown as ExperienceFullData);
+    const defaults = defaultExpData as unknown as ExperienceFullData;
+    setFormData(defaults);
     setExpMeta(DEFAULT_EXP_META);
     setIsDirty(false);
     window.dispatchEvent(new Event('portfolio_experience_data_updated'));
     window.dispatchEvent(new Event('portfolio_custom_translations_updated'));
-    showToast(isEn ? 'Reset to default data' : '已重設回預設資料');
+    try {
+      await updateDocument('experience', defaults);
+      showToast(isEn ? 'Reset to default data' : '已重設回預設資料');
+    } catch {
+      showToast(isEn ? 'Restored locally' : '已重設本地資料');
+    }
     setDialog(EMPTY_DIALOG);
   };
 
@@ -824,12 +920,12 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
             addText:      isLight ? '#0369a1'                : '#00f0ff',
           },
           work: {
-            activeBg:     isLight ? 'rgba(59,130,246,0.1)'  : 'rgba(59,130,246,0.12)',
-            activeBorder: isLight ? '#2563eb'                : '#3b82f6',
-            activeText:   isLight ? '#1d4ed8'                : '#60a5fa',
-            addBg:        isLight ? 'rgba(59,130,246,0.1)'  : 'rgba(59,130,246,0.12)',
-            addBorder:    isLight ? '#2563eb'                : '#3b82f6',
-            addText:      isLight ? '#1d4ed8'                : '#60a5fa',
+            activeBg:     isLight ? 'rgba(56,189,248,0.1)'  : 'rgba(56,189,248,0.15)',
+            activeBorder: isLight ? '#0284c7'                : '#38bdf8',
+            activeText:   isLight ? '#0284c7'                : '#38bdf8',
+            addBg:        isLight ? 'rgba(56,189,248,0.1)'  : 'rgba(56,189,248,0.15)',
+            addBorder:    isLight ? '#0284c7'                : '#38bdf8',
+            addText:      isLight ? '#0284c7'                : '#38bdf8',
           },
           workshops: {
             activeBg:     isLight ? 'rgba(124,58,237,0.1)'  : 'rgba(168,85,247,0.12)',
@@ -948,26 +1044,17 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       {activeSubTab === 'degrees' && (
         <div className="space-y-4">
           <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
-            <span>{isEn ? 'Drag items or use buttons to reorder entries:' : '可按住左側把手或使用上下按鈕調整順序：'}</span>
+            <span>{isEn ? 'Entries sorted chronologically by end date' : '學歷項目依結束時間自動排序'}</span>
             <span className="text-[10px] font-mono">Total: {formData[lang]?.degrees?.length || 0}</span>
           </div>
 
           {(formData[lang]?.degrees || []).map((deg, idx) => {
             const colorSpec = COLOR_SEQUENCE[idx % COLOR_SEQUENCE.length];
-            const isDragging = draggingIdx === idx;
-            const isOver = dragOverIdx === idx;
 
             return (
               <div
                 key={deg.id || idx}
-                draggable={!isPreview}
-                onDragStart={(e) => handleDragStart(e, idx)}
-                onDragEnd={handleDragEnd}
-                onDragOver={(e) => handleDragOver(e, idx)}
-                onDrop={(e) => handleDrop(e, idx)}
-                className={`border cyber-cut-sm p-5 space-y-4 transition-all ${
-                  isDragging ? 'opacity-40 scale-95' : ''
-                } ${isOver ? 'ring-2 ring-[var(--neon-cyan)]' : ''}`}
+                className="border cyber-cut-sm p-5 space-y-4 transition-all"
                 style={{
                   backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)',
                   borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
@@ -976,56 +1063,50 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 {/* 標題列排版 */}
                 <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
-                    {!isPreview && (
-                      <div className="cursor-grab active:cursor-grabbing p-1 text-[var(--text-sub)] hover:text-[var(--neon-cyan)]">
-                        <GripVertical className="w-4 h-4" />
-                      </div>
-                    )}
                     <span className={`px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold ${colorSpec.badge}`}>
                       #{idx + 1}
                     </span>
+                    {deg.visible === false && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 border cyber-cut-sm text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border-rose-500/30">
+                        <EyeOff className="w-3 h-3" />
+                        <span>{isEn ? 'HIDDEN' : '已隱藏'}</span>
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      disabled={isPreview}
-                      onClick={() => setActiveDegreeIconIdx(idx)}
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] text-[var(--text-main)] transition-colors cursor-pointer"
-                      title={isEn ? 'Click to change icon' : '點擊更換圖示'}
+                    {/* 項目顯示/隱藏開關 */}
+                    <label
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
+                      title={deg.visible !== false ? '點擊於前臺隱藏此學歷' : '點擊於前臺顯示此學歷'}
                     >
-                      {(() => {
-                        const defaultDegIcon = deg.type === 'master' || deg.id === 'master' || idx === 0 ? 'graduation-cap' : 'school';
-                        const curIcon = deg.iconType || defaultDegIcon;
-                        return (
-                          <>
-                            {React.createElement(getLucideIconByName(curIcon), {
-                              className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
-                            })}
-                            <span className="truncate max-w-[80px]">{curIcon}</span>
-                          </>
-                        );
-                      })()}
-                    </button>
+                      {deg.visible !== false ? (
+                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
+                      ) : (
+                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
+                      )}
+                      <input
+                        type="checkbox"
+                        checked={deg.visible !== false}
+                        disabled={isPreview}
+                        onChange={(e) => handleDegreeChange(idx, 'visible' as any, e.target.checked)}
+                        className="sr-only"
+                      />
+                      <span>{deg.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
+                    </label>
 
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === 0}
-                      onClick={() => handleMoveItem('degrees', idx, idx - 1)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Up' : '往前調整順位'}
+                    {/* 固定學歷語意圖示展示 */}
+                    <div
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-85"
+                      title={isEn ? 'Fixed Degree Semantic Icon' : '固定學位語意圖示'}
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === (formData[lang]?.degrees?.length || 0) - 1}
-                      onClick={() => handleMoveItem('degrees', idx, idx + 1)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Down' : '往後調整順位'}
-                    >
-                      <ArrowDown className="w-3.5 h-3.5" />
-                    </button>
+                      {React.createElement(getLucideIconByName(deg.type === 'master' || deg.id === 'master' || idx === 0 ? 'graduation-cap' : 'school'), {
+                        className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
+                      })}
+                      <span className="truncate max-w-[80px]">
+                        {deg.type === 'master' || deg.id === 'master' || idx === 0 ? (isEn ? 'Master' : '碩士') : (isEn ? 'Bachelor' : '學士')}
+                      </span>
+                    </div>
 
                     <button
                       type="button"
@@ -1097,21 +1178,45 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
 
                 {/* 學位操作按鈕組與佐證連結 */}
                 {deg.buttons && deg.buttons.length > 0 && (
-                  <div className="pt-2 border-t border-[var(--border-color)]/60 space-y-2">
-                    <span className="text-[11px] font-['Noto_Sans_TC'] font-semibold text-[var(--text-sub)]">
-                      {isEn ? 'Attached Proof Documents (Drive Links):' : '附帶佐證證明檔案（雲端硬碟連結）：'}
-                    </span>
+                  <div className="pt-2 border-t border-[var(--border-color)]/60 space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-['Noto_Sans_TC'] font-semibold text-[var(--text-sub)]">
+                        {isEn ? 'Attached Proof Documents & Buttons (Drive Links):' : '附帶佐證證明檔案與操作按鈕（雲端硬碟連結）：'}
+                      </span>
+                      <span className="text-[10px] text-[var(--text-sub)]">
+                        {isEn ? 'Each button can be toggled independently' : '每個按鈕皆可獨立開啟或隱藏'}
+                      </span>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {deg.buttons.map((btn, bIdx) => (
-                        <CmsUrlInput
-                          key={bIdx}
-                          label={btn.label}
-                          value={formData.driveLinks?.[btn.linkKey] || ''}
-                          onChange={(val) => handleDriveLinkChange(btn.linkKey, val)}
-                          placeholder="https://drive.google.com/file/d/..."
-                          disabled={isPreview}
-                          isEn={isEn}
-                        />
+                        <div key={bIdx} className="p-3 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-bold text-[var(--text-main)]">
+                              {btn.label}
+                            </span>
+                            <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
+                              <input
+                                type="checkbox"
+                                checked={btn.visible !== false}
+                                disabled={isPreview}
+                                onChange={(e) => handleDegreeButtonToggle(idx, bIdx, e.target.checked)}
+                                className="sr-only peer"
+                              />
+                              <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
+                              <span className={btn.visible !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
+                                {btn.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
+                              </span>
+                            </label>
+                          </div>
+                          <CmsUrlInput
+                            label={isEn ? `${btn.label} Drive Link` : `${btn.label}雲端連結`}
+                            value={formData.driveLinks?.[btn.linkKey] || ''}
+                            onChange={(val) => handleDriveLinkChange(btn.linkKey, val)}
+                            placeholder="https://drive.google.com/file/d/..."
+                            disabled={isPreview || btn.visible === false}
+                            isEn={isEn}
+                          />
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -1126,26 +1231,17 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       {activeSubTab === 'work' && (
         <div className="space-y-4">
           <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
-            <span>{isEn ? 'Drag items or use buttons to reorder entries:' : '可按住左側把手或使用上下按鈕調整順序：'}</span>
+            <span>{isEn ? 'Entries sorted chronologically by end date' : '工作經歷項目依結束時間自動排序'}</span>
             <span className="text-[10px] font-mono">Total: {formData[lang]?.workExperiences?.length || 0}</span>
           </div>
 
           {(formData[lang]?.workExperiences || []).map((work, idx) => {
             const colorSpec = COLOR_SEQUENCE[idx % COLOR_SEQUENCE.length];
-            const isDragging = draggingIdx === idx;
-            const isOver = dragOverIdx === idx;
 
             return (
               <div
                 key={idx}
-                draggable={!isPreview}
-                onDragStart={(e) => handleDragStart(e, idx)}
-                onDragEnd={handleDragEnd}
-                onDragOver={(e) => handleDragOver(e, idx)}
-                onDrop={(e) => handleDrop(e, idx)}
-                className={`border cyber-cut-sm p-5 space-y-4 transition-all ${
-                  isDragging ? 'opacity-40 scale-95' : ''
-                } ${isOver ? 'ring-2 ring-[var(--neon-cyan)]' : ''}`}
+                className="border cyber-cut-sm p-5 space-y-4 transition-all"
                 style={{
                   backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)',
                   borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
@@ -1154,56 +1250,50 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 {/* 標題列排版 */}
                 <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
-                    {!isPreview && (
-                      <div className="cursor-grab active:cursor-grabbing p-1 text-[var(--text-sub)] hover:text-[var(--neon-cyan)]">
-                        <GripVertical className="w-4 h-4" />
-                      </div>
-                    )}
                     <span className={`px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold ${colorSpec.badge}`}>
                       #{idx + 1}
                     </span>
+                    {work.visible === false && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 border cyber-cut-sm text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border-rose-500/30">
+                        <EyeOff className="w-3 h-3" />
+                        <span>{isEn ? 'HIDDEN' : '已隱藏'}</span>
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      disabled={isPreview}
-                      onClick={() => setActiveWorkIconIdx(idx)}
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] text-[var(--text-main)] transition-colors cursor-pointer"
-                      title={isEn ? 'Click to change icon' : '點擊更換圖示'}
+                    {/* 項目顯示/隱藏開關 */}
+                    <label
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
+                      title={work.visible !== false ? '點擊於前臺隱藏此經歷' : '點擊於前臺顯示此經歷'}
                     >
-                      {(() => {
-                        const defaultWorkIcon = idx === 0 ? 'school' : (idx === 1 ? 'palette' : 'building-2');
-                        const curIcon = work.iconType || defaultWorkIcon;
-                        return (
-                          <>
-                            {React.createElement(getLucideIconByName(curIcon), {
-                              className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
-                            })}
-                            <span className="truncate max-w-[80px]">{curIcon}</span>
-                          </>
-                        );
-                      })()}
-                    </button>
+                      {work.visible !== false ? (
+                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
+                      ) : (
+                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
+                      )}
+                      <input
+                        type="checkbox"
+                        checked={work.visible !== false}
+                        disabled={isPreview}
+                        onChange={(e) => handleWorkChange(idx, 'visible' as any, e.target.checked)}
+                        className="sr-only"
+                      />
+                      <span>{work.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
+                    </label>
 
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === 0}
-                      onClick={() => handleMoveItem('work', idx, idx - 1)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Up' : '往前調整順位'}
+                    {/* 固定工作經歷語意圖示展示 */}
+                    <div
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-85"
+                      title={isEn ? 'Fixed Work Semantic Icon' : '固定經歷語意圖示'}
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === (formData[lang]?.workExperiences?.length || 0) - 1}
-                      onClick={() => handleMoveItem('work', idx, idx + 1)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Down' : '往後調整順位'}
-                    >
-                      <ArrowDown className="w-3.5 h-3.5" />
-                    </button>
+                      {React.createElement(getLucideIconByName(work.iconType || (idx === 0 ? 'school' : (idx === 1 ? 'palette' : 'building-2'))), {
+                        className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
+                      })}
+                      <span className="truncate max-w-[80px]">
+                        {work.iconType || (idx === 0 ? 'school' : (idx === 1 ? 'palette' : 'building-2'))}
+                      </span>
+                    </div>
 
                     <button
                       type="button"
@@ -1343,26 +1433,17 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       {activeSubTab === 'workshops' && (
         <div className="space-y-4">
           <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
-            <span>{isEn ? 'Drag items or use buttons to reorder entries:' : '可按住左側把手或使用上下按鈕調整順序：'}</span>
+            <span>{isEn ? 'Entries sorted chronologically by end date' : '研習項目依結束時間自動排序'}</span>
             <span className="text-[10px] font-mono">Total: {formData[lang]?.workshops?.length || 0}</span>
           </div>
 
           {(formData[lang]?.workshops || []).map((ws, idx) => {
             const colorSpec = COLOR_SEQUENCE[idx % COLOR_SEQUENCE.length];
-            const isDragging = draggingIdx === idx;
-            const isOver = dragOverIdx === idx;
 
             return (
               <div
                 key={idx}
-                draggable={!isPreview}
-                onDragStart={(e) => handleDragStart(e, idx)}
-                onDragEnd={handleDragEnd}
-                onDragOver={(e) => handleDragOver(e, idx)}
-                onDrop={(e) => handleDrop(e, idx)}
-                className={`border cyber-cut-sm p-5 space-y-4 transition-all ${
-                  isDragging ? 'opacity-40 scale-95' : ''
-                } ${isOver ? 'ring-2 ring-[var(--neon-cyan)]' : ''}`}
+                className="border cyber-cut-sm p-5 space-y-4 transition-all"
                 style={{
                   backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)',
                   borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
@@ -1371,35 +1452,50 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 {/* 標題列排版 */}
                 <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
-                    {!isPreview && (
-                      <div className="cursor-grab active:cursor-grabbing p-1 text-[var(--text-sub)] hover:text-[var(--neon-cyan)]">
-                        <GripVertical className="w-4 h-4" />
-                      </div>
-                    )}
                     <span className={`px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold ${colorSpec.badge}`}>
                       #{idx + 1}
                     </span>
+                    {ws.visible === false && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 border cyber-cut-sm text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border-rose-500/30">
+                        <EyeOff className="w-3 h-3" />
+                        <span>{isEn ? 'HIDDEN' : '已隱藏'}</span>
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === 0}
-                      onClick={() => handleMoveItem('workshops', idx, idx - 1)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Up' : '往前調整順位'}
+                    {/* 項目顯示/隱藏開關 */}
+                    <label
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
+                      title={ws.visible !== false ? '點擊於前臺隱藏此研習' : '點擊於前臺顯示此研習'}
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === (formData[lang]?.workshops?.length || 0) - 1}
-                      onClick={() => handleMoveItem('workshops', idx, idx + 1)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Down' : '往後調整順位'}
+                      {ws.visible !== false ? (
+                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
+                      ) : (
+                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
+                      )}
+                      <input
+                        type="checkbox"
+                        checked={ws.visible !== false}
+                        disabled={isPreview}
+                        onChange={(e) => handleWorkshopChange(idx, 'visible' as any, e.target.checked)}
+                        className="sr-only"
+                      />
+                      <span>{ws.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
+                    </label>
+
+                    {/* 固定研習語意圖示展示 */}
+                    <div
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-85"
+                      title={isEn ? 'Fixed Workshop Semantic Icon' : '固定研習語意圖示'}
                     >
-                      <ArrowDown className="w-3.5 h-3.5" />
-                    </button>
+                      {React.createElement(getLucideIconByName(ws.iconType || 'code'), {
+                        className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
+                      })}
+                      <span className="truncate max-w-[80px]">
+                        {ws.iconType || 'code'}
+                      </span>
+                    </div>
 
                     <button
                       type="button"
@@ -1438,17 +1534,13 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       const curIcon = ws.iconType || (defaultWsIcons[idx % defaultWsIcons.length] || 'code');
                       const WsIcon = getLucideIconByName(curIcon);
                       return (
-                        <button
-                          type="button"
-                          disabled={isPreview}
-                          onClick={() => setActiveWorkshopIconIdx(idx)}
-                          className="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 border cyber-cut-sm bg-[var(--card-inner)] hover:border-[var(--neon-cyan)] text-[var(--text-main)] transition-colors cursor-pointer disabled:opacity-40"
+                        <div
+                          className="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 border cyber-cut-sm bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-80"
                           style={{ borderColor: borderCol }}
-                          title={isEn ? 'Click to change icon' : '點擊更換圖示'}
                         >
                           <WsIcon className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
                           <span className="text-[11px] font-mono truncate">{curIcon}</span>
-                        </button>
+                        </div>
                       );
                     })()}
                   </div>
@@ -1482,13 +1574,31 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                     />
                   </div>
 
-                  <div>
+                  <div className="p-3 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[var(--text-main)]">
+                        {isEn ? 'Proof Document Button' : '「檢視研習證明」按鈕'}
+                      </span>
+                      <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
+                        <input
+                          type="checkbox"
+                          checked={ws.showProof !== false}
+                          disabled={isPreview}
+                          onChange={(e) => handleWorkshopChange(idx, 'showProof' as any, e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
+                        <span className={ws.showProof !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
+                          {ws.showProof !== false ? (isEn ? 'SHOW' : '顯示按鈕') : (isEn ? 'HIDE' : '關閉隱藏')}
+                        </span>
+                      </label>
+                    </div>
                     <CmsUrlInput
                       label={isEn ? 'Proof Drive URL' : '研習證明雲端連結'}
                       value={formData.driveLinks?.[ws.driveLinkKey] || ''}
                       onChange={(val) => handleDriveLinkChange(ws.driveLinkKey, val)}
                       placeholder="https://drive.google.com/file/d/..."
-                      disabled={isPreview}
+                      disabled={isPreview || ws.showProof === false}
                       isEn={isEn}
                     />
                   </div>
@@ -1538,25 +1648,15 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       {activeSubTab === 'theses' && (
         <div className="space-y-4">
           <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
-            <span>{isEn ? 'Drag items or use buttons to reorder entries:' : '可按住左側把手或使用上下按鈕調整順序：'}</span>
+            <span>{isEn ? 'Entries sorted chronologically by end date' : '論文項目依發表時間自動排序'}</span>
             <span className="text-[10px] font-mono">Total: {formData[lang]?.theses?.length || 0}</span>
           </div>
 
           {(formData[lang]?.theses || []).map((th, idx) => {
-            const isDragging = draggingIdx === idx;
-            const isOver = dragOverIdx === idx;
-
             return (
               <div
                 key={idx}
-                draggable={!isPreview}
-                onDragStart={(e) => handleDragStart(e, idx)}
-                onDragEnd={handleDragEnd}
-                onDragOver={(e) => handleDragOver(e, idx)}
-                onDrop={(e) => handleDrop(e, idx)}
-                className={`border cyber-cut-sm p-5 space-y-4 transition-all ${
-                  isDragging ? 'opacity-40 scale-95' : ''
-                } ${isOver ? 'ring-2 ring-emerald-400' : ''}`}
+                className="border cyber-cut-sm p-5 space-y-4 transition-all"
                 style={{
                   backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)',
                   borderColor: isLight ? 'rgba(16,185,129,0.35)' : 'rgba(16,185,129,0.3)',
@@ -1565,56 +1665,50 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 {/* 標題列排版 */}
                 <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
-                    {!isPreview && (
-                      <div className="cursor-grab active:cursor-grabbing p-1 text-[var(--text-sub)] hover:text-emerald-400">
-                        <GripVertical className="w-4 h-4" />
-                      </div>
-                    )}
                     <span className="px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
                       #{idx + 1}
                     </span>
+                    {th.visible === false && (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 border cyber-cut-sm text-[10px] font-mono font-bold bg-rose-500/10 text-rose-400 border-rose-500/30">
+                        <EyeOff className="w-3 h-3" />
+                        <span>{isEn ? 'HIDDEN' : '已隱藏'}</span>
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      disabled={isPreview}
-                      onClick={() => setActiveThesisIconIdx(idx)}
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/10 text-emerald-300 hover:bg-emerald-500/20 transition-colors cursor-pointer disabled:opacity-40"
-                      title={isEn ? 'Click to change icon' : '點擊更換圖示'}
+                    {/* 項目顯示/隱藏開關 */}
+                    <label
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/10 text-emerald-300 cursor-pointer select-none"
+                      title={th.visible !== false ? '點擊於前臺隱藏此論文/期刊' : '點擊於前臺顯示此論文/期刊'}
                     >
-                      {(() => {
-                        const defaultThesisIcon = idx === 0 ? 'file-text' : 'presentation';
-                        const curIcon = th.iconType || defaultThesisIcon;
-                        return (
-                          <>
-                            {React.createElement(getLucideIconByName(curIcon), {
-                              className: 'w-3.5 h-3.5 text-emerald-400 shrink-0',
-                            })}
-                            <span className="font-bold">{curIcon}</span>
-                          </>
-                        );
-                      })()}
-                    </button>
+                      {th.visible !== false ? (
+                        <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                      ) : (
+                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
+                      )}
+                      <input
+                        type="checkbox"
+                        checked={th.visible !== false}
+                        disabled={isPreview}
+                        onChange={(e) => handleThesisChange(idx, 'visible' as any, e.target.checked)}
+                        className="sr-only"
+                      />
+                      <span>{th.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
+                    </label>
 
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === 0}
-                      onClick={() => handleMoveItem('theses', idx, idx - 1)}
-                      className="p-1.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:text-emerald-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Up' : '往前調整順位'}
+                    {/* 固定學術發表語意圖示展示 */}
+                    <div
+                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-emerald-500/30 bg-emerald-500/10 text-emerald-300 select-none opacity-85"
+                      title={isEn ? 'Fixed Publication Semantic Icon' : '固定論文語意圖示'}
                     >
-                      <ArrowUp className="w-3.5 h-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      disabled={isPreview || idx === (formData[lang]?.theses?.length || 0) - 1}
-                      onClick={() => handleMoveItem('theses', idx, idx + 1)}
-                      className="p-1.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/30 text-emerald-300 hover:text-emerald-200 disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
-                      title={isEn ? 'Move Down' : '往後調整順位'}
-                    >
-                      <ArrowDown className="w-3.5 h-3.5" />
-                    </button>
+                      {React.createElement(getLucideIconByName(th.iconType || (idx === 0 ? 'file-text' : 'presentation')), {
+                        className: 'w-3.5 h-3.5 text-emerald-400 shrink-0',
+                      })}
+                      <span className="font-bold">
+                        {th.iconType || (idx === 0 ? 'file-text' : 'presentation')}
+                      </span>
+                    </div>
 
                     <button
                       type="button"
@@ -1692,18 +1786,54 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                     />
                   </div>
 
-                  <div>
+                  <div className="p-3 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[var(--text-main)]">
+                        {isEn ? 'Paper Full-text Button' : '「檢視論文全文」按鈕'}
+                      </span>
+                      <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
+                        <input
+                          type="checkbox"
+                          checked={th.showFullText !== false}
+                          disabled={isPreview}
+                          onChange={(e) => handleThesisChange(idx, 'showFullText' as any, e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-400 relative"></div>
+                        <span className={th.showFullText !== false ? 'text-emerald-400' : 'text-slate-500'}>
+                          {th.showFullText !== false ? (isEn ? 'SHOW' : '顯示') : (isEn ? 'HIDE' : '隱藏')}
+                        </span>
+                      </label>
+                    </div>
                     <CmsUrlInput
                       label={isEn ? 'Paper Full-text Link' : '論文全文雲端連結'}
                       value={(th.driveLinkKey && formData.driveLinks?.[th.driveLinkKey]) || ''}
                       onChange={(val) => th.driveLinkKey && handleDriveLinkChange(th.driveLinkKey, val)}
                       placeholder="https://drive.google.com/file/d/..."
-                      disabled={isPreview}
+                      disabled={isPreview || th.showFullText === false}
                       isEn={isEn}
                     />
                   </div>
 
-                  <div>
+                  <div className="p-3 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-[var(--text-main)]">
+                        {isEn ? 'Slides Presentation Button' : '「論文簡報」按鈕'}
+                      </span>
+                      <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
+                        <input
+                          type="checkbox"
+                          checked={th.showPresentation !== false}
+                          disabled={isPreview}
+                          onChange={(e) => handleThesisChange(idx, 'showPresentation' as any, e.target.checked)}
+                          className="sr-only peer"
+                        />
+                        <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-400 relative"></div>
+                        <span className={th.showPresentation !== false ? 'text-emerald-400' : 'text-slate-500'}>
+                          {th.showPresentation !== false ? (isEn ? 'SHOW' : '顯示') : (isEn ? 'HIDE' : '隱藏')}
+                        </span>
+                      </label>
+                    </div>
                     <CmsUrlInput
                       label={isEn ? 'Slides Link' : '發表簡報雲端連結'}
                       value={(th.slidesDriveLinkKey && formData.driveLinks?.[th.slidesDriveLinkKey]) || ''}
@@ -1715,7 +1845,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                         handleDriveLinkChange(key, val);
                       }}
                       placeholder="https://drive.google.com/file/d/..."
-                      disabled={isPreview}
+                      disabled={isPreview || th.showPresentation === false}
                       isEn={isEn}
                     />
                   </div>
@@ -1725,70 +1855,6 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
           })}
         </div>
       )}
-
-      {/* 研習工作坊圖示選擇器彈窗 */}
-      <CmsIconPickerModal
-        isOpen={activeWorkshopIconIdx !== null}
-        currentIconName={
-          activeWorkshopIconIdx !== null
-            ? (formData[lang]?.workshops?.[activeWorkshopIconIdx]?.iconType || ['code', 'box', 'video', 'gamepad-2'][activeWorkshopIconIdx % 4] || 'code')
-            : 'code'
-        }
-        onSelectIcon={(iconName) => {
-          if (activeWorkshopIconIdx !== null) {
-            handleWorkshopChange(activeWorkshopIconIdx, 'iconType', iconName);
-          }
-        }}
-        onClose={() => setActiveWorkshopIconIdx(null)}
-      />
-
-      {/* 學歷學位圖示選擇器彈窗 */}
-      <CmsIconPickerModal
-        isOpen={activeDegreeIconIdx !== null}
-        currentIconName={
-          activeDegreeIconIdx !== null
-            ? (formData[lang]?.degrees?.[activeDegreeIconIdx]?.iconType || (formData[lang]?.degrees?.[activeDegreeIconIdx]?.type === 'master' || activeDegreeIconIdx === 0 ? 'graduation-cap' : 'school'))
-            : 'graduation-cap'
-        }
-        onSelectIcon={(iconName) => {
-          if (activeDegreeIconIdx !== null) {
-            handleDegreeChange(activeDegreeIconIdx, 'iconType', iconName);
-          }
-        }}
-        onClose={() => setActiveDegreeIconIdx(null)}
-      />
-
-      {/* 工作經歷圖示選擇器彈窗 */}
-      <CmsIconPickerModal
-        isOpen={activeWorkIconIdx !== null}
-        currentIconName={
-          activeWorkIconIdx !== null
-            ? (formData[lang]?.workExperiences?.[activeWorkIconIdx]?.iconType || (activeWorkIconIdx === 0 ? 'school' : activeWorkIconIdx === 1 ? 'palette' : 'building-2'))
-            : 'school'
-        }
-        onSelectIcon={(iconName) => {
-          if (activeWorkIconIdx !== null) {
-            handleWorkChange(activeWorkIconIdx, 'iconType', iconName);
-          }
-        }}
-        onClose={() => setActiveWorkIconIdx(null)}
-      />
-
-      {/* 學術論文圖示選擇器彈窗 */}
-      <CmsIconPickerModal
-        isOpen={activeThesisIconIdx !== null}
-        currentIconName={
-          activeThesisIconIdx !== null
-            ? (formData[lang]?.theses?.[activeThesisIconIdx]?.iconType || (activeThesisIconIdx === 0 ? 'file-text' : 'presentation'))
-            : 'file-text'
-        }
-        onSelectIcon={(iconName) => {
-          if (activeThesisIconIdx !== null) {
-            handleThesisIconChange(activeThesisIconIdx, iconName);
-          }
-        }}
-        onClose={() => setActiveThesisIconIdx(null)}
-      />
 
     </div>
   );

@@ -161,7 +161,7 @@ const HtmlScriptProjects: React.FC<ThemeProps> = ({ isLight }) => {
 // ── TS Script 1: src/App.tsx (Core Application Orchestration) ──
 const TsScriptApp: React.FC<ThemeProps> = ({ isLight }) => {
   const kwCol = isLight ? '#7c3aed' : '#c084fc';
-  const fnCol = isLight ? '#2563eb' : '#60a5fa';
+  const fnCol = isLight ? '#0284c7' : '#38bdf8';
   const typeCol = isLight ? '#d97706' : '#fbbf24';
   const strCol = isLight ? '#047857' : '#34d399';
   const numCol = '#64748b';
@@ -204,7 +204,7 @@ const TsScriptApp: React.FC<ThemeProps> = ({ isLight }) => {
 // ── TS Script 2: src/utils/bgmSynth.ts (Web Audio Synthesizer) ──
 const TsScriptSynth: React.FC<ThemeProps> = ({ isLight }) => {
   const kwCol = isLight ? '#7c3aed' : '#c084fc';
-  const fnCol = isLight ? '#2563eb' : '#60a5fa';
+  const fnCol = isLight ? '#0284c7' : '#38bdf8';
   const typeCol = isLight ? '#d97706' : '#fbbf24';
   const strCol = isLight ? '#047857' : '#34d399';
   const numCol = '#64748b';
@@ -241,7 +241,7 @@ const TsScriptSynth: React.FC<ThemeProps> = ({ isLight }) => {
 // ── TS Script 3: src/components/SciFiRobotAvatar.tsx (Mecha Logic) ──
 const TsScriptAvatar: React.FC<ThemeProps> = ({ isLight }) => {
   const kwCol = isLight ? '#7c3aed' : '#c084fc';
-  const fnCol = isLight ? '#2563eb' : '#60a5fa';
+  const fnCol = isLight ? '#0284c7' : '#38bdf8';
   const typeCol = isLight ? '#d97706' : '#fbbf24';
   const numCol = '#64748b';
 
@@ -278,7 +278,7 @@ const TsScriptAvatar: React.FC<ThemeProps> = ({ isLight }) => {
 // ── TS Script 4: src/hooks/useScrollReveal.ts (Scroll Observer) ──
 const TsScriptScroll: React.FC<ThemeProps> = ({ isLight }) => {
   const kwCol = isLight ? '#7c3aed' : '#c084fc';
-  const fnCol = isLight ? '#2563eb' : '#60a5fa';
+  const fnCol = isLight ? '#0284c7' : '#38bdf8';
   const typeCol = isLight ? '#d97706' : '#fbbf24';
   const strCol = isLight ? '#047857' : '#34d399';
   const numCol = '#64748b';

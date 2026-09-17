@@ -13,6 +13,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 import {
   X,
   Layers,
@@ -39,25 +40,17 @@ interface Artwork {
   embedUrl?: string;
   featured?: boolean;
   featuredOrder?: number;
+  visible?: boolean;
 }
 
 export const ArtGallery: React.FC = () => {
   const { t, lang } = useLang();
   const { theme } = useTheme();
+  const { data } = usePortfolioData();
   const isLight = theme === 'light';
 
-  /**
-   * TODO: [後端端點對接] 取得使用者模式藝術畫廊與多媒體作品資料
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/gallery
-   * 3. 請求參數:
-   *    - Query Params: category (string, 可選)
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: Artwork[] }
-   *    - 500 Internal Server Error: 伺服器讀取畫廊資料失敗
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (gallery-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
-   */
-  const galleryItems = artGalleryDataJson as Artwork[];
+  const rawGallery = ((data.gallery || artGalleryDataJson) as Artwork[]);
+  const galleryItems = rawGallery.filter((a) => a.visible !== false);
 
   const [activeTab, setActiveTab] = useState('featured');
   const [activeImage, setActiveImage] = useState<Artwork | null>(null);
@@ -409,15 +402,23 @@ export const ArtGallery: React.FC = () => {
         ) : (
           /* STANDARD GRID VIEW — CLEAN NO OVERLAY ZOOM BUTTONS */
           <div
-            className="cyber-card p-6 border cyber-cut-corner max-w-6xl mx-auto space-y-6 shadow-xl"
-            style={{ backgroundColor: isLight ? '#ffffff' : 'rgba(8,14,26,0.85)', borderColor: borderCol }}
+            className="cyber-card p-6 border cyber-cut-corner max-w-6xl mx-auto space-y-6 shadow-xl backdrop-blur-xl"
+            style={{
+              background: isLight
+                ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
+                : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
+              borderColor: borderCol,
+              boxShadow: isLight
+                ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
+                : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
+            }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {displayedArt.map((art) => (
                 <div
                   key={art.id}
                   onClick={() => setActiveImage(art)}
-                  className="group relative overflow-hidden cyber-cut-sm border cursor-pointer aspect-square w-full shadow-md transition-all hover:-translate-y-1 hover:border-cyan-400"
+                  className="group relative overflow-hidden cyber-cut-sm border cursor-pointer aspect-square w-full shadow-md transition-all hover:border-cyan-400"
                   style={{
                     borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)',
                   }}
