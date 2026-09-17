@@ -35,10 +35,7 @@ export const InitialPreloader: React.FC<InitialPreloaderProps> = ({ onComplete }
       (Boolean(navigator.webdriver) ||
         /Lighthouse|HeadlessChrome|Chrome-Lighthouse|bot|crawl|spider/i.test(navigator.userAgent));
 
-    const isFastPass =
-      isBot || (typeof window !== 'undefined' && window.innerWidth < 768);
-
-    if (isFastPass) {
+    if (isBot) {
       onComplete();
       return;
     }

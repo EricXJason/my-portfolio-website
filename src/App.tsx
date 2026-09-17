@@ -30,26 +30,18 @@ function PortfolioMainView() {
   const [soundPlaying, setSoundPlaying] = useState<boolean>(false);
   const [soundVolume, setSoundVolume] = useState<number>(0.3);
 
-  // 檢測是否為爬蟲、Lighthouse、已進站訪客或行動端直通
-  const isBotOrReturning = (() => {
+  // 僅針對自動化測試或爬蟲環境直通，真人訪客每次皆完整呈現科技載入動畫與語系選擇視窗
+  const isBot = (() => {
     if (typeof navigator === 'undefined') return false;
-    const isBot =
+    return (
       Boolean(navigator.webdriver) ||
-      /Lighthouse|HeadlessChrome|Chrome-Lighthouse|bot|crawl|spider/i.test(navigator.userAgent);
-    if (isBot) return true;
-    try {
-      if (sessionStorage.getItem('portfolio_site_entered') === 'true') return true;
-      // 行動端小螢幕優先直通主頁內容，避免彈窗遮蔽造成的 LCP 與轉換率流失
-      if (typeof window !== 'undefined' && window.innerWidth < 768) return true;
-      return false;
-    } catch {
-      return false;
-    }
+      /Lighthouse|HeadlessChrome|Chrome-Lighthouse|bot|crawl|spider/i.test(navigator.userAgent)
+    );
   })();
 
   // 三階段平滑開場載入生命週期：0-100% 科技進度條 -> 語系選擇視窗 -> 正式揭幕
-  const [preloaderDone, setPreloaderDone] = useState<boolean>(() => isBotOrReturning);
-  const [siteEntered, setSiteEntered] = useState<boolean>(() => isBotOrReturning);
+  const [preloaderDone, setPreloaderDone] = useState<boolean>(() => isBot);
+  const [siteEntered, setSiteEntered] = useState<boolean>(() => isBot);
 
 
   // 正式進入網站前嚴格鎖定全域捲動條，防止背景溢出與跳動
@@ -92,12 +84,7 @@ function PortfolioMainView() {
       {/* 步驟二：多國語系選擇彈窗 (首幀底層預先渲染) */}
       <LangSelectModal
         isOpen={!siteEntered}
-        onSelectLanguage={() => {
-          try {
-            sessionStorage.setItem('portfolio_site_entered', 'true');
-          } catch {}
-          setSiteEntered(true);
-        }}
+        onSelectLanguage={() => setSiteEntered(true)}
       />
 
       {/* 步驟三：前臺主內容 */}
