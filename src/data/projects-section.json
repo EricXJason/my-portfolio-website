@@ -156,17 +156,19 @@
     "ytId": "https://www.youtube.com/watch?v=VR360ch3UmI",
     "honors": [],
     "honors_en": [],
-    "desc": "結合 AR 空間感測技術之新竹神社歷史文化導覽互動遊戲。使用者可透過觸發互動任務探索歷史故事並進行選擇題測驗。",
-    "desc_en": "AR spatial observation interactive guide for Hsinchu Shrine. Users trigger interactive quests to explore cultural stories and complete multiple-choice quizzes.",
+    "desc": "結合 AR 空間感測技術之新竹神社歷史文化導覽互動遊戲。使用者可透過觸發互動任務探索歷史故事，並載入 ScriptableObject 模組化題庫進行文化知識選擇題測驗。",
+    "desc_en": "AR spatial observation interactive guide for Hsinchu Shrine. Users trigger interactive quests to explore cultural stories and complete multiple-choice quizzes powered by modular ScriptableObject datasets.",
     "contributions": [
       "AR 識別與空間定位：整合 Vuforia SDK 實作 AR 圖像識別與空間座標定位，處理虛實物件疊加。",
+      "歷史題庫與測驗架構：運用 ScriptableObject 建立模組化問答題庫資料結構，解耦歷史考據文字、題目選項與回饋判定，大幅提升題型維護彈性。",
       "過場編排與狀態管理：運用 Timeline 系統精確控制過場動畫與音訊同步；採用 Singleton 模式管理全域場景載入與任務數據。"
     ],
     "contributions_en": [
       "AR Tracking & Placement: Vuforia SDK image targeting and spatial coordinate positioning for virtual object overlay.",
+      "Quiz System & ScriptableObject: Built modular question data structures with ScriptableObject, decoupling quiz choices and scoring criteria for flexible maintenance.",
       "Cutscenes & State Management: Timeline system for camera animation and audio sync; Singleton pattern for scene loading & quest state."
     ],
-    "tags": ["Unity (C#)", "Vuforia SDK", "Timeline"],
+    "tags": ["Unity (C#)", "Vuforia SDK", "ScriptableObject", "Timeline"],
     "date": "2025.10 - 2026.02",
     "date_en": "2025.10 - 2026.02"
   },
@@ -182,17 +184,19 @@
     "ytId": "https://www.youtube.com/watch?v=O-GtG-Gwb78",
     "honors": [],
     "honors_en": [],
-    "desc": "結合籃球投擲與環保分類教育之兒童 VR 沉浸式體驗遊戲。玩家透過將垃圾投擲至正確回收桶以學習資源分類。",
-    "desc_en": "Educational VR basketball game combining trash sorting with physics throwing mechanics to teach environmental classification.",
+    "desc": "結合籃球投擲與環保分類教育之兒童 VR 沉浸式體驗遊戲。採用 ScriptableObject 配置題目資料與回收屬性，引導玩家將各類垃圾投擲至正確回收桶以學習資源分類。",
+    "desc_en": "Educational VR basketball game combining trash sorting with physics throwing mechanics. Utilizes ScriptableObject to configure quiz datasets and classification attributes for interactive learning.",
     "contributions": [
       "VR 物理互動開發：利用 Meta Quest SDK 實作手勢追蹤、控制器輸入映射與實體抓取邏輯，處理投籃物理軌跡與碰撞反饋。",
+      "題庫資料與分類配置：使用 ScriptableObject 定義問題題目與物件回收屬性容器，將垃圾品項、環保題目與分值邏輯資料化，支援無痛擴充新題目。",
       "流程與計分狀態控管：導入 Singleton 模式管理全域計分系統、計時器與關卡流程切換。"
     ],
     "contributions_en": [
       "VR Physics & Grab: Meta Quest SDK hand tracking, controller input mapping, physics grabbing, and throwing trajectory feedback.",
+      "Quiz & Sorting Data Architecture: Leveraged ScriptableObject containers for question datasets and recycling attributes, enabling seamless expansion of items.",
       "State & Scoring System: Singleton pattern for global score tracking, timer, and stage flow control."
     ],
-    "tags": ["Unity (C#)", "Meta Quest SDK"],
+    "tags": ["Unity (C#)", "Meta Quest SDK", "ScriptableObject"],
     "date": "2025.03 - 2025.05",
     "date_en": "2025.03 - 2025.05"
   },

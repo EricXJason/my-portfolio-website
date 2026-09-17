@@ -6,9 +6,11 @@
       "catColor": "#00f0ff",
       "catType": "game",
       "items": [
-        { "label": "遊戲引擎", "rowType": "tech", "content": "Unity ( C#) / Unreal Engine ( Blueprints )" },
+        { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
         { "label": "設計模式與架構", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
-        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / Editor Scripting ( Inspector, EditorWindow ) / Saving System / AI Navigation / Timeline / Cinemachine / DOTween" },
+        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / AI Navigation" },
+        { "label": "動畫與相機", "rowType": "text", "content": "Timeline / Cinemachine / DOTween Pro" },
+        { "label": "資料儲存", "rowType": "text", "content": "PlayerPrefs / JSON" },
         { "label": "XR 實境開發", "rowType": "text", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
         { "label": "多人連線開發", "rowType": "text", "content": "Netcode / Photon Pun" }
       ]
@@ -48,9 +50,11 @@
       "catColor": "#00f0ff",
       "catType": "game",
       "items": [
-        { "label": "Game Engines", "rowType": "tech", "content": "Unity ( C#) / Unreal Engine ( Blueprints )" },
+        { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
         { "label": "Design Patterns & Architecture", "rowType": "text", "content": "Singleton / Object Pool / Registry / Observer Pattern / Event-based Architecture" },
-        { "label": "Core Technologies", "rowType": "text", "content": "URP / Shader Graph / Addressables / Editor Scripting ( Inspector, EditorWindow ) / Saving System / AI Navigation / Timeline / Cinemachine / DOTween" },
+        { "label": "Core Technologies", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / AI Navigation" },
+        { "label": "Animation & Camera", "rowType": "text", "content": "Timeline / Cinemachine / DOTween Pro" },
+        { "label": "Data Persistence", "rowType": "text", "content": "PlayerPrefs / JSON" },
         { "label": "XR Development", "rowType": "text", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
         { "label": "Multiplayer Networking", "rowType": "text", "content": "Netcode / Photon Pun" }
       ]
