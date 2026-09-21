@@ -129,7 +129,7 @@ export const Skills: React.FC = () => {
 
   const primaryColor   = isLight ? '#0369a1' : '#00f0ff'; // 青 — 全端開發
   const commonColor    = isLight ? '#7c3aed' : '#c084fc'; // 紫 — 通用工程
-  const secondaryColor = isLight ? '#059669' : '#34d399'; // 綠 — 輔助技能/多媒體設計統一綠色
+  const secondaryColor = isLight ? '#7e22ce' : '#c084fc'; // 紫 — 輔助技能統一紫色
 
   const headerRef   = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const primaryRef  = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;

@@ -44,6 +44,7 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
   const { resetAllToDefaults } = usePortfolioData();
   const [modeExitDialog, setModeExitDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
   const [resetAllDialog, setResetAllDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
+  const [returnToSiteDialog, setReturnToSiteDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
   const [isResetting, setIsResetting] = useState(false);
   const navigate = useNavigate();
 
@@ -52,11 +53,24 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
   const isEn = lang === 'en';
 
   const handleReturnToSite = () => {
-    if (onExitToSite) {
-      onExitToSite();
-    } else {
-      navigate('/');
-    }
+    setReturnToSiteDialog({
+      isOpen: true,
+      type: 'delete',
+      title: isEn ? 'Return to Site' : '返回前臺網站',
+      message: isEn
+        ? 'Are you sure you want to leave the CMS and return to the user-facing site?'
+        : '確定要離開 CMS 管理點並返回前臺網站嗎？',
+      confirmText: isEn ? 'Return to Site' : '確認返回',
+      cancelText: isEn ? 'Stay' : '留在 CMS',
+      onConfirm: () => {
+        setReturnToSiteDialog(EMPTY_DIALOG);
+        if (onExitToSite) {
+          onExitToSite();
+        } else {
+          navigate('/');
+        }
+      },
+    });
   };
 
   // 點擊管理者模式徽章 → 若外部有未存檔攔截機制則交由外部處理三選項對話框
@@ -160,6 +174,13 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
       <CmsConfirmDialog
         dialog={resetAllDialog}
         onClose={() => setResetAllDialog(EMPTY_DIALOG)}
+        isEn={isEn}
+      />
+
+      {/* 返回前臺使用者模式二次確認對話框 */}
+      <CmsConfirmDialog
+        dialog={returnToSiteDialog}
+        onClose={() => setReturnToSiteDialog(EMPTY_DIALOG)}
         isEn={isEn}
       />
 
