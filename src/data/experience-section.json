@@ -137,7 +137,7 @@
         "btnText": "檢視研習證明",
         "skillsHeader": "專業內容與技能學習",
         "skills": [
-          "AI 賦能與開發流程：運用 AI 工具輔助系統分析、生成測試代碼與 Code Review，提升開發效率。",
+          "現代工程與開發工作流：運用 AI 開發工具輔助架構設計、單元測試編寫與代碼審查，落實高效工程實踐。",
           "前端技術與框架：掌握 HTML5/CSS3、JavaScript/TypeScript、Bootstrap 及 Angular 框架。",
           "後端開發與微服務：運用 Java OOP、Spring Boot、Hibernate 打造 RESTful API 及微服務架構。",
           "資料庫與資安實務：具備 ER Model 設計、MySQL/SQL 語法優化及資訊安全防護實作經驗。",
@@ -336,7 +336,7 @@
         "btnText": "View Proof",
         "skillsHeader": "Skills & Content Mastered",
         "skills": [
-          "AI-Enabled Workflow: Leveraged LLM APIs and prompt engineering for code review and automated unit tests.",
+          "Modern Engineering & Workflow: Applied AI developer tooling for architectural modeling, unit test coverage, and code review.",
           "Frontend Engineering: Mastered HTML5/CSS3, TypeScript, Bootstrap, and Angular with RxJS and REST APIs.",
           "Backend & Microservices: Built RESTful APIs using Java OOP, Spring Boot, Hibernate, and JUnit testing.",
           "Database & Security: ER modeling, SQL optimization, JDBC, and security protection (SQLi, XSS, CSRF).",

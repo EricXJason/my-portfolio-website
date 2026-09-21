@@ -217,9 +217,15 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   const handleFieldChange = (field: keyof SiteSettingsContent, value: string) => {
@@ -307,11 +313,11 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/40 text-emerald-400 text-xs font-['Noto_Sans_TC'] shadow-lg backdrop-blur-xl animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
@@ -319,12 +325,12 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
       <CmsConfirmDialog dialog={dialog} onClose={() => setDialog(EMPTY_DIALOG)} isEn={isEn} />
 
       {/* 頂部工具列：純淨標題與操作按鈕 */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
-        <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
+        <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)] whitespace-nowrap">
           {isEn ? 'Site Settings' : '網站設定'}
         </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={isPreview ? undefined : triggerResetDialog}

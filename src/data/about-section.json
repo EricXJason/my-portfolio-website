@@ -2,9 +2,18 @@
   "avatarUrl": "/assets/images/personal.webp",
   "zh": {
     "title": "關於我",
-    "intro": "具備新媒體藝術碩士背景，專注於互動應用開發、全端網頁與多媒體設計。",
+    "intro": "具備新媒體藝術碩士背景，專注於全端網頁開發與互動應用架構設計。",
     "heading": "核心專長與專業定位",
-    "p1": "許哲誠，25歲，畢業於國立臺灣藝術大學新媒體藝術碩士班。主修 VR/AR 互動應用開發、全端網頁架構與多媒體美學設計。具備創新思維、跨領域溝通協調與專案企劃能力，擅長自我管理，對新技術與挑戰充滿熱忱。",
+    "p1": "許哲誠，國立臺灣藝術大學新媒體藝術碩士。專精於全端系統架構、即時互動應用開發與現代多媒體視覺工程。具備獨立系統設計能力、前後端垂直整合與高效跨領域協作實務，擅長自主技術調研與工程落地，專注於建構兼具嚴謹資料邏輯與流暢互動體驗的現代數位系統。",
+    "bio": {
+      "title": "個人自傳",
+      "p1_title": "從遊戲程式到探索資工",
+      "p1": "大學時因為著迷於互動體驗，從 Unity C# 踏入程式世界，為了把專題做得更完整，還主動挑戰自學 Unreal Engine。過程中我意識到底層原理的重要，便跨系去選修與旁聽計算機概論、資料結構及演算法，把基本功打穩。大學三年也跟隨教授參與科技部計畫，在無數次排查與實作中，確立了自己想深耕軟體工程的熱情。",
+      "p2_title": "系統架構思維與全端垂直整合",
+      "p2": "進研究所開發大型互動系統時，我碰到了系統維護與擴充上的瓶頸。早期開發習慣著重在功能實現，但隨著專案規模擴大，模組間的耦合常導致系統牽一髮動全身。這促使我反思軟體工程的本質，開始將 Clean Code、SOLID 原則與設計模式落實在架構重構中。隨後我更將工程範疇延伸至現代全端體系，深耕後端服務分層設計、資料庫架構與前端狀態管理。過往在即時渲染引擎打下的邏輯底子，讓我能順暢銜接分散式網路架構，具備從資料存取層到使用者互動層的完整垂直整合能力。",
+      "p3_title": "工程信念：系統架構與代碼品質的極致把關",
+      "p3": "在開發工具與自動化日益普及的現代，工程師的核心價值更在於對系統架構的宏觀判斷與程式碼品質的嚴謹把關。工具能加速原型試錯與基礎樣板產出，但決定分散式系統是否穩固、服務模組是否解耦的關鍵，始終是工程師對底層邏輯與設計模式的深刻理解。我期許自己持續優化工程工作流，同時堅守架構品質，打造兼具效能與可維護性的優秀數位產品。"
+    },
     "stats": [
       {
         "id": "exp",
@@ -31,9 +40,18 @@
   },
   "en": {
     "title": "About",
-    "intro": "Holding an M.A. in New Media Art, focusing on interactive application development, fullstack web engineering, and multimedia design.",
+    "intro": "Combining an M.A. in New Media Art with software engineering, focusing on high-reliability fullstack architectures and real-time interactive systems.",
     "heading": "Core Competency & Specialization",
-    "p1": "Che-Cheng Hsu, 25 years old, graduated with an M.A. in New Media Art from National Taiwan University of Arts. Majoring in VR/AR interactive application development, fullstack web engineering, and multimedia design. Possesses innovative thinking, cross-domain communication skills, project planning expertise, self-management, and a passion for new technology challenges.",
+    "p1": "Che-Cheng Hsu holds an M.A. in New Media Art from National Taiwan University of Arts. Specializing in full-stack system architecture, real-time interactive application development, and modern multimedia visual engineering. Possesses strong independent system design capability, vertical full-stack integration skills, and efficient cross-functional collaboration experience. Excels in autonomous technical research and engineering delivery, dedicated to building modern digital systems that seamlessly combine rigorous data logic with fluid interactive experiences.",
+    "bio": {
+      "title": "Personal Biography",
+      "p1_title": "From Game Dev to CS Foundations",
+      "p1": "Fascinated by interactive experiences during college, I started coding with Unity C# and taught myself Unreal Engine to build an ambitious graduation project. Realizing the importance of fundamentals, I cross-enrolled in and audited CS courses like Data Structures and Algorithms. Serving as an assistant on NSTC research projects for three years solidified my passion for software engineering.",
+      "p2_title": "Architectural Thinking & Full-Stack Integration",
+      "p2": "Developing large-scale interactive systems in graduate school exposed significant bottlenecks in maintenance and scalability. Early on, development focused primarily on feature delivery, but as system scale expanded, high component coupling made changes precarious. This prompted me to re-evaluate the core of software engineering, actively implementing Clean Code, SOLID principles, and design patterns into architectural refactoring. I subsequently expanded my engineering domain into modern full-stack web environments, focusing on layered backend service design, relational database modeling, and frontend state management. My grounding in real-time rendering logic allows me to seamlessly connect with distributed web architectures, establishing robust vertical integration from persistence layers to interactive UIs.",
+      "p3_title": "Engineering Conviction: Rigorous Architectural & Code Quality Governance",
+      "p3": "In an era of ubiquitous developer tooling and automation, an engineer's true value lies in architectural discernment and uncompromising code quality governance. While modern tools accelerate prototyping and boilerplate generation, the foundation of resilient distributed systems and decoupled services still rests on deep comprehension of underlying logic and design patterns. I aspire to continually refine my engineering workflows while safeguarding architectural integrity, delivering performant, maintainable, and purposeful digital software."
+    },
     "stats": [
       {
         "id": "exp",

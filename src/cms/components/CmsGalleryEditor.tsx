@@ -23,6 +23,7 @@ import {
   ArrowDown,
   Eye,
   EyeOff,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -31,6 +32,7 @@ import defaultGalleryData from '../../data/gallery-section.json';
 import { SectionTitleEditor } from './SectionTitleEditor';
 import { CmsImagePicker } from './CmsImagePicker';
 import { CmsUrlInput } from './CmsUrlInput';
+import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import {
   CmsConfirmDialog,
   CmsConfirmDialogState,
@@ -210,9 +212,15 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
   const [draggingIdx, setDraggingIdx] = useState<number | null>(null);
   const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   const featuredCount = items.filter((it) => it.featured).length;
@@ -404,19 +412,12 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
       next.splice(toIdx, 0, moved);
       return next;
     });
+    showToast(isEn ? 'Gallery item reordered!' : '畫廊作品順序已更新！');
   };
 
   /**
-   * TODO: [後端端點對接] 儲存並更新美術畫廊與 3D 多媒體展品清單
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/gallery
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: { items: GalleryItem[], meta: GalleryMeta }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "美術畫廊更新成功" }
-   *    - 401 Unauthorized: 憑證無效
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
+   * [資料持久化] 儲存並更新美術畫廊與 3D 多媒體展品清單
+   * 寫入本地快照並同步推送至 Firebase Firestore 雲端資料庫。
    */
   const doSave = async () => {
     setIsDirty(false);
@@ -456,8 +457,21 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
     }
   };
 
+  /** handleSetDefault — 將當前畫廊資料設為預設值基準 */
+  const handleSetDefault = () => {
+    try {
+      localStorage.setItem('portfolio_gallery_baseline', JSON.stringify(items));
+      showToast(isEn ? 'Current gallery set as module default!' : '當前「美術畫廊」內容已設為預設值！');
+    } catch {
+      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
+    }
+  };
+
   const doReset = async () => {
     setIsDirty(false);
+    const baselineRaw = localStorage.getItem('portfolio_gallery_baseline');
+    const isBaseline = !!baselineRaw;
+    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as GalleryItem[]) : (defaultGalleryData as GalleryItem[]);
     try {
       localStorage.removeItem('portfolio_gallery_data');
       window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
@@ -476,10 +490,10 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
         localStorage.setItem('portfolio_custom_translations', JSON.stringify(translations));
         window.dispatchEvent(new Event('portfolio_translations_updated'));
       }
-      setItems(defaultGalleryData as GalleryItem[]);
+      setItems(resetData);
       setGalleryMeta(DEFAULT_GALLERY_META);
-      await updateDocument('gallery', defaultGalleryData);
-      showToast(isEn ? '"Art Gallery" module restored to defaults!' : '「美術畫廊」模組已還原為初始預設資料！');
+      await updateDocument('gallery', resetData);
+      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Art Gallery" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「美術畫廊」模組已還原為初始預設資料！'));
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
@@ -499,14 +513,16 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
   };
 
   const triggerResetDialog = () => {
+    const baselineRaw = localStorage.getItem('portfolio_gallery_baseline');
+    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? 'Are you sure you want to reset the "Art Gallery" module to default? This will only reset this module and will not affect others.'
-        : '確定要將「美術畫廊」模組還原為初始預設值嗎？此操作僅會重置美術畫廊模組的內容，不會影響其他模組。',
-      confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
+        ? (isBaseline ? 'Reset the "Art Gallery" module to the pinned default state?' : 'Are you sure you want to reset the "Art Gallery" module to default?')
+        : (isBaseline ? '確定要將「美術畫廊」還原至設定的預設值嗎？' : '確定要將「美術畫廊」模組還原為初始預設值嗎？此操作僅會重置美術畫廊模組的內容，不會影響其他模組。'),
+      confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: doReset,
     });
   };
@@ -537,11 +553,11 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/40 text-emerald-400 text-xs font-['Noto_Sans_TC'] shadow-lg backdrop-blur-xl animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
@@ -549,10 +565,10 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
       <CmsConfirmDialog dialog={dialog} onClose={() => setDialog(EMPTY_DIALOG)} isEn={isEn} />
 
       {/* 頂部操作列 */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
         <div>
-          <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)] flex items-center gap-2.5">
-            <ImageIcon className="w-6 h-6 text-[var(--neon-cyan)]" />
+          <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)] flex items-center gap-2.5 whitespace-nowrap">
+            <ImageIcon className="w-6 h-6 text-[var(--neon-cyan)] shrink-0" />
             <span>{isEn ? 'Art Gallery' : '美術畫廊'}</span>
           </h1>
           <p className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] mt-1">
@@ -560,7 +576,7 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={isPreview ? undefined : triggerResetDialog}
@@ -569,6 +585,17 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={isPreview ? undefined : handleSetDefault}
+            disabled={isPreview}
+            title={isEn ? 'Pin current gallery as module default' : '將當前美術畫廊內容設為預設值'}
+            className="flex items-center gap-1.5 px-3.5 py-2 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold text-[var(--text-sub)] hover:text-amber-400 border-[var(--border-color)] hover:border-amber-400/40 bg-[var(--card-inner)] transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
 
           <button
@@ -641,10 +668,11 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
           type="button"
           onClick={handleAddItem}
           disabled={isPreview}
-          className="flex items-center gap-1.5 px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold text-[var(--neon-cyan)] bg-[var(--cat-icon-bg)] hover:bg-cyan-500/20 border-[var(--cat-icon-border)] transition-all cursor-pointer disabled:opacity-40 shadow-xs"
+          className="flex items-center justify-center p-2 border cyber-cut-sm text-[var(--neon-cyan)] bg-[var(--cat-icon-bg)] hover:bg-cyan-500/20 border-[var(--cat-icon-border)] transition-all cursor-pointer disabled:opacity-40 shadow-xs shrink-0"
+          title={isEn ? 'Add Artwork' : '新增作品'}
+          aria-label={isEn ? 'Add Artwork' : '新增作品'}
         >
-          <Plus className="w-3.5 h-3.5" />
-          <span>{isEn ? 'Add Artwork' : '新增作品'}</span>
+          <Plus className="w-4 h-4" />
         </button>
       </div>
 
@@ -656,11 +684,11 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
               ? (isEn ? 'Featured Artworks (Max 10, rendered in order in front-end 3D wheel):' : '精選作品清單（最多 10 件，依設定順序呈現於前臺 3D 輪盤）：')
               : (isEn ? 'Drag items to reorder gallery artwork sequence:' : '按住左側把手可拖曳調整畫廊作品排序順序：')}
           </span>
-          <span className="text-[10px] font-mono">
-            {isEn
-              ? `Showing ${filteredItems.length} of ${items.length} (Featured: ${featuredCount}/${MAX_FEATURED})`
-              : `顯示 ${filteredItems.length} / 共 ${items.length} 件（精選：${featuredCount}/${MAX_FEATURED}）`}
-          </span>
+          {activeCategory === 'featured' && (
+            <span className="text-[10px] font-mono text-[var(--neon-cyan)]">
+              {isEn ? `Featured: ${featuredCount}/${MAX_FEATURED}` : `精選：${featuredCount}/${MAX_FEATURED}`}
+            </span>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -717,31 +745,19 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
 
                   <div className="flex items-center gap-1.5">
                     {/* 作品顯示/隱藏開關 */}
-                    <label
-                      className="flex items-center gap-1 px-2 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
-                      title={item.visible !== false ? '點擊於前臺隱藏此作品' : '點擊於前臺顯示此作品'}
-                    >
-                      {item.visible !== false ? (
-                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
-                      ) : (
-                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
-                      )}
-                      <input
-                        type="checkbox"
-                        checked={item.visible !== false}
-                        disabled={isPreview}
-                        onChange={(e) => {
-                          setIsDirty(true);
-                          setItems((prev) => {
-                            const updated = [...prev];
-                            updated[actualIndex] = { ...updated[actualIndex], visible: e.target.checked };
-                            return updated;
-                          });
-                        }}
-                        className="sr-only"
-                      />
-                      <span>{item.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
-                    </label>
+                    <CmsVisibilityToggle
+                      checked={item.visible !== false}
+                      onChange={(val) => {
+                        setIsDirty(true);
+                        setItems((prev) => {
+                          const updated = [...prev];
+                          updated[actualIndex] = { ...updated[actualIndex], visible: val };
+                          return updated;
+                        });
+                      }}
+                      disabled={isPreview}
+                      size="sm"
+                    />
 
                     <button
                       type="button"

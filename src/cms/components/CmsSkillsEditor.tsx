@@ -23,6 +23,7 @@ import {
   ArrowDown,
   Eye,
   EyeOff,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -35,6 +36,7 @@ import {
 import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { CmsTagListEditor } from './CmsTagListEditor';
 import { getLucideIconByName } from './CmsIconPickerModal';
+import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import defaultSkillsData from '../../data/skills-section.json';
 import { splitSkillTokens } from '../../utils/skillsHelper';
 
@@ -77,12 +79,13 @@ const DEFAULT_SKILLS_META: Record<'zh' | 'en', SkillsMeta> = {
 };
 
 
-/** Automatic CIS category dot color indicator */
+/** Automatic CIS category dot color indicator — 青(185°)→藍(205°)→紫(270°)→赤珊瑚紅(340°) */
 const getCategoryDotColor = (catType: string, idx: number): string => {
-  if (catType === 'game') return '#00f0ff';
-  if (catType === 'fullstack') return '#2563eb';
-  if (catType === 'media') return '#a855f7';
-  const palette = ['#00f0ff', '#2563eb', '#a855f7', '#10b981'];
+  if (catType === 'fullstack') return '#00f0ff'; // 青
+  if (catType === 'game')      return '#38bdf8'; // 藍
+  if (catType === 'common')    return '#c084fc'; // 紫
+  if (catType === 'media')     return '#ff4d6d'; // 賽博赤珊瑚紅
+  const palette = ['#00f0ff', '#38bdf8', '#c084fc', '#ff4d6d'];
   return palette[idx % palette.length];
 };
 
@@ -214,92 +217,43 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
   const [itemDragging, setItemDragging] = useState<number | null>(null);
   const [itemDragOver, setItemDragOver] = useState<number | null>(null);
 
-  // 技能分類拖曳狀態
-  const catDragRef = useRef<number | null>(null);
-  const [catDragging, setCatDragging] = useState<number | null>(null);
-  const [catDragOver, setCatDragOver] = useState<number | null>(null);
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
-  };
-
-  const handleCategoryNameChange = (catIdx: number, value: string) => {
-    setIsDirty(true);
-    setFormData((prev) => {
-      const updatedCats = [...prev[lang]];
-      updatedCats[catIdx] = { ...updatedCats[catIdx], category: value };
-      return { ...prev, [lang]: updatedCats };
-    });
-  };
-
-
-  // 新增技能分類（同時建立中英文版本）
-  const handleAddCategory = () => {
-    setIsDirty(true);
-    const newCatZh: SkillCategory = {
-      category: '新分類',
-      catTier: 'secondary',
-      catType: 'other',
-      items: [{ label: '技能領域', rowType: 'tech', content: '' }],
-    };
-    const newCatEn: SkillCategory = {
-      category: 'New Category',
-      catTier: 'secondary',
-      catType: 'other',
-      items: [{ label: 'Skill Field', rowType: 'tech', content: '' }],
-    };
-    setFormData((prev) => ({
-      zh: [...prev.zh, newCatZh],
-      en: [...prev.en, newCatEn],
-    }));
-    setActiveCategoryIndex(formData[lang].length);
-    showToast(isEn ? 'New category added!' : '已成功新增一個技能分類！');
-  };
-
-
-  const handleCategoryVisibleToggle = (catIdx: number, visible: boolean) => {
-    setIsDirty(true);
-    setFormData((prev) => {
-      const updateList = (list: SkillCategory[]) => {
-        const copy = [...list];
-        if (copy[catIdx]) {
-          copy[catIdx] = { ...copy[catIdx], visible };
-        }
-        return copy;
-      };
-      return {
-        zh: updateList(prev.zh),
-        en: updateList(prev.en),
-      };
-    });
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   const handleItemChange = (catIdx: number, itemIdx: number, field: 'label' | 'content' | 'visible', value: any) => {
     setIsDirty(true);
+    if (field === 'visible') {
+      showToast(value !== false ? (isEn ? 'Skill item visible on site!' : '已開啟該技能項目展示！') : (isEn ? 'Skill item hidden from site!' : '已從前臺隱藏該技能項目！'));
+    }
     setFormData((prev) => {
-      // 跨語系同步 visible
-      if (field === 'visible') {
-        const updateCats = (cats: SkillCategory[]) => {
-          const copy = [...cats];
-          if (copy[catIdx] && copy[catIdx].items[itemIdx]) {
-            const itemsCopy = [...copy[catIdx].items];
-            itemsCopy[itemIdx] = { ...itemsCopy[itemIdx], visible: value };
-            copy[catIdx] = { ...copy[catIdx], items: itemsCopy };
-          }
-          return copy;
-        };
+      const updateCats = (cats: SkillCategory[], val: any) => {
+        const copy = [...cats];
+        if (copy[catIdx] && copy[catIdx].items[itemIdx]) {
+          const itemsCopy = [...copy[catIdx].items];
+          itemsCopy[itemIdx] = { ...itemsCopy[itemIdx], [field]: val };
+          copy[catIdx] = { ...copy[catIdx], items: itemsCopy };
+        }
+        return copy;
+      };
+
+      // 跨語系同步：visible（顯示/隱藏）與 content（技能標籤）同步中英
+      if (field === 'visible' || field === 'content') {
         return {
-          zh: updateCats(prev.zh),
-          en: updateCats(prev.en),
+          zh: updateCats(prev.zh, value),
+          en: updateCats(prev.en, value),
         };
       }
 
-      const updatedCats = [...prev[lang]];
-      const updatedItems = [...updatedCats[catIdx].items];
-      updatedItems[itemIdx] = { ...updatedItems[itemIdx], [field]: value };
-      updatedCats[catIdx] = { ...updatedCats[catIdx], items: updatedItems };
-      return { ...prev, [lang]: updatedCats };
+      // label 僅更新當前語系（標題可能有中英差異）
+      return { ...prev, [lang]: updateCats(prev[lang], value) };
     });
   };
 
@@ -352,25 +306,6 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     });
   };
 
-  const handleMoveCategory = (fromIdx: number, toIdx: number) => {
-    if (isPreview || fromIdx === toIdx || fromIdx < 0 || toIdx < 0) return;
-    setIsDirty(true);
-    setFormData((prev) => {
-      const reorder = (cats: SkillCategory[]) => {
-        if (toIdx >= cats.length) return cats;
-        const copy = [...cats];
-        const [removed] = copy.splice(fromIdx, 1);
-        copy.splice(toIdx, 0, removed);
-        return copy;
-      };
-      return {
-        zh: reorder(prev.zh),
-        en: reorder(prev.en),
-      };
-    });
-    setActiveCategoryIndex(toIdx);
-  };
-
   // 技能項目拖曳事件處理函式
   const handleItemDragStart = (e: React.DragEvent, idx: number) => {
     itemDragRef.current = idx; setItemDragging(idx); e.dataTransfer.effectAllowed = 'move';
@@ -391,43 +326,12 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
       return { ...prev, [lang]: updatedCats };
     });
     setItemDragging(null); setItemDragOver(null); itemDragRef.current = null;
-  };
-
-  // 技能分類拖曳事件處理函式（同時重排中英雙語分類順序）
-  const handleCatDragStart = (e: React.DragEvent, idx: number) => {
-    catDragRef.current = idx; setCatDragging(idx); e.dataTransfer.effectAllowed = 'move';
-  };
-  const handleCatDragEnd = () => { setCatDragging(null); setCatDragOver(null); catDragRef.current = null; };
-  const handleCatDragOver = (e: React.DragEvent, idx: number) => { e.preventDefault(); if (catDragRef.current !== idx) setCatDragOver(idx); };
-  const handleCatDrop = (e: React.DragEvent, targetIdx: number) => {
-    e.preventDefault();
-    const sourceIdx = catDragRef.current;
-    if (sourceIdx === null || sourceIdx === targetIdx) { setCatDragging(null); setCatDragOver(null); catDragRef.current = null; return; }
-    setIsDirty(true);
-    setFormData((prev) => {
-      const reorder = (arr: SkillCategory[]) => {
-        const newArr = [...arr];
-        const [removed] = newArr.splice(sourceIdx, 1);
-        newArr.splice(targetIdx, 0, removed);
-        return newArr;
-      };
-      return { zh: reorder(prev.zh), en: reorder(prev.en) };
-    });
-    setActiveCategoryIndex(targetIdx);
-    setCatDragging(null); setCatDragOver(null); catDragRef.current = null;
+    showToast(isEn ? 'Skill order updated!' : '已更新技能排序順序！');
   };
 
   /**
-   * TODO: [後端端點對接] 儲存並更新專業技能分類與晶片標籤清單
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/skills
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: { data: SkillCategoryData, meta: SkillsMeta }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "技能資料更新成功" }
-   *    - 401 Unauthorized: 憑證無效
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
+   * [資料持久化] 儲存並更新專業技能分類與晶片標籤清單
+   * 寫入本地快照並同步推送至 Firebase Firestore 雲端資料庫。
    */
   const triggerSaveDialog = () => {
     setDialog({
@@ -463,16 +367,30 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     });
   };
 
+  /** handleSetDefault — 將當前內容設為模組預設值基準 */
+  const handleSetDefault = () => {
+    try {
+      localStorage.setItem('portfolio_skills_baseline', JSON.stringify(formData));
+      showToast(isEn ? 'Current skills set as module default!' : '當前「專業技能」內容已設為預設值！');
+    } catch {
+      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
+    }
+  };
+
   const triggerResetDialog = () => {
+    const baselineRaw = localStorage.getItem('portfolio_skills_baseline');
+    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
-      message: isEn ? 'Are you sure you want to reset the "Skills" module to default?' : '確定要將「專業技能」模組還原為初始預設值嗎？',
+      message: isEn
+        ? (isBaseline ? 'Reset this module to the pinned default state?' : 'Are you sure you want to reset the "Skills" module to default?')
+        : (isBaseline ? '確定要將「專業技能」還原至設定的預設值嗎？' : '確定要將「專業技能」模組還原為初始預設值嗎？'),
       confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
       onConfirm: async () => {
         setIsDirty(false);
-        const resetData = defaultSkillsData as SkillsFullData;
+        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as SkillsFullData) : (defaultSkillsData as SkillsFullData);
         try {
           localStorage.removeItem('portfolio_skills_data');
           window.dispatchEvent(new Event('portfolio_skills_data_updated'));
@@ -488,7 +406,7 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
           setSkillsMeta(DEFAULT_SKILLS_META);
           setActiveCategoryIndex(0);
           await updateDocument('skills', resetData);
-          showToast(isEn ? '"Skills" module restored to defaults!' : '「專業技能」模組已還原為初始預設資料！');
+          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Skills" module restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專業技能」模組已還原為初始預設資料！'));
         } catch {
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
         }
@@ -501,10 +419,11 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/40 text-emerald-400 text-xs font-['Noto_Sans_TC'] shadow-lg animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400" /><span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
@@ -516,12 +435,17 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
       />
 
       {/* 頂部操作列 */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
-        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">{isEn ? 'Skills' : '專業技能'}</h1>
-        <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
+        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] whitespace-nowrap">{isEn ? 'Skills' : '專業技能'}</h1>
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button type="button" onClick={isPreview ? undefined : triggerResetDialog} disabled={isPreview}
             className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 cursor-pointer'}`}>
             <RotateCcw className="w-3.5 h-3.5" /><span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
+          </button>
+          <button type="button" onClick={isPreview ? undefined : handleSetDefault} disabled={isPreview}
+            title={isEn ? 'Pin current skills as module default' : '將當前專業技能內容設為預設值'}
+            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'}`}>
+            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" /><span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
           <button type="button" onClick={isPreview ? undefined : triggerSaveDialog} disabled={isPreview}
             className={`px-5 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold bg-[var(--neon-cyan)] text-[var(--neon-cyan-fg)] flex items-center gap-1.5 transition-all ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-[var(--neon-cyan)]/90 shadow-[0_0_15px_rgba(0,240,255,0.3)] cursor-pointer'}`}>
@@ -544,144 +468,93 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
         isPreview={isPreview}
       />
 
-      {/* 分類標籤頁與新增按鈕 */}
+      {/* 4 大主專業技能固定分類標籤頁 */}
       <div className="space-y-2">
         <div className="flex items-center justify-between px-1">
-          <p className="text-xs text-[var(--text-sub)]/60 font-['Share_Tech_Mono']">
-            {isEn ? 'Drag tabs to reorder categories' : '拖曳分頁標籤可調整分類順序'}
+          <p className="text-xs text-[var(--text-sub)]/80 font-['Share_Tech_Mono']">
+            {isEn ? '4 Core Skill Categories (Fixed Structure & Order)' : '4 大主專業技能分類 · 固定架構與順序'}
           </p>
-          {!isPreview && (
-            <button type="button" onClick={handleAddCategory}
-              className="flex items-center gap-1.5 px-3 py-1.5 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium text-[var(--neon-cyan)] border-[var(--neon-cyan)]/30 bg-[var(--neon-cyan)]/5 hover:bg-[var(--neon-cyan)]/10 transition-colors cursor-pointer">
-              <Plus className="w-3.5 h-3.5" /><span>{isEn ? 'Add Category' : '新增分類'}</span>
-            </button>
-          )}
+          <span className="text-[11px] font-mono px-2 py-0.5 border cyber-cut-sm bg-cyan-500/10 text-[var(--neon-cyan)] border-cyan-500/30">
+            {isEn ? 'CUSTOMIZABLE CATEGORIES' : '4 大主專業分類 · 可自由命名'}
+          </span>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2.5">
           {categories.map((cat, idx) => {
             const isActive = idx === activeCategoryIndex;
-            const isDraggingThis = catDragging === idx;
-            const isOverThis = catDragOver === idx;
             const dotColor = getCategoryDotColor(cat.catType, idx);
             return (
-              <div
+              <button
                 key={idx}
-                draggable={!isPreview}
-                onDragStart={(e) => handleCatDragStart(e, idx)}
-                onDragEnd={handleCatDragEnd}
-                onDragOver={(e) => handleCatDragOver(e, idx)}
-                onDragLeave={() => setCatDragOver(null)}
-                onDrop={(e) => handleCatDrop(e, idx)}
-                className={`relative transition-all duration-150 ${isDraggingThis ? 'opacity-40 scale-95' : ''} ${isOverThis ? 'ring-2 ring-[var(--neon-cyan)]/60' : ''}`}
+                type="button"
+                onClick={() => setActiveCategoryIndex(idx)}
+                className={`px-4 py-2.5 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  isActive
+                    ? 'bg-[var(--neon-cyan)]/15 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_15px_rgba(0,240,255,0.2)]'
+                    : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
+                }`}
               >
-                <button
-                  type="button"
-                  onClick={() => setActiveCategoryIndex(idx)}
-                  className={`px-4 py-2.5 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                    isActive
-                      ? 'bg-[var(--neon-cyan)]/15 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_15px_rgba(0,240,255,0.2)]'
-                      : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
-                  }`}
-                >
-                  {!isPreview && <GripVertical className="w-3.5 h-3.5 opacity-40" />}
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
-                  <span>{cat.category}</span>
-                  <span className="text-[10px] font-mono opacity-70">({cat.items.length})</span>
-                  {cat.visible === false && (
-                    <span className="text-[9px] font-mono px-1.5 py-0.5 border cyber-cut-sm bg-rose-500/15 text-rose-400 border-rose-500/30">
-                      {isEn ? 'HIDDEN' : '隱藏'}
-                    </span>
-                  )}
-                </button>
-              </div>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
+                <span>{cat.category}</span>
+                <span className="text-[10px] font-mono opacity-70">({cat.items.length})</span>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* 當前選取技能類別編輯器 */}
+      {/* 當前選取主技能類別與子項目編輯區 */}
       {currentCategory && (
         <div className="border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] p-6 sm:p-8 backdrop-blur-xl space-y-6">
-          {/* 技能類別頂部標題列 */}
-          <div className="flex flex-col gap-4 border-b border-[var(--border-color)] pb-5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2">
-                  <Layers className="w-4 h-4 text-[var(--neon-cyan)]" />
-                  <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
-                    {isEn ? 'Category Settings' : '分類設定'}
-                  </h2>
-                </div>
+          {/* 主分類鎖定資訊列 */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[var(--border-color)] pb-5">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-9 h-9 border cyber-cut-sm flex items-center justify-center shrink-0"
+                style={{
+                  backgroundColor: `${getCategoryDotColor(currentCategory.catType, activeCategoryIndex)}20`,
+                  borderColor: `${getCategoryDotColor(currentCategory.catType, activeCategoryIndex)}50`,
+                  color: getCategoryDotColor(currentCategory.catType, activeCategoryIndex),
+                }}
+              >
+                {React.createElement(getLucideIconByName(currentCategory.icon || 'layers'), {
+                  className: 'w-5 h-5',
+                })}
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                {/* 分類前臺顯示/隱藏開關 */}
-                <label
-                  className="flex items-center gap-1.5 cursor-pointer select-none text-xs font-mono px-2.5 py-1 border cyber-cut-sm transition-colors"
-                  style={{
-                    backgroundColor: currentCategory.visible !== false ? 'rgba(0, 240, 255, 0.08)' : 'rgba(100, 116, 139, 0.1)',
-                    borderColor: currentCategory.visible !== false ? 'rgba(0, 240, 255, 0.4)' : 'rgba(100, 116, 139, 0.3)',
-                  }}
-                  title={currentCategory.visible !== false ? (isEn ? 'Category visible on showcase — click to hide' : '點擊於前臺隱藏此分類') : (isEn ? 'Category hidden — click to show' : '點擊於前臺顯示此分類')}
-                >
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
+                  <label className="text-xs font-mono text-[var(--neon-cyan)] font-bold shrink-0">
+                    {isEn ? 'Category Name:' : '主分類名稱:'}
+                  </label>
                   <input
-                    type="checkbox"
-                    checked={currentCategory.visible !== false}
+                    type="text"
                     disabled={isPreview}
-                    onChange={(e) => handleCategoryVisibleToggle(activeCategoryIndex, e.target.checked)}
-                    className="accent-[var(--neon-cyan)] cursor-pointer w-3.5 h-3.5"
+                    value={currentCategory.category}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setIsDirty(true);
+                      setFormData((prev) => {
+                        const langList = [...(prev[lang] || [])];
+                        if (langList[activeCategoryIndex]) {
+                          langList[activeCategoryIndex] = {
+                            ...langList[activeCategoryIndex],
+                            category: val,
+                          };
+                        }
+                        return { ...prev, [lang]: langList };
+                      });
+                    }}
+                    className="px-3 py-1 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-main)] font-['Noto_Sans_TC'] font-bold text-base focus:border-[var(--neon-cyan)] focus:outline-none transition-colors w-full max-w-sm"
+                    placeholder={isEn ? 'Enter category name' : '輸入分類名稱'}
                   />
-                  <span className={currentCategory.visible !== false ? 'text-[var(--neon-cyan)] font-bold' : 'text-slate-500'}>
-                    {currentCategory.visible !== false ? (isEn ? 'CATEGORY VISIBLE' : '前臺顯示此分類') : (isEn ? 'CATEGORY HIDDEN' : '前臺隱藏此分類')}
-                  </span>
-                </label>
-
-                <div className="flex items-center gap-1.5">
-                <button
-                  type="button"
-                  disabled={isPreview || activeCategoryIndex === 0}
-                  onClick={() => handleMoveCategory(activeCategoryIndex, activeCategoryIndex - 1)}
-                  className="px-2.5 py-1 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer transition-colors"
-                  title={isEn ? 'Move category earlier' : '向前移動分類'}
-                >
-                  <ArrowUp className="w-3 h-3 -rotate-90" />
-                  <span className="hidden sm:inline">{isEn ? 'Move Earlier' : '前移分類'}</span>
-                </button>
-                <button
-                  type="button"
-                  disabled={isPreview || activeCategoryIndex === categories.length - 1}
-                  onClick={() => handleMoveCategory(activeCategoryIndex, activeCategoryIndex + 1)}
-                  className="px-2.5 py-1 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-30 disabled:cursor-not-allowed flex items-center gap-1 cursor-pointer transition-colors"
-                  title={isEn ? 'Move category later' : '向後移動分類'}
-                >
-                  <ArrowDown className="w-3 h-3 -rotate-90" />
-                  <span className="hidden sm:inline">{isEn ? 'Move Later' : '後移分類'}</span>
-                </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* 技能類別名稱輸入框 */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)]">{isEn ? 'Category Name' : '分類名稱'}</label>
-                <input type="text" value={currentCategory.category} onChange={(e) => handleCategoryNameChange(activeCategoryIndex, e.target.value)} disabled={isPreview}
-                  className={`w-full px-3 py-2 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-sm font-bold text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`} />
-              </div>
-
-              {/* 技能類別向量圖示（固定規格） */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)]">{isEn ? 'Category Icon (Fixed)' : '分類代表圖示 (固定)'}</label>
-                <div className="w-full px-3 py-2 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-xs text-[var(--text-main)] flex items-center justify-between">
-                  <div className="flex items-center gap-2 truncate">
-                    {React.createElement(getLucideIconByName(currentCategory.icon || 'layers'), {
-                      className: 'w-4 h-4 text-[var(--neon-cyan)] shrink-0',
-                    })}
-                    <span className="font-mono text-[11px] truncate">{currentCategory.icon || (isEn ? 'Default' : '預設圖示')}</span>
-                  </div>
-                  <span className="text-[10px] text-[var(--text-sub)]/60 font-mono shrink-0">
-                    {isEn ? 'Fixed' : '固定圖示'}
+                  <span className="text-[10px] font-mono px-2 py-0.5 border cyber-cut-sm bg-slate-800 text-slate-300 border-slate-700 w-fit shrink-0">
+                    {currentCategory.catTier === 'primary' ? (isEn ? 'CORE TIER' : '核心領域') : (isEn ? 'SUPPORTING TIER' : '輔助領域')}
                   </span>
                 </div>
+                <p className="text-xs text-[var(--text-sub)]/70 font-['Noto_Sans_TC'] mt-1">
+                  {isEn
+                    ? 'Custom category name supported. Manage subcategories and tags below.'
+                    : '支援自訂主分類名稱；請於下方管理子分類領域、技術標籤與開關狀態。'}
+                </p>
               </div>
             </div>
           </div>
@@ -692,12 +565,16 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
               <h3 className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)] tracking-wider flex items-center gap-1.5">
                 <Code2 className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
                 {isEn ? 'Skill Items' : '技能項目清單'}
-                <span className="font-mono opacity-70">({currentCategory.items.length})</span>
               </h3>
               {!isPreview && (
-                <button type="button" onClick={() => handleAddItem(activeCategoryIndex)}
-                  className="px-3 py-1 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold bg-[var(--card-inner)] hover:bg-[var(--card-bg)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] transition-colors cursor-pointer flex items-center gap-1">
-                  <Plus className="w-3.5 h-3.5" />{isEn ? 'Add Item' : '新增項目'}
+                <button
+                  type="button"
+                  onClick={() => handleAddItem(activeCategoryIndex)}
+                  className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] hover:bg-[var(--card-bg)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] transition-colors cursor-pointer flex items-center justify-center"
+                  title={isEn ? 'Add Item' : '新增項目'}
+                  aria-label={isEn ? 'Add Item' : '新增項目'}
+                >
+                  <Plus className="w-3.5 h-3.5" />
                 </button>
               )}
             </div>
@@ -742,19 +619,12 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
                             </span>
                           )}
                         </div>
-                        <label className="flex items-center gap-1 cursor-pointer select-none text-[10px] font-mono" title={item.visible !== false ? '點擊於前臺隱藏此項目' : '點擊於前臺顯示此項目'}>
-                          <input
-                            type="checkbox"
-                            checked={item.visible !== false}
-                            disabled={isPreview}
-                            onChange={(e) => handleItemChange(activeCategoryIndex, itemIdx, 'visible' as any, e.target.checked)}
-                            className="sr-only peer"
-                          />
-                          <div className="w-6.5 h-3.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-2.5 after:w-2.5 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
-                          <span className={item.visible !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
-                            {item.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
-                          </span>
-                        </label>
+                        <CmsVisibilityToggle
+                          checked={item.visible !== false}
+                          onChange={(val) => handleItemChange(activeCategoryIndex, itemIdx, 'visible' as any, val)}
+                          disabled={isPreview}
+                          size="sm"
+                        />
                       </div>
                       <input type="text" value={item.label} disabled={isPreview} onChange={(e) => handleItemChange(activeCategoryIndex, itemIdx, 'label', e.target.value)}
                         className={`w-full px-3 py-2 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-xs font-bold text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`} />

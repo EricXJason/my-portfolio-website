@@ -28,6 +28,7 @@ import {
   Bot,
   Eye,
   EyeOff,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -35,6 +36,7 @@ import { SectionTitleEditor } from './SectionTitleEditor';
 import { CmsDatePicker } from './CmsDatePicker';
 import { CmsImagePicker } from './CmsImagePicker';
 import { CmsTagListEditor } from './CmsTagListEditor';
+import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import { TechIcon } from '../../components/icons/TechIcon';
 import { ExternalLink } from 'lucide-react';
 import { CmsUrlInput } from './CmsUrlInput';
@@ -256,9 +258,15 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
 
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   const activeProjectIndex = projects.findIndex((p) => p.id === activeProjectId);
@@ -447,6 +455,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       return newProjs.map((p, i) => ({ ...p, order: i + 1 }));
     });
     setProjDragging(null); setProjDragOver(null); projDragRef.current = null;
+    showToast(isEn ? 'Project order updated!' : '已更新專案排序順位！');
   };
 
   const handleMoveProjectOrder = (id: string, direction: 'up' | 'down') => {
@@ -462,17 +471,12 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       updated[targetIdx] = temp;
       return updated.map((p, i) => ({ ...p, order: i + 1 }));
     });
+    showToast(isEn ? 'Project order updated!' : '已更新專案排序順位！');
   };
 
   /**
-   * TODO: [後端端點對接] 刪除指定 ID 之專案作品實體
-   * 1. HTTP Method: DELETE
-   * 2. 預期端點: /api/v1/projects/{projectId}
-   * 3. 請求參數: Path Param: projectId (string)
-   * 4. 預期回應:
-   *    - 204 No Content: 刪除成功
-   *    - 404 Not Found: 查無該專案
-   * 5. 當前狀態: 暫時由前端狀態陣列直接移除並標記 isDirty。
+   * [專案實體刪除] 刪除指定 ID 之專案作品實體
+   * 從目前編輯狀態中移除並標記變更，待儲存時一併同步。
    */
   const triggerDeleteDialog = () => {
     if (!activeProject) return;
@@ -497,17 +501,8 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
   };
 
   /**
-   * TODO: [後端端點對接] 儲存並更新所有專案作品列表與自訂排序
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/projects
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: { projects: ProjectItem[], meta: ProjectsMeta }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "專案作品列表更新成功" }
-   *    - 400 Bad Request: 欄位驗證失敗或精選數量超過上限
-   *    - 401 Unauthorized: 憑證過期
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
+   * [資料持久化] 儲存並更新所有專案作品列表與自訂排序
+   * 寫入本地快照並同步推送至 Firebase Firestore 雲端資料庫。
    */
   const triggerSaveDialog = () => {
     setDialog({
@@ -546,18 +541,30 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     });
   };
 
+  /** handleSetDefault — 將當前專案資料設為預設值基準 */
+  const handleSetDefault = () => {
+    try {
+      localStorage.setItem('portfolio_projects_baseline', JSON.stringify(projects));
+      showToast(isEn ? 'Current projects set as module default!' : '當前「專案作品」內容已設為預設值！');
+    } catch {
+      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
+    }
+  };
+
   const triggerResetDialog = () => {
+    const baselineRaw = localStorage.getItem('portfolio_projects_baseline');
+    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? 'Are you sure you want to reset the "Projects" module to default? This will only reset this module and will not affect others.'
-        : '確定要將「專案作品」模組還原為初始預設值嗎？此操作僅會重置專案作品模組的內容，不會影響其他模組。',
-      confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
+        ? (isBaseline ? 'Reset projects to the pinned default state?' : 'Are you sure you want to reset the "Projects" module to default?')
+        : (isBaseline ? '確定要將「專案作品」還原至設定的預設值嗎？' : '確定要將「專案作品」模組還原為初始預設值嗎？此操作僅會重置專案作品模組的內容，不會影響其他模組。'),
+      confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
-        const defaultList = defaultProjectsData as ProjectItem[];
+        const defaultList = baselineRaw ? (JSON.parse(baselineRaw) as ProjectItem[]) : (defaultProjectsData as ProjectItem[]);
         try {
           localStorage.removeItem('portfolio_projects_data');
           window.dispatchEvent(new Event('portfolio_projects_data_updated'));
@@ -584,7 +591,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
         setActiveProjectId(defaultList[0]?.id || '');
         try {
           await updateDocument('projects', defaultList);
-          showToast(isEn ? '"Projects" module restored to defaults!' : '「專案作品」模組已還原為初始預設資料！');
+          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Projects" restored to initial defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專案作品」模組已還原為初始預設資料！'));
         } catch {
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
         }
@@ -677,6 +684,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     currentOrder[targetIdx] = temp;
 
     handleFieldChange('buttonOrder', currentOrder);
+    showToast(isEn ? 'Button order updated!' : '已更新動作按鈕排列順序！');
   };
 
   const handleBtnDragStart = (e: React.DragEvent, idx: number) => {
@@ -719,15 +727,16 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     setBtnDragging(null);
     setBtnDragOver(null);
     btnDragRef.current = null;
+    showToast(isEn ? 'Button order updated!' : '已更新動作按鈕排列順序！');
   };
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-3 rounded-xl bg-[var(--card-bg)] border border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.3)] font-['Noto_Sans_TC'] text-sm backdrop-blur-xl animate-fade-in">
-          <Check className="w-4 h-4 text-[var(--neon-cyan)]" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
@@ -739,12 +748,12 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       />
 
       {/* 頂部操作列 */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
-        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
+        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] whitespace-nowrap">
           {isEn ? 'Projects' : '專案作品'}
         </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={isPreview ? undefined : triggerResetDialog}
@@ -756,6 +765,19 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={isPreview ? undefined : handleSetDefault}
+            disabled={isPreview}
+            title={isEn ? 'Pin current projects as module default' : '將當前專案作品內容設為預設值'}
+            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
+              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
+            }`}
+          >
+            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
 
           <button
@@ -798,19 +820,17 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                 <FolderGit2 className="w-4 h-4 text-[var(--neon-cyan)]" />
                 <span>{isEn ? 'Projects List' : '專案作品清單'}</span>
               </h2>
-              <span className="text-[10px] text-[var(--text-sub)]/70 font-mono">
-                {isEn ? `Total: ${projects.length} entries` : `共 ${projects.length} 件作品`}
-              </span>
             </div>
 
             {!isPreview && (
               <button
                 type="button"
                 onClick={handleAddProject}
-                className="px-3 py-1.5 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold bg-[var(--neon-cyan)] text-[var(--neon-cyan-fg)] hover:bg-[var(--neon-cyan)]/90 flex items-center gap-1 transition-all shadow-[0_0_10px_rgba(0,240,255,0.2)] cursor-pointer"
+                className="p-2 border cyber-cut-sm bg-[var(--neon-cyan)] text-[var(--neon-cyan-fg)] hover:bg-[var(--neon-cyan)]/90 flex items-center justify-center transition-all shadow-[0_0_10px_rgba(0,240,255,0.2)] cursor-pointer"
+                title={isEn ? 'Add Project' : '新增專案'}
+                aria-label={isEn ? 'Add Project' : '新增專案'}
               >
-                <Plus className="w-3.5 h-3.5" />
-                <span>{isEn ? 'Add' : '新增'}</span>
+                <Plus className="w-4 h-4" />
               </button>
             )}
           </div>
@@ -918,33 +938,70 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                       </div>
                     </div>
 
-                    {/* 右側：垂直重排序按鈕組 */}
+                    {/* 右側：快速顯示/隱藏開關與垂直重排序按鈕組 */}
                     {!isPreview && (
-                      <div className="flex flex-col gap-1 shrink-0 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="flex items-center gap-1.5 shrink-0">
+                        {/* 專案顯示/隱藏快速開關 (眼睛圖示切換) */}
                         <button
                           type="button"
-                          disabled={idx === 0}
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleMoveProjectOrder(proj.id, 'up');
+                            const newVisible = proj.visible === false ? true : false;
+                            setIsDirty(true);
+                            setProjects((prev) =>
+                              prev.map((p) => (p.id === proj.id ? { ...p, visible: newVisible } : p))
+                            );
+                            showToast(
+                              newVisible
+                                ? (isEn ? `"${title}" is now visible on site!` : `已開啟「${title}」前臺展示！`)
+                                : (isEn ? `"${title}" is now hidden from site!` : `已從前臺隱藏「${title}」！`)
+                            );
                           }}
-                          className="p-1 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
-                          title={isEn ? 'Move project up' : '向上移動順位'}
+                          className={`p-1.5 border cyber-cut-sm transition-all cursor-pointer ${
+                            proj.visible !== false
+                              ? 'bg-cyan-500/10 border-cyan-500/40 text-[var(--neon-cyan)] hover:bg-cyan-500/25 hover:border-cyan-500 shadow-[0_0_8px_rgba(0,240,255,0.2)]'
+                              : 'bg-rose-500/15 border-rose-500/50 text-rose-400 hover:bg-rose-500/30 hover:border-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.25)]'
+                          }`}
+                          title={
+                            proj.visible !== false
+                              ? (isEn ? 'Visible on site — Click to hide' : '前臺正常展示中（點擊直接隱藏）')
+                              : (isEn ? 'Hidden from site — Click to show' : '已從前臺隱藏（點擊恢復展示）')
+                          }
                         >
-                          <ArrowUp className="w-2.5 h-2.5" />
+                          {proj.visible !== false ? (
+                            <Eye className="w-3.5 h-3.5" />
+                          ) : (
+                            <EyeOff className="w-3.5 h-3.5" />
+                          )}
                         </button>
-                        <button
-                          type="button"
-                          disabled={idx === projects.length - 1}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleMoveProjectOrder(proj.id, 'down');
-                          }}
-                          className="p-1 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
-                          title={isEn ? 'Move project down' : '向下移動順位'}
-                        >
-                          <ArrowDown className="w-2.5 h-2.5" />
-                        </button>
+
+                        {/* 垂直重排序按鈕組 */}
+                        <div className="flex flex-col gap-0.5 opacity-80 sm:opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            type="button"
+                            disabled={idx === 0}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMoveProjectOrder(proj.id, 'up');
+                            }}
+                            className="p-1 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
+                            title={isEn ? 'Move project up' : '向上移動順位'}
+                          >
+                            <ArrowUp className="w-2.5 h-2.5" />
+                          </button>
+                          <button
+                            type="button"
+                            disabled={idx === projects.length - 1}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMoveProjectOrder(proj.id, 'down');
+                            }}
+                            className="p-1 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--neon-cyan)] disabled:opacity-20 disabled:cursor-not-allowed cursor-pointer"
+                            title={isEn ? 'Move project down' : '向下移動順位'}
+                          >
+                            <ArrowDown className="w-2.5 h-2.5" />
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
@@ -1007,7 +1064,10 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
               </label>
               <select
                 value={activeProject.category}
-                onChange={(e) => handleFieldChange('category', e.target.value)}
+                onChange={(e) => {
+                  handleFieldChange('category', e.target.value as any);
+                  showToast(isEn ? 'Project category updated!' : '已更新專案類型分類！');
+                }}
                 className="w-full px-4 py-2.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-sm text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] cursor-pointer"
               >
                 <option value="interactive">{isEn ? 'Interactive App' : '互動應用開發'}</option>
@@ -1026,7 +1086,15 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                   type="checkbox"
                   checked={!!activeProject.isFullAi}
                   disabled={isPreview}
-                  onChange={(e) => handleFieldChange('isFullAi', e.target.checked)}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    handleFieldChange('isFullAi', checked);
+                    showToast(
+                      checked
+                        ? (isEn ? 'AI attribution marked!' : '已標記為 AI 輔助開發！')
+                        : (isEn ? 'AI attribution removed!' : '已取消 AI 輔助開發標記！')
+                    );
+                  }}
                   className="w-4 h-4 rounded-none text-emerald-500 focus:ring-0 focus:outline-none cursor-pointer"
                 />
                 <Cpu className="w-4 h-4 text-emerald-400 shrink-0" />
@@ -1073,15 +1141,19 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                   </span>
                 </div>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={activeProject.visible !== false}
-                  onChange={(e) => handleFieldChange('visible', e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-10 h-5.5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4.5 after:w-4.5 after:transition-all peer-checked:bg-[var(--neon-cyan)]"></div>
-              </label>
+              <CmsVisibilityToggle
+                checked={activeProject.visible !== false}
+                onChange={(val) => {
+                  handleFieldChange('visible', val);
+                  const title = activeProject.title_zh || activeProject.title_en || '專案';
+                  showToast(
+                    val
+                      ? (isEn ? `"${title}" is now visible on site!` : `已開啟「${title}」前臺展示！`)
+                      : (isEn ? `"${title}" is now hidden from site!` : `已從前臺隱藏「${title}」！`)
+                  );
+                }}
+                size="md"
+              />
             </div>
 
             {/* 精選專案設定（互動 3 項、全端 3 項上限，精選排序 1-3，隱藏專案強制排除） */}
@@ -1141,8 +1213,8 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
               </div>
 
               {activeProject.featured && (
-                <div className="flex flex-col sm:flex-row sm:items-center gap-3 pt-1">
-                  <div className="flex items-center gap-2">
+                <div className="space-y-2 pt-2.5 border-t border-[var(--border-color)]/60">
+                  <div className="flex flex-wrap items-center gap-2.5">
                     <label className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] shrink-0">
                       {isEn ? 'Featured Display Order:' : '精選作品順序：'}
                     </label>
@@ -1150,18 +1222,18 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                       value={activeProject.featuredOrder ?? 1}
                       disabled={isPreview}
                       onChange={(e) => handleFeaturedOrderChange(Number(e.target.value))}
-                      className="px-3 py-1.5 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-xs font-bold text-[var(--neon-cyan)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono'] cursor-pointer"
+                      className="px-3 py-1.5 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-xs font-bold text-[var(--neon-cyan)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Share_Tech_Mono'] cursor-pointer shrink-0 min-w-[210px]"
                     >
                       <option value={1}>{isEn ? 'Order 1 (1st Priority)' : '第 1 順位 (最優先)'}</option>
                       <option value={2}>{isEn ? 'Order 2 (2nd Priority)' : '第 2 順位'}</option>
                       <option value={3}>{isEn ? 'Order 3 (3rd Priority)' : '第 3 順位'}</option>
                     </select>
                   </div>
-                  <span className="text-[11px] text-[var(--text-sub)]/70 font-['Noto_Sans_TC']">
+                  <p className="text-[11px] text-[var(--text-sub)]/70 font-['Noto_Sans_TC'] leading-relaxed">
                     {isEn
                       ? 'Selecting a priority already in use will automatically swap orders.'
                       : '若選取已被其他專案佔用之順位，系統將自動對調順序。'}
-                  </span>
+                  </p>
                 </div>
               )}
             </div>
@@ -1416,7 +1488,10 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
               <CmsTagListEditor
                 label={isEn ? 'Tech Stack Tags' : '技術標籤清單'}
                 tags={activeProject.tags || []}
-                onChange={(newTags) => handleFieldChange('tags', newTags)}
+                onChange={(newTags) => {
+                  handleFieldChange('tags', newTags);
+                  showToast(isEn ? 'Tech tags updated!' : '已更新技術標籤清單！');
+                }}
                 disabled={isPreview}
                 placeholder={isEn ? 'Add tech tag...' : '新增標籤...'}
               />

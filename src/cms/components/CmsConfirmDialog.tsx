@@ -25,9 +25,10 @@ export interface CmsConfirmDialogState {
 }
 
 interface CmsConfirmDialogProps {
-  dialog: CmsConfirmDialogState;
+  dialog?: CmsConfirmDialogState;
+  state?: CmsConfirmDialogState;
   onClose: () => void;
-  isEn: boolean;
+  isEn?: boolean;
 }
 
 export const EMPTY_DIALOG: CmsConfirmDialogState = {
@@ -41,10 +42,12 @@ export const EMPTY_DIALOG: CmsConfirmDialogState = {
 };
 
 export const CmsConfirmDialog: React.FC<CmsConfirmDialogProps> = ({
-  dialog,
+  dialog: propDialog,
+  state: propState,
   onClose,
-  isEn,
+  isEn = false,
 }) => {
+  const dialog = propDialog || propState || EMPTY_DIALOG;
   const { theme } = useTheme();
   const isLight = theme === 'light';
 

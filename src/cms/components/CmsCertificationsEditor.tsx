@@ -25,6 +25,7 @@ import {
   Pencil,
   Eye,
   EyeOff,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -36,7 +37,7 @@ import {
 } from './CmsConfirmDialog';
 import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { SectionTitleEditor } from './SectionTitleEditor';
-import { getLucideIconByName } from './CmsIconPickerModal';
+import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import { CmsUrlInput } from './CmsUrlInput';
 
 interface CertItem {
@@ -200,9 +201,15 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
   const [draggingItem, setDraggingItem] = useState<{ groupIdx: number; itemIdx: number } | null>(null);
   const [dragOverItem, setDragOverItem] = useState<{ groupIdx: number; itemIdx: number } | null>(null);
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   /* ── Meta ── */
@@ -417,6 +424,7 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
       return { ...prev, zh: reorder(prev.zh), en: reorder(prev.en) };
     });
     setDraggingGroupIdx(null); setDragOverGroupIdx(null);
+    showToast(isEn ? 'Category order updated!' : '已更新證照分類排序！');
   };
 
   /* ── Drag: item ── */
@@ -443,6 +451,7 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
       return { ...prev, zh: reorder(prev.zh), en: reorder(prev.en) };
     });
     setDraggingItem(null); setDragOverItem(null);
+    showToast(isEn ? 'Certification order updated!' : '已更新證照項目排序！');
   };
 
   /* ── Save / Reset dialogs ── */
@@ -459,30 +468,34 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
     });
   };
 
+  /** handleSetDefault — 將當前證照資料設為預設值基準 */
+  const handleSetDefault = () => {
+    try {
+      localStorage.setItem('portfolio_certifications_baseline', JSON.stringify(formData));
+      showToast(isEn ? 'Current certifications set as module default!' : '當前「專業證照」內容已設為預設值！');
+    } catch {
+      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
+    }
+  };
+
   const triggerResetDialog = () => {
+    const baselineRaw = localStorage.getItem('portfolio_certifications_baseline');
+    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Restore Defaults' : '確認還原此模組預設',
       message: isEn
-        ? 'Reset the "Certifications" module to its original defaults? Other modules are not affected.'
-        : '確定要將「專業證照」模組還原為初始預設值嗎？此操作不會影響其他模組。',
-      confirmText: isEn ? 'Restore' : '確定還原',
+        ? (isBaseline ? 'Reset the "Certifications" module to the pinned default state?' : 'Reset the "Certifications" module to its original defaults? Other modules are not affected.')
+        : (isBaseline ? '確定要將「專業證照」還原至設定的預設值嗎？' : '確定要將「專業證照」模組還原為初始預設值嗎？此操作不會影響其他模組。'),
+      confirmText: isEn ? 'Restore' : '確定還原預設',
       onConfirm: doReset,
     });
   };
 
   /**
-   * TODO: [後端端點對接] 儲存並更新國際證照與獲獎榮譽清單
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/certifications
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: { data: CertificationsFullData, meta: AwardsMeta }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "證照榮譽資料更新成功" }
-   *    - 401 Unauthorized: 憑證無效
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
+   * [資料持久化] 儲存並更新國際證照與獲獎榮譽清單
+   * 同步更新至本地快照與 Firebase Firestore 雲端資料庫。
    */
   const doSave = async () => {
     setIsDirty(false);
@@ -511,6 +524,9 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
 
   const doReset = async () => {
     setIsDirty(false);
+    const baselineRaw = localStorage.getItem('portfolio_certifications_baseline');
+    const isBaseline = !!baselineRaw;
+    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as CertificationsFullData) : (defaultCertsData as CertificationsFullData);
     try {
       localStorage.removeItem('portfolio_certifications_data');
       window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
@@ -521,10 +537,10 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
         localStorage.setItem('portfolio_custom_translations', JSON.stringify(t));
         window.dispatchEvent(new Event('portfolio_translations_updated'));
       }
-      setFormData(defaultCertsData as CertificationsFullData);
+      setFormData(resetData);
       setAwardsMeta(DEFAULT_AWARDS_META);
-      await updateDocument('certifications', defaultCertsData);
-      showToast(isEn ? '"Certifications" module restored to defaults!' : '「專業證照」模組已還原為預設！');
+      await updateDocument('certifications', resetData);
+      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Certifications" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專業證照」模組已還原為預設！'));
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
@@ -534,11 +550,11 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/40 text-emerald-400 text-xs font-['Noto_Sans_TC'] shadow-lg backdrop-blur-xl animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
@@ -546,11 +562,11 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
       <CmsConfirmDialog dialog={dialog} onClose={() => setDialog(EMPTY_DIALOG)} isEn={isEn} />
 
       {/* 頂部操作列 */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
-        <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
+        <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)] whitespace-nowrap">
           {isEn ? 'Certifications & Awards' : '專業證照'}
         </h1>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={isPreview ? undefined : triggerResetDialog}
@@ -562,6 +578,18 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={isPreview ? undefined : handleSetDefault}
+            disabled={isPreview}
+            title={isEn ? 'Pin current certifications as module default' : '將當前專業證照內容設為預設值'}
+            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
+              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
+            }`}
+          >
+            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
           <button
             type="button"
@@ -601,25 +629,19 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
               {isEn ? 'Language Score & Cloud Storage' : '語言檢定與雲端證照庫'}
             </h2>
           </div>
-          <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
-            <input
-              type="checkbox"
-              checked={formData.toeic.visible !== false}
-              disabled={isPreview}
-              onChange={(e) => {
-                setIsDirty(true);
-                setFormData((prev) => ({
-                  ...prev,
-                  toeic: { ...prev.toeic, visible: e.target.checked },
-                }));
-              }}
-              className="sr-only peer"
-            />
-            <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-amber-400 relative"></div>
-            <span className={formData.toeic.visible !== false ? 'text-amber-400 font-bold' : 'text-slate-500'}>
-              {formData.toeic.visible !== false ? (isEn ? 'VISIBLE' : '顯示卡片') : (isEn ? 'HIDDEN' : '隱藏卡片')}
-            </span>
-          </label>
+          <CmsVisibilityToggle
+            checked={formData.toeic.visible !== false}
+            onChange={(val) => {
+              setIsDirty(true);
+              setFormData((prev) => ({
+                ...prev,
+                toeic: { ...prev.toeic, visible: val },
+              }));
+              showToast(val ? (isEn ? 'TOEIC card visible on site!' : '已開啟多益成績卡片展示！') : (isEn ? 'TOEIC card hidden from site!' : '已從前臺隱藏多益成績卡片！'));
+            }}
+            disabled={isPreview}
+            size="sm"
+          />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-1.5">
@@ -665,17 +687,15 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
             <span className="text-sm font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
               {isEn ? 'Certification Categories' : '證照分類管理'}
             </span>
-            <span className="text-xs font-mono text-[var(--text-sub)]">
-              ({currentGroups.length} {isEn ? 'categories' : '個分類'})
-            </span>
           </div>
           <button
             type="button"
             onClick={handleAddGroup}
-            className="px-3 py-1.5 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold bg-[var(--card-inner)] hover:bg-[var(--card-bg)] border-[var(--border-color)] hover:border-amber-400 text-amber-400 flex items-center gap-1.5 transition-colors cursor-pointer"
+            className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] hover:bg-[var(--card-bg)] border-[var(--border-color)] hover:border-amber-400 text-amber-400 flex items-center justify-center transition-colors cursor-pointer"
+            title={isEn ? 'Add Category' : '新增分類'}
+            aria-label={isEn ? 'Add Category' : '新增分類'}
           >
-            <Plus className="w-3.5 h-3.5" />
-            <span>{isEn ? 'Add Category' : '新增分類'}</span>
+            <Plus className="w-4 h-4" />
           </button>
         </div>
 
@@ -697,8 +717,8 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
               } ${isDragTarget ? 'border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.3)]' : 'border-[var(--border-color)]'}`}
             >
               {/* 群組頂部標題列 */}
-              <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3 gap-3">
-                <div className="flex items-center gap-2 flex-1 min-w-0">
+              <div className="flex flex-wrap items-center justify-between border-b border-[var(--border-color)] pb-3 gap-3">
+                <div className="flex items-center gap-2 flex-1 min-w-[200px]">
                   {/* 拖曳控制手把 */}
                   <span
                     className="cursor-grab active:cursor-grabbing text-[var(--text-sub)] hover:text-amber-400 shrink-0 transition-colors"
@@ -740,30 +760,17 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
                       title={isEn ? 'Edit category name' : '編輯分類名稱'}
                     />
                   </div>
-
-                  {/* 分類群組向量圖示（固定規格） */}
-                  <div
-                    className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] bg-[var(--card-inner)] text-[var(--text-main)] shrink-0"
-                    title={isEn ? 'Category icon (Fixed)' : '分類代表圖示 (固定)'}
-                  >
-                    {React.createElement(getLucideIconByName(group.iconType || (groupIdx === 0 ? 'shield-check' : 'award')), {
-                      className: 'w-3.5 h-3.5 text-amber-400 shrink-0',
-                    })}
-                    <span className="truncate max-w-[80px]">{group.iconType || (groupIdx === 0 ? 'shield-check' : 'award')}</span>
-                  </div>
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs font-mono text-[var(--neon-cyan)]">
-                    {group.items.length} {isEn ? 'items' : '項'}
-                  </span>
                   <button
                     type="button"
                     onClick={() => handleAddCertItem(groupIdx)}
-                    className="px-3 py-1 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold bg-[var(--card-inner)] hover:bg-[var(--card-bg)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] flex items-center gap-1 transition-colors cursor-pointer"
+                    className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] hover:bg-[var(--card-bg)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] flex items-center justify-center transition-colors cursor-pointer"
+                    title={isEn ? 'Add Cert' : '新增證照'}
+                    aria-label={isEn ? 'Add Cert' : '新增證照'}
                   >
-                    <Plus className="w-3 h-3" />
-                    <span>{isEn ? 'Add Cert' : '新增證照'}</span>
+                    <Plus className="w-3.5 h-3.5" />
                   </button>
                   {currentGroups.length > 1 && (
                     <button
@@ -841,31 +848,22 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <label
-                            className="flex items-center gap-1 cursor-pointer select-none text-[10px] font-mono"
-                            title={item.visible !== false ? '點擊於前臺隱藏此證照' : '點擊於前臺顯示此證照'}
-                          >
-                            <input
-                              type="checkbox"
-                              checked={item.visible !== false}
-                              disabled={isPreview}
-                              onChange={(e) => {
-                                setIsDirty(true);
-                                setFormData((prev) => {
-                                  const groups = [...(prev[lang] || [])];
-                                  const items = [...groups[groupIdx].items];
-                                  items[itemIdx] = { ...items[itemIdx], visible: e.target.checked };
-                                  groups[groupIdx] = { ...groups[groupIdx], items };
-                                  return { ...prev, [lang]: groups };
-                                });
-                              }}
-                              className="sr-only peer"
-                            />
-                            <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
-                            <span className={item.visible !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
-                              {item.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
-                            </span>
-                          </label>
+                          <CmsVisibilityToggle
+                            checked={item.visible !== false}
+                            onChange={(checked) => {
+                              setIsDirty(true);
+                              setFormData((prev) => {
+                                const groups = [...(prev[lang] || [])];
+                                const items = [...groups[groupIdx].items];
+                                items[itemIdx] = { ...items[itemIdx], visible: checked };
+                                groups[groupIdx] = { ...groups[groupIdx], items };
+                                return { ...prev, [lang]: groups };
+                              });
+                              showToast(checked ? (isEn ? 'Certification visible on site!' : '已開啟此證照前臺展示！') : (isEn ? 'Certification hidden from site!' : '已從前臺隱藏此證照！'));
+                            }}
+                            disabled={isPreview}
+                            size="sm"
+                          />
 
                           <button
                             type="button"
@@ -916,7 +914,7 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
 
                 {group.items.length === 0 && (
                   <div className="md:col-span-2 py-8 text-center text-[var(--text-sub)] text-sm font-['Noto_Sans_TC'] border border-dashed border-[var(--border-color)] cyber-cut-sm">
-                    {isEn ? 'No certifications yet. Click "Add Cert" to add one.' : '尚無證照。點擊「新增證照」來新增。'}
+                    {isEn ? 'No certifications yet. Click "+" above to add one.' : '尚無證照。點擊上方「+」按鈕來新增。'}
                   </div>
                 )}
               </div>

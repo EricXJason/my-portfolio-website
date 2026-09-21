@@ -38,11 +38,8 @@ export const LangProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   }, [lang]);
 
   /**
-   * TODO: [後端端點對接] 於正式接入後端 API 後，改由後端動態取得自訂生產字典
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/translations
-   * 3. 預期回應: 200 OK: Record<Language, Record<string, string>>
-   * 4. 當前狀態: 使用者模式嚴格使用本地標準 site-translations.json，與 CMS 暫存隔離，待後端上線後再進行對接。
+   * 雙語字串檢索函式 (Translation Lookup)
+   * 依據目前語言狀態取得對應鍵值，若查無翻譯則回退至鍵名本身。
    */
   const t = (key: string): string => {
     const translations = (i18n as Record<Language, Record<string, string>>)[lang];

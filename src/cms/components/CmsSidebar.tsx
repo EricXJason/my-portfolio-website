@@ -28,7 +28,10 @@ import {
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
+import { useCmsDirty } from '../context/CmsDirtyContext';
+import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { TechIcon } from '../../components/icons/TechIcon';
+import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 
 export interface NavItem {
   id: string;
@@ -48,6 +51,16 @@ export const DEFAULT_MODULE_ORDER = [
   'experience',
   'gallery',
 ];
+
+export const DEFAULT_MODULE_VISIBILITY: Record<string, boolean> = {
+  home: true,
+  about: true,
+  skills: true,
+  projects: true,
+  awards: true,
+  experience: true,
+  gallery: true,
+};
 
 export const CMS_NAV_ITEMS: NavItem[] = [
   {
@@ -171,36 +184,113 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
     };
   }, []);
 
+  // 模組可見度狀態（除首頁恆常置頂鎖定外，其餘皆可個別於前臺開關）
+  const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_modules_visibility');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return { ...DEFAULT_MODULE_VISIBILITY, ...parsed, home: true };
+        }
+      }
+    } catch {}
+    return DEFAULT_MODULE_VISIBILITY;
+  });
+
+  useEffect(() => {
+    const handleVisUpdate = () => {
+      try {
+        const saved = localStorage.getItem('portfolio_modules_visibility');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            setModuleVisibility({ ...DEFAULT_MODULE_VISIBILITY, ...parsed, home: true });
+            return;
+          }
+        }
+      } catch {}
+      setModuleVisibility(DEFAULT_MODULE_VISIBILITY);
+    };
+
+    window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+    window.addEventListener('storage', handleVisUpdate);
+    return () => {
+      window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+      window.removeEventListener('storage', handleVisUpdate);
+    };
+  }, []);
+
+  const { isDirty: _isDirty, setIsDirty } = useCmsDirty();
+  const { data, updateDocument } = usePortfolioData();
+
+  const handleToggleModuleVisibility = async (moduleId: string, visible: boolean) => {
+    if (moduleId === 'home') return;
+    const next = { ...moduleVisibility, [moduleId]: visible, home: true };
+    setModuleVisibility(next);
+    setIsDirty(true); // 標記未存檔狀態，離開時強制跳出警告確認
+    try {
+      localStorage.setItem('portfolio_modules_visibility', JSON.stringify(next));
+      window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+    } catch {}
+
+    // 即時同步推送到 Firestore 的 site_settings
+    try {
+      const curSettings = data.site_settings || {};
+      await updateDocument('site_settings', {
+        ...curSettings,
+        modules_visibility: next,
+      });
+    } catch (e) {
+      console.error('[CmsSidebar]: Failed to persist modules_visibility to Firestore:', e);
+    }
+  };
+
   /**
-   * TODO: [後端端點對接] 儲存全站模組自訂排版順序
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/site-settings/module-order
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: { moduleOrder: string[] }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "模組排序儲存成功" }
-   *    - 401 Unauthorized: 憑證無效
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
+   * [模組排序持久化] 儲存全站模組自訂排版順序
+   * 更新至 local 儲存層與狀態事件匯流排，使全站各導覽組件即時同步。
    */
-  const saveOrder = (newOrder: string[]) => {
+  const saveOrder = async (newOrder: string[]) => {
     const sanitized = ['home', ...newOrder.filter((id) => id !== 'home')];
     setModuleOrder(sanitized);
+    setIsDirty(true); // 標記未存檔狀態
     try {
       localStorage.setItem('portfolio_modules_order', JSON.stringify(sanitized));
       window.dispatchEvent(new Event('portfolio_modules_order_updated'));
     } catch {
       // 忽略例外
     }
+
+    // 即時同步推送到 Firestore 的 site_settings
+    try {
+      const curSettings = data.site_settings || {};
+      await updateDocument('site_settings', {
+        ...curSettings,
+        modules_order: sanitized,
+      });
+    } catch (e) {
+      console.error('[CmsSidebar]: Failed to persist modules_order to Firestore:', e);
+    }
   };
 
-  const resetOrder = () => {
+  const resetOrder = async () => {
     setModuleOrder(DEFAULT_MODULE_ORDER);
+    setIsDirty(true); // 標記未存檔狀態
     try {
       localStorage.removeItem('portfolio_modules_order');
       window.dispatchEvent(new Event('portfolio_modules_order_updated'));
     } catch {
       // 忽略例外
+    }
+
+    try {
+      const curSettings = data.site_settings || {};
+      await updateDocument('site_settings', {
+        ...curSettings,
+        modules_order: DEFAULT_MODULE_ORDER,
+      });
+    } catch (e) {
+      console.error('[CmsSidebar]: Failed to reset modules_order in Firestore:', e);
     }
   };
 
@@ -426,9 +516,21 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
                       </span>
                     )}
 
-                    {/* 右側：上移、下移與拖曳手把按鈕組 */}
+                    {/* 右側：前臺顯示開關、上移、下移與拖曳手把按鈕組 */}
                     {!isHome && (
-                      <div className="flex items-center gap-0.5">
+                      <div className="flex items-center gap-1.5">
+                        <div onClick={(e) => e.stopPropagation()}>
+                          <CmsVisibilityToggle
+                            checked={moduleVisibility[item.id] !== false}
+                            onChange={(val) => handleToggleModuleVisibility(item.id, val)}
+                            size="sm"
+                            title={
+                              moduleVisibility[item.id] !== false
+                                ? (isEn ? 'Visible on website — Click to hide' : '於前臺展示中（點擊隱藏此模組）')
+                                : (isEn ? 'Hidden from website — Click to show' : '已從前臺隱藏（點擊恢復展示）')
+                            }
+                          />
+                        </div>
                         <button
                           type="button"
                           disabled={itemIdx <= 1}

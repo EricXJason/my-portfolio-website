@@ -91,23 +91,23 @@
     "buttonOrder": ["live", "admin", "github"],
     "honors": [],
     "honors_en": [],
-    "desc": "採用 React 19 與 TypeScript 打造之賽博龐克科幻風格全端作品集網站。深度整合自研視覺化 CMS 內容管理後臺，架構「本地離線優先快取（SWR）+ Firebase Firestore 毫秒級即時監聽」雙向同步系統，並全面導入 Firebase Auth 官方身分驗證體系、Cloudflare Workers 邊緣運算與動態 Canvas 粒子視覺網絡。",
-    "desc_en": "Cyberpunk-aesthetic fullstack portfolio website engineered with React 19 and TypeScript. Deeply integrates an in-house visual CMS dashboard featuring an Offline-First SWR + Firebase Firestore real-time listener architecture, reinforced with Firebase Auth official credentials, Cloudflare Workers edge deployment, and dynamic Canvas particle networks.",
+    "desc": "以 React 19 與 TypeScript 建構之個人作品集與視覺化 CMS 管理後臺。前端採用 Tailwind CSS 實作賽博風格與高對比深淺色介面；資料層架構本地快照搭配 Firebase Firestore 雙向即時監聽；後端整合 Firebase Auth 權限控管與 Cloudflare Workers 邊緣部署。",
+    "desc_en": "A personal portfolio and visual CMS dashboard built with React 19 and TypeScript. Features a cyberpunk high-contrast theme via Tailwind CSS, local snapshot with real-time Firebase Firestore synchronization, Firebase Auth access control, and Cloudflare Workers edge deployment.",
     "contributions": [
-      "自研模組化視覺 CMS 內容管理後臺：自主研發涵蓋首頁、網站全域設定、個人簡歷、專業技能、精選專案、證照榮譽、工作經歷與畫廊等八大模組之視覺化管理後臺，實作未儲存狀態智慧阻斷防護（Unsaved State Guard）、跨語系資料結構自動同步與細粒度開關防禦機制。",
-      "Firebase Firestore 雙向串流同步與離線優先快取（SWR）：架構「本地 JSON 0ms 首屏極速渲染 + Firestore onSnapshot 即時串流監聽」雙層狀態中樞，達成前臺展示無須重新整理網頁即可毫秒級熱更新，CMS 儲存時自動持久化至雲端資料庫集合。",
-      "Firebase Auth 官方安全身分認證：全面接入 Firebase Authentication 官方金鑰驗證體系，徹底杜絕模擬放行與旁路漏洞，實作高強度登入安全門禁與憑證狀態生命週期管理。",
-      "全端 BaaS 與多媒體雲端管線：整合 Firebase Storage 作為 BaaS 雲端儲存中心，支援非同步多媒體資材上傳、SVG 技術圖示即時庫映射與高可靠度資料持久化管線。",
-      "賽博龐克 HUD 科幻美學與動態視覺系統：精心設計沉浸式深色賽博龐克 HUD 終端與玻璃擬態（Glassmorphism）科幻層次，整合動態 Canvas 粒子交互網絡、客製化發光游標、視差滾動與全裝置自適應排版，符合 WCAG 高對比無障礙標準。",
-      "CI/CD 自動化建構與邊緣運算部署：結合 GitHub Actions 自動化品質門禁檢測與 Cloudflare Workers 邊緣運算部署管線，自動化發布至全球 Anycast CDN 節點，實現全球極速載入體驗。"
+      "CMS 視覺化管理後臺：為首頁、簡介、技能、專案與經歷等展示模組打造專用管理介面，實作未儲存防跳出機制（Unsaved Guard）與多語系即時同步。",
+      "資料快取與即時同步：結合本地靜態 JSON 與 Firestore onSnapshot 串流監聽，達到首屏即時呈現與後臺儲存無須重整即時反映之混合資料流。",
+      "身分驗證與安全控管：串接 Firebase Authentication 實作管理員登入流程與 Token 生命週期管理，保護後臺資料操作邊界。",
+      "多媒體與雲端資產管理：串接 Firebase Storage 支援圖片資產上傳，並實作 SVG 技術圖示與動態靜態資源映射。",
+      "互動視覺與無障礙設計：實作 Canvas 粒子互動背景、發光游標與進場動畫，並嚴格遵循深淺色對比度規範。",
+      "CI/CD 自動化建構與部署：配置 GitHub Actions 工作流於推送時自動執行型別驗證與打包，並自動發布至 Cloudflare Workers。"
     ],
     "contributions_en": [
-      "In-House Modular Visual CMS Admin Suite: Engineered a proprietary visual admin dashboard spanning Hero, Site Settings, About, Skills, Projects, Experience, Certifications, and Art Gallery with intelligent Unsaved State Guard, cross-language automatic synchronization, and fine-grained display toggles.",
-      "Firebase Firestore Real-Time Streaming & Offline-First SWR: Designed a two-tier state hub with local JSON 0ms initial rendering and Firestore onSnapshot live listeners, enabling sub-second zero-refresh hot updates on public pages while seamlessly persisting CMS edits to cloud collections.",
-      "Firebase Auth Official Security Gateway: Integrated official Firebase Authentication credential verification, eliminating bypass vulnerabilities and enforcing strict access control with session lifecycle management.",
-      "Fullstack BaaS & Cloud Media Pipeline: Integrated Firebase Storage as a cloud asset hub supporting asynchronous multimedia uploads, live SVG icon library mapping, and robust data persistence pipelines.",
-      "Cyberpunk HUD Sci-Fi Aesthetics & Dynamic Visual System: Crafted an immersive cyberpunk HUD terminal and sci-fi glassmorphism layers, coupled with interactive Canvas particle networks, custom illuminated cursor, parallax scrolling, and responsive layouts meeting WCAG high-contrast standards.",
-      "Automated CI/CD Pipeline & Edge Deployment: Coupled GitHub Actions automated quality gates with Cloudflare Workers edge runtime deployment, dispatching automatically across global Anycast CDN edge nodes for lightning-fast worldwide delivery."
+      "Visual CMS Admin Dashboard: Developed dedicated management interfaces for Hero, About, Skills, Projects, and Experience modules, with unsaved changes warnings and multi-language synchronization.",
+      "Data Caching & Real-Time Sync: Combined local static JSON with Firestore onSnapshot listeners to achieve immediate first-paint and instant cloud sync without page refreshes.",
+      "Authentication & Security: Integrated Firebase Authentication for administrator sign-in and token session lifecycle management.",
+      "Cloud Media Asset Management: Leveraged Firebase Storage for image uploads alongside dynamic SVG icon and static asset mapping.",
+      "Interactive Visuals & Accessibility: Built Canvas particle background, custom cursor, and smooth scroll animations adhering to high-contrast accessibility guidelines.",
+      "CI/CD & Edge Deployment: Configured GitHub Actions to run type checks and automated builds on push, deploying automatically to Cloudflare Workers."
     ],
     "tags": ["React 19", "TypeScript", "Tailwind CSS", "Firebase Firestore", "Firebase Auth", "Cloudflare Workers", "GitHub Actions", "Canvas API", "Vite"],
     "date": "2026.09",
@@ -321,17 +321,17 @@
     "adminUrl": "https://survey-flow.pages.dev/admin",
     "githubUrl": "https://github.com/EricXJason/survey-flow",
     "buttonOrder": ["live", "admin", "github"],
-    "desc": "基於 Angular 與 TypeScript 架構打造之企業級動態問卷引擎。實作宣告式動態表單驗證、非同步資料串流處理、自適應響應式題型渲染與即時問卷分析儀表板。",
-    "desc_en": "Enterprise dynamic survey platform engineered with Angular and TypeScript. Features declarative reactive form validation, async data stream processing, and real-time response analytics dashboard.",
+    "desc": "基於 Angular 與 TypeScript 開發之動態問卷系統。實作響應式表單驗證、非同步資料串流處理、多題型動態渲染與填答統計儀表板。",
+    "desc_en": "Dynamic survey platform built with Angular and TypeScript. Features reactive form validation, asynchronous data streaming, multi-question type dynamic rendering, and a response analytics dashboard.",
     "contributions": [
-      "動態表單與狀態串流：運用 Angular Reactive Forms 與 RxJS 實作複雜條件題型跳轉邏輯與即時表單校驗。",
-      "模組化題型體系：採用 Angular 獨立元件架構建構可擴充題型庫，支援單複選、多階評分量表與問卷進度條快照。",
-      "RESTful API 與離線暫存：設計高可靠度 DTO 傳輸合約，結合非同步 HttpClient 實作問卷即時自動儲存防斷網保護。"
+      "動態表單與狀態串流：運用 Angular Reactive Forms 與 RxJS 實作條件跳轉題型與即時輸入驗證邏輯。",
+      "模組化題型體系：採用 Angular 獨立元件架構建構題型元件庫，支援單複選、量表題型與填答進度計算。",
+      "RESTful API 與暫存機制：設計型別安全的 DTO 資料合約，結合 HttpClient 處理即時自動暫存與網路異常重試。"
     ],
     "contributions_en": [
-      "Dynamic Reactive Forms & State: Engineered Angular Reactive Forms & RxJS for conditional branching logic and real-time validation.",
-      "Modular Survey Widgets: Built scalable standalone components for multi-type question matrices and progress snapshots.",
-      "RESTful DTO Contracts: Designed type-safe API communication with async auto-save pipelines and offline recovery."
+      "Dynamic Reactive Forms & State: Built conditional branching logic and real-time form validation with Angular Reactive Forms & RxJS.",
+      "Modular Survey Components: Developed scalable standalone question components supporting multiple choice, rating scales, and progress tracking.",
+      "RESTful DTO Contracts: Implemented type-safe HTTP communication with auto-save support and error handling."
     ],
     "tags": ["Angular", "TypeScript", "Tailwind CSS", "RxJS", "RESTful API", "Node.js"],
     "date": "2026.08 - 2026.09",
@@ -350,17 +350,17 @@
     "adminUrl": "https://cloud-ecommerce.pages.dev/admin",
     "githubUrl": "https://github.com/EricXJason/cloud-ecommerce",
     "buttonOrder": ["live", "admin", "github"],
-    "desc": "現代無伺服器架構打造之全端電商平臺。具備即時商品庫存快取、購物車持久化同步、安全金流串接模擬與多維度銷售指標儀表板。",
-    "desc_en": "Modern fullstack e-commerce platform built on serverless architecture. Features real-time inventory caching, persistent cart sync, payment gateway flow, and sales analytics dashboard.",
+    "desc": "基於 React 與 Node.js 開發之全端電商系統。包含商品型錄檢索、購物車持久化快取、模擬金流結帳流程與後臺訂單管理功能。",
+    "desc_en": "Full-stack e-commerce application built with React and Node.js. Features product catalog browsing, persistent cart caching, checkout simulation, and order management.",
     "contributions": [
-      "購物車與全域狀態管理：採用 Context API 與本地快取雙軌同步機制，實現毫秒級購物車計算與併發防禦。",
-      "後端 API 與資料庫設計：設計高內聚 RESTful API 與關聯式資料庫 Schema，落實 ACID 交易隔離與防超賣防禦。",
-      "響應式商品展示介面：實作動態虛擬列表渲染海量商品資料，搭配即時多條件模糊搜尋與分類排序演算法。"
+      "購物車與全域狀態管理：採用 Context API 與本地儲存同步機制，維護跨頁面購物車狀態與數量校驗。",
+      "後端 API 與資料庫設計：以 Express 與 PostgreSQL 設計 RESTful API 端點，落實資料庫交易與庫存扣減防護。",
+      "商品瀏覽與檢索介面：實作虛擬滾動列表優化海量商品渲染效能，並整合多條件篩選與即時搜尋功能。"
     ],
     "contributions_en": [
-      "Cart & Global State Management: Built dual-sync cart pipeline with Context API and local persistence.",
-      "Backend Architecture & Database: Engineered RESTful endpoints and relational schema enforcing ACID transactions.",
-      "High-Performance Catalog UI: Implemented virtualized list rendering with multi-criteria dynamic filtering."
+      "Cart & Global State Management: Maintained persistent cart state and quantity validation across routes using React Context API.",
+      "Backend API & Database: Designed RESTful endpoints and relational PostgreSQL schema ensuring safe transactions and inventory updates.",
+      "Catalog UI & Search: Implemented virtual scrolling for large catalog datasets alongside multi-criteria filtering."
     ],
     "tags": ["React", "TypeScript", "Node.js", "Express", "PostgreSQL", "Tailwind CSS"],
     "date": "2026.06 - 2026.07",

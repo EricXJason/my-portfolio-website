@@ -113,15 +113,8 @@ export const Education: React.FC = () => {
   const isLight = theme === 'light';
 
   /**
-   * TODO: [後端端點對接] 取得使用者模式學歷、經歷、研習與論文詳細資料
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/experience
-   * 3. 請求參數:
-   *    - Query Params: lang (string, 'zh' | 'en' | 'ja')
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: { zh: SectionData, en: SectionData, ja: SectionData, driveLinks: Record<string, string> } }
-   *    - 500 Internal Server Error: 伺服器讀取學經歷資料失敗
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (experience-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
+   * [資料來源調度] 學歷、工作經歷、工作坊研習與論文著作完整資訊
+   * 由 PortfolioDataContext 提供統一資料驅動，支援雲端證照與外部連結對應。
    */
   const { data } = usePortfolioData();
   const dataMap = ((data.experience || eduData) as unknown as Record<Language, SectionData> & { driveLinks: Record<string, string> });
@@ -140,39 +133,56 @@ export const Education: React.FC = () => {
   const workshopsRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
   const thesesRef    = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
 
-  // 經歷與學歷項目色彩順序循環規範：賽博青 → 高亮電光天藍 → 亮紫色
+  // 經歷與學歷項目色彩順序循環規範：賽博青 (185°) → 電光湛藍 (205°) → 亮紫色 (270°) → 賽博赤珊瑚紅 (340°)
   const sequenceAccents = [
-    // 1: 霓虹賽博青 (Electric Cyan)
-    { main: isLight ? '#0284c7' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)', border: isLight ? '#38bdf8' : '#00f0ff' },
-    // 2: 極光電光天藍 (Vivid Hyper Sky Blue - 告別暗濁、高對比 14:1)
-    { main: isLight ? '#0284c7' : '#38bdf8', bg: isLight ? '#e0f2fe' : 'rgba(56, 189, 248, 0.15)', border: isLight ? '#38bdf8' : '#38bdf8' },
-    // 3: 亮紫色 (Electric Violet)
-    { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(192, 132, 252, 0.15)', border: isLight ? '#c084fc' : '#c084fc' },
+    // 1: 霓虹賽博青 (Cyan - 185°: 淺色模式採用深翡翠青 #0891b2 + 冰青底 #ecfeff + 亮青邊 #06b6d4)
+    { main: isLight ? '#0891b2' : '#00f0ff', bg: isLight ? '#ecfeff' : 'rgba(0, 240, 255, 0.15)', border: isLight ? '#06b6d4' : '#00f0ff' },
+    // 2: 極光電光湛藍 (Royal Blue - 205°: 淺色模式採用深皇家藍 #2563eb + 湛藍底 #eff6ff + 寶藍邊 #3b82f6)
+    { main: isLight ? '#2563eb' : '#38bdf8', bg: isLight ? '#eff6ff' : 'rgba(56, 189, 248, 0.15)', border: isLight ? '#3b82f6' : '#38bdf8' },
+    // 3: 亮紫色 (Electric Violet - 270°: 淺色模式採用深紫羅蘭 #7c3aed + 淡紫底 #faf5ff + 亮紫邊 #a855f7)
+    { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#faf5ff' : 'rgba(192, 132, 252, 0.15)', border: isLight ? '#a855f7' : '#c084fc' },
+    // 4: 翡翠賽博綠 (Emerald Green - 150°: 淺色模式採用深翡翠綠 #059669 + 薄荷綠底 #ecfdf5 + 亮綠邊 #10b981)
+    { main: isLight ? '#059669' : '#34d399', bg: isLight ? '#ecfdf5' : 'rgba(52, 211, 153, 0.15)', border: isLight ? '#10b981' : '#34d399' },
   ];
 
-  // 3 distinct cyber theme colors for Degree Buttons: (1: 畢業證書 -> Cyan, 2: 歷年成績單 -> Vivid Sky Blue, 3: 系排名證明 -> Purple)
+
+  // 學歷按鈕配色依序：#1 青色 (Cyan) → #2 藍色 (Blue) → #3 紫色 (Purple)
   const degreeButtonStyles: Record<string, { bg: string; border: string; text: string }> = {
     cert: {
-      bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
-      border: isLight ? '#0284c7' : '#00f0ff',
-      text: isLight ? '#0369a1' : '#00f0ff',
+      bg: isLight ? '#ecfeff' : 'rgba(0, 240, 255, 0.15)',
+      border: isLight ? '#0891b2' : '#00f0ff',
+      text: isLight ? '#0891b2' : '#00f0ff',
     },
     transcript: {
-      bg: isLight ? '#e0f2fe' : 'rgba(56, 232, 255, 0.15)',
-      border: isLight ? '#0284c7' : '#38e8ff',
-      text: isLight ? '#0284c7' : '#38e8ff',
+      bg: isLight ? '#eff6ff' : 'rgba(59, 130, 246, 0.15)',
+      border: isLight ? '#2563eb' : '#3b82f6',
+      text: isLight ? '#2563eb' : '#93c5fd',
     },
     ranking: {
-      bg: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.15)',
-      border: isLight ? '#9333ea' : '#c084fc',
-      text: isLight ? '#6b21a8' : '#e9d5ff',
+      bg: isLight ? '#faf5ff' : 'rgba(168, 85, 247, 0.15)',
+      border: isLight ? '#7c3aed' : '#c084fc',
+      text: isLight ? '#7c3aed' : '#c084fc',
     },
   };
 
   const defaultBtnStyle = {
-    bg: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
-    border: isLight ? '#0284c7' : '#00f0ff',
-    text: isLight ? '#0369a1' : '#00f0ff',
+    bg: isLight ? '#ecfeff' : 'rgba(0, 240, 255, 0.15)',
+    border: isLight ? '#0891b2' : '#00f0ff',
+    text: isLight ? '#0891b2' : '#00f0ff',
+  };
+
+  /** 論文區塊專屬按鈕樣式（對應赤珊瑚紅與琥珀微光） */
+  const publicationBtnStyles: Record<string, { bg: string; border: string; text: string }> = {
+    paper: {
+      bg: isLight ? '#ecfeff' : 'rgba(0, 240, 255, 0.15)',
+      border: isLight ? '#0891b2' : '#00f0ff',
+      text: isLight ? '#0891b2' : '#00f0ff',
+    },
+    slides: {
+      bg: isLight ? '#eff6ff' : 'rgba(59, 130, 246, 0.15)',
+      border: isLight ? '#2563eb' : '#3b82f6',
+      text: isLight ? '#2563eb' : '#93c5fd',
+    },
   };
 
   // 頂級科幻毛玻璃面板風格 (Sci-Fi Glassmorphism Section Style: 真正清透半透明 0.52~0.62 + 頂部 1px 鏡面高光)
@@ -223,17 +233,17 @@ export const Education: React.FC = () => {
   };
 
   /** 渲染頂級科幻雙行 HUD 時間數據膠囊 (2-Line Chrono Capsule: 兩行優雅排版，徹底解決橫向溢出邊緣問題) */
-  const renderChronoCapsule = (periodStr: string, accent: { main: string; border: string }, isSinglePub = false) => {
+  const renderChronoCapsule = (periodStr: string, accent: { main: string; border: string; bg?: string }, _isSinglePub = false) => {
     const parsed = parseTimelinePeriod(periodStr);
 
     return (
       <div
         className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1.5 border cyber-cut-sm transition-all duration-300 group-hover:scale-[1.02] shadow-sm backdrop-blur-md select-none"
         style={{
-          background: isLight ? 'rgba(240, 249, 255, 0.94)' : 'rgba(8, 14, 28, 0.85)',
+          background: isLight ? (accent.bg || '#ffffff') : 'rgba(8, 14, 28, 0.85)',
           borderColor: isLight ? accent.border : `${accent.main}55`,
           boxShadow: isLight
-            ? '0 2px 8px rgba(15, 23, 42, 0.05)'
+            ? `0 2px 8px ${accent.main}20`
             : `inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 0 14px ${accent.main}18`,
         }}
       >
@@ -870,9 +880,10 @@ export const Education: React.FC = () => {
                   <div
                     className="p-3 border cyber-cut-sm shrink-0"
                     style={{
-                      backgroundColor: isLight ? '#d1fae5' : 'rgba(16,185,129,0.12)',
-                      borderColor: isLight ? '#34d399' : 'rgba(16,185,129,0.35)',
-                      color: isLight ? '#047857' : '#10b981',
+                      backgroundColor: isLight ? '#ecfdf5' : 'rgba(16, 185, 129, 0.14)',
+                      borderColor: isLight ? '#6ee7b7' : 'rgba(16, 185, 129, 0.48)',
+                      color: isLight ? '#059669' : '#34d399',
+                      boxShadow: isLight ? 'none' : '0 0 16px rgba(16, 185, 129, 0.3)',
                     }}
                   >
                     <BookOpen size={22} />
@@ -1012,9 +1023,9 @@ export const Education: React.FC = () => {
                                   rel="noreferrer"
                                   className="px-4 py-2 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group min-w-[140px]"
                                   style={{
-                                    backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.15)',
-                                    borderColor: isLight ? '#059669' : '#10b981',
-                                    color: isLight ? '#047857' : '#34d399',
+                                    backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
+                                    borderColor: isLight ? '#0284c7' : '#00f0ff',
+                                    color: isLight ? '#0369a1' : '#00f0ff',
                                   }}
                                 >
                                   <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />
@@ -1030,9 +1041,9 @@ export const Education: React.FC = () => {
                                   rel="noreferrer"
                                   className="px-4 py-2 border font-tech text-xs sm:text-sm font-bold uppercase cyber-cut-sm flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 cursor-pointer shadow-xs group min-w-[140px]"
                                   style={{
-                                    backgroundColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.15)',
-                                    borderColor: isLight ? '#38bdf8' : '#00f0ff',
-                                    color: isLight ? '#0369a1' : '#00f0ff',
+                                    backgroundColor: isLight ? '#eff6ff' : 'rgba(59, 130, 246, 0.15)',
+                                    borderColor: isLight ? '#3b82f6' : '#3b82f6',
+                                    color: isLight ? '#1d4ed8' : '#93c5fd',
                                   }}
                                 >
                                   <ExternalLink size={14} className="shrink-0 group-hover:scale-110 transition-transform" />

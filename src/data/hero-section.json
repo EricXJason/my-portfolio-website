@@ -15,12 +15,12 @@
   "showLine": true,
   "zh": {
     "title": "許哲誠",
-    "subtitle": "互動應用開發／全端開發／多媒體設計",
-    "description": "專注於互動應用開發、全端網頁架構與新媒體藝術實踐，致力打造具沉浸感的數位體驗。"
+    "subtitle": "全端開發／互動應用開發",
+    "description": "專注於全端軟體架構與即時互動系統開發。擅長串接底層資料邏輯與頂層沉浸式互動，堅持模組化設計與程式碼可維護性，致力於打造高穩定性且流暢的現代數位產品。"
   },
   "en": {
     "title": "HSU, CHE-CHENG",
-    "subtitle": "Interactive App Dev / Fullstack Dev / Multimedia Design",
-    "description": "Specializing in interactive application development, fullstack web architecture, and new media design aesthetics to deliver immersive digital experiences."
+    "subtitle": "Fullstack Dev / Interactive App Dev",
+    "description": "Dedicated to full-stack software architecture and real-time interactive systems. Skilled in bridging low-level data logic with high-fidelity immersive interaction, adhering to modular design and code maintainability, and committed to building stable, responsive digital products."
   }
 }

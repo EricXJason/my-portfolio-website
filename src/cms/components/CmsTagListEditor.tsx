@@ -143,15 +143,12 @@ export const CmsTagListEditor: React.FC<CmsTagListEditorProps> = ({
 
   return (
     <div className="space-y-2.5">
-      {/* 標籤名稱與計數 */}
+      {/* 標籤名稱 */}
       <div className="flex items-center justify-between">
         <label className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] flex items-center gap-1.5">
           <Tag className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
           <span>{label || (isEn ? 'Tags List' : '標籤清單')}</span>
         </label>
-        <span className="text-[10px] font-mono text-[var(--text-sub)]">
-          {tags.length} {isEn ? 'tags' : '項'}
-        </span>
       </div>
 
       {/* 標籤流式容器 */}
@@ -174,7 +171,7 @@ export const CmsTagListEditor: React.FC<CmsTagListEditorProps> = ({
               className={`group relative flex items-center gap-1.5 px-2.5 py-1.5 border cyber-cut-sm text-xs font-mono select-none transition-all duration-150 ${
                 isDragging ? 'opacity-30 scale-95' : ''
               } ${isOver ? 'ring-2 ring-[var(--neon-cyan)] scale-105' : ''} ${
-                !disabled ? 'cursor-grab active:cursor-grabbing hover:-translate-y-0.5 shadow-xs' : ''
+                !disabled ? 'cursor-grab active:cursor-grabbing shadow-xs' : ''
               }`}
               style={{
                 backgroundColor: accent.bg,
@@ -190,9 +187,9 @@ export const CmsTagListEditor: React.FC<CmsTagListEditorProps> = ({
 
               <span className="font-bold tracking-wide">{tag}</span>
 
-              {/* 左右微調按鈕 (供非拖曳快速重排) */}
+              {/* 左右微調按鈕 (永遠顯示，供快速重排) */}
               {!disabled && tags.length > 1 && (
-                <div className="hidden group-hover:flex items-center gap-0.5 opacity-60 hover:opacity-100 pl-0.5">
+                <div className="flex items-center gap-0.5 opacity-50 hover:opacity-100 pl-0.5">
                   {idx > 0 && (
                     <button
                       type="button"

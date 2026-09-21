@@ -14,7 +14,33 @@ import React from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { usePortfolioData } from '../context/PortfolioDataContext';
-import { Gamepad2, Globe, Palette, Cpu, Code2, Server, Monitor, Layout, Database, Cloud, Wrench, GitMerge, PenTool, Bot, Box, LucideIcon, Zap, Layers } from 'lucide-react';
+import {
+  Gamepad2,
+  Globe,
+  Palette,
+  Cpu,
+  Code2,
+  Server,
+  Monitor,
+  Layout,
+  Database,
+  Cloud,
+  Wrench,
+  GitBranch,
+  PenTool,
+  Bot,
+  Box,
+  Boxes,
+  Workflow,
+  LineChart,
+  Glasses,
+  Wifi,
+  Terminal,
+  Sparkles,
+  LucideIcon,
+  Zap,
+  Layers,
+} from 'lucide-react';
 import skillsData from '../data/skills-section.json';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import { splitSkillTokens } from '../utils/skillsHelper';
@@ -30,7 +56,7 @@ interface SkillItem {
 interface SkillCategory {
   category: string;
   catType: string;
-  catTier?: 'primary' | 'secondary';
+  catTier?: 'primary' | 'common' | 'secondary';
   icon?: string;
   visible?: boolean;
   items: SkillItem[];
@@ -44,32 +70,34 @@ const CAT_ICON_MAP: Record<string, LucideIcon> = {
 
 const getLabelIcon = (label: string, catColor: string) => {
   const l = label.toLowerCase();
-  if (l.includes('遊戲引擎') || l.includes('game engine')) return <Cpu size={16} style={{ color: catColor }} />;
-  if (l.includes('設計模式') || l.includes('design pattern')) return <Code2 size={16} style={{ color: catColor }} />;
-  if (l.includes('核心') || l.includes('core')) return <Wrench size={16} style={{ color: catColor }} />;
-  if (l.includes('xr') || l.includes('xr 實境')) return <Monitor size={16} style={{ color: catColor }} />;
-  if (l.includes('多人') || l.includes('multiplayer')) return <GitMerge size={16} style={{ color: catColor }} />;
-  if (l.includes('語言') || l.includes('lang')) return <Code2 size={16} style={{ color: catColor }} />;
-  if (l.includes('後端') || l.includes('backend')) return <Server size={16} style={{ color: catColor }} />;
-  if (l.includes('前端') || l.includes('frontend') || l.includes('框架')) return <Layout size={16} style={{ color: catColor }} />;
-  if (l.includes('資料庫') || l.includes('database')) return <Database size={16} style={{ color: catColor }} />;
-  if (l.includes('伺服器') || l.includes('雲端') || l.includes('server') || l.includes('cloud')) return <Cloud size={16} style={{ color: catColor }} />;
-  if (l.includes('視覺') || l.includes('visual') || l.includes('ui/ux')) return <PenTool size={16} style={{ color: catColor }} />;
-  if (l.includes('ai') || l.includes('aigc')) return <Bot size={16} style={{ color: catColor }} />;
-  if (l.includes('3d') || l.includes('建模') || l.includes('model')) return <Box size={16} style={{ color: catColor }} />;
-  return <Zap size={16} style={{ color: catColor }} />;
+  // 互動應用開發 (5 個獨特圖示)
+  if (l.includes('遊戲引擎') || l.includes('game engine'))                              return <Cpu       size={16} style={{ color: catColor }} />;
+  if (l.includes('核心技術') || l.includes('core tech'))                               return <Wrench    size={16} style={{ color: catColor }} />;
+  if (l.includes('動畫') || l.includes('animation') || l.includes('相機'))              return <Monitor   size={16} style={{ color: catColor }} />;
+  if (l.includes('xr') || l.includes('xr 實境') || l.includes('xr dev'))                return <Glasses   size={16} style={{ color: catColor }} />;
+  if (l.includes('多人') || l.includes('multiplayer'))                                 return <Wifi      size={16} style={{ color: catColor }} />;
+  // 全端開發 (6 個獨特圖示)
+  if (l.includes('程式語言') || l.includes('programming lang'))                      return <Code2     size={16} style={{ color: catColor }} />;
+  if (l.includes('前端') || l.includes('frontend') || l.includes('樣式'))              return <Layout    size={16} style={{ color: catColor }} />;
+  if (l.includes('後端') || l.includes('backend'))                                    return <Server    size={16} style={{ color: catColor }} />;
+  if (l.includes('資料庫') || l.includes('database') || l.includes('service'))        return <Database  size={16} style={{ color: catColor }} />;
+  if (l.includes('雲端') || l.includes('cloud') || l.includes('edge') || l.includes('部署')) return <Cloud     size={16} style={{ color: catColor }} />;
+  if (l.includes('開發與測試') || l.includes('dev & test') || l.includes('tool'))     return <Terminal  size={16} style={{ color: catColor }} />;
+  // 通用軟體工程能力 (4 個獨特圖示)
+  if (l.includes('架構') || l.includes('設計模式') || l.includes('architecture'))     return <Boxes     size={16} style={{ color: catColor }} />;
+  if (l.includes('版本控制') || l.includes('version control') || l.includes('devops'))    return <GitBranch size={16} style={{ color: catColor }} />;
+  if (l.includes('系統分析') || l.includes('system anal') || l.includes('圖表'))       return <LineChart size={16} style={{ color: catColor }} />;
+  if (l.includes('ai') || l.includes('aigc') || l.includes('輔助開發') || l.includes('輔助創作')) return <Bot   size={16} style={{ color: catColor }} />;
+  // 多媒體設計 (2 個獨特圖示)
+  if (l.includes('3d') || l.includes('建模') || l.includes('model'))                  return <Box       size={16} style={{ color: catColor }} />;
+  if (l.includes('視覺') || l.includes('visual') || l.includes('ui/ux') || l.includes('影音')) return <Palette size={16} style={{ color: catColor }} />;
+  // Fallback 預設安全圖示
+  return <Sparkles size={16} style={{ color: catColor }} />;
 };
 
 /**
- * TODO: [後端端點對接] 取得使用者模式專業技能分組與標籤清單
- * 1. HTTP Method: GET
- * 2. 預期端點: /api/v1/skills
- * 3. 請求參數:
- *    - Query Params: lang (string, 'zh' | 'en' | 'ja')
- * 4. 預期回應:
- *    - 200 OK: { success: true, data: { zh: SkillCategory[], en: SkillCategory[], ja: SkillCategory[] } }
- *    - 500 Internal Server Error: 伺服器讀取技能清單失敗
- * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (skills-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
+ * [專業技能模組] 展示工程技術、架構分層與多媒體視覺之核心技能晶片
+ * 支援 zh / en / ja 三語系切換與光暗主題自適應渲染。
  */
 export const Skills: React.FC = () => {
   const { t, lang } = useLang();
@@ -88,19 +116,24 @@ export const Skills: React.FC = () => {
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
 
   const primarySkills = currentSkills.filter((s) => s.catTier === 'primary');
+  const commonSkills  = currentSkills.filter((s) => s.catTier === 'common');
   const secondarySkills = currentSkills.filter((s) => s.catTier === 'secondary');
 
+  // 全站順序色嚴格規範：青色 (Cyan) → 藍色 (Sky/Blue) → 紫色 (Purple) → 綠色 (Emerald Green)
   const catAccents: Record<string, { main: string; bg: string; border: string }> = {
-    game:      { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)', border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)' },
-    fullstack: { main: isLight ? '#0284c7' : '#38bdf8', bg: isLight ? '#e0f2fe' : 'rgba(56,189,248,0.15)', border: isLight ? '#38bdf8' : 'rgba(56,189,248,0.5)' },
-    media:     { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' },
+    fullstack: { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)',   border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)'   }, // 1. 青色
+    game:      { main: isLight ? '#1d4ed8' : '#38bdf8', bg: isLight ? '#eff6ff' : 'rgba(56,189,248,0.15)', border: isLight ? '#93c5fd' : 'rgba(56,189,248,0.4)'  }, // 2. 藍色
+    common:    { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' }, // 3. 紫色
+    media:     { main: isLight ? '#059669' : '#34d399', bg: isLight ? '#ecfdf5' : 'rgba(16,185,129,0.14)', border: isLight ? '#6ee7b7' : 'rgba(52,211,153,0.42)' }, // 4. 綠色 (第四順位嚴格遵照青藍紫綠)
   };
 
-  const primaryColor = isLight ? '#0369a1' : '#00f0ff';
-  const secondaryColor = isLight ? '#7c3aed' : '#c084fc';
+  const primaryColor   = isLight ? '#0369a1' : '#00f0ff'; // 青 — 全端開發
+  const commonColor    = isLight ? '#7c3aed' : '#c084fc'; // 紫 — 通用工程
+  const secondaryColor = isLight ? '#059669' : '#34d399'; // 綠 — 輔助技能/多媒體設計統一綠色
 
   const headerRef   = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const primaryRef  = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
+  const commonRef   = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
   const secondaryRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
 
   return (
@@ -229,111 +262,114 @@ export const Skills: React.FC = () => {
           </div>
         </div>
 
-        {/* 一項跨領域輔助能力 */}
-        {secondarySkills.length > 0 && (
-          <div ref={secondaryRef} className="max-w-6xl mx-auto space-y-6">
-            <div className="flex items-center gap-2.5 pb-2 border-b reveal-up" style={{ borderColor: isLight ? 'rgba(4, 120, 87, 0.3)' : 'rgba(52, 211, 153, 0.3)' }}>
-              <Layers size={20} style={{ color: secondaryColor }} />
-              <h3 className="font-hud font-bold text-base sm:text-lg uppercase tracking-wider" style={{ color: secondaryColor }}>
-                {lang === 'zh' ? '輔助專業技能' : 'AUXILIARY COMPETENCY'}
-              </h3>
-            </div>
+        {/* 輔助專業技能 — common + secondary 合併，外層 2 欄 grid 左右/左右/中 */}
+        {(commonSkills.length > 0 || secondarySkills.length > 0) && (() => {
+          const auxiliarySkills = [...commonSkills, ...secondarySkills];
+          const getBadgeText = (catType: string) => {
+            if (catType === 'common') return lang === 'zh' ? '通用工程專長' : 'GENERAL ENGINEERING';
+            return lang === 'zh' ? '輔助型專長' : 'AUXILIARY SKILLS';
+          };
+          return (
+            <div ref={secondaryRef} className="max-w-6xl mx-auto space-y-6">
+              <div className="flex items-center gap-2.5 pb-2 border-b reveal-up" style={{ borderColor: isLight ? 'rgba(124, 58, 237, 0.3)' : 'rgba(192,132,252,0.35)' }}>
+                <Layers size={20} style={{ color: secondaryColor }} />
+                <h3 className="font-hud font-bold text-base sm:text-lg uppercase tracking-wider" style={{ color: secondaryColor }}>
+                  {lang === 'zh' ? '輔助專業技能' : 'SUPPORTING SKILLS'}
+                </h3>
+              </div>
 
-            {secondarySkills.map((cat, sIdx) => {
-              const CatIcon = (cat.icon ? getLucideIconByName(cat.icon) : null) || CAT_ICON_MAP[cat.catType] || Palette;
-              const accent = catAccents[cat.catType] || catAccents.media;
+              {/* 外層垂直排列（上下堆疊） */}
+              <div className="flex flex-col gap-8">
+                {auxiliarySkills.map((cat, aIdx) => {
+                  const CatIcon = (cat.icon ? getLucideIconByName(cat.icon) : null)
+                    || (cat.catType === 'common' ? Wrench : null)
+                    || CAT_ICON_MAP[cat.catType]
+                    || Palette;
+                  const accent = catAccents[cat.catType] || catAccents.media;
+                  const isLastOdd = auxiliarySkills.length % 2 === 1 && aIdx === auxiliarySkills.length - 1;
 
-              return (
-                <div
-                  key={sIdx}
-                  className="cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-xl space-y-6 reveal-scale reveal-d1"
-                  style={{
-                    background: isLight
-                      ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
-                      : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
-                    borderColor: isLight ? accent.border : borderCol,
-                    boxShadow: isLight
-                      ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
-                      : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
-                  }}
-                >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3 border-b border-slate-700/40 pb-4">
-                    <div className="flex items-center gap-3 min-w-0">
-                      <div
-                        className="p-2.5 sm:p-3 border cyber-cut-sm shrink-0"
-                        style={{
-                          backgroundColor: accent.bg,
-                          borderColor: accent.border,
-                          color: accent.main,
-                        }}
-                      >
-                        <CatIcon size={22} />
-                      </div>
-                      <h4 className="text-lg sm:text-2xl font-black font-hud uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                        {cat.category}
-                      </h4>
-                    </div>
-
-                    <span
-                      className="px-3 sm:px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs self-start sm:self-auto"
+                  return (
+                    <div
+                      key={aIdx}
+                      className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-xl space-y-6 reveal-scale reveal-d${(aIdx % 2 + 1) as 1 | 2}${isLastOdd ? ' md:col-span-2 md:max-w-[50%] md:mx-auto md:w-full' : ''}`}
                       style={{
-                        backgroundColor: accent.bg,
-                        borderColor: accent.border,
-                        color: accent.main,
+                        background: isLight
+                          ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
+                          : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
+                        borderColor: isLight ? accent.border : borderCol,
+                        boxShadow: isLight
+                          ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
+                          : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
                       }}
                     >
-                      {lang === 'zh' ? '輔助型專長' : 'SUPPORTING SKILLS'}
-                    </span>
-                  </div>
-
-                  {/* 六等分對稱平衡網格 */}
-                  <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-                    {cat.items.map((item, iIdx) => {
-                      const tokens = splitSkillTokens(item.content);
-                      const isRow1 = iIdx < 3;
-                      const spanClass = isRow1 ? 'md:col-span-2' : 'md:col-span-3';
-
-                      return (
-                        <div
-                          key={iIdx}
-                          className={`${spanClass} p-4 border cyber-cut-sm flex flex-col justify-start space-y-2.5 transition-all duration-300 shadow-xs`}
-                          style={{
-                            backgroundColor: isLight ? 'rgba(248, 250, 252, 0.85)' : 'rgba(8, 14, 28, 0.45)',
-                            borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
-                          }}
-                        >
-                          <div className="flex items-center justify-between border-b border-slate-700/20 pb-2">
-                            <span className="font-hud font-bold text-sm sm:text-base uppercase tracking-wider flex items-center gap-2" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                              {getLabelIcon(item.label, accent.main)}
-                              <span>{item.label}</span>
-                            </span>
+                      {/* 卡片標題列 */}
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3 border-b border-slate-700/40 pb-4">
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div
+                            className="p-2.5 sm:p-3 border cyber-cut-sm shrink-0"
+                            style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.main }}
+                          >
+                            <CatIcon size={22} />
                           </div>
-
-                          <div className="flex flex-wrap items-center gap-2 pt-1">
-                            {tokens.map((sub, sIdx) => (
-                              <span
-                                key={sIdx}
-                                className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm skill-tag-reveal"
-                                style={{
-                                  backgroundColor: isLight ? '#ffffff' : 'rgba(0,0,0,0.4)',
-                                  borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
-                                  color: isLight ? '#0f172a' : '#e2e8f0',
-                                  animationDelay: `${(iIdx * 0.07 + sIdx * 0.035).toFixed(2)}s`,
-                                }}
-                              >
-                                {sub}
-                              </span>
-                            ))}
-                          </div>
+                          <h4 className="text-lg sm:text-2xl font-black font-hud uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                            {cat.category}
+                          </h4>
                         </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+                        <span
+                          className="px-3 sm:px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs self-start sm:self-auto"
+                          style={{ backgroundColor: accent.bg, borderColor: accent.border, color: accent.main }}
+                        >
+                          {getBadgeText(cat.catType)}
+                        </span>
+                      </div>
+
+                      {/* 子項目 2 欄 grid（奇數最後一項置中） */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {cat.items.map((item, iIdx) => {
+                          const tokens = splitSkillTokens(item.content);
+                          const isItemOdd = cat.items.length % 2 === 1 && iIdx === cat.items.length - 1;
+                          return (
+                            <div
+                              key={iIdx}
+                              className={`${isItemOdd ? 'md:col-span-2 md:max-w-[50%] md:mx-auto md:w-full' : ''} p-4 border cyber-cut-sm flex flex-col justify-start space-y-2.5 transition-all duration-300 shadow-xs`}
+                              style={{
+                                backgroundColor: isLight ? 'rgba(248, 250, 252, 0.85)' : 'rgba(8, 14, 28, 0.45)',
+                                borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.12)',
+                              }}
+                            >
+                              <div className="flex items-center border-b border-slate-700/20 pb-2">
+                                <span className="font-hud font-bold text-sm sm:text-base uppercase tracking-wider flex items-center gap-2" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                                  {getLabelIcon(item.label, accent.main)}
+                                  <span>{item.label}</span>
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2 pt-1">
+                                {tokens.map((sub, sIdx) => (
+                                  <span
+                                    key={sIdx}
+                                    className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm skill-tag-reveal"
+                                    style={{
+                                      backgroundColor: isLight ? '#ffffff' : 'rgba(0,0,0,0.4)',
+                                      borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
+                                      color: isLight ? '#0f172a' : '#e2e8f0',
+                                      animationDelay: `${(iIdx * 0.07 + sIdx * 0.035).toFixed(2)}s`,
+                                    }}
+                                  >
+                                    {sub}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })()}
 
       </div>
     </section>

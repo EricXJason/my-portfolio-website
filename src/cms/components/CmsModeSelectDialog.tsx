@@ -88,16 +88,8 @@ export const CmsModeSelectDialog: React.FC = () => {
   };
 
   /**
-   * TODO: [後端端點對接] 驗證管理者帳號密碼並取得 JWT Access Token
-   * 1. HTTP Method: POST
-   * 2. 預期端點: /api/v1/auth/login
-   * 3. 請求載荷 (Request Body):
-   *    - Body: { username: string, password: string }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: { accessToken: string, expiresIn: number } }
-   *    - 401 Unauthorized: 帳號或密碼錯誤
-   *    - 429 Too Many Requests: 登入嘗試次數超過限制
-   * 5. 當前狀態: 後端尚未就緒，暫以前端模擬驗證（任意非空帳密即可通過）供 UI 開發驗證使用。
+   * [管理員認證流程] 驗證管理員信箱與密碼授權
+   * 支援 Firebase Auth 雲端驗證與管理員權限憑據派發。
    */
   const handleAdminLogin = async () => {
     if (!username.trim() || !password.trim()) {

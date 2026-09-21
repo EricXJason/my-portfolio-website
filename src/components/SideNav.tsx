@@ -13,6 +13,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 
 interface SectionItem {
   id: string;
@@ -40,17 +41,61 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
   const [activeSection, setActiveSection] = useState('home');
 
   /**
-   * TODO: [後端端點對接] 取得使用者模式浮動側邊導覽 (SideNav) 模組順序
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/modules-order
-   * 3. 請求參數: 無
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: string[] }
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，採用官方標準順序，待後端 API 完成後改由 apiClient.get() 取得。
+   * [導覽模組拓撲] 浮動側邊導覽 (SideNav) 模組順序定義
+   * 採用全域標準展示順序，與主頁面渲染管線保持嚴格一致。
    */
+  const { data } = usePortfolioData();
   const moduleOrder = ['home', 'about', 'skills', 'projects', 'awards', 'experience', 'gallery'];
 
-  const sections = moduleOrder.map((id) => BASE_SECTIONS[id]).filter(Boolean);
+  const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
+    if (data?.site_settings?.modules_visibility) {
+      return { home: true, ...data.site_settings.modules_visibility };
+    }
+    try {
+      const saved = localStorage.getItem('portfolio_modules_visibility');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return { home: true, ...parsed };
+        }
+      }
+    } catch {}
+    return { home: true };
+  });
+
+  useEffect(() => {
+    if (data?.site_settings?.modules_visibility) {
+      setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+    }
+  }, [data?.site_settings?.modules_visibility]);
+
+  useEffect(() => {
+    const handleVisUpdate = () => {
+      try {
+        const saved = localStorage.getItem('portfolio_modules_visibility');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            setModuleVisibility({ home: true, ...parsed });
+            return;
+          }
+        }
+      } catch {}
+      setModuleVisibility({ home: true });
+    };
+
+    window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+    window.addEventListener('storage', handleVisUpdate);
+    return () => {
+      window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+      window.removeEventListener('storage', handleVisUpdate);
+    };
+  }, []);
+
+  const sections = moduleOrder
+    .filter((id) => id === 'home' || moduleVisibility[id] !== false)
+    .map((id) => BASE_SECTIONS[id])
+    .filter(Boolean);
 
   useEffect(() => {
     const handleScroll = () => {

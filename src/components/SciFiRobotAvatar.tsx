@@ -29,15 +29,16 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
   const eyeLeftRef    = useRef<SVGGElement | null>(null);
   const eyeRightRef   = useRef<SVGGElement | null>(null);
   const centerPosRef  = useRef({ x: 0, y: 0 });
+  const lastEyePosRef = useRef({ x: 0, y: 0 }); // 記錄最後一次眼球位移座標
   const blinkScaleRef = useRef(1); // 追蹤目前眨眼垂直縮放比例
 
   const [_isBlinking, setIsBlinking] = useState(false);
   const [isScanning, setIsScanning] = useState(false);
 
-  // 直接操縱眼球 <g> transform 屬性 — 熱路徑零組件協調開銷
+  // 直接操縱眼球 <g> transform 屬性（確保 scaleY 最低維持在中間 0.55，絕不完全閉合）
   const applyEyeTransform = (x: number, y: number) => {
-    const scaleY = blinkScaleRef.current;
-    const t = `translate(${x.toFixed(2)},${y.toFixed(2)}) scale(1,${scaleY})`;
+    const scaleY = Math.max(0.55, blinkScaleRef.current);
+    const t = `translate(${x.toFixed(2)},${y.toFixed(2)}) scale(1,${scaleY.toFixed(2)})`;
     eyeLeftRef.current?.setAttribute('transform', t);
     eyeRightRef.current?.setAttribute('transform', t);
   };
@@ -77,6 +78,7 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
       const maxOffset = 6;
       const moveX = (deltaX / distance) * Math.min(Math.abs(deltaX * 0.05), maxOffset);
       const moveY = (deltaY / distance) * Math.min(Math.abs(deltaY * 0.05), maxOffset);
+      lastEyePosRef.current = { x: moveX, y: moveY };
       applyEyeTransform(moveX, moveY);
     };
 
@@ -96,19 +98,20 @@ export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying
     };
   }, []);
 
-  // 週期性隨機自動眨眼 — 支援 prefers-reduced-motion 停用
+  // 週期性隨機自動眨眼 — 眨眼時維持在中間高度（0.55），絕不完全閉合
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       return;
     }
     const blink = () => {
       setIsBlinking(true);
-      blinkScaleRef.current = 0.05;
-      applyEyeTransform(0, 0); // 閉眼瞬間瞳孔自動回正
+      blinkScaleRef.current = 0.55; // 至少在中間高度（半睜神態），不完全閉合成線
+      applyEyeTransform(lastEyePosRef.current.x, lastEyePosRef.current.y);
       setTimeout(() => {
         setIsBlinking(false);
         blinkScaleRef.current = 1;
-      }, 200);
+        applyEyeTransform(lastEyePosRef.current.x, lastEyePosRef.current.y); // 恢復張開狀態
+      }, 160);
     };
     const blinkInterval = setInterval(blink, 4500);
     return () => clearInterval(blinkInterval);

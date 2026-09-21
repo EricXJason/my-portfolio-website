@@ -2,10 +2,10 @@
  * ============================================================================
  * 檔案名稱: CmsIconPickerModal.tsx
  * 所屬模組: Portfolio CMS (全域通用圖示選擇彈窗)
- * 責任描述: 負責管理 CMS 各模組之 100+ 大規模 Lucide 向量圖示選擇、即時搜尋與分類篩選。
+ * 責任描述: 負責管理 CMS 各模組之 200+ 大規模 Lucide 向量圖示選擇、即時搜尋與分類篩選。
  * 架構分層: CMS Presentation Layer (Modal Component)
  * 依賴關係: 依賴 ThemeContext 與 Lucide 向量圖示庫。
- * 邊界處理: 支援 ESC 鍵快速關閉、搜尋無結果友善反饋、深淺色高對比賽博切角樣式。
+ * 邊界處理: 彈窗選項內部純圖標展示（無文字）、支援 ESC 鍵快速關閉、搜尋過濾與高對比賽博切角樣式。
  * ============================================================================
  */
 
@@ -13,83 +13,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search,
   X,
-  GraduationCap,
-  Award,
-  Trophy,
-  Medal,
-  Crown,
-  Star,
   Sparkles,
-  Bookmark,
-  Code,
-  Code2,
-  Terminal,
-  Cpu,
-  Database,
-  Server,
-  Globe,
-  Globe2,
-  GitBranch,
-  GitMerge,
-  GitCommit,
-  Wrench,
-  Layers,
-  Gamepad,
-  Gamepad2,
-  Palette,
-  Image as ImageIcon,
-  Video,
-  Music,
-  Headphones,
-  Camera,
-  Film,
-  Box,
-  PenTool,
-  Monitor,
-  Play,
-  Briefcase,
-  Building,
-  Building2,
-  Compass,
-  Target,
-  Rocket,
-  Lightbulb,
-  Zap,
-  TrendingUp,
-  FolderGit2,
-  Cloud,
-  Shield,
-  ShieldCheck,
-  Lock,
-  Key,
-  Radio,
-  Bell,
-  User,
-  Users,
-  Heart,
-  ThumbsUp,
-  Send,
-  Mail,
-  Phone,
-  MessageSquare,
-  ExternalLink,
-  Link,
-  Share2,
-  Eye,
-  Calendar,
-  Clock,
-  History,
-  FileText,
-  FileCode,
-  AlertTriangle,
-  Info,
-  School,
-  BookOpen,
-  Presentation,
-  Landmark,
-  Scroll,
-  FlaskConical,
-  LucideIcon,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -112,9 +36,10 @@ interface CmsIconPickerModalProps {
  * CmsIconPickerModal
  * 全站 CMS 通用圖示選擇彈窗：
  * 1. 具備即時搜尋列 (Search Bar)
- * 2. 涵蓋 100+ 個高品質官方 Lucide 圖示
- * 3. 採用前臺語言選擇 dialog 方形切角 HUD 風格 (cyber-cut-corner, hud-corner-brackets)
- * 4. 支援 ESC 鍵與點擊外部關閉
+ * 2. 涵蓋 200+ 個高品質官方 Lucide 圖示
+ * 3. 圖標選項採用純向量圖示呈現（完全去除文字，高密度俐落方塊）
+ * 4. 採用前臺語言選擇 dialog 方形切角 HUD 風格 (cyber-cut-corner, hud-corner-brackets)
+ * 5. 支援 ESC 鍵與點擊外部關閉
  */
 export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
   isOpen,
@@ -166,13 +91,17 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
 
   const categories = [
     { id: 'all', zh: '全部', en: 'All' },
-    { id: 'academic', zh: '學歷榮譽', en: 'Academic' },
-    { id: 'dev', zh: '程式架構', en: 'Dev & Code' },
-    { id: 'multimedia', zh: '多媒體遊戲', en: 'Multimedia' },
-    { id: 'business', zh: '產業實務', en: 'Business' },
-    { id: 'security', zh: '雲端資安', en: 'Cloud & Security' },
-    { id: 'general', zh: '個人通訊', en: 'General' },
+    { id: 'academic', zh: '學術', en: 'Academic' },
+    { id: 'dev', zh: '軟體', en: 'Dev' },
+    { id: 'hardware', zh: '硬體', en: 'Hardware' },
+    { id: 'multimedia', zh: '媒體', en: 'Media' },
+    { id: 'business', zh: '商務', en: 'Business' },
+    { id: 'security', zh: '資安', en: 'Security' },
+    { id: 'tools', zh: '工具', en: 'Tools' },
+    { id: 'general', zh: '通用', en: 'General' },
   ];
+
+  const CurrentIconComp = getLucideIconByName(currentIconName);
 
   return (
     <div
@@ -188,7 +117,7 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
       aria-label="圖示選擇器"
     >
       <div
-        className="relative w-full max-w-2xl max-h-[85vh] border cyber-cut-corner p-5 sm:p-7 shadow-2xl flex flex-col gap-4 hud-corner-brackets transition-all duration-300"
+        className="relative w-full max-w-3xl max-h-[85vh] border cyber-cut-corner p-5 sm:p-7 shadow-2xl flex flex-col gap-3.5 hud-corner-brackets transition-all duration-300"
         style={{
           backgroundColor: isLight ? 'rgba(255, 255, 255, 0.98)' : 'rgba(8, 14, 26, 0.96)',
           borderColor: borderCol,
@@ -213,10 +142,10 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
             </div>
             <div>
               <h3 className="text-base font-bold font-['Noto_Sans_TC'] tracking-wide" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
-                {isEn ? 'Universal Icon Selector' : '全域圖示選擇器'}
+                {isEn ? 'Universal Icon Library' : '全域圖示庫選擇器'}
               </h3>
               <p className="text-[11px] font-['Noto_Sans_TC'] text-[var(--text-sub)]">
-                {isEn ? `${ICON_LIBRARY.length} PROFESSIONAL ICONS LOADED` : `已加載 ${ICON_LIBRARY.length} 款專業向量圖示庫`}
+                {isEn ? `${ICON_LIBRARY.length} ICONS AVAILABLE` : `已載入 ${ICON_LIBRARY.length} 款向量圖示`}
               </p>
             </div>
           </div>
@@ -239,8 +168,8 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder={isEn ? 'Search icons by name or keywords (e.g. code, star, award)...' : '搜尋圖示名稱或關鍵字（例如：程式、證照、獎盃、科技、多媒體）...'}
-            className="w-full pl-10 pr-9 py-2.5 text-xs border cyber-cut-sm bg-[var(--card-inner)] text-[var(--text-main)] outline-none font-['Noto_Sans_TC'] transition-colors"
+            placeholder={isEn ? 'Search icons by name...' : '搜尋圖示名稱或關鍵字...'}
+            className="w-full pl-10 pr-9 py-2 text-xs border cyber-cut-sm bg-[var(--card-inner)] text-[var(--text-main)] outline-none font-['Noto_Sans_TC'] transition-colors"
             style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)' }}
             autoFocus
           />
@@ -248,15 +177,15 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
             <button
               type="button"
               onClick={() => setSearchTerm('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-sub)] hover:text-[var(--text-main)]"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--text-sub)] hover:text-[var(--text-main)] cursor-pointer"
             >
               <X className="w-3.5 h-3.5" />
             </button>
           )}
         </div>
 
-        {/* 分類切換分頁 */}
-        <div className="flex flex-wrap items-center gap-1.5 pb-1">
+        {/* 分類篩選 Tab */}
+        <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
           {categories.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
@@ -264,14 +193,16 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1.5 border cyber-cut-sm text-[11px] font-['Noto_Sans_TC'] whitespace-nowrap transition-all cursor-pointer ${
+                className={`px-2.5 py-1 text-[11px] font-['Noto_Sans_TC'] font-semibold border cyber-cut-sm shrink-0 transition-all cursor-pointer ${
                   isActive
-                    ? 'font-bold border-cyan-400 text-[var(--neon-cyan)] shadow-xs'
-                    : 'text-[var(--text-sub)] hover:text-[var(--text-main)] border-transparent'
+                    ? 'text-[var(--neon-cyan)] shadow-[0_0_10px_rgba(0,240,255,0.2)]'
+                    : 'text-[var(--text-sub)] hover:text-[var(--text-main)] opacity-70 hover:opacity-100'
                 }`}
                 style={{
-                  backgroundColor: isActive ? (isLight ? '#e0f2fe' : 'rgba(0,240,255,0.15)') : 'transparent',
-                  borderColor: isActive ? (isLight ? '#0284c7' : '#00f0ff') : 'transparent',
+                  borderColor: isActive ? cyanCol : (isLight ? '#e2e8f0' : 'rgba(255, 255, 255, 0.1)'),
+                  backgroundColor: isActive
+                    ? (isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.12)')
+                    : 'transparent',
                 }}
               >
                 {isEn ? cat.en : cat.zh}
@@ -280,12 +211,11 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
           })}
         </div>
 
-        {/* 圖示網格清單 */}
-        <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2.5 min-h-[260px] max-h-[380px]">
+        {/* 純圖標方塊網格 (完全無文字，高密度俐落方塊) */}
+        <div className="flex-1 overflow-y-auto pr-1 max-h-[50vh] grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-1.5 p-1">
           {filteredIcons.map((item) => {
             const IconComp = item.component;
-            const isSelected =
-              currentIconName.toLowerCase().replace(/_/g, '-') === item.name.toLowerCase();
+            const isSelected = item.name === currentIconName;
 
             return (
               <button
@@ -295,43 +225,35 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
                   onSelectIcon(item.name);
                   onClose();
                 }}
-                className={`p-3 border cyber-cut-sm flex flex-col items-center justify-center gap-2 text-center transition-all cursor-pointer group relative ${
-                  isSelected ? 'ring-2 ring-[var(--neon-cyan)] shadow-md' : 'hover:scale-105'
+                className={`group relative flex items-center justify-center h-10 w-full border cyber-cut-sm transition-all cursor-pointer ${
+                  isSelected
+                    ? 'shadow-[0_0_12px_rgba(0,240,255,0.35)] scale-105 z-10'
+                    : 'hover:scale-105 hover:border-[var(--neon-cyan)]'
                 }`}
                 style={{
                   backgroundColor: isSelected
-                    ? (isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.18)')
+                    ? (isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.2)')
                     : (isLight ? '#f8fafc' : 'rgba(15, 23, 42, 0.6)'),
                   borderColor: isSelected
-                    ? (isLight ? '#0284c7' : '#00f0ff')
+                    ? cyanCol
                     : (isLight ? '#e2e8f0' : 'rgba(255, 255, 255, 0.08)'),
                 }}
-                title={isEn ? `${item.labelEn} (${item.name})` : item.labelZh}
+                title={item.name}
               >
                 {isSelected && (
                   <span
-                    className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center text-[9px] font-bold"
+                    className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full flex items-center justify-center text-[7px] font-bold"
                     style={{ backgroundColor: cyanCol, color: '#030712' }}
                   >
                     ✓
                   </span>
                 )}
                 <IconComp
-                  className={`w-5 h-5 transition-transform group-hover:scale-110 ${
+                  className={`w-4 h-4 transition-transform group-hover:scale-110 ${
                     isSelected ? 'text-[var(--neon-cyan)]' : 'text-[var(--text-sub)] group-hover:text-[var(--text-main)]'
                   }`}
                   style={{ color: isSelected ? cyanCol : undefined }}
                 />
-                <div className="w-full text-center">
-                  <div className="text-[11px] font-['Noto_Sans_TC'] font-semibold truncate" style={{ color: isLight ? '#0f172a' : '#f1f5f9' }}>
-                    {isEn ? item.labelEn : item.labelZh}
-                  </div>
-                  {isEn && (
-                    <div className="text-[9px] font-['Share_Tech_Mono'] text-[var(--text-sub)]/70 truncate">
-                      {item.name}
-                    </div>
-                  )}
-                </div>
               </button>
             );
           })}
@@ -346,9 +268,15 @@ export const CmsIconPickerModal: React.FC<CmsIconPickerModalProps> = ({
           )}
         </div>
 
-        {/* 頁尾提示資訊 */}
-        <div className="flex items-center justify-between pt-2 border-t text-[11px] font-['Share_Tech_Mono'] text-[var(--text-sub)]" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}>
-          <span>{isEn ? `CURRENT: ${currentIconName || 'star'}` : `已選取圖示：${ICON_LIBRARY.find(i => i.name === currentIconName)?.labelZh || '標準圖示'}`}</span>
+        {/* 頁尾資訊：簡潔圖示預覽與關閉 */}
+        <div className="flex items-center justify-between pt-2 border-t text-[11px] font-mono text-[var(--text-sub)]" style={{ borderColor: isLight ? '#e2e8f0' : 'rgba(255,255,255,0.1)' }}>
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase opacity-70">{isEn ? 'Active:' : '目前圖示:'}</span>
+            <div className="w-6 h-6 border cyber-cut-sm flex items-center justify-center bg-[var(--card-inner)]" style={{ borderColor: cyanCol }}>
+              <CurrentIconComp className="w-3.5 h-3.5" style={{ color: cyanCol }} />
+            </div>
+            <span className="text-[10px] font-mono opacity-80">{currentIconName || 'star'}</span>
+          </div>
           <button
             type="button"
             onClick={onClose}

@@ -25,6 +25,7 @@ import {
   ArrowDown,
   Eye,
   EyeOff,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -32,7 +33,8 @@ import { useCmsDirty } from '../context/CmsDirtyContext';
 import defaultExpData from '../../data/experience-section.json';
 import { SectionTitleEditor } from './SectionTitleEditor';
 import { CmsDatePicker } from './CmsDatePicker';
-import { getLucideIconByName } from './CmsIconPickerModal';
+import { CmsIconPickerModal, getLucideIconByName } from './CmsIconPickerModal';
+import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import { CmsTagListEditor } from './CmsTagListEditor';
 import { CmsUrlInput } from './CmsUrlInput';
 import {
@@ -154,12 +156,28 @@ const DEFAULT_EXP_META: Record<'zh' | 'en', ExpMetaTitles> = {
   },
 };
 
-// 顏色順序規範：青色 (Cyan) → 藍色 (Blue) → 紫色 (Purple) 依序循環
+// 顏色順序規範：青色 (Cyan) → 藍色 (Blue) → 紫色 (Purple) → 綠色 (Green) 依序循環
 const COLOR_SEQUENCE = [
   { name: '青色 (Cyan)', hex: '#00f0ff', lightHex: '#0369a1', badge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30' },
   { name: '藍色 (Blue)', hex: '#3b82f6', lightHex: '#1d4ed8', badge: 'bg-blue-500/10 text-blue-400 border-blue-500/30' },
   { name: '紫色 (Purple)', hex: '#a855f7', lightHex: '#6d28d9', badge: 'bg-purple-500/10 text-purple-400 border-purple-500/30' },
+  { name: '綠色 (Green)', hex: '#10b981', lightHex: '#047857', badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' },
 ];
+
+/**
+ * parseEndDateValue — 解析結束日期為可排序數值 (與 Education.tsx 前臺完全同步)
+ * 支援格式：'YYYY/MM ~ YYYY/MM'、'YYYY.MM - YYYY.MM'、'YYYY/MM' 等
+ */
+const parseEndDateValue = (dateStr?: string): number => {
+  if (!dateStr) return 0;
+  const parts = dateStr.split(/[~\u2013\u2014\-\u81f3]/);
+  const endPart = parts[parts.length - 1].trim();
+  const match = endPart.match(/(\d{4})[./\-](\d{1,2})/);
+  if (match) return parseInt(match[1], 10) * 100 + parseInt(match[2], 10);
+  const yearMatch = endPart.match(/(\d{4})/);
+  if (yearMatch) return parseInt(yearMatch[1], 10) * 100;
+  return 0;
+};
 
 interface CmsExperienceEditorProps {
   isPreview?: boolean;
@@ -168,7 +186,7 @@ interface CmsExperienceEditorProps {
 /**
  * CmsExperienceEditor
  * 經歷與學術全能編輯器：
- * 1. 嚴格落實顏色順序規範：青色 (Cyan) → 藍色 (Blue) → 紫色 (Purple) 循環，論文專屬綠色。
+ * 1. 嚴格落實顏色順序規範：青色 (Cyan) → 藍色 (Blue) → 紫色 (Purple) → 紅色 (Red) 循環，論文專屬綠色。
  * 2. 整合 SectionTitleEditor 支援全域區塊與各子項自訂標題。
  * 3. 支援學歷 (degrees)、工作經歷 (workExperiences)、研習 (workshops)、論文期刊 (theses) 四大區塊之全面 CRUD 與拖曳排序。
  * 4. 時間與期間欄位全面整合 CmsDatePicker。
@@ -321,6 +339,47 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   const [activeSubTab, setActiveSubTab] = useState<'degrees' | 'work' | 'workshops' | 'theses'>('degrees');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
+  const [iconPickerTarget, setIconPickerTarget] = useState<{ type: 'degree' | 'work' | 'workshop' | 'thesis'; index: number } | null>(null);
+
+  const handleSelectIconForTarget = (iconName: string) => {
+    if (!iconPickerTarget) return;
+    const { type, index } = iconPickerTarget;
+    setIsDirty(true);
+    if (type === 'degree') {
+      handleDegreeChange(index, 'iconType' as any, iconName);
+    } else if (type === 'work') {
+      handleWorkChange(index, 'iconType' as any, iconName);
+    } else if (type === 'workshop') {
+      handleWorkshopChange(index, 'iconType' as any, iconName);
+    } else if (type === 'thesis') {
+      handleThesisChange(index, 'iconType' as any, iconName);
+    }
+    showToast(isEn ? `Icon updated to ${iconName}` : `已更新代表圖示`);
+    setIconPickerTarget(null);
+  };
+
+  const currentTargetIcon = (() => {
+    if (!iconPickerTarget) return '';
+    const { type, index } = iconPickerTarget;
+    const curLangData = formData[lang] || formData.zh;
+    if (type === 'degree') {
+      const deg = curLangData?.degrees?.[index];
+      return deg?.iconType || (deg?.type === 'master' || index === 0 ? 'graduation-cap' : 'school');
+    }
+    if (type === 'work') {
+      const work = curLangData?.workExperiences?.[index];
+      return work?.iconType || (index === 0 ? 'school' : (index === 1 ? 'palette' : 'building-2'));
+    }
+    if (type === 'workshop') {
+      const ws = curLangData?.workshops?.[index];
+      return ws?.iconType || 'code';
+    }
+    if (type === 'thesis') {
+      const th = curLangData?.theses?.[index];
+      return th?.iconType || (index === 0 ? 'file-text' : 'presentation');
+    }
+    return '';
+  })();
 
   /** 解析歷程時間字串之最終結束時間數值 (由新至舊自動降序排序核心) */
   const parseEndDateValue = (dateStr?: string): number => {
@@ -340,9 +399,15 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     return 0;
   };
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   // ── 通用雲端硬碟連結處理 ──────────────────────────────────────────────────
@@ -361,6 +426,9 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   // ── 學歷 (Degrees) 欄位變更（支援跨語系結構同步） ─────────────────────────
   const handleDegreeChange = (idx: number, field: keyof DegreeItem, value: any) => {
     setIsDirty(true);
+    if (field === 'visible') {
+      showToast(value !== false ? (isEn ? 'Degree item visible on site!' : '已開啟該筆學歷展示！') : (isEn ? 'Degree item hidden from site!' : '已從前臺隱藏該筆學歷！'));
+    }
     setFormData((prev) => {
       const syncFields: (keyof DegreeItem)[] = ['period', 'visible', 'type', 'iconType'];
       const shouldSync = syncFields.includes(field);
@@ -473,6 +541,9 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   // ── 工作經歷 (Work Experiences) CRUD 與跨語系同步 ────────────────────────
   const handleWorkChange = (idx: number, field: keyof WorkItem, value: any) => {
     setIsDirty(true);
+    if (field === 'visible') {
+      showToast(value !== false ? (isEn ? 'Work experience visible on site!' : '已開啟該筆工作經歷展示！') : (isEn ? 'Work experience hidden from site!' : '已從前臺隱藏該筆工作經歷！'));
+    }
     setFormData((prev) => {
       const syncFields: (keyof WorkItem)[] = ['period', 'visible', 'iconType'];
       const shouldSync = syncFields.includes(field);
@@ -553,6 +624,9 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   // ── 研習歷程 (Workshops) CRUD 與跨語系同步 ─────────────────────────────
   const handleWorkshopChange = (idx: number, field: keyof WorkshopItem, value: any) => {
     setIsDirty(true);
+    if (field === 'visible') {
+      showToast(value !== false ? (isEn ? 'Workshop visible on site!' : '已開啟該筆研習歷程展示！') : (isEn ? 'Workshop hidden from site!' : '已從前臺隱藏該筆研習歷程！'));
+    }
     setFormData((prev) => {
       const syncFields: (keyof WorkshopItem)[] = ['date', 'visible', 'iconType', 'hasCertificate', 'driveLinkKey'];
       const shouldSync = syncFields.includes(field);
@@ -638,6 +712,9 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   // ── 學術論文 (Theses) 欄位變更與跨語系同步 ────────────────────────────────
   const handleThesisChange = (idx: number, field: keyof ThesisItem, value: any) => {
     setIsDirty(true);
+    if (field === 'visible') {
+      showToast(value !== false ? (isEn ? 'Thesis visible on site!' : '已開啟該論文/發表展示！') : (isEn ? 'Thesis hidden from site!' : '已從前臺隱藏該論文/發表！'));
+    }
     setFormData((prev) => {
       const syncFields: (keyof ThesisItem)[] = [
         'date',
@@ -739,16 +816,8 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
 
   // ── 儲存與重設 ─────────────────────────────────────────────────────────────
   /**
-   * TODO: [後端端點對接] 儲存並同步更新學歷、經歷、研習與論文期刊資料
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/experience
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: { data: ExperienceFullData, meta: ExpMetaTitles }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "經歷與學歷資料更新成功" }
-   *    - 401 Unauthorized: 權限不足
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
+   * [資料持久化] 儲存並同步更新學歷、經歷、研習與論文期刊資料
+   * 寫入本地快照並同步推送至 Firebase Firestore 雲端資料庫。
    */
   const handleSaveConfirm = async () => {
     try {
@@ -798,6 +867,13 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   };
 
   const handleResetConfirm = async () => {
+    // 優先還原使用者設定的「基準值」，若無則還原原始 JSON
+    const baselineRaw = localStorage.getItem('portfolio_experience_baseline');
+    const defaults = baselineRaw
+      ? (JSON.parse(baselineRaw) as ExperienceFullData)
+      : (defaultExpData as unknown as ExperienceFullData);
+    const isBaseline = !!baselineRaw;
+
     try {
       localStorage.removeItem('portfolio_experience_data');
       const savedTrans = localStorage.getItem('portfolio_custom_translations');
@@ -811,7 +887,6 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     } catch {
       // 忽略例外
     }
-    const defaults = defaultExpData as unknown as ExperienceFullData;
     setFormData(defaults);
     setExpMeta(DEFAULT_EXP_META);
     setIsDirty(false);
@@ -819,22 +894,34 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     window.dispatchEvent(new Event('portfolio_custom_translations_updated'));
     try {
       await updateDocument('experience', defaults);
-      showToast(isEn ? 'Reset to default data' : '已重設回預設資料');
+      showToast(isEn
+        ? (isBaseline ? 'Restored to baseline data' : 'Reset to default data')
+        : (isBaseline ? '已還原至基準資料' : '已重設回預設資料'));
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
     setDialog(EMPTY_DIALOG);
   };
 
+  /** handleSetDefault — 將當前經歷資料儲存為預設值基準，reset 時優先還原此預設 */
+  const handleSetDefault = () => {
+    try {
+      localStorage.setItem('portfolio_experience_baseline', JSON.stringify(formData));
+      showToast(isEn ? 'Current data set as module default. Reset will restore to this state.' : '當前「經歷」內容已設為預設值，還原預設將回到此狀態！');
+    } catch {
+      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
+    }
+  };
+
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/40 text-emerald-400 text-xs font-['Noto_Sans_TC'] shadow-lg backdrop-blur-xl animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
@@ -846,12 +933,12 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       />
 
       {/* 頂部控制列（全站統一標準樣式） */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
-        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
+        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] whitespace-nowrap">
           {isEn ? 'Experience & Academic' : '經歷與學術'}
         </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             disabled={isPreview}
@@ -874,6 +961,20 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
+          </button>
+
+          {/* 設為預設值按鈕 */}
+          <button
+            type="button"
+            disabled={isPreview}
+            onClick={handleSetDefault}
+            title={isEn ? 'Pin current data as module default' : '將當前內容設為此模組預設值'}
+            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
+              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
+            }`}
+          >
+            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
 
           <button
@@ -1019,7 +1120,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
               );
             })}
 
-            {/* 新增按鈕：隨當前子頁籤之代表主題色動態調整 */}
+            {/* 新增按鈕：隨當前子頁籤之代表主題色動態調整（純 + icon 按鈕） */}
             <div className="ml-auto">
               <button
                 type="button"
@@ -1033,20 +1134,18 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                     ? handleAddWorkshop
                     : handleAddThesis
                 }
-                className="flex items-center gap-1.5 px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs hover:opacity-80 active:scale-[0.98]"
+                className="flex items-center justify-center p-2 border cyber-cut-sm transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed shadow-xs hover:opacity-80 active:scale-[0.98]"
                 style={{
                   backgroundColor: currentAddAccent.addBg,
                   borderColor: currentAddAccent.addBorder,
                   color: currentAddAccent.addText,
                 }}
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>
-                  {isEn
+                title={
+                  isEn
                     ? activeSubTab === 'degrees'
                       ? 'Add Degree'
                       : activeSubTab === 'work'
-                      ? 'Add Work'
+                      ? 'Add Work Experience'
                       : activeSubTab === 'workshops'
                       ? 'Add Workshop'
                       : 'Add Publication'
@@ -1056,8 +1155,27 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                     ? '新增工作經歷'
                     : activeSubTab === 'workshops'
                     ? '新增研習'
-                    : '新增論文'}
-                </span>
+                    : '新增論文'
+                }
+                aria-label={
+                  isEn
+                    ? activeSubTab === 'degrees'
+                      ? 'Add Degree'
+                      : activeSubTab === 'work'
+                      ? 'Add Work Experience'
+                      : activeSubTab === 'workshops'
+                      ? 'Add Workshop'
+                      : 'Add Publication'
+                    : activeSubTab === 'degrees'
+                    ? '新增學歷'
+                    : activeSubTab === 'work'
+                    ? '新增工作經歷'
+                    : activeSubTab === 'workshops'
+                    ? '新增研習'
+                    : '新增論文'
+                }
+              >
+                <Plus className="w-4 h-4" />
               </button>
             </div>
           </div>
@@ -1067,13 +1185,20 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       {/* ── 子頁籤 1：學歷列表 ── */}
       {activeSubTab === 'degrees' && (
         <div className="space-y-4">
-          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
+          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] px-1">
             <span>{isEn ? 'Entries sorted chronologically by end date' : '學歷項目依結束時間自動排序'}</span>
-            <span className="text-[10px] font-mono">Total: {formData[lang]?.degrees?.length || 0}</span>
           </div>
 
-          {(formData[lang]?.degrees || []).map((deg, idx) => {
-            const colorSpec = COLOR_SEQUENCE[idx % COLOR_SEQUENCE.length];
+          {(() => {
+            // Build sorted-index color map (mirrors Education.tsx sort: descending end date)
+            const degreesArr = formData[lang]?.degrees || [];
+            const degSortedColorMap = new Map<string | number, number>();
+            [...degreesArr]
+              .sort((a, b) => parseEndDateValue((b as any).period) - parseEndDateValue((a as any).period))
+              .forEach((d, si) => degSortedColorMap.set((d as any).id ?? degreesArr.indexOf(d as any), si));
+            return degreesArr.map((deg, idx) => {
+            const sortedColorIdx = degSortedColorMap.get((deg as any).id ?? idx) ?? idx;
+            const colorSpec = COLOR_SEQUENCE[sortedColorIdx % COLOR_SEQUENCE.length];
 
             return (
               <div
@@ -1085,7 +1210,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 }}
               >
                 {/* 標題列排版 */}
-                <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
                     <span className={`px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold ${colorSpec.badge}`}>
                       #{idx + 1}
@@ -1099,38 +1224,30 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* 項目顯示/隱藏開關 */}
-                    <label
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
-                      title={deg.visible !== false ? '點擊於前臺隱藏此學歷' : '點擊於前臺顯示此學歷'}
-                    >
-                      {deg.visible !== false ? (
-                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
-                      ) : (
-                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
-                      )}
-                      <input
-                        type="checkbox"
-                        checked={deg.visible !== false}
-                        disabled={isPreview}
-                        onChange={(e) => handleDegreeChange(idx, 'visible' as any, e.target.checked)}
-                        className="sr-only"
-                      />
-                      <span>{deg.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
-                    </label>
+                    {/* 項目顯示/隱藏開關（統一青色直角風格） */}
+                    <CmsVisibilityToggle
+                      checked={deg.visible !== false}
+                      onChange={(val) => handleDegreeChange(idx, 'visible' as any, val)}
+                      disabled={isPreview}
+                      size="sm"
+                    />
 
-                    {/* 固定學歷語意圖示展示 */}
-                    <div
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-85"
-                      title={isEn ? 'Fixed Degree Semantic Icon' : '固定學位語意圖示'}
-                    >
-                      {React.createElement(getLucideIconByName(deg.type === 'master' || deg.id === 'master' || idx === 0 ? 'graduation-cap' : 'school'), {
-                        className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
-                      })}
-                      <span className="truncate max-w-[80px]">
-                        {deg.type === 'master' || deg.id === 'master' || idx === 0 ? (isEn ? 'Master' : '碩士') : (isEn ? 'Bachelor' : '學士')}
-                      </span>
-                    </div>
+                    {/* 學歷自選圖示按鈕（純圖標，無文字） */}
+                    {(() => {
+                      const curIcon = deg.iconType || (deg.type === 'master' || deg.id === 'master' || idx === 0 ? 'graduation-cap' : 'school');
+                      const DegIcon = getLucideIconByName(curIcon);
+                      return (
+                        <button
+                          type="button"
+                          disabled={isPreview}
+                          onClick={() => setIconPickerTarget({ type: 'degree', index: idx })}
+                          className="w-7 h-7 flex items-center justify-center border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] cursor-pointer transition-colors"
+                          title={isEn ? `Select degree icon (current: ${curIcon})` : `更換學歷圖示 (目前: ${curIcon})`}
+                        >
+                          <DegIcon className="w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0" />
+                        </button>
+                      );
+                    })()}
 
                     <button
                       type="button"
@@ -1218,19 +1335,12 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                             <span className="text-xs font-bold text-[var(--text-main)]">
                               {btn.label}
                             </span>
-                            <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
-                              <input
-                                type="checkbox"
-                                checked={btn.visible !== false}
-                                disabled={isPreview}
-                                onChange={(e) => handleDegreeButtonToggle(idx, bIdx, e.target.checked)}
-                                className="sr-only peer"
-                              />
-                              <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
-                              <span className={btn.visible !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
-                                {btn.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
-                              </span>
-                            </label>
+                            <CmsVisibilityToggle
+                              checked={btn.visible !== false}
+                              onChange={(val) => handleDegreeButtonToggle(idx, bIdx, val)}
+                              disabled={isPreview}
+                              size="sm"
+                            />
                           </div>
                           <CmsUrlInput
                             label={isEn ? `${btn.label} Drive Link` : `${btn.label}雲端連結`}
@@ -1247,20 +1357,28 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 )}
               </div>
             );
-          })}
+            });
+          })()}
         </div>
       )}
 
       {/* ── 子頁籤 2：工作經歷列表 ── */}
       {activeSubTab === 'work' && (
         <div className="space-y-4">
-          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
+          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] px-1">
             <span>{isEn ? 'Entries sorted chronologically by end date' : '工作經歷項目依結束時間自動排序'}</span>
-            <span className="text-[10px] font-mono">Total: {formData[lang]?.workExperiences?.length || 0}</span>
           </div>
 
-          {(formData[lang]?.workExperiences || []).map((work, idx) => {
-            const colorSpec = COLOR_SEQUENCE[idx % COLOR_SEQUENCE.length];
+          {(() => {
+            // Build sorted-index color map (mirrors Education.tsx sort: descending end date)
+            const workArr = formData[lang]?.workExperiences || [];
+            const workSortedColorMap = new Map<string | number, number>();
+            [...workArr]
+              .sort((a, b) => parseEndDateValue((b as any).period) - parseEndDateValue((a as any).period))
+              .forEach((w, si) => workSortedColorMap.set((w as any).id ?? workArr.indexOf(w as any), si));
+            return workArr.map((work, idx) => {
+            const sortedColorIdx = workSortedColorMap.get((work as any).id ?? idx) ?? idx;
+            const colorSpec = COLOR_SEQUENCE[sortedColorIdx % COLOR_SEQUENCE.length];
 
             return (
               <div
@@ -1272,7 +1390,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 }}
               >
                 {/* 標題列排版 */}
-                <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
                     <span className={`px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold ${colorSpec.badge}`}>
                       #{idx + 1}
@@ -1286,38 +1404,31 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* 項目顯示/隱藏開關 */}
-                    <label
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
-                      title={work.visible !== false ? '點擊於前臺隱藏此經歷' : '點擊於前臺顯示此經歷'}
-                    >
-                      {work.visible !== false ? (
-                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
-                      ) : (
-                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
-                      )}
-                      <input
-                        type="checkbox"
-                        checked={work.visible !== false}
-                        disabled={isPreview}
-                        onChange={(e) => handleWorkChange(idx, 'visible' as any, e.target.checked)}
-                        className="sr-only"
-                      />
-                      <span>{work.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
-                    </label>
+                    {/* 項目顯示/隱藏開關（統一青色直角風格） */}
+                    <CmsVisibilityToggle
+                      checked={work.visible !== false}
+                      onChange={(val) => handleWorkChange(idx, 'visible' as any, val)}
+                      disabled={isPreview}
+                      size="sm"
+                    />
 
-                    {/* 固定工作經歷語意圖示展示 */}
-                    <div
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-85"
-                      title={isEn ? 'Fixed Work Semantic Icon' : '固定經歷語意圖示'}
-                    >
-                      {React.createElement(getLucideIconByName(work.iconType || (idx === 0 ? 'school' : (idx === 1 ? 'palette' : 'building-2'))), {
-                        className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
-                      })}
-                      <span className="truncate max-w-[80px]">
-                        {work.iconType || (idx === 0 ? 'school' : (idx === 1 ? 'palette' : 'building-2'))}
-                      </span>
-                    </div>
+                    {/* 工作經歷自選圖示按鈕（純圖標，無文字） */}
+                    {(() => {
+                      const defaultWorkIcons = ['school', 'palette', 'building-2'];
+                      const curIcon = work.iconType || (defaultWorkIcons[idx % defaultWorkIcons.length] || 'briefcase');
+                      const WorkIcon = getLucideIconByName(curIcon);
+                      return (
+                        <button
+                          type="button"
+                          disabled={isPreview}
+                          onClick={() => setIconPickerTarget({ type: 'work', index: idx })}
+                          className="w-7 h-7 flex items-center justify-center border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] cursor-pointer transition-colors"
+                          title={isEn ? `Select work icon (current: ${curIcon})` : `更換經歷圖示 (目前: ${curIcon})`}
+                        >
+                          <WorkIcon className="w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0" />
+                        </button>
+                      );
+                    })()}
 
                     <button
                       type="button"
@@ -1449,20 +1560,28 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 </div>
               </div>
             );
-          })}
+            });
+          })()}
         </div>
       )}
 
       {/* ── 子頁籤 3：研習工作坊列表 ── */}
       {activeSubTab === 'workshops' && (
         <div className="space-y-4">
-          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
+          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] px-1">
             <span>{isEn ? 'Entries sorted chronologically by end date' : '研習項目依結束時間自動排序'}</span>
-            <span className="text-[10px] font-mono">Total: {formData[lang]?.workshops?.length || 0}</span>
           </div>
 
-          {(formData[lang]?.workshops || []).map((ws, idx) => {
-            const colorSpec = COLOR_SEQUENCE[idx % COLOR_SEQUENCE.length];
+          {(() => {
+            // Build sorted-index color map (mirrors Education.tsx sort: descending end date)
+            const wsArr = formData[lang]?.workshops || [];
+            const wsSortedColorMap = new Map<string | number, number>();
+            [...wsArr]
+              .sort((a, b) => parseEndDateValue((b as any).date) - parseEndDateValue((a as any).date))
+              .forEach((w, si) => wsSortedColorMap.set((w as any).id ?? wsArr.indexOf(w as any), si));
+            return wsArr.map((ws, idx) => {
+            const sortedColorIdx = wsSortedColorMap.get((ws as any).id ?? idx) ?? idx;
+            const colorSpec = COLOR_SEQUENCE[sortedColorIdx % COLOR_SEQUENCE.length];
 
             return (
               <div
@@ -1474,7 +1593,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 }}
               >
                 {/* 標題列排版 */}
-                <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
                     <span className={`px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold ${colorSpec.badge}`}>
                       #{idx + 1}
@@ -1488,38 +1607,31 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* 項目顯示/隱藏開關 */}
-                    <label
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-[var(--border-color)] hover:border-[var(--neon-cyan)] bg-[var(--card-inner)] cursor-pointer select-none"
-                      title={ws.visible !== false ? '點擊於前臺隱藏此研習' : '點擊於前臺顯示此研習'}
-                    >
-                      {ws.visible !== false ? (
-                        <Eye className="w-3.5 h-3.5 text-[var(--neon-cyan)]" />
-                      ) : (
-                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
-                      )}
-                      <input
-                        type="checkbox"
-                        checked={ws.visible !== false}
-                        disabled={isPreview}
-                        onChange={(e) => handleWorkshopChange(idx, 'visible' as any, e.target.checked)}
-                        className="sr-only"
-                      />
-                      <span>{ws.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
-                    </label>
+                    {/* 項目顯示/隱藏開關（統一青色直角風格） */}
+                    <CmsVisibilityToggle
+                      checked={ws.visible !== false}
+                      onChange={(val) => handleWorkshopChange(idx, 'visible' as any, val)}
+                      disabled={isPreview}
+                      size="sm"
+                    />
 
-                    {/* 固定研習語意圖示展示 */}
-                    <div
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-[var(--border-color)] bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-85"
-                      title={isEn ? 'Fixed Workshop Semantic Icon' : '固定研習語意圖示'}
-                    >
-                      {React.createElement(getLucideIconByName(ws.iconType || 'code'), {
-                        className: 'w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0',
-                      })}
-                      <span className="truncate max-w-[80px]">
-                        {ws.iconType || 'code'}
-                      </span>
-                    </div>
+                    {/* 研習自選圖示按鈕（純圖標，無文字） */}
+                    {(() => {
+                      const defaultWsIcons = ['code', 'box', 'video', 'gamepad-2'];
+                      const curIcon = ws.iconType || (defaultWsIcons[idx % defaultWsIcons.length] || 'code');
+                      const WsIcon = getLucideIconByName(curIcon);
+                      return (
+                        <button
+                          type="button"
+                          disabled={isPreview}
+                          onClick={() => setIconPickerTarget({ type: 'workshop', index: idx })}
+                          className="w-7 h-7 flex items-center justify-center border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] cursor-pointer transition-colors"
+                          title={isEn ? `Select workshop icon (current: ${curIcon})` : `更換研習圖示 (目前: ${curIcon})`}
+                        >
+                          <WsIcon className="w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0" />
+                        </button>
+                      );
+                    })()}
 
                     <button
                       type="button"
@@ -1558,13 +1670,16 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       const curIcon = ws.iconType || (defaultWsIcons[idx % defaultWsIcons.length] || 'code');
                       const WsIcon = getLucideIconByName(curIcon);
                       return (
-                        <div
-                          className="w-full flex items-center justify-center gap-1.5 px-2.5 py-2 border cyber-cut-sm bg-[var(--card-inner)] text-[var(--text-main)] select-none opacity-80"
+                        <button
+                          type="button"
+                          disabled={isPreview}
+                          onClick={() => setIconPickerTarget({ type: 'workshop', index: idx })}
+                          className="w-full h-9 flex items-center justify-center border cyber-cut-sm bg-[var(--card-inner)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] cursor-pointer transition-colors"
                           style={{ borderColor: borderCol }}
+                          title={isEn ? `Select icon (current: ${curIcon})` : `更換研習圖示 (目前: ${curIcon})`}
                         >
                           <WsIcon className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
-                          <span className="text-[11px] font-mono truncate">{curIcon}</span>
-                        </div>
+                        </button>
                       );
                     })()}
                   </div>
@@ -1603,19 +1718,12 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       <span className="text-xs font-bold text-[var(--text-main)]">
                         {isEn ? 'Proof Document Button' : '「檢視研習證明」按鈕'}
                       </span>
-                      <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
-                        <input
-                          type="checkbox"
-                          checked={ws.showProof !== false}
-                          disabled={isPreview}
-                          onChange={(e) => handleWorkshopChange(idx, 'showProof' as any, e.target.checked)}
-                          className="sr-only peer"
-                        />
-                        <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-[var(--neon-cyan)] relative"></div>
-                        <span className={ws.showProof !== false ? 'text-[var(--neon-cyan)]' : 'text-slate-500'}>
-                          {ws.showProof !== false ? (isEn ? 'SHOW' : '顯示按鈕') : (isEn ? 'HIDE' : '關閉隱藏')}
-                        </span>
-                      </label>
+                      <CmsVisibilityToggle
+                        checked={ws.showProof !== false}
+                        onChange={(val) => handleWorkshopChange(idx, 'showProof' as any, val)}
+                        disabled={isPreview}
+                        size="sm"
+                      />
                     </div>
                     <CmsUrlInput
                       label={isEn ? 'Proof Drive URL' : '研習證明雲端連結'}
@@ -1664,16 +1772,16 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 </div>
               </div>
             );
-          })}
+            });
+          })()}
         </div>
       )}
 
       {/* ── 子頁籤 4：學術論文與發表列表 ── */}
       {activeSubTab === 'theses' && (
         <div className="space-y-4">
-          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
+          <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] px-1">
             <span>{isEn ? 'Entries sorted chronologically by end date' : '論文項目依發表時間自動排序'}</span>
-            <span className="text-[10px] font-mono">Total: {formData[lang]?.theses?.length || 0}</span>
           </div>
 
           {(formData[lang]?.theses || []).map((th, idx) => {
@@ -1687,7 +1795,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 }}
               >
                 {/* 標題列排版 */}
-                <div className="flex items-center justify-between gap-3 border-b border-[var(--border-color)] pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--border-color)] pb-3">
                   <div className="flex items-center gap-2.5">
                     <span className="px-2.5 py-0.5 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold bg-emerald-500/10 text-emerald-400 border-emerald-500/30">
                       #{idx + 1}
@@ -1701,38 +1809,30 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                   </div>
 
                   <div className="flex items-center gap-2">
-                    {/* 項目顯示/隱藏開關 */}
-                    <label
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-bold font-mono border-emerald-500/30 hover:border-emerald-400 bg-emerald-500/10 text-emerald-300 cursor-pointer select-none"
-                      title={th.visible !== false ? '點擊於前臺隱藏此論文/期刊' : '點擊於前臺顯示此論文/期刊'}
-                    >
-                      {th.visible !== false ? (
-                        <Eye className="w-3.5 h-3.5 text-emerald-400" />
-                      ) : (
-                        <EyeOff className="w-3.5 h-3.5 text-rose-400" />
-                      )}
-                      <input
-                        type="checkbox"
-                        checked={th.visible !== false}
-                        disabled={isPreview}
-                        onChange={(e) => handleThesisChange(idx, 'visible' as any, e.target.checked)}
-                        className="sr-only"
-                      />
-                      <span>{th.visible !== false ? (isEn ? 'Show' : '顯示') : (isEn ? 'Hidden' : '隱藏')}</span>
-                    </label>
+                    {/* 項目顯示/隱藏開關（統一青色直角風格） */}
+                    <CmsVisibilityToggle
+                      checked={th.visible !== false}
+                      onChange={(val) => handleThesisChange(idx, 'visible' as any, val)}
+                      disabled={isPreview}
+                      size="sm"
+                    />
 
-                    {/* 固定學術發表語意圖示展示 */}
-                    <div
-                      className="flex items-center gap-1.5 px-2.5 py-1 border cyber-cut-sm text-[11px] font-mono border-emerald-500/30 bg-emerald-500/10 text-emerald-300 select-none opacity-85"
-                      title={isEn ? 'Fixed Publication Semantic Icon' : '固定論文語意圖示'}
-                    >
-                      {React.createElement(getLucideIconByName(th.iconType || (idx === 0 ? 'file-text' : 'presentation')), {
-                        className: 'w-3.5 h-3.5 text-emerald-400 shrink-0',
-                      })}
-                      <span className="font-bold">
-                        {th.iconType || (idx === 0 ? 'file-text' : 'presentation')}
-                      </span>
-                    </div>
+                    {/* 論文自選圖示按鈕（純圖標，無文字） */}
+                    {(() => {
+                      const curIcon = th.iconType || (idx === 0 ? 'file-text' : 'presentation');
+                      const ThesisIcon = getLucideIconByName(curIcon);
+                      return (
+                        <button
+                          type="button"
+                          disabled={isPreview}
+                          onClick={() => setIconPickerTarget({ type: 'thesis', index: idx })}
+                          className="w-7 h-7 flex items-center justify-center border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] hover:border-[var(--neon-cyan)] text-[var(--neon-cyan)] cursor-pointer transition-colors"
+                          title={isEn ? `Select publication icon (current: ${curIcon})` : `更換論文圖示 (目前: ${curIcon})`}
+                        >
+                          <ThesisIcon className="w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0" />
+                        </button>
+                      );
+                    })()}
 
                     <button
                       type="button"
@@ -1815,19 +1915,12 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       <span className="text-xs font-bold text-[var(--text-main)]">
                         {isEn ? 'Paper Full-text Button' : '「檢視論文全文」按鈕'}
                       </span>
-                      <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
-                        <input
-                          type="checkbox"
-                          checked={th.showFullText !== false}
-                          disabled={isPreview}
-                          onChange={(e) => handleThesisChange(idx, 'showFullText' as any, e.target.checked)}
-                          className="sr-only peer"
-                        />
-                        <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-400 relative"></div>
-                        <span className={th.showFullText !== false ? 'text-emerald-400' : 'text-slate-500'}>
-                          {th.showFullText !== false ? (isEn ? 'SHOW' : '顯示') : (isEn ? 'HIDE' : '隱藏')}
-                        </span>
-                      </label>
+                      <CmsVisibilityToggle
+                        checked={th.showFullText !== false}
+                        onChange={(val) => handleThesisChange(idx, 'showFullText' as any, val)}
+                        disabled={isPreview}
+                        size="sm"
+                      />
                     </div>
                     <CmsUrlInput
                       label={isEn ? 'Paper Full-text Link' : '論文全文雲端連結'}
@@ -1844,19 +1937,12 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       <span className="text-xs font-bold text-[var(--text-main)]">
                         {isEn ? 'Slides Presentation Button' : '「論文簡報」按鈕'}
                       </span>
-                      <label className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono">
-                        <input
-                          type="checkbox"
-                          checked={th.showPresentation !== false}
-                          disabled={isPreview}
-                          onChange={(e) => handleThesisChange(idx, 'showPresentation' as any, e.target.checked)}
-                          className="sr-only peer"
-                        />
-                        <div className="w-7 h-4 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-emerald-400 relative"></div>
-                        <span className={th.showPresentation !== false ? 'text-emerald-400' : 'text-slate-500'}>
-                          {th.showPresentation !== false ? (isEn ? 'SHOW' : '顯示') : (isEn ? 'HIDE' : '隱藏')}
-                        </span>
-                      </label>
+                      <CmsVisibilityToggle
+                        checked={th.showPresentation !== false}
+                        onChange={(val) => handleThesisChange(idx, 'showPresentation' as any, val)}
+                        disabled={isPreview}
+                        size="sm"
+                      />
                     </div>
                     <CmsUrlInput
                       label={isEn ? 'Slides Link' : '發表簡報雲端連結'}
@@ -1880,6 +1966,16 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
         </div>
       )}
 
+      {/* 全域圖示庫選擇器彈窗 (純圖標高密度網格，無文字) */}
+      <CmsIconPickerModal
+        isOpen={iconPickerTarget !== null}
+        currentIconName={currentTargetIcon}
+        onSelectIcon={handleSelectIconForTarget}
+        onClose={() => setIconPickerTarget(null)}
+      />
+
+      {/* 確認對話框 */}
+      <CmsConfirmDialog state={dialog} onClose={() => setDialog(EMPTY_DIALOG)} />
     </div>
   );
 };

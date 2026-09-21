@@ -1,5 +1,15 @@
 {
   "codeAnimationSpeed": 1.0,
+  "modules_order": ["home", "about", "skills", "projects", "awards", "experience", "gallery"],
+  "modules_visibility": {
+    "home": true,
+    "about": true,
+    "skills": true,
+    "projects": true,
+    "awards": true,
+    "experience": true,
+    "gallery": true
+  },
   "zh": {
     "htmlTitle": "Portfolio",
     "headerTop": "Portfolio",

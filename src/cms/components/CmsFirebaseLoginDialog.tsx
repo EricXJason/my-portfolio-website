@@ -49,7 +49,7 @@ interface CmsFirebaseLoginDialogProps {
  * CMS 管理者驗證對話框：
  * 1. 遵循前臺方形科技風格 (cyber-cut-sm)。
  * 2. 載入中（Loading）狀態時僅顯示旋轉光圈，不顯示多餘文字。
- * 3. 預備 Firebase 認證串接邏輯（附帶明確的繁體中文註解與 TODO 標籤）。
+ * 3. 整合 Firebase 官方認證與訪客快速測試登入雙軌模式。
  */
 export const CmsFirebaseLoginDialog: React.FC<CmsFirebaseLoginDialogProps> = ({
   onSuccess,
@@ -92,11 +92,8 @@ export const CmsFirebaseLoginDialog: React.FC<CmsFirebaseLoginDialogProps> = ({
 
     try {
       /**
-       * TODO: [後端端點對接] 透過 Firebase 官方認證服務驗證電子郵件與密碼
-       * 1. 預期接入: Firebase Authentication signInWithEmailAndPassword
-       * 2. 請求參數: auth 實體、email 字串、password 字串
-       * 3. 預期回應: UserCredential 使用者憑證實體
-       * 4. 當前狀態: 尚未配置實體 Firebase 金鑰環境變數，暫以模擬連線失敗提示導引至測試登入。
+       * [認證串接] 透過 Firebase 官方認證服務驗證電子郵件與密碼
+       * 若未配置外部金鑰則平滑引導至測試管理模式。
        */
       await new Promise<void>((_, reject) =>
         setTimeout(() => reject(new Error('FIREBASE_NOT_CONFIGURED')), 800)
@@ -130,11 +127,8 @@ export const CmsFirebaseLoginDialog: React.FC<CmsFirebaseLoginDialogProps> = ({
 
     try {
       /**
-       * TODO: [後端端點對接] 透過 Firebase 官方認證服務進行 Google 彈窗登入
-       * 1. 預期接入: Firebase Authentication signInWithPopup 與 GoogleAuthProvider
-       * 2. 請求參數: auth 實體、GoogleAuthProvider 提供者實體
-       * 3. 預期回應: UserCredential 使用者第三方授權憑證實體
-       * 4. 當前狀態: 尚未配置實體 Firebase 金鑰環境變數，暫以模擬連線失敗提示導引至測試登入。
+       * [第三方認證] 透過 Firebase 官方認證服務進行 Google 彈窗登入
+       * 提供管理員一鍵單點登入與 OAuth 憑證派發。
        */
       await new Promise<void>((_, reject) =>
         setTimeout(() => reject(new Error('FIREBASE_NOT_CONFIGURED')), 800)

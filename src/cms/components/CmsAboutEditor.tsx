@@ -19,6 +19,8 @@ import {
   GripVertical,
   ArrowUp,
   ArrowDown,
+  BookOpen,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -30,6 +32,7 @@ import {
 } from './CmsConfirmDialog';
 import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { CmsImagePicker } from './CmsImagePicker';
+import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import defaultAboutData from '../../data/about-section.json';
 
 interface StatItem {
@@ -40,11 +43,22 @@ interface StatItem {
   visible?: boolean;
 }
 
+interface BioData {
+  title: string;
+  p1_title: string;
+  p1: string;
+  p2_title: string;
+  p2: string;
+  p3_title: string;
+  p3: string;
+}
+
 interface AboutLangData {
   title: string;
   intro: string;
   heading: string;
   p1: string;
+  bio?: BioData;
   stats: StatItem[];
 }
 
@@ -168,9 +182,15 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
   const [statDragging, setStatDragging] = useState<number | null>(null);
   const [statDragOver, setStatDragOver] = useState<number | null>(null);
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   const handleFieldChange = (field: keyof AboutLangData, value: string) => {
@@ -179,6 +199,32 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
       ...prev,
       [lang]: { ...prev[lang], [field]: value },
     }));
+  };
+
+  const handleBioChange = (field: keyof BioData, value: string) => {
+    setIsDirty(true);
+    setFormData((prev) => {
+      const defaultBio = (defaultAboutData as any)?.[lang]?.bio || {
+        title: isEn ? 'Personal Biography' : '個人自傳',
+        p1_title: '',
+        p1: '',
+        p2_title: '',
+        p2: '',
+        p3_title: '',
+        p3: '',
+      };
+      const currentBio = prev[lang].bio || defaultBio;
+      return {
+        ...prev,
+        [lang]: {
+          ...prev[lang],
+          bio: {
+            ...currentBio,
+            [field]: value,
+          },
+        },
+      };
+    });
   };
 
   const handleStatChange = (
@@ -212,6 +258,7 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
 
   // 數據統計指標拖放事件處理函式
   const handleStatDragStart = (e: React.DragEvent, idx: number) => {
+    if (isPreview) return;
     statDragRef.current = idx;
     setStatDragging(idx);
     e.dataTransfer.effectAllowed = 'move';
@@ -246,6 +293,7 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
       };
     });
     setStatDragging(null); setStatDragOver(null); statDragRef.current = null;
+    showToast(isEn ? 'Stats order updated!' : '已更新統計卡片排序！');
   };
 
   const handleMoveStat = (fromIdx: number, toIdx: number) => {
@@ -267,16 +315,8 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
   };
 
   /**
-   * TODO: [後端端點對接] 儲存並同步更新「關於我」模組簡介與統計數據
-   * 1. HTTP Method: PUT
-   * 2. 預期端點: /api/v1/about
-   * 3. 請求載荷 (Request Body):
-   *    - Header: Authorization: Bearer <JWT_ACCESS_TOKEN>
-   *    - Body: { data: AboutFullData, meta: { zhTitle: string, enTitle: string } }
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, message: "關於我模組更新成功" }
-   *    - 401 Unauthorized: 管理者憑證失效
-   * 5. 當前狀態: 暫時採用本地持久化 (localStorage) 模擬更新，待後端 API 上線後切換為 apiClient.put()。
+   * [資料持久化] 儲存並同步更新「關於我」模組簡介與統計數據
+   * 寫入本地快照並同步推送至 Firebase Firestore 雲端資料庫。
    */
   const triggerSaveDialog = () => {
     setDialog({
@@ -316,25 +356,37 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     });
   };
 
+  /** handleSetDefault — 將當前關於我資料設為預設值基準 */
+  const handleSetDefault = () => {
+    try {
+      localStorage.setItem('portfolio_about_baseline', JSON.stringify(formData));
+      showToast(isEn ? 'Current about data set as module default!' : '當前「關於我」內容已設為預設值！');
+    } catch {
+      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
+    }
+  };
+
   const triggerResetDialog = () => {
+    const baselineRaw = localStorage.getItem('portfolio_about_baseline');
+    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? 'Are you sure you want to reset the "About" module to default?'
-        : '確定要將「關於我」模組還原為初始預設值嗎？此操作僅會重置關於我模組的內容，不會影響其他模組。',
-      confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
+        ? (isBaseline ? 'Reset about module to the pinned default state?' : 'Are you sure you want to reset the "About" module to default?')
+        : (isBaseline ? '確定要將「關於我」還原至設定的預設值嗎？' : '確定要將「關於我」模組還原為初始預設值嗎？此操作僅會重置關於我模組的內容，不會影響其他模組。'),
+      confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
-        const resetData = defaultAboutData as unknown as AboutFullData;
+        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as unknown as AboutFullData) : (defaultAboutData as unknown as AboutFullData);
         try {
           localStorage.removeItem('portfolio_about_data');
           window.dispatchEvent(new Event('portfolio_about_data_updated'));
           setFormData(resetData);
           setAboutMeta({ zhTitle: '關於我', enTitle: 'About' });
           await updateDocument('about', resetData);
-          showToast(isEn ? '"About" module restored to defaults!' : '「關於我」模組已還原為初始預設資料！');
+          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"About" restored to initial defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「關於我」模組已還原為初始預設資料！'));
         } catch {
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
         }
@@ -346,15 +398,15 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/40 text-emerald-400 text-xs font-['Noto_Sans_TC'] shadow-lg animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
-      {/* 二次確認模態對話框 (風格與語言選擇視窗統一) */}
+      {/* 二次確認對話框 */}
       <CmsConfirmDialog
         dialog={dialog}
         onClose={() => setDialog(EMPTY_DIALOG)}
@@ -362,11 +414,11 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
       />
 
       {/* 頂部操作列 */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
-        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl">
+        <h1 className="text-2xl font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] whitespace-nowrap">
           {isEn ? 'About' : '關於我'}
         </h1>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={isPreview ? undefined : triggerResetDialog}
@@ -376,6 +428,16 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
+          </button>
+          <button
+            type="button"
+            onClick={isPreview ? undefined : handleSetDefault}
+            disabled={isPreview}
+            title={isEn ? 'Pin current about data as module default' : '將當前關於我內容設為預設值'}
+            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'}`}
+          >
+            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
           <button
             type="button"
@@ -501,9 +563,6 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
             <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
               {isEn ? 'Core Highlights' : '核心亮點卡片'}
             </h2>
-            <span className="text-xs text-[var(--text-sub)] font-['Share_Tech_Mono'] ml-1">
-              ({currentContent.stats.length})
-            </span>
           </div>
           <span className="text-[11px] font-mono px-2.5 py-1 border cyber-cut-sm text-[var(--neon-cyan)] bg-[var(--card-inner)]" style={{ borderColor: 'rgba(0, 240, 255, 0.3)' }}>
             {isEn ? 'FIXED 3 CARDS' : '固定 3 張亮點卡'}
@@ -549,25 +608,12 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
                     </span>
 
                     {/* 卡片前臺顯示/隱藏開關 */}
-                    <label
-                      className="flex items-center gap-1.5 cursor-pointer select-none text-[10px] font-mono px-2 py-0.5 border cyber-cut-sm transition-colors ml-1"
-                      style={{
-                        backgroundColor: stat.visible !== false ? 'rgba(0, 240, 255, 0.08)' : 'rgba(100, 116, 139, 0.1)',
-                        borderColor: stat.visible !== false ? 'rgba(0, 240, 255, 0.3)' : 'rgba(100, 116, 139, 0.25)',
-                      }}
-                      title={stat.visible !== false ? (isEn ? 'Visible on showcase — click to hide' : '點擊於前臺隱藏此卡片') : (isEn ? 'Hidden — click to show' : '點擊於前臺顯示此卡片')}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={stat.visible !== false}
-                        disabled={isPreview}
-                        onChange={(e) => handleStatChange(idx, 'visible', e.target.checked)}
-                        className="accent-[var(--neon-cyan)] cursor-pointer w-3 h-3"
-                      />
-                      <span className={stat.visible !== false ? 'text-[var(--neon-cyan)] font-bold' : 'text-slate-500'}>
-                        {stat.visible !== false ? (isEn ? 'ON' : '顯示') : (isEn ? 'OFF' : '隱藏')}
-                      </span>
-                    </label>
+                    <CmsVisibilityToggle
+                      checked={stat.visible !== false}
+                      onChange={(val) => handleStatChange(idx, 'visible', val)}
+                      disabled={isPreview}
+                      size="sm"
+                    />
                   </div>
 
                   {/* 向上/向下移動排序按鈕組 */}
@@ -626,6 +672,145 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
         </div>
 
       </div>
+
+      {/* 第三分區：個人自傳設定（三段歷程、標題與內文） */}
+      {(() => {
+        const bioData = currentContent.bio || (defaultAboutData as any)?.[lang]?.bio || {
+          title: isEn ? 'Personal Biography' : '個人自傳',
+          p1_title: isEn ? 'Background & Turning Point' : '背景與思維轉折',
+          p1: '',
+          p2_title: isEn ? 'Full-Stack & Interactive Practice' : '全端與互動工程實踐',
+          p2: '',
+          p3_title: isEn ? 'Engineering Values & Aspirations' : '工程原則與自我期許',
+          p3: '',
+        };
+
+        return (
+          <div className="border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] p-6 sm:p-8 backdrop-blur-xl space-y-6">
+            <div className="flex items-center justify-between border-b border-[var(--border-color)] pb-3">
+              <div className="flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-[var(--neon-cyan)]" />
+                <h2 className="text-base font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+                  {isEn ? 'Biography Settings' : '個人自傳設定'}
+                </h2>
+              </div>
+              <span className="text-[11px] font-mono px-2.5 py-1 border cyber-cut-sm text-[var(--neon-cyan)] bg-[var(--card-inner)]" style={{ borderColor: 'rgba(0, 240, 255, 0.3)' }}>
+                {isEn ? '3 PARAGRAPHS' : '三段自傳收納'}
+              </span>
+            </div>
+
+            {/* 自傳總標題 */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-bold font-['Noto_Sans_TC'] text-[var(--text-main)]">
+                {isEn ? 'Biography Main Title' : '自傳主標題'}
+              </label>
+              <input
+                type="text"
+                value={bioData.title || ''}
+                onChange={(e) => handleBioChange('title', e.target.value)}
+                disabled={isPreview}
+                className={`w-full px-4 py-2 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-sm text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`}
+              />
+            </div>
+
+            {/* 第一段：背景與思維轉折（規則色 1：青色） */}
+            <div className="p-4 border cyber-cut-sm border-l-4 border-[var(--border-color)] bg-[var(--card-inner)] space-y-3" style={{ borderLeftColor: '#0891b2' }}>
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-mono font-bold px-2 py-1.5 border cyber-cut-sm bg-cyan-500/10 text-cyan-400 border-cyan-500/30 shrink-0">01</span>
+                <input
+                  type="text"
+                  value={bioData.p1_title || ''}
+                  onChange={(e) => handleBioChange('p1_title', e.target.value)}
+                  placeholder={isEn ? 'Section 1 Subheading...' : '第一段段落標題...'}
+                  disabled={isPreview}
+                  className={`flex-1 px-3 py-1.5 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-sm font-bold text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`}
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)]">
+                    {isEn ? 'Content' : '段落內文'}
+                  </label>
+                  <span className="text-[10px] font-mono text-[var(--text-sub)]">
+                    {(bioData.p1 || '').length} 字
+                  </span>
+                </div>
+                <textarea
+                  rows={3}
+                  value={bioData.p1 || ''}
+                  onChange={(e) => handleBioChange('p1', e.target.value)}
+                  disabled={isPreview}
+                  className={`w-full px-3 py-2 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-xs text-[var(--text-main)] leading-relaxed focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] resize-y ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`}
+                />
+              </div>
+            </div>
+
+            {/* 第二段：全端與互動工程實踐（規則色 2：天藍色） */}
+            <div className="p-4 border cyber-cut-sm border-l-4 border-[var(--border-color)] bg-[var(--card-inner)] space-y-3" style={{ borderLeftColor: '#0284c7' }}>
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-mono font-bold px-2 py-1.5 border cyber-cut-sm bg-sky-500/10 text-sky-400 border-sky-500/30 shrink-0">02</span>
+                <input
+                  type="text"
+                  value={bioData.p2_title || ''}
+                  onChange={(e) => handleBioChange('p2_title', e.target.value)}
+                  placeholder={isEn ? 'Section 2 Subheading...' : '第二段段落標題...'}
+                  disabled={isPreview}
+                  className={`flex-1 px-3 py-1.5 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-sm font-bold text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`}
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)]">
+                    {isEn ? 'Content' : '段落內文'}
+                  </label>
+                  <span className="text-[10px] font-mono text-[var(--text-sub)]">
+                    {(bioData.p2 || '').length} 字
+                  </span>
+                </div>
+                <textarea
+                  rows={4}
+                  value={bioData.p2 || ''}
+                  onChange={(e) => handleBioChange('p2', e.target.value)}
+                  disabled={isPreview}
+                  className={`w-full px-3 py-2 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-xs text-[var(--text-main)] leading-relaxed focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] resize-y ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`}
+                />
+              </div>
+            </div>
+
+            {/* 第三段：工程原則與自我期許（規則色 3：紫色） */}
+            <div className="p-4 border cyber-cut-sm border-l-4 border-[var(--border-color)] bg-[var(--card-inner)] space-y-3" style={{ borderLeftColor: '#7e22ce' }}>
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-mono font-bold px-2 py-1.5 border cyber-cut-sm bg-purple-500/10 text-purple-400 border-purple-500/30 shrink-0">03</span>
+                <input
+                  type="text"
+                  value={bioData.p3_title || ''}
+                  onChange={(e) => handleBioChange('p3_title', e.target.value)}
+                  placeholder={isEn ? 'Section 3 Subheading...' : '第三段段落標題...'}
+                  disabled={isPreview}
+                  className={`flex-1 px-3 py-1.5 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-sm font-bold text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`}
+                />
+              </div>
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label className="text-[11px] font-bold font-['Noto_Sans_TC'] text-[var(--text-sub)]">
+                    {isEn ? 'Content' : '段落內文'}
+                  </label>
+                  <span className="text-[10px] font-mono text-[var(--text-sub)]">
+                    {(bioData.p3 || '').length} 字
+                  </span>
+                </div>
+                <textarea
+                  rows={3}
+                  value={bioData.p3 || ''}
+                  onChange={(e) => handleBioChange('p3', e.target.value)}
+                  disabled={isPreview}
+                  className={`w-full px-3 py-2 border cyber-cut-sm bg-[var(--card-bg)] border-[var(--border-color)] text-xs text-[var(--text-main)] leading-relaxed focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] resize-y ${isPreview ? 'opacity-50 cursor-not-allowed' : ''}`}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

@@ -41,15 +41,8 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [showVolumePopup, setShowVolumePopup] = useState(false);
 
   /**
-   * TODO: [後端端點對接] 取得使用者模式網站全域設定 (網頁標題、雙層導覽列品牌名稱、動畫速度)
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/site-settings
-   * 3. 請求參數:
-   *    - Header: Authorization (非強制，公開讀取)
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: SiteSettings }
-   *    - 500 Internal Server Error: 伺服器讀取全域設定失敗
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (site-settings.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
+   * [全域設定管理] 網站全域設定 (網頁標題、雙層導覽列品牌名稱、動畫速度)
+   * 透過 PortfolioDataContext 集中管理並提供多語系 Fallback 支援。
    */
   const { data } = usePortfolioData();
   const siteSettings = ((data.site_settings || defaultSiteSettings) as typeof defaultSiteSettings);
@@ -154,15 +147,55 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   /**
-   * TODO: [後端端點對接] 取得使用者模式導覽列與區塊模組自訂排版順序
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/modules-order
-   * 3. 請求參數: 無
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: string[] }
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，採用作品集標準推薦順序，待後端 API 完成後改由 apiClient.get() 取得。
+   * [導覽排版拓撲] 導覽列各項目之標準展示順序
+   * 遵循全站模組架構，保持頂部導覽列與首頁內容章節完美對應。
    */
   const moduleOrder = ['home', 'about', 'skills', 'projects', 'awards', 'experience', 'gallery'];
+
+  const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
+    if (data?.site_settings?.modules_visibility) {
+      return { home: true, ...data.site_settings.modules_visibility };
+    }
+    try {
+      const saved = localStorage.getItem('portfolio_modules_visibility');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return { home: true, ...parsed };
+        }
+      }
+    } catch {}
+    return { home: true };
+  });
+
+  useEffect(() => {
+    if (data?.site_settings?.modules_visibility) {
+      setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+    }
+  }, [data?.site_settings?.modules_visibility]);
+
+  useEffect(() => {
+    const handleVisUpdate = () => {
+      try {
+        const saved = localStorage.getItem('portfolio_modules_visibility');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            setModuleVisibility({ home: true, ...parsed });
+            return;
+          }
+        }
+      } catch {}
+      setModuleVisibility({ home: true });
+    };
+
+    window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+    window.addEventListener('storage', handleVisUpdate);
+    return () => {
+      window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+      window.removeEventListener('storage', handleVisUpdate);
+    };
+  }, []);
 
   const expSubItems = [
     { key: 'nav_sub_degrees', href: '#education-degrees' },
@@ -182,6 +215,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   };
 
   const mainNavItems = moduleOrder
+    .filter((id) => id === 'home' || moduleVisibility[id] !== false)
     .map((id) => baseNavMap[id])
     .filter(Boolean);
 

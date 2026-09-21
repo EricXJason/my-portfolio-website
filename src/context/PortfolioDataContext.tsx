@@ -57,6 +57,30 @@ const MODULE_KEY_MAP: Record<PortfolioDocId, string> = {
 };
 
 /**
+ * 計算本地靜態資料指紋，當程式碼中的 JSON 變更時自動偵測並同步最新設定
+ */
+export const getContentFingerprint = (): string => {
+  try {
+    const raw = JSON.stringify({
+      aboutBioP1: LOCAL_FALLBACKS.about?.zh?.bio?.p1 || '',
+      aboutBioP2: LOCAL_FALLBACKS.about?.zh?.bio?.p2 || '',
+      aboutBioP3: LOCAL_FALLBACKS.about?.zh?.bio?.p3 || '',
+      aboutTitle: LOCAL_FALLBACKS.about?.zh?.bio?.title || '',
+      heroDesc: LOCAL_FALLBACKS.hero?.zh?.description || '',
+      buildVer: '2026.09.22.bio.v6',
+    });
+    let hash = 0;
+    for (let i = 0; i < raw.length; i++) {
+      hash = ((hash << 5) - hash) + raw.charCodeAt(i);
+      hash |= 0;
+    }
+    return `fp_${Math.abs(hash)}`;
+  } catch {
+    return 'fp_init';
+  }
+};
+
+/**
  * 讀取本機快取優先資料（支援 preview 與一般持久化快取）
  */
 const getInitialModuleData = <T,>(docId: PortfolioDocId): T => {
@@ -64,6 +88,13 @@ const getInitialModuleData = <T,>(docId: PortfolioDocId): T => {
     return LOCAL_FALLBACKS[docId] as unknown as T;
   }
   try {
+    // 若靜態代碼指紋與本機快取指紋不符，優先以最新 LOCAL_FALLBACKS 呈現，達成即時同步
+    const currentFp = getContentFingerprint();
+    const savedFp = localStorage.getItem('portfolio_content_fingerprint');
+    if (savedFp !== currentFp) {
+      return LOCAL_FALLBACKS[docId] as unknown as T;
+    }
+
     const primaryKey = MODULE_KEY_MAP[docId];
     const saved = localStorage.getItem(primaryKey) || localStorage.getItem(`portfolio_preview_${docId}`);
     if (saved) {
@@ -136,6 +167,25 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
           ...prev,
           ...cloudUpdates,
         }));
+        // 同步覆蓋本地快照，達成 0ms 下次直接呈現最新雲端內容
+        try {
+          Object.entries(cloudUpdates).forEach(([k, v]) => {
+            const pKey = MODULE_KEY_MAP[k as PortfolioDocId];
+            if (pKey && v) {
+              localStorage.setItem(pKey, JSON.stringify(v));
+              if (k === 'site_settings' && v) {
+                if ((v as any).modules_visibility) {
+                  localStorage.setItem('portfolio_modules_visibility', JSON.stringify((v as any).modules_visibility));
+                  window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+                }
+                if ((v as any).modules_order) {
+                  localStorage.setItem('portfolio_modules_order', JSON.stringify((v as any).modules_order));
+                  window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+                }
+              }
+            }
+          });
+        } catch {}
         setIsCloudConnected(true);
         setLastUpdated(new Date());
       }
@@ -172,8 +222,25 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
         return true;
       }
 
-      // 3. 非同步寫入 Firestore 雲端資料庫
+      // 3. 非同步寫入 Firestore 雲端資料庫與本機持久化快照
       try {
+        if (MODULE_KEY_MAP[docId]) {
+          try {
+            localStorage.setItem(MODULE_KEY_MAP[docId], JSON.stringify(newPayload));
+            // 特殊連動：若為 site_settings 且含 modules_visibility 或 modules_order，同步寫入獨立鍵
+            if (docId === 'site_settings' && newPayload) {
+              if (newPayload.modules_visibility) {
+                localStorage.setItem('portfolio_modules_visibility', JSON.stringify(newPayload.modules_visibility));
+                window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+              }
+              if (newPayload.modules_order) {
+                localStorage.setItem('portfolio_modules_order', JSON.stringify(newPayload.modules_order));
+                window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+              }
+            }
+            window.dispatchEvent(new Event(`portfolio_${docId}_data_updated`));
+          } catch {}
+        }
         await savePortfolioDoc(docId, newPayload);
         setLastUpdated(new Date());
         return true;
@@ -194,7 +261,8 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
    */
   const resetAllToDefaults = useCallback(async (): Promise<void> => {
     setIsLoadingCloud(true);
-    const freshDefaults: PortfolioDataState = {
+
+    const targetDefaults: PortfolioDataState = {
       hero: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.hero)),
       site_settings: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.site_settings)),
       about: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.about)),
@@ -207,38 +275,53 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     // 1. 立即重置本地 React 狀態
-    setData(freshDefaults);
+    setData(targetDefaults);
 
-    // 2. 清除所有相關 localStorage
-    const keysToRemove = [
-      'portfolio_projects_data',
-      'portfolio_custom_translations',
-      'portfolio_about_data',
-      'portfolio_skills_data',
-      'portfolio_experience_data',
-      'portfolio_gallery_data',
-      'portfolio_certifications_data',
-      'portfolio_hero_data',
-      'portfolio_site_settings_data',
-      'portfolio_modules_order',
-    ];
-    keysToRemove.forEach((k) => {
+    // 2. 清除所有編輯暫存 localStorage 與任何 baseline 快取
+    const keysMap: Record<string, any> = {
+      portfolio_projects_data: targetDefaults.projects,
+      portfolio_about_data: targetDefaults.about,
+      portfolio_skills_data: targetDefaults.skills,
+      portfolio_experience_data: targetDefaults.experience,
+      portfolio_gallery_data: targetDefaults.gallery,
+      portfolio_certifications_data: targetDefaults.certifications,
+      portfolio_hero_data: targetDefaults.hero,
+      portfolio_site_settings_data: targetDefaults.site_settings,
+    };
+
+    Object.entries(keysMap).forEach(([k, v]) => {
       try {
-        localStorage.removeItem(k);
+        localStorage.setItem(k, JSON.stringify(v));
       } catch {}
     });
 
-    // 清理所有 preview 暫存
+    try {
+      if (targetDefaults.site_translations) {
+        localStorage.setItem('portfolio_custom_translations', JSON.stringify(targetDefaults.site_translations));
+      }
+      if (targetDefaults.site_settings) {
+        if (targetDefaults.site_settings.modules_visibility) {
+          localStorage.setItem('portfolio_modules_visibility', JSON.stringify(targetDefaults.site_settings.modules_visibility));
+          window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+        }
+        if (targetDefaults.site_settings.modules_order) {
+          localStorage.setItem('portfolio_modules_order', JSON.stringify(targetDefaults.site_settings.modules_order));
+          window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+        }
+      }
+    } catch {}
+
+    // 清理所有 preview 與 baseline 暫存
     try {
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith('portfolio_preview_')) {
+        if (key && (key.startsWith('portfolio_preview_') || key.endsWith('_baseline'))) {
           localStorage.removeItem(key);
         }
       }
     } catch {}
 
-    // 3. 批次將預設值同步還原至 Firestore
+    // 3. 批次將乾淨的程式碼預設值同步還原至 Firestore
     if (db && isFirebaseConfigured) {
       const docIds = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
       await Promise.all(
@@ -265,6 +348,20 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
     window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
   }, []);
 
+  // 5. 自動指紋同步：當程式碼 JSON 修改時，自動 reset all 確保 CMS 與前臺即時反映最新內容
+  useEffect(() => {
+    try {
+      const currentFp = getContentFingerprint();
+      const savedFp = localStorage.getItem('portfolio_content_fingerprint');
+      if (savedFp !== currentFp) {
+        localStorage.setItem('portfolio_content_fingerprint', currentFp);
+        resetAllToDefaults().catch(() => {});
+      }
+    } catch (e) {
+      console.warn('[DataContext]: Auto fingerprint sync failed:', e);
+    }
+  }, [resetAllToDefaults]);
+
   // 智慧同步策略：CMS 管理模式啟用即時雙向監聽，前臺展示模式採用非阻塞 SWR 輕量抓取
   useEffect(() => {
     if (!isFirebaseConfigured || !db) return;
@@ -289,6 +386,23 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
                   ...prev,
                   [key]: payload,
                 }));
+                // 同步至本機快照
+                try {
+                  const pKey = MODULE_KEY_MAP[key];
+                  if (pKey && payload) {
+                    localStorage.setItem(pKey, JSON.stringify(payload));
+                    if (key === 'site_settings') {
+                      if ((payload as any).modules_visibility) {
+                        localStorage.setItem('portfolio_modules_visibility', JSON.stringify((payload as any).modules_visibility));
+                        window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+                      }
+                      if ((payload as any).modules_order) {
+                        localStorage.setItem('portfolio_modules_order', JSON.stringify((payload as any).modules_order));
+                        window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+                      }
+                    }
+                  }
+                } catch {}
                 setIsCloudConnected(true);
                 setLastUpdated(new Date());
               }

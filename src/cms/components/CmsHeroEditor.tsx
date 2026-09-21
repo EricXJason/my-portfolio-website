@@ -25,6 +25,7 @@ import {
   Link as LinkIcon,
   Eye,
   EyeOff,
+  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -134,9 +135,15 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
 
+  const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const showToast = (msg: string) => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
     setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 3000);
+    toastTimerRef.current = setTimeout(() => {
+      setToastMessage(null);
+      toastTimerRef.current = null;
+    }, 2500);
   };
 
   const handleFieldChange = (
@@ -208,22 +215,34 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
     });
   };
 
+  /** handleSetDefault — 將當前首頁資料設為預設值基準 */
+  const handleSetDefault = () => {
+    try {
+      localStorage.setItem('portfolio_hero_baseline', JSON.stringify(formData));
+      showToast(isEn ? 'Current home data set as module default!' : '當前「首頁」內容已設為預設值！');
+    } catch {
+      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
+    }
+  };
+
   const triggerResetDialog = () => {
+    const baselineRaw = localStorage.getItem('portfolio_hero_baseline');
+    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? 'Are you sure you want to reset the "Home" module to default? This will only reset this module and will not affect others.'
-        : '確定要將「首頁」模組還原為初始預設值嗎？此操作僅會重置首頁模組的內容，不會影響其他模組。',
-      confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
+        ? (isBaseline ? 'Reset home module to the pinned default state?' : 'Are you sure you want to reset the "Home" module to default?')
+        : (isBaseline ? '確定要將「首頁」還原至設定的預設值嗎？' : '確定要將「首頁」模組還原為初始預設值嗎？此操作僅會重置首頁模組的內容，不會影響其他模組。'),
+      confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
-        const resetData = defaultHeroData as HeroSectionFullData;
+        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as HeroSectionFullData) : (defaultHeroData as HeroSectionFullData);
         setFormData(resetData);
         try {
           await updateDocument('hero', resetData);
-          showToast(isEn ? '"Home" module restored to defaults!' : '「首頁」模組已還原為初始預設資料！');
+          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Home" restored to initial defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「首頁」模組已還原為初始預設資料！'));
         } catch (err) {
           console.error(err);
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
@@ -236,11 +255,11 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      {/* 浮動提示訊息通知 */}
+      {/* 浮動提示訊息通知 - 嚴格方形直角科技風格，避開右下角 BackToTop 浮動按鈕 */}
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 flex items-center gap-2 px-4 py-2.5 border cyber-cut-sm bg-emerald-500/10 border-emerald-500/40 text-emerald-400 text-xs font-['Noto_Sans_TC'] shadow-lg backdrop-blur-xl animate-fade-in">
-          <Check className="w-4 h-4 text-emerald-400" />
-          <span>{toastMessage}</span>
+        <div className="fixed bottom-20 sm:bottom-24 right-6 sm:right-8 z-[10000] flex items-center gap-2.5 px-4 py-2.5 border cyber-cut-sm rounded-none bg-[var(--card-bg)]/95 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_20px_rgba(0,240,255,0.35)] font-['Noto_Sans_TC'] text-xs sm:text-sm backdrop-blur-xl animate-fade-in pointer-events-none">
+          <Check className="w-4 h-4 text-[var(--neon-cyan)] shrink-0" />
+          <span className="tracking-wide font-medium">{toastMessage}</span>
         </div>
       )}
 
@@ -248,12 +267,12 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
       <CmsConfirmDialog dialog={dialog} onClose={() => setDialog(EMPTY_DIALOG)} isEn={isEn} />
 
       {/* 頂部工具列：純淨標題與操作按鈕 */}
-      <div className="flex items-center justify-between p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
-        <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)]">
+      <div className="flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6 border cyber-cut-sm border-[var(--border-color)] bg-[var(--card-bg)] backdrop-blur-xl shadow-md">
+        <h1 className="text-xl sm:text-2xl font-black font-['Orbitron',sans-serif] tracking-wide text-[var(--text-main)] whitespace-nowrap">
           {isEn ? 'Home' : '首頁'}
         </h1>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={isPreview ? undefined : triggerResetDialog}
@@ -265,6 +284,19 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={isPreview ? undefined : handleSetDefault}
+            disabled={isPreview}
+            title={isEn ? 'Pin current home data as module default' : '將當前首頁內容設為預設值'}
+            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
+              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
+            }`}
+          >
+            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
+            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
 
           <button

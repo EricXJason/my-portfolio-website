@@ -13,17 +13,17 @@
     "nav_sub_workshops": "研習歷程",
     "nav_sub_publications": "論文與期刊",
 
-    "hero_badge_spec": "AI 技術與前沿技術持續跟進中",
+    "hero_badge_spec": "持續深耕全端架構與即時系統工程",
     "hero_title": "許哲誠",
-    "hero_subtitle_pc": "互動應用開發／全端開發／多媒體設計",
-    "hero_desc": "專注於互動應用開發、全端網頁架構與新媒體藝術實踐，致力打造具沉浸感與技術含量的數位體驗。",
+    "hero_subtitle_pc": "全端開發／互動應用開發／多媒體設計",
+    "hero_desc": "專注於全端軟體架構與即時互動系統開發。擅長串接底層資料邏輯與頂層沉浸式互動，堅持模組化設計與程式碼可維護性，致力於打造高穩定性且流暢的現代數位產品。",
     "btn_github": "GitHub 專頁",
     "btn_artstation": "ArtStation 作品集",
 
     "about_title": "關於我",
-    "about_intro": "具備新媒體藝術碩士背景，專注於互動應用開發、全端網頁與多媒體設計。",
+    "about_intro": "具備新媒體藝術碩士背景，專注於全端網頁開發與互動應用架構設計。",
     "about_heading": "核心專長與專業定位",
-    "about_p1": "許哲誠，25歲，畢業於國立臺灣藝術大學新媒體藝術碩士班。主修 VR/AR 互動應用開發、全端網頁架構與多媒體美學設計。具備創新思維、跨領域溝通協調與專案企劃能力，擅長自我管理，對新技術與挑戰充滿熱忱。",
+    "about_p1": "許哲誠，國立臺灣藝術大學新媒體藝術碩士。專精於全端系統架構、即時互動應用開發與現代多媒體視覺工程。具備獨立系統設計能力、前後端垂直整合與高效跨領域協作實務，擅長自主技術調研與工程落地，專注於建構兼具嚴謹資料邏輯與流暢互動體驗的現代數位系統。",
     "stat_exp": "臺藝大碩士",
     "stat_exp_label": "新媒體藝術碩士畢業",
     "stat_projects": "多種核心專案",
@@ -34,8 +34,8 @@
     "view_credential": "檢視成績證明",
 
     "skills_title": "專業技能",
-    "skills_intro": "涵蓋互動應用開發、全端架構與多媒體美學設計，展現跨領域全方位開發實力。",
-    "skills_subtitle": "涵蓋互動應用開發、全端架構與多媒體美學設計，展現跨領域全方位開發實力。",
+    "skills_intro": "整合 Java/Spring Boot 後端、Angular/React 前端、Unity/Unreal 即時渲染引擎與 3D 視覺管線之實務技術棧。",
+    "skills_subtitle": "整合 Java/Spring Boot 後端、Angular/React 前端、Unity/Unreal 即時渲染引擎與 3D 視覺管線之實務技術棧。",
 
     "projects_title": "專案作品",
     "projects_note": "所有專案均包含真實展示畫面與相關連結，可點擊查看影片展示、線上網站或 GitHub 專頁。",
@@ -56,7 +56,7 @@
     "cat_gal_sketch": "2D 精細素描",
 
     "exp_title": "經歷",
-    "exp_intro": "完整的學術研究歷程、專業產業實務經驗、原廠研習培訓與國際學術論文發表成果。",
+    "exp_intro": "包含新媒體藝術研究所歷程、國科會產學專案開發、次世代遊戲美術實務與全端整合工程訓練。",
     "degree_section_title": "學歷",
     "work_section_title": "工作經歷",
     "edu_master": "國立臺灣藝術大學 — 新媒體藝術碩士班 (碩士)",
@@ -83,7 +83,7 @@
     "btn_view_slides": "檢視論文簡報",
 
     "awards_title": "專業證照",
-    "awards_intro": "具備國家級技術士技能檢定與多項多媒體、3D 建模及 Office 原廠國際專業認證。",
+    "awards_intro": "取得多項國家級技術士證照、3D 數位設計認證與多益英語能力檢定。",
     "btn_view_cert_proof": "檢視證照",
     "btn_view_drive_folder": "檢視全部證照目錄",
 
@@ -103,17 +103,17 @@
     "nav_sub_workshops": "Workshops",
     "nav_sub_publications": "Publications",
 
-    "hero_badge_spec": "AI & Emerging Tech Focus",
+    "hero_badge_spec": "Continuous Research in Full-Stack Architecture & Real-Time Systems",
     "hero_title": "HSU, CHE-CHENG",
-    "hero_subtitle_pc": "Interactive App Dev / Fullstack Dev / Multimedia Design",
-    "hero_desc": "Specializing in interactive application development, fullstack web architecture, and new media design aesthetics to deliver immersive digital experiences.",
+    "hero_subtitle_pc": "Fullstack Dev / Interactive App Dev / Multimedia Design",
+    "hero_desc": "Dedicated to full-stack software architecture and real-time interactive systems. Skilled in bridging low-level data logic with high-fidelity immersive interaction, adhering to modular design and code maintainability, and committed to building stable, responsive digital products.",
     "btn_github": "GitHub Profile",
     "btn_artstation": "ArtStation Portfolio",
 
     "about_title": "About",
-    "about_intro": "Holding an M.A. in New Media Art, focusing on interactive application development, fullstack web engineering, and multimedia design.",
+    "about_intro": "Holding an M.A. in New Media Art, specializing in fullstack web engineering and interactive application architecture.",
     "about_heading": "Core Competency & Specialization",
-    "about_p1": "Che-Cheng Hsu, 25 years old, graduated with an M.A. in New Media Art from National Taiwan University of Arts. Majoring in VR/AR interactive application development, fullstack web engineering, and multimedia design. Possesses innovative thinking, cross-domain communication skills, project planning expertise, self-management, and a passion for new technology challenges.",
+    "about_p1": "Che-Cheng Hsu holds an M.A. in New Media Art from National Taiwan University of Arts. Specializing in full-stack system architecture, real-time interactive application development, and modern multimedia visual engineering. Possesses strong independent system design capability, vertical full-stack integration skills, and efficient cross-functional collaboration experience. Excels in autonomous technical research and engineering delivery, dedicated to building modern digital systems that seamlessly combine rigorous data logic with fluid interactive experiences.",
     "stat_exp": "NTUA Master",
     "stat_exp_label": "M.A. in New Media Art",
     "stat_projects": "Diverse Core Projects",
@@ -124,8 +124,8 @@
     "view_credential": "View Credential",
 
     "skills_title": "Skills",
-    "skills_intro": "Covering interactive application dev, fullstack architecture, and multimedia design aesthetics.",
-    "skills_subtitle": "Covering interactive application dev, fullstack architecture, and multimedia design aesthetics.",
+    "skills_intro": "A solid technical stack integrating Java/Spring Boot backend, Angular/React frontend, Unity/Unreal real-time engines, and 3D visual pipelines.",
+    "skills_subtitle": "A solid technical stack integrating Java/Spring Boot backend, Angular/React frontend, Unity/Unreal real-time engines, and 3D visual pipelines.",
 
     "projects_title": "Projects",
     "projects_note": "All projects feature authentic previews and interactive links to explore video demos, live sites, or GitHub repositories.",
@@ -146,7 +146,7 @@
     "cat_gal_sketch": "2D Fine Sketch",
 
     "exp_title": "Experience",
-    "exp_intro": "Comprehensive academic research, professional work experience, industry training programs, and published research papers.",
+    "exp_intro": "Spanning graduate research at NTUA, NSTC research projects, AAA game 3D asset production, and full-stack engineering bootcamps.",
     "degree_section_title": "Degrees",
     "work_section_title": "Work Experience",
     "edu_master": "National Taiwan University of Arts — M.A. in New Media Art (Master)",
@@ -173,7 +173,7 @@
     "btn_view_slides": "View Slides",
 
     "awards_title": "Credentials",
-    "awards_intro": "Holding national technician licenses and international professional software certifications.",
+    "awards_intro": "National technician licenses, 3D digital design certifications, and TOEIC English proficiency credentials.",
     "btn_view_cert_proof": "View Credential",
     "btn_view_drive_folder": "View All Credentials",
 

@@ -206,15 +206,8 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
   const [selectedProjectModal, setSelectedProjectModal] = useState<ProjectItem | null>(null);
 
   /**
-   * TODO: [後端端點對接] 取得使用者模式精選專案列表與技術展示詳細資訊
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/projects
-   * 3. 請求參數:
-   *    - Query Params: category (string, 可選), featured (boolean, 可選)
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: ProjectItem[] }
-   *    - 500 Internal Server Error: 伺服器讀取專案列表失敗
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，直接採用本地靜態 JSON 資料 (projects-section.json) 驅動，待後端 API 完成後改由 apiClient.get() 取得。
+   * [資料來源調度] 精選專案列表與技術展示資料
+   * 由 PortfolioDataContext 提供統一資料驅動，具備可見度過濾與快照備援。
    */
   const { data } = usePortfolioData();
   const rawProjects = ((data.projects || projectsData) as ProjectItem[]);
@@ -290,13 +283,13 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const isFeaturedSideBySideView = filter === 'featured';
 
-  // 專案類別篩選順序：精選作品 -> 全部作品 -> 互動應用 (青) -> 全端開發 (藍) -> 前端開發 (紫)
+  // 專案類別篩選順序：精選作品 -> 全部作品 -> 全端開發 -> 前端開發 -> 互動應用
   const filters = [
     { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
     { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
-    { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
     { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={15} /> },
+    { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
   ];
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
@@ -559,45 +552,44 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         {/* 精選作品模式：雙領域左右對稱 3+3 雙旗艦緊湊排版 (Dual-Domain Compact Symmetrical Showcase) */}
         {isFeaturedSideBySideView ? (
           <div ref={gridRef} className="max-w-6xl mx-auto space-y-4 sm:space-y-5">
-            {/* 領域對等標頭 (Equal-Status Pillar Headers) — 乾淨俐落、居中正中、官方分類名稱 */}
+            {/* 領域對等標頭 (Equal-Status Pillar Headers) — 乾淨俐落、居中正中、官方分類名稱，左右兩側統一為一致的科技青色標準樣式 */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-center pt-2">
-              {/* 左側：互動應用開發 (青色 #00f0ff) */}
+              {/* 左側：全端開發 (左側交換，統一與右側一致的標準青色風格) */}
               <div
                 className="flex items-center justify-center pb-2.5 border-b-2 relative"
-                style={{ borderColor: isLight ? '#38bdf8' : 'rgba(0, 240, 255, 0.45)' }}
+                style={{ borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.45)' }}
               >
                 <h3
                   className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
-                  style={{ color: isLight ? '#0369a1' : '#00f0ff' }}
+                  style={{ color: isLight ? '#0284c7' : '#00f0ff' }}
                 >
-                  {lang === 'zh' ? categoryMap.interactive.zh : categoryMap.interactive.en}
+                  {lang === 'zh' ? categoryMap.fullstack.zh : categoryMap.fullstack.en}
                 </h3>
               </div>
 
-              {/* 右側：全端開發 (極光電光天藍 #38bdf8 - 高對比清晰透亮) */}
+              {/* 右側：互動應用開發 (右側交換，統一與左側一致的標準青色風格) */}
               <div
                 className="flex items-center justify-center pb-2.5 border-b-2 relative"
-                style={{ borderColor: isLight ? '#0284c7' : 'rgba(56, 189, 248, 0.6)' }}
+                style={{ borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.45)' }}
               >
                 <h3
                   className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
-                  style={{ color: isLight ? '#0284c7' : '#38bdf8' }}
+                  style={{ color: isLight ? '#0284c7' : '#00f0ff' }}
                 >
-                  {lang === 'zh' ? categoryMap.fullstack.zh : categoryMap.fullstack.en}
+                  {lang === 'zh' ? categoryMap.interactive.zh : categoryMap.interactive.en}
                 </h3>
               </div>
             </div>
 
             {/* 3 列雙欄等高卡片配對 (Symmetrical Row-By-Row Grid) */}
             {[0, 1, 2].map((idx) => {
-              const leftProject = featuredInteractiveProjects[idx];
-              const rightProject = featuredFullstackProjects[idx];
+              const leftProject = featuredFullstackProjects[idx];
+              const rightProject = featuredInteractiveProjects[idx];
               if (!leftProject && !rightProject) return null;
 
-              const renderCompactCard = (project: ProjectItem | undefined, domain: 'interactive' | 'fullstack', pIdx: number) => {
+              const renderCompactCard = (project: ProjectItem | undefined, domain: 'fullstack' | 'interactive', pIdx: number) => {
                 if (!project) return <div className="hidden lg:block" />;
 
-                const isInteractive = domain === 'interactive';
                 const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
                 const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
                 const categoryObj = categoryMap[project.category] ?? fallbackCategoryStyle;
@@ -607,52 +599,36 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 return (
                   <Tilt3DCard
                     key={project.id}
-                    isInteractive={isInteractive}
+                    isInteractive={domain === 'interactive'}
                     className={`cyber-card border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-lg relative flex flex-col overflow-hidden group reveal-scale reveal-d${((pIdx % 3) + 1) as 1 | 2 | 3}`}
                     style={{
-                      background: isInteractive
-                        ? (isLight
-                            ? 'linear-gradient(145deg, #f0fdfa 0%, #ffffff 60%, #f8fafc 100%)'
-                            : 'linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)')
-                        : (isLight
-                            ? 'linear-gradient(145deg, #eff6ff 0%, #ffffff 60%, #f8fafc 100%)'
-                            : 'linear-gradient(145deg, rgba(59, 130, 246, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)'),
-                      borderColor: isInteractive
-                        ? (isLight ? '#7dd3fc' : 'rgba(0, 240, 255, 0.35)')
-                        : (isLight ? '#93c5fd' : 'rgba(96, 165, 250, 0.38)'),
+                      background: isLight
+                        ? 'linear-gradient(145deg, #f0fdfa 0%, #ffffff 60%, #f8fafc 100%)'
+                        : 'linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)',
+                      borderColor: isLight ? '#7dd3fc' : 'rgba(0, 240, 255, 0.35)',
                       boxShadow: isLight
                         ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 4px 20px rgba(0,0,0,0.04)'
-                        : isInteractive
-                          ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 240, 255, 0.1)'
-                          : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(59, 130, 246, 0.1)',
+                        : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 240, 255, 0.1)',
                     }}
                   >
                     {/* 1. 頂部通欄 Header：作品名稱（左）＋ 右邊標籤（右，嚴格單行絕對不折行） */}
                     <div
                       className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between gap-3 min-w-0"
                       style={{
-                        backgroundColor: isLight
-                          ? (isInteractive ? 'rgba(240, 253, 250, 0.9)' : 'rgba(239, 246, 255, 0.9)')
-                          : (isInteractive ? 'rgba(0, 240, 255, 0.05)' : 'rgba(59, 130, 246, 0.05)'),
-                        borderColor: isInteractive
-                          ? (isLight ? '#bae6fd' : 'rgba(0, 240, 255, 0.22)')
-                          : (isLight ? '#bfdbfe' : 'rgba(96, 165, 250, 0.22)'),
+                        backgroundColor: isLight ? 'rgba(240, 253, 250, 0.9)' : 'rgba(0, 240, 255, 0.05)',
+                        borderColor: isLight ? '#bae6fd' : 'rgba(0, 240, 255, 0.22)',
                       }}
                     >
                       <div className="flex items-center gap-2 min-w-0 flex-1">
                         <div
                           className="w-1.5 h-4 rounded-xs shrink-0 transition-all duration-300 group-hover:scale-y-125"
                           style={{
-                            backgroundColor: isInteractive ? '#00f0ff' : '#3b82f6',
-                            boxShadow: isInteractive
-                              ? '0 0 8px rgba(0, 240, 255, 0.7)'
-                              : '0 0 8px rgba(59, 130, 246, 0.7)',
+                            backgroundColor: '#00f0ff',
+                            boxShadow: '0 0 8px rgba(0, 240, 255, 0.7)',
                           }}
                         />
                         <h4
-                          className={`text-sm sm:text-base font-black font-hud uppercase tracking-tight cursor-pointer transition-colors leading-tight truncate ${
-                            isInteractive ? 'hover:text-cyan-400' : 'hover:text-blue-400'
-                          }`}
+                          className="text-sm sm:text-base font-black font-hud uppercase tracking-tight cursor-pointer transition-colors leading-tight truncate hover:text-cyan-400"
                           style={{ color: isLight ? '#0f172a' : '#ffffff' }}
                           onClick={() => setSelectedProjectModal(project)}
                           title={title}
@@ -696,9 +672,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                       <div
                         className="w-full aspect-video rounded-sm relative overflow-hidden bg-slate-950 border cyber-cut-sm cursor-pointer flex items-center justify-center group/thumb self-center"
                         style={{
-                          borderColor: isInteractive
-                            ? (isLight ? '#bae6fd' : 'rgba(0,240,255,0.25)')
-                            : (isLight ? '#bfdbfe' : 'rgba(96,165,250,0.3)'),
+                          borderColor: isLight ? '#bae6fd' : 'rgba(0,240,255,0.25)',
                         }}
                         onClick={() => setSelectedProjectModal(project)}
                       >
@@ -752,9 +726,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                       className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-t mt-auto"
                       style={{
                         backgroundColor: isLight ? '#f8fafc' : 'rgba(3, 7, 18, 0.6)',
-                        borderColor: isInteractive
-                          ? (isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.18)')
-                          : (isLight ? '#eff6ff' : 'rgba(96, 165, 250, 0.18)'),
+                        borderColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.18)',
                       }}
                     >
                       {renderProjectActionButtons(project, true)}

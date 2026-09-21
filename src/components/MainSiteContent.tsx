@@ -22,6 +22,7 @@ import { CyberParticles } from './CyberParticles';
 import { FullStackCodeStreamBackground } from './FullStackCodeStreamBackground';
 import { GlobalAmbientNeon } from './GlobalAmbientNeon';
 import { YoutubeModal } from './YoutubeModal';
+import { usePortfolioData } from '../context/PortfolioDataContext';
 
 // 首屏以下區塊：全面採動態延遲載入 (Lazy Load) 以極限縮減首屏 JS 解析與 Style & Layout 重排時間
 const About          = lazy(() => import('./About'));
@@ -56,15 +57,56 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
   const [ytModal, setYtModal] = useState<YtModalState>({ open: false, videoId: '', title: '' });
 
   /**
-   * TODO: [後端端點對接] 取得使用者模式主頁面區塊模組渲染順序
-   * 1. HTTP Method: GET
-   * 2. 預期端點: /api/v1/modules-order
-   * 3. 請求參數: 無
-   * 4. 預期回應:
-   *    - 200 OK: { success: true, data: string[] }
-   * 5. 當前狀態: 使用者模式嚴格與 CMS 隔離，採用官方標準排列順序，待後端 API 完成後改由 apiClient.get() 取得。
+   * [模組渲染順序] 主頁面核心區塊渲染順序定義
+   * 採用官方標準模組流向架構，提供訪客端高穩定性的展示拓撲。
    */
+  const { data } = usePortfolioData();
   const moduleOrder = ['home', 'about', 'skills', 'projects', 'awards', 'experience', 'gallery'];
+
+  const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
+    if (data?.site_settings?.modules_visibility) {
+      return { home: true, ...data.site_settings.modules_visibility };
+    }
+    try {
+      const saved = localStorage.getItem('portfolio_modules_visibility');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          return { home: true, ...parsed };
+        }
+      }
+    } catch {}
+    return { home: true };
+  });
+
+  React.useEffect(() => {
+    if (data?.site_settings?.modules_visibility) {
+      setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+    }
+  }, [data?.site_settings?.modules_visibility]);
+
+  React.useEffect(() => {
+    const handleVisUpdate = () => {
+      try {
+        const saved = localStorage.getItem('portfolio_modules_visibility');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed && typeof parsed === 'object') {
+            setModuleVisibility({ home: true, ...parsed });
+            return;
+          }
+        }
+      } catch {}
+      setModuleVisibility({ home: true });
+    };
+
+    window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+    window.addEventListener('storage', handleVisUpdate);
+    return () => {
+      window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
+      window.removeEventListener('storage', handleVisUpdate);
+    };
+  }, []);
 
   const handleOpenYoutube = (videoId: string, title: string) => {
     setYtModal({ open: true, videoId, title });
@@ -75,6 +117,10 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
   };
 
   const renderSection = (id: string) => {
+    if (id !== 'home' && moduleVisibility[id] === false) {
+      return null;
+    }
+
     switch (id) {
       case 'home':
         return <Hero key="home" soundPlaying={soundPlaying} />;
