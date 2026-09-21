@@ -67,65 +67,20 @@ interface ProjectItem {
   };
 }
 
-/** 3D 視差傾斜卡片元件 (Cyberpunk 3D Tilt Card with dynamic light glare) */
+/** 作品卡片容器（已移除 3D 視差效果，保留結構相容性） */
 const Tilt3DCard: React.FC<{
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
   isInteractive?: boolean;
-}> = ({ children, className = '', style = {}, isInteractive }) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState('');
-  const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-
-    // 舒適且不失震撼的 ±7 度 3D 視差旋轉
-    const rotateX = ((0.5 - y) * 14).toFixed(2);
-    const rotateY = ((x - 0.5) * 14).toFixed(2);
-
-    setTransform(`perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`);
-    setGlare({ x: x * 100, y: y * 100, opacity: 0.16 });
-  };
-
-  const handleMouseLeave = () => {
-    setTransform('perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)');
-    setGlare((prev) => ({ ...prev, opacity: 0 }));
-  };
-
+}> = ({ children, className = '', style = {} }) => {
   return (
-    <div
-      ref={cardRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className={className}
-      style={{
-        ...style,
-        transform: transform || undefined,
-        transition: transform ? 'transform 0.12s ease-out' : 'transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1)',
-        transformStyle: 'preserve-3d',
-        willChange: 'transform',
-      }}
-    >
+    <div className={className} style={style}>
       {children}
-      {/* 3D 滑鼠跟隨光斑反射 */}
-      <div
-        className="pointer-events-none absolute inset-0 z-30 transition-opacity duration-300"
-        style={{
-          opacity: glare.opacity,
-          background: `radial-gradient(circle at ${glare.x}% ${glare.y}%, ${
-            isInteractive ? 'rgba(0, 240, 255, 0.45)' : 'rgba(56, 189, 248, 0.45)'
-          } 0%, transparent 65%)`,
-          mixBlendMode: 'screen',
-        }}
-      />
     </div>
   );
 };
+
 
 interface ProjectsProps {
   onOpenYoutube: (ytId: string, title: string) => void;

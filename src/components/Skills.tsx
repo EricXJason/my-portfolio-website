@@ -10,7 +10,7 @@
  * ============================================================================
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useLang, Language } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { usePortfolioData } from '../context/PortfolioDataContext';
@@ -116,13 +116,14 @@ export const Skills: React.FC = () => {
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
 
   const primarySkills = currentSkills.filter((s) => s.catTier === 'primary');
+  const [primaryActiveTab, setPrimaryActiveTab] = useState(0);
   const commonSkills  = currentSkills.filter((s) => s.catTier === 'common');
   const secondarySkills = currentSkills.filter((s) => s.catTier === 'secondary');
 
   // 全站順序色嚴格規範：青色 (Cyan) → 藍色 (Sky/Blue) → 紫色 (Purple) → 綠色 (Emerald Green)
   const catAccents: Record<string, { main: string; bg: string; border: string }> = {
     fullstack: { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)',   border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)'   }, // 1. 青色
-    game:      { main: isLight ? '#1d4ed8' : '#38bdf8', bg: isLight ? '#eff6ff' : 'rgba(56,189,248,0.15)', border: isLight ? '#93c5fd' : 'rgba(56,189,248,0.4)'  }, // 2. 藍色
+    game:      { main: isLight ? '#1d4ed8' : '#60a5fa', bg: isLight ? '#eff6ff' : 'rgba(96,165,250,0.15)', border: isLight ? '#93c5fd' : 'rgba(96,165,250,0.4)'  }, // 2. 藍色（更鑑和）
     common:    { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' }, // 3. 紫色
     media:     { main: isLight ? '#059669' : '#34d399', bg: isLight ? '#ecfdf5' : 'rgba(16,185,129,0.14)', border: isLight ? '#6ee7b7' : 'rgba(52,211,153,0.42)' }, // 4. 綠色 (第四順位嚴格遵照青藍紫綠)
   };
@@ -164,7 +165,33 @@ export const Skills: React.FC = () => {
             </h3>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* 手機端 Tab 切換器 (< md) */}
+          {primarySkills.length > 1 && (
+            <div className="flex md:hidden gap-0 border cyber-cut-sm overflow-hidden mb-4"
+              style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0,240,255,0.2)' }}
+            >
+              {primarySkills.map((cat, idx) => {
+                const accent = catAccents[cat.catType] || catAccents.game;
+                const isActive = primaryActiveTab === idx;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setPrimaryActiveTab(idx)}
+                    className="flex-1 py-2 text-xs font-bold font-hud uppercase tracking-wider transition-all duration-200 cursor-pointer"
+                    style={{
+                      backgroundColor: isActive ? accent.bg : 'transparent',
+                      color: isActive ? accent.main : (isLight ? '#64748b' : '#94a3b8'),
+                      borderRight: idx < primarySkills.length - 1 ? `1px solid ${isLight ? '#cbd5e1' : 'rgba(0,240,255,0.2)'}` : 'none',
+                    }}
+                  >
+                    {cat.category}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {primarySkills.map((cat, idx) => {
               const CatIcon = (cat.icon ? getLucideIconByName(cat.icon) : null) || CAT_ICON_MAP[cat.catType] || Gamepad2;
               const accent = catAccents[cat.catType] || catAccents.game;
@@ -172,7 +199,7 @@ export const Skills: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className={`cyber-card p-6 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-xl relative reveal-scale reveal-d${(idx + 1) as 1 | 2}`}
+                  className={`cyber-card p-5 sm:p-7 border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-xl relative reveal-scale reveal-d${(idx + 1) as 1 | 2}${idx !== primaryActiveTab ? ' hidden md:block' : ''}`}
                   style={{
                     background: isLight
                       ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
@@ -183,36 +210,37 @@ export const Skills: React.FC = () => {
                       : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
                   }}
                 >
-                  <div className="space-y-6">
-                    {/* 分類標題列與對應圖示 */}
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between items-start gap-3 border-b border-slate-700/40 pb-4">
-                      <div className="flex items-center gap-3 min-w-0">
+                  <div className="space-y-5">
+                    {/* 分類標題列 — 永遠 flex-row 防止行動端破版 */}
+                    <div className="flex items-center justify-between gap-2 border-b border-slate-700/40 pb-3">
+                      <div className="flex items-center gap-2.5 min-w-0">
                         <div
-                          className="p-2.5 sm:p-3 border cyber-cut-sm shrink-0"
+                          className="p-2 sm:p-2.5 border cyber-cut-sm shrink-0"
                           style={{
                             backgroundColor: accent.bg,
                             borderColor: accent.border,
                             color: accent.main,
                           }}
                         >
-                          <CatIcon size={22} />
+                          <CatIcon size={20} />
                         </div>
-                        <h4 className="text-lg sm:text-2xl font-black font-hud uppercase tracking-tight" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
+                        <h4 className="text-base sm:text-xl font-black font-hud uppercase tracking-tight truncate" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
                           {cat.category}
                         </h4>
                       </div>
 
                       <span
-                        className="px-3 sm:px-3.5 py-1 border font-tech text-xs sm:text-sm font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs self-start sm:self-auto"
+                        className="px-2.5 py-0.5 border font-tech text-[10px] sm:text-xs font-bold uppercase tracking-wider cyber-cut-sm shrink-0 shadow-xs"
                         style={{
                           backgroundColor: accent.bg,
                           borderColor: accent.border,
                           color: accent.main,
                         }}
                       >
-                        {lang === 'zh' ? '核心專長' : 'CORE FOCUS'}
+                        {lang === 'zh' ? '核心專長' : 'CORE'}
                       </span>
                     </div>
+
 
                     {/* 技能項目條列 */}
                     <div className="space-y-4">
