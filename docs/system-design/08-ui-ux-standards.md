@@ -56,6 +56,17 @@
 - **科技天藍色 (Tech Sky Blue)**：`#0284c7` (對比度 5.8:1，符合 AA / AAA Large 標準)。
 - **高對比覆寫保護 (Contrast Override Guard)**：在淺色模式下，`bg-[var(--neon-cyan)]` 內之文字與圖示強制指定為純白色（`--neon-cyan-fg: #ffffff`），徹底根除深天藍底印黑字導致的閱讀障礙。
 
+### 3.3 全站領域分類順序色與精選金色規範 (Sequential Color Hierarchy)
+
+為形塑層次嚴密且語意一致之戰術介面，全站專案作品、專業技能與畫廊展示統一遵循以下順序色彩與高亮規則：
+
+- **精選專案高亮 (Featured Golden Accent)**：金色 (`#f59e0b` / `#fbbf24`)，代表最核心之旗艦代表作。
+- **全部項目基調 (All Items Neutral)**：純白色 (`#ffffff` / `#0f172a`)，提供最高清晰度之全視角導航。
+- **第一領域 (Tier 1 - Fullstack / 3D Scenes)**：青色 (`#00f0ff` / `#0284c7`)，象徵全端架構與空間建構。
+- **第二領域 (Tier 2 - Interactive / 3D Assets)**：藍色 (`#3b82f6` / `#1d4ed8`)，象徵即時互動與物件演算。
+- **第三領域 (Tier 3 - Software / 2D Sketches)**：紫色 (`#c084fc` / `#7c3aed`)，象徵工程架構與手繪骨架。
+- **第四領域 (Tier 4 - Multimedia / 2D Marker)**：綠色 (`#34d399` / `#059669`)，象徵色彩感知與視覺合成。
+
 ---
 
 ## 4. 資材與多媒體格式分流規範 | Multimedia Asset Segregation Protocol

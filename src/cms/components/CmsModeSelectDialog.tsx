@@ -83,9 +83,13 @@ export const CmsModeSelectDialog: React.FC = () => {
       onConfirm: () => {
         try {
           sessionStorage.setItem('portfolio_site_entered', 'true');
+          sessionStorage.setItem('portfolio_from_cms', 'true');
         } catch {}
         setExitConfirm(EMPTY_DIALOG);
         navigate('/');
+        try {
+          window.location.href = '/';
+        } catch {}
       },
     });
   };

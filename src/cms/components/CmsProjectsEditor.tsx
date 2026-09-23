@@ -277,7 +277,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     (p) => p.featured && p.category === 'interactive'
   ).length;
   const fullstackFeaturedCount = projects.filter(
-    (p) => p.featured && (p.category === 'fullstack' || p.category === 'frontend')
+    (p) => p.featured && p.category === 'fullstack'
   ).length;
   const currentCatFeaturedCount = isInteractive
     ? interactiveFeaturedCount
@@ -303,7 +303,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       const sameCatProjects = projects.filter((p) =>
         isInteractive
           ? p.category === 'interactive'
-          : p.category === 'fullstack' || p.category === 'frontend'
+          : p.category === 'fullstack'
       );
       const usedOrders = new Set(
         sameCatProjects
@@ -359,7 +359,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
           p.featured &&
           (isInteractive
             ? p.category === 'interactive'
-            : p.category === 'fullstack' || p.category === 'frontend') &&
+            : p.category === 'fullstack') &&
           p.featuredOrder === newOrder
       );
       if (conflictIdx !== -1) {
@@ -835,12 +835,6 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
             )}
           </div>
 
-          <p className="text-[10px] text-[var(--text-sub)]/60 font-['Noto_Sans_TC'] px-1">
-            {isEn
-              ? 'Click to edit; use ▲/▼ or drag vertically to reorder'
-              : '點選專案進行編輯，可點擊 ▲/▼ 或垂直拖曳調整順位'}
-          </p>
-
           {/* 垂直專案列表（嚴格垂直排列，零水平溢出） */}
           <div className="space-y-2">
             {projects.map((proj, idx) => {
@@ -904,11 +898,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                           <span className="text-[9px] font-['Noto_Sans_TC'] px-1.5 py-0.2 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)]">
                             {proj.category === 'interactive'
                               ? (isEn ? 'Interactive App' : '互動應用開發')
-                              : proj.category === 'frontend'
-                              ? (isEn ? 'Frontend Dev' : '前端開發')
-                              : proj.category === 'fullstack'
-                              ? (isEn ? 'Fullstack Dev' : '全端開發')
-                              : proj.category}
+                              : (isEn ? 'Fullstack Dev' : '全端開發')}
                           </span>
 
                           {/* 精選推薦徽章 */}
@@ -1071,7 +1061,6 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                 className="w-full px-4 py-2.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-sm text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] cursor-pointer"
               >
                 <option value="interactive">{isEn ? 'Interactive App' : '互動應用開發'}</option>
-                <option value="frontend">{isEn ? 'Frontend Dev' : '前端開發'}</option>
                 <option value="fullstack">{isEn ? 'Fullstack Dev' : '全端開發'}</option>
               </select>
             </div>

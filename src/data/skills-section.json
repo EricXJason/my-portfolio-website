@@ -33,7 +33,7 @@
         { "label": "軟體架構與設計模式", "rowType": "tech", "content": "SOLID Principles / Clean Code / Observer Pattern / Event-driven Architecture / Object Pool / Singleton" },
         { "label": "版本控制與維運工具", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Sourcetree" },
         { "label": "系統分析與架構圖表", "rowType": "tech", "content": "Mermaid / draw.io / Notion / Markdown / Office Suite" },
-        { "label": "AI 輔助開發工程", "rowType": "tech", "content": "Claude Code / Antigravity / Cursor / OpenAI Codex" }
+        { "label": "AI 輔助開發工程", "rowType": "tech", "content": "AGENTS.md / MCP / Skills / Claude Code / Cursor / Antigravity" }
       ]
     },
     {
@@ -80,7 +80,7 @@
         { "label": "Software Architecture & Design Patterns", "rowType": "tech", "content": "SOLID Principles / Clean Code / Observer Pattern / Event-driven Architecture / Object Pool / Singleton" },
         { "label": "Version Control & DevOps", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Sourcetree" },
         { "label": "System Analysis & Diagrams", "rowType": "tech", "content": "Mermaid / draw.io / Notion / Markdown / Office Suite" },
-        { "label": "AI-Assisted Development Engineering", "rowType": "tech", "content": "Claude Code / Antigravity / Cursor / OpenAI Codex" }
+        { "label": "AI-Assisted Development Engineering", "rowType": "tech", "content": "AGENTS.md / MCP / Skills / Claude Code / Cursor / Antigravity" }
       ]
     },
     {

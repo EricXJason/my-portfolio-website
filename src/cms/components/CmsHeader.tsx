@@ -70,8 +70,12 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
         setReturnToSiteDialog(EMPTY_DIALOG);
         try {
           sessionStorage.setItem('portfolio_site_entered', 'true');
+          sessionStorage.setItem('portfolio_from_cms', 'true');
         } catch {}
         navigate('/');
+        try {
+          window.location.href = '/';
+        } catch {}
       },
     });
   };

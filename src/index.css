@@ -346,31 +346,28 @@ body {
 }
 .filter-btn-inactive {
   background-color: rgba(8, 14, 26, 0.80);
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #ffffff;
 }
 .filter-btn-inactive:hover {
-  background-color: #00f0ff !important;
-  color: #030712 !important;
-  border-color: #00f0ff !important;
-  box-shadow: 0 0 18px rgba(0, 240, 255, 0.45) !important;
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 :root.light .filter-btn-active {
-  background: #0369a1 !important;
-  color: #ffffff !important;
-  border-color: #0369a1 !important;
-  box-shadow: 0 4px 14px rgba(3, 105, 161, 0.35) !important;
+  background: #0369a1;
+  color: #ffffff;
+  border-color: #0369a1;
+  box-shadow: 0 4px 14px rgba(3, 105, 161, 0.35);
 }
 :root.light .filter-btn-inactive {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
+  background-color: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
 :root.light .filter-btn-inactive:hover {
-  background-color: #0369a1 !important;
-  color: #ffffff !important;
-  border-color: #0369a1 !important;
-  box-shadow: 0 4px 14px rgba(3, 105, 161, 0.35) !important;
+  background-color: #f1f5f9;
+  border-color: #94a3b8;
 }
 
 /* ════════════════════════════════════════════════════════════

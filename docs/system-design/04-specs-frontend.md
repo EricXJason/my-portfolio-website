@@ -15,7 +15,7 @@
 | **Hero 首頁看板 (Hero Banner)** | 賽博龐克機甲微表情機器人（支援滑鼠軌跡眼球追蹤）、雙語標題與動態副標、外部社群一鍵連結與剪貼簿聯絡資訊複製 / Cyberpunk mecha avatar with pupil tracking, dual-language typewriter headers, and one-click contact copying |
 | **About 關於我 (About Me)** | 個人專業簡歷、新媒體藝術學術背景與三大核心指標卡片（碩士學位、多專案實績、國際證照）/ Professional bio, academic background, and metric summary HUD cards |
 | **Skills 技能矩陣 (Skills Matrix)** | 兩大核心領域（遊戲開發、全端工程）與輔助技能矩陣，晶片化科技標籤展示，根分類永久顯示而子項具細粒度開關 / Core engineering domains (Game Dev, Full-Stack) with chip-style tech tags |
-| **Projects 專案作品 (Featured Projects)** | 多維度過濾（全部、互動應用、前端開發、全端開發）、精選橫向看板、全專案矩陣、雙欄詳情燈箱與 YouTube 影音嵌入，支援隱藏項目自動脫離精選 / Multi-tag filtering, spotlight showcases, lightbox inspector, and embedded video demo |
+| **Projects 專案作品 (Featured Projects)** | 多維度過濾（精選作品、全部、全端開發、互動應用）、精選橫向看板、全專案矩陣、雙欄詳情燈箱與 YouTube 影音嵌入，支援隱藏項目自動脫離精選 / Multi-tag filtering (Featured, All, Fullstack, Interactive), spotlight showcases, lightbox inspector, and embedded video demo |
 | **Education 經歷學術 (Academic & Experience)** | 整合學歷歷程、工作經歷、國科會研習歷程與論文期刊發表，以結束時間精確自動降序排序並支援雲端連結 / Timeline chronicle covering academics, professional career, research projects, and publications |
 | **Certifications 專業證照 (Certificates)** | 國際語言檢定（TOEIC 755 藍色證書，具可視性開關）與專業技術證照庫，支援外部證明文件直接檢視驗證 / Global language proficiency and professional engineering certifications |
 | **Art Gallery 美術畫廊 (Art Gallery)** | 3D 場景/道具輪盤展示、互動 3D 檢視器（ArtStation 3D 嵌入）、2D 麥克筆與概念素描燈箱 / 3D prop turntable showcases, interactive ArtStation 3D embedded viewer, and 2D concept art lightbox |

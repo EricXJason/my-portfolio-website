@@ -91,8 +91,12 @@ const CmsAppInner: React.FC = () => {
     } else if (dest.type === 'route') {
       try {
         sessionStorage.setItem('portfolio_site_entered', 'true');
+        sessionStorage.setItem('portfolio_from_cms', 'true');
       } catch {}
       navigate(dest.target);
+      try {
+        window.location.href = dest.target;
+      } catch {}
     } else if (dest.type === 'mode') {
       signOut();
     }
@@ -109,8 +113,12 @@ const CmsAppInner: React.FC = () => {
     } else if (dest.type === 'route') {
       try {
         sessionStorage.setItem('portfolio_site_entered', 'true');
+        sessionStorage.setItem('portfolio_from_cms', 'true');
       } catch {}
       navigate(dest.target);
+      try {
+        window.location.href = dest.target;
+      } catch {}
     } else if (dest.type === 'mode') {
       signOut();
     }
@@ -151,9 +159,13 @@ const CmsAppInner: React.FC = () => {
           onConfirm: () => {
             try {
               sessionStorage.setItem('portfolio_site_entered', 'true');
+              sessionStorage.setItem('portfolio_from_cms', 'true');
             } catch {}
             setShowExitConfirmDialog(false);
             navigate('/');
+            try {
+              window.location.href = '/';
+            } catch {}
           },
         }}
         onClose={() => setShowExitConfirmDialog(false)}

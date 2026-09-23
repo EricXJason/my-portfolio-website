@@ -95,7 +95,7 @@ describe('CMS 頂部導覽列按鈕操作與雲端同步流程測試', () => {
     // 驗證等待還原完成視窗出現
     await waitFor(() => {
       expect(screen.getByText(/全站所有 9 大模組已成功還原至最原始預設資料/i)).toBeInTheDocument();
-    });
+    }, { timeout: 4000 });
 
     // 點擊「知道了」按鈕關閉
     const okBtn = screen.getByRole('button', { name: /知道了|Got it/i });

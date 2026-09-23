@@ -79,13 +79,13 @@ const DEFAULT_SKILLS_META: Record<'zh' | 'en', SkillsMeta> = {
 };
 
 
-/** Automatic CIS category dot color indicator — 青(185°)→藍(205°)→紫(270°)→赤珊瑚紅(340°) */
+/** Automatic CIS category dot color indicator — 青(全端)→藍(互動)→紫(通用軟體)→綠(多媒體設計) */
 const getCategoryDotColor = (catType: string, idx: number): string => {
   if (catType === 'fullstack') return '#00f0ff'; // 青
-  if (catType === 'game')      return '#38bdf8'; // 藍
-  if (catType === 'common')    return '#c084fc'; // 紫
-  if (catType === 'media')     return '#ff4d6d'; // 賽博赤珊瑚紅
-  const palette = ['#00f0ff', '#38bdf8', '#c084fc', '#ff4d6d'];
+  if (catType === 'game')      return '#3b82f6'; // 藍
+  if (catType === 'common')    return '#a855f7'; // 紫
+  if (catType === 'media')     return '#10b981'; // 綠 (Emerald/Green)
+  const palette = ['#00f0ff', '#3b82f6', '#a855f7', '#10b981'];
   return palette[idx % palette.length];
 };
 
@@ -468,38 +468,38 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
         isPreview={isPreview}
       />
 
-      {/* 4 大主專業技能固定分類標籤頁 */}
-      <div className="space-y-2">
-        <div className="flex items-center justify-between px-1">
-          <p className="text-xs text-[var(--text-sub)]/80 font-['Share_Tech_Mono']">
-            {isEn ? '4 Core Skill Categories (Fixed Structure & Order)' : '4 大主專業技能分類 · 固定架構與順序'}
-          </p>
-          <span className="text-[11px] font-mono px-2 py-0.5 border cyber-cut-sm bg-cyan-500/10 text-[var(--neon-cyan)] border-cyan-500/30">
-            {isEn ? 'CUSTOMIZABLE CATEGORIES' : '4 大主專業分類 · 可自由命名'}
-          </span>
-        </div>
-        <div className="flex flex-wrap gap-2.5">
-          {categories.map((cat, idx) => {
-            const isActive = idx === activeCategoryIndex;
-            const dotColor = getCategoryDotColor(cat.catType, idx);
-            return (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setActiveCategoryIndex(idx)}
-                className={`px-4 py-2.5 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                  isActive
-                    ? 'bg-[var(--neon-cyan)]/15 border-[var(--neon-cyan)] text-[var(--neon-cyan)] shadow-[0_0_15px_rgba(0,240,255,0.2)]'
-                    : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
-                }`}
-              >
-                <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
-                <span>{cat.category}</span>
-                <span className="text-[10px] font-mono opacity-70">({cat.items.length})</span>
-              </button>
-            );
-          })}
-        </div>
+      {/* 4 大主專業技能分類標籤頁 */}
+      <div className="flex flex-wrap gap-2.5">
+        {categories.map((cat, idx) => {
+          const isActive = idx === activeCategoryIndex;
+          const dotColor = getCategoryDotColor(cat.catType, idx);
+          return (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => setActiveCategoryIndex(idx)}
+              style={
+                isActive
+                  ? {
+                      backgroundColor: `${dotColor}18`,
+                      borderColor: dotColor,
+                      color: dotColor,
+                      boxShadow: `0 0 15px ${dotColor}35`,
+                    }
+                  : undefined
+              }
+              className={`px-4 py-2.5 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                isActive
+                  ? ''
+                  : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
+              }`}
+            >
+              <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
+              <span>{cat.category}</span>
+              <span className="text-[10px] font-mono opacity-70">({cat.items.length})</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* 當前選取主技能類別與子項目編輯區 */}
@@ -550,11 +550,6 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
                     {currentCategory.catTier === 'primary' ? (isEn ? 'CORE TIER' : '核心領域') : (isEn ? 'SUPPORTING TIER' : '輔助領域')}
                   </span>
                 </div>
-                <p className="text-xs text-[var(--text-sub)]/70 font-['Noto_Sans_TC'] mt-1">
-                  {isEn
-                    ? 'Custom category name supported. Manage subcategories and tags below.'
-                    : '支援自訂主分類名稱；請於下方管理子分類領域、技術標籤與開關狀態。'}
-                </p>
               </div>
             </div>
           </div>
@@ -578,10 +573,6 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
                 </button>
               )}
             </div>
-
-            <p className="text-[10px] text-[var(--text-sub)]/50 font-['Share_Tech_Mono']">
-              {isEn ? 'Drag the grip to reorder items.' : '拖曳左側握把可調整技能項目順序。'}
-            </p>
 
             <div className="space-y-3">
               {currentCategory.items.map((item, itemIdx) => {

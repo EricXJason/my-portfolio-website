@@ -196,27 +196,105 @@ export const ArtGallery: React.FC = () => {
 
         {/* 分類篩選列 — 行動端 2 欄等寬網格 / 桌面端彈性換行 */}
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => {
-                setActiveTab(tab.key);
-                setIsExpanded(false);
-              }}
-              role="tab"
-              aria-selected={activeTab === tab.key}
-              className={`h-11 px-3 sm:px-6 w-full sm:w-auto border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap ${
-                activeTab === tab.key
-                  ? 'filter-btn-active scale-[1.02] sm:scale-105 shadow-md'
-                  : 'filter-btn-inactive'
-              }`}
-            >
-              <div className="flex items-center justify-center gap-2 whitespace-nowrap">
-                {tab.icon}
-                <span className="whitespace-nowrap">{tab.label}</span>
-              </div>
-            </button>
-          ))}
+          {tabs.map((tab, idx) => {
+            const isLastOdd = idx === tabs.length - 1 && tabs.length % 2 !== 0;
+            const isActive = activeTab === tab.key;
+
+            // 篩選按鈕專屬色系（精選為金色、全部為白色、3D場景/3D物件/素描/麥克筆依序為青/藍/紫/綠）
+            let customActiveStyle: React.CSSProperties = {};
+            let hoverClass = '';
+
+            if (tab.key === 'featured') {
+              hoverClass = 'hover:border-amber-400 hover:text-amber-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#fef3c7' : 'rgba(245, 158, 11, 0.16)',
+                  color: isLight ? '#b45309' : '#fbbf24',
+                  borderColor: isLight ? '#f59e0b' : '#f59e0b',
+                  boxShadow: isLight ? '0 4px 14px rgba(245, 158, 11, 0.35)' : '0 0 14px rgba(245, 158, 11, 0.45)',
+                };
+              }
+            } else if (tab.key === 'all') {
+              hoverClass = 'hover:border-white hover:text-white';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#0f172a' : 'rgba(255, 255, 255, 0.14)',
+                  color: '#ffffff',
+                  borderColor: isLight ? '#0f172a' : '#ffffff',
+                  boxShadow: isLight ? '0 4px 14px rgba(15, 23, 42, 0.30)' : '0 0 14px rgba(255, 255, 255, 0.45)',
+                };
+              }
+            } else if (tab.key === '3d-scene') {
+              // 3D 場景：青色 (Cyan)
+              hoverClass = 'hover:border-cyan-400 hover:text-cyan-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.16)',
+                  color: isLight ? '#ffffff' : '#00f0ff',
+                  borderColor: isLight ? '#0284c7' : '#00f0ff',
+                  boxShadow: isLight ? '0 4px 14px rgba(2, 132, 199, 0.35)' : '0 0 14px rgba(0, 240, 255, 0.45)',
+                };
+              }
+            } else if (tab.key === '3d-prop') {
+              // 3D 物件：藍色 (Blue)
+              hoverClass = 'hover:border-blue-400 hover:text-blue-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#2563eb' : 'rgba(59, 130, 246, 0.18)',
+                  color: isLight ? '#ffffff' : '#60a5fa',
+                  borderColor: isLight ? '#2563eb' : '#3b82f6',
+                  boxShadow: isLight ? '0 4px 14px rgba(37, 99, 235, 0.35)' : '0 0 14px rgba(59, 130, 246, 0.45)',
+                };
+              }
+            } else if (tab.key === 'sketch') {
+              // 2D 素描：紫色 (Purple)
+              hoverClass = 'hover:border-purple-400 hover:text-purple-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#7e22ce' : 'rgba(168, 85, 247, 0.18)',
+                  color: isLight ? '#ffffff' : '#c084fc',
+                  borderColor: isLight ? '#7e22ce' : '#a855f7',
+                  boxShadow: isLight ? '0 4px 14px rgba(126, 34, 206, 0.35)' : '0 0 14px rgba(168, 85, 247, 0.45)',
+                };
+              }
+            } else if (tab.key === 'marker') {
+              // 2D 麥克筆：綠色 (Green / Emerald)
+              hoverClass = 'hover:border-emerald-400 hover:text-emerald-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#059669' : 'rgba(16, 185, 129, 0.18)',
+                  color: isLight ? '#ffffff' : '#34d399',
+                  borderColor: isLight ? '#059669' : '#10b981',
+                  boxShadow: isLight ? '0 4px 14px rgba(5, 150, 105, 0.35)' : '0 0 14px rgba(16, 185, 129, 0.45)',
+                };
+              }
+            }
+
+            return (
+              <button
+                key={tab.key}
+                onClick={() => {
+                  setActiveTab(tab.key);
+                  setIsExpanded(false);
+                }}
+                role="tab"
+                aria-selected={isActive}
+                style={customActiveStyle}
+                className={`h-11 px-3 sm:px-6 w-full sm:w-auto border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap ${
+                  isLastOdd ? 'col-span-2 sm:col-span-1' : ''
+                } ${
+                  isActive
+                    ? 'filter-btn-active scale-[1.02] sm:scale-105 shadow-md'
+                    : `filter-btn-inactive ${hoverClass}`
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2 whitespace-nowrap text-inherit">
+                  {tab.icon}
+                  <span className="whitespace-nowrap">{tab.label}</span>
+                </div>
+              </button>
+            );
+          })}
         </div>
 
         {/* 精選 3D 封面流展示輪播 */}
@@ -414,15 +492,27 @@ export const ArtGallery: React.FC = () => {
             }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {displayedArt.map((art) => (
-                <div
-                  key={art.id}
-                  onClick={() => setActiveImage(art)}
-                  className="group relative overflow-hidden cyber-cut-sm border cursor-pointer aspect-square w-full shadow-md transition-all hover:border-cyan-400"
-                  style={{
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)',
-                  }}
-                >
+              {displayedArt.map((art) => {
+                const hoverBorderClass =
+                  art.cat === '3d-scene'
+                    ? 'hover:border-cyan-400'
+                    : art.cat === '3d-prop'
+                    ? 'hover:border-blue-400'
+                    : art.cat === 'sketch'
+                    ? 'hover:border-purple-400'
+                    : art.cat === 'marker'
+                    ? 'hover:border-emerald-400'
+                    : 'hover:border-cyan-400';
+
+                return (
+                  <div
+                    key={art.id}
+                    onClick={() => setActiveImage(art)}
+                    className={`group relative overflow-hidden cyber-cut-sm border cursor-pointer aspect-square w-full shadow-md transition-all ${hoverBorderClass}`}
+                    style={{
+                      borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)',
+                    }}
+                  >
                   {art.img ? (
                     <img
                       src={getAssetUrl(art.img)}
@@ -440,7 +530,8 @@ export const ArtGallery: React.FC = () => {
                     </div>
                   )}
                 </div>
-              ))}
+              );
+            })}
             </div>
 
             {filteredArt.length > 8 && (

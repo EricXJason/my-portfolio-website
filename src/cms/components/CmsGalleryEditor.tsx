@@ -678,18 +678,13 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
 
       {/* 畫廊藝術作品網格列表（支援拖曳排序） */}
       <div className="space-y-3">
-        <div className="text-xs font-['Noto_Sans_TC'] text-[var(--text-sub)] flex items-center justify-between px-1">
-          <span>
-            {activeCategory === 'featured'
-              ? (isEn ? 'Featured Artworks (Max 10, rendered in order in front-end 3D wheel):' : '精選作品清單（最多 10 件，依設定順序呈現於前臺 3D 輪盤）：')
-              : (isEn ? 'Drag items to reorder gallery artwork sequence:' : '按住左側把手可拖曳調整畫廊作品排序順序：')}
-          </span>
-          {activeCategory === 'featured' && (
+        {activeCategory === 'featured' && (
+          <div className="flex items-center justify-end px-1">
             <span className="text-[10px] font-mono text-[var(--neon-cyan)]">
               {isEn ? `Featured: ${featuredCount}/${MAX_FEATURED}` : `精選：${featuredCount}/${MAX_FEATURED}`}
             </span>
-          )}
-        </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {filteredItems.map((item) => {

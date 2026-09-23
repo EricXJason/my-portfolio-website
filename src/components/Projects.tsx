@@ -99,38 +99,27 @@ interface CategoryStyle {
 }
 
 const categoryMap: Record<string, CategoryStyle> = {
-  interactive: {
-    zh: '互動應用開發',
-    en: 'Interactive App',
+  fullstack: {
+    zh: '全端開發',
+    en: 'Fullstack Dev',
     darkBg: 'rgba(0, 240, 255, 0.12)',
     darkBorder: 'rgba(0, 240, 255, 0.45)',
     darkText: '#00f0ff',
     lightBg: '#e0f2fe',
     lightBorder: '#0284c7',
     lightText: '#0369a1',
-    iconName: 'interactive',
+    iconName: 'fullstack',
   },
-  fullstack: {
-    zh: '全端開發',
-    en: 'Fullstack Dev',
+  interactive: {
+    zh: '互動應用開發',
+    en: 'Interactive App',
     darkBg: 'rgba(59, 130, 246, 0.16)',
     darkBorder: 'rgba(96, 165, 250, 0.55)',
-    darkText: '#93c5fd',
+    darkText: '#60a5fa',
     lightBg: '#eff6ff',
     lightBorder: '#3b82f6',
     lightText: '#1d4ed8',
-    iconName: 'fullstack',
-  },
-  frontend: {
-    zh: '前端開發',
-    en: 'Frontend Dev',
-    darkBg: 'rgba(168, 85, 247, 0.20)',
-    darkBorder: '#a855f7',
-    darkText: '#c084fc',
-    lightBg: '#f3e8ff',
-    lightBorder: '#7c3aed',
-    lightText: '#6b21a8',
-    iconName: 'frontend',
+    iconName: 'interactive',
   },
 };
 
@@ -221,7 +210,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const featuredFullstackProjects = useMemo(() => {
     return projects
-      .filter((p) => (p.category === 'fullstack' || p.category === 'frontend') && p.featured && p.visible !== false)
+      .filter((p) => p.category === 'fullstack' && p.featured && p.visible !== false)
       .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999))
       .slice(0, 3);
   }, [projects]);
@@ -238,12 +227,11 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const isFeaturedSideBySideView = filter === 'featured';
 
-  // 專案類別篩選順序：精選作品 -> 全部作品 -> 全端開發 -> 前端開發 -> 互動應用
+  // 專案類別篩選順序：精選作品 -> 全部作品 -> 全端開發 -> 互動應用
   const filters = [
     { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
     { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
     { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
-    { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={15} /> },
     { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
   ];
 
@@ -478,6 +466,54 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2.5 sm:gap-3 max-w-5xl mx-auto mb-12" role="tablist">
           {filters.map((f, idx) => {
             const isLastOdd = idx === filters.length - 1 && filters.length % 2 !== 0;
+            const isActive = filter === f.key;
+
+            // 篩選按鈕專屬色系（精選為金色、全部為白色、全端為青色、互動為藍色）
+            let customActiveStyle: React.CSSProperties = {};
+            let hoverClass = '';
+
+            if (f.key === 'featured') {
+              hoverClass = 'hover:border-amber-400 hover:text-amber-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#fef3c7' : 'rgba(245, 158, 11, 0.16)',
+                  color: isLight ? '#b45309' : '#fbbf24',
+                  borderColor: isLight ? '#f59e0b' : '#f59e0b',
+                  boxShadow: isLight ? '0 4px 14px rgba(245, 158, 11, 0.35)' : '0 0 14px rgba(245, 158, 11, 0.45)',
+                };
+              }
+            } else if (f.key === 'all') {
+              hoverClass = 'hover:border-white hover:text-white';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#0f172a' : 'rgba(255, 255, 255, 0.14)',
+                  color: '#ffffff',
+                  borderColor: isLight ? '#0f172a' : '#ffffff',
+                  boxShadow: isLight ? '0 4px 14px rgba(15, 23, 42, 0.30)' : '0 0 14px rgba(255, 255, 255, 0.45)',
+                };
+              }
+            } else if (f.key === 'fullstack') {
+              hoverClass = 'hover:border-cyan-400 hover:text-cyan-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.16)',
+                  color: isLight ? '#ffffff' : '#00f0ff',
+                  borderColor: isLight ? '#0284c7' : '#00f0ff',
+                  boxShadow: isLight ? '0 4px 14px rgba(2, 132, 199, 0.35)' : '0 0 14px rgba(0, 240, 255, 0.45)',
+                };
+              }
+            } else if (f.key === 'interactive') {
+              hoverClass = 'hover:border-blue-400 hover:text-blue-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#2563eb' : 'rgba(59, 130, 246, 0.18)',
+                  color: isLight ? '#ffffff' : '#60a5fa',
+                  borderColor: isLight ? '#2563eb' : '#3b82f6',
+                  boxShadow: isLight ? '0 4px 14px rgba(37, 99, 235, 0.35)' : '0 0 14px rgba(59, 130, 246, 0.45)',
+                };
+              }
+            }
+
             return (
               <button
                 key={f.key}
@@ -486,16 +522,17 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                   setShowAllProjects(false);
                 }}
                 role="tab"
-                aria-selected={filter === f.key}
+                aria-selected={isActive}
+                style={customActiveStyle}
                 className={`h-11 px-3 sm:px-6 w-full sm:w-auto border cyber-cut-sm font-tech text-xs sm:text-sm font-bold uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center text-center whitespace-nowrap ${
                   isLastOdd ? 'col-span-2 sm:col-span-1' : ''
                 } ${
-                  filter === f.key
+                  isActive
                     ? 'filter-btn-active scale-[1.02] sm:scale-105 shadow-md'
-                    : 'filter-btn-inactive'
+                    : `filter-btn-inactive ${hoverClass}`
                 }`}
               >
-                <div className="flex items-center justify-center gap-2 whitespace-nowrap">
+                <div className="flex items-center justify-center gap-2 whitespace-nowrap text-inherit">
                   {f.icon}
                   <span className="whitespace-nowrap">{f.label}</span>
                 </div>
@@ -504,199 +541,229 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
           })}
         </div>
 
-        {/* 精選作品模式：雙領域左右對稱 3+3 雙旗艦緊湊排版 (Dual-Domain Compact Symmetrical Showcase) */}
+        {/* 精選作品模式：六個方塊完整左右對齊，RWD 依序排列且純線分隔 (Dual-Domain 6-Box Symmetrical Aligned Showcase) */}
         {isFeaturedSideBySideView ? (
-          <div ref={gridRef} className="max-w-6xl mx-auto space-y-4 sm:space-y-5">
-            {/* 領域對等標頭 (Equal-Status Pillar Headers) — 乾淨俐落、居中正中、官方分類名稱，左右兩側統一為一致的科技青色標準樣式 */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-center pt-2">
-              {/* 左側：全端開發 (左側交換，統一與右側一致的標準青色風格) */}
-              <div
-                className="flex items-center justify-center pb-2.5 border-b-2 relative"
-                style={{ borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.45)' }}
-              >
-                <h3
-                  className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
-                  style={{ color: isLight ? '#0284c7' : '#00f0ff' }}
-                >
-                  {lang === 'zh' ? categoryMap.fullstack.zh : categoryMap.fullstack.en}
-                </h3>
-              </div>
+          <div ref={gridRef} className="max-w-6xl mx-auto">
+            {/* 宣告式卡片渲染輔助函式 (左側全端為青色系、右側互動為藍色系，內部自適應 stretch 實現 100% 左右等高) */}
+            {(() => {
+              const renderCompactCard = (project: ProjectItem | undefined, domain: 'fullstack' | 'interactive', pIdx: number, extraClasses = '') => {
+                if (!project) return null;
 
-              {/* 右側：互動應用開發 (右側交換，統一與左側一致的標準青色風格) */}
-              <div
-                className="flex items-center justify-center pb-2.5 border-b-2 relative"
-                style={{ borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.45)' }}
-              >
-                <h3
-                  className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
-                  style={{ color: isLight ? '#0284c7' : '#00f0ff' }}
-                >
-                  {lang === 'zh' ? categoryMap.interactive.zh : categoryMap.interactive.en}
-                </h3>
-              </div>
-            </div>
-
-            {/* 3 列雙欄等高卡片配對 (Symmetrical Row-By-Row Grid) */}
-            {[0, 1, 2].map((idx) => {
-              const leftProject = featuredFullstackProjects[idx];
-              const rightProject = featuredInteractiveProjects[idx];
-              if (!leftProject && !rightProject) return null;
-
-              const renderCompactCard = (project: ProjectItem | undefined, domain: 'fullstack' | 'interactive', pIdx: number) => {
-                if (!project) return <div className="hidden lg:block" />;
-
+                const isFullstack = domain === 'fullstack';
                 const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
                 const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
-                const categoryObj = categoryMap[project.category] ?? fallbackCategoryStyle;
+                const categoryObj = categoryMap[project.category] ?? (isFullstack ? categoryMap.fullstack : categoryMap.interactive);
                 const categoryLabel = lang === 'zh' ? categoryObj.zh : categoryObj.en;
                 const isPlaceholder = !project.image || project.image.includes('placeholder');
 
+                // 顏色系統：左邊全端為青色 (Cyan)，右邊互動應用為藍色 (Blue)
+                const cardBorder = isLight
+                  ? (isFullstack ? '#7dd3fc' : '#93c5fd')
+                  : (isFullstack ? 'rgba(0, 240, 255, 0.35)' : 'rgba(96, 165, 250, 0.45)');
+                const cardBg = isLight
+                  ? (isFullstack ? 'linear-gradient(145deg, #f0fdfa 0%, #ffffff 60%, #f8fafc 100%)' : 'linear-gradient(145deg, #eff6ff 0%, #ffffff 60%, #f8fafc 100%)')
+                  : (isFullstack ? 'linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)' : 'linear-gradient(145deg, rgba(59, 130, 246, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)');
+                const cardShadow = isLight
+                  ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 4px 20px rgba(0,0,0,0.04)'
+                  : (isFullstack ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 240, 255, 0.1)' : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(59, 130, 246, 0.1)');
+                const headerBg = isLight
+                  ? (isFullstack ? 'rgba(240, 253, 250, 0.9)' : 'rgba(239, 246, 255, 0.9)')
+                  : (isFullstack ? 'rgba(0, 240, 255, 0.05)' : 'rgba(59, 130, 246, 0.05)');
+                const headerBorder = isLight
+                  ? (isFullstack ? '#bae6fd' : '#bfdbfe')
+                  : (isFullstack ? 'rgba(0, 240, 255, 0.22)' : 'rgba(96, 165, 250, 0.25)');
+                const pillarBg = isFullstack ? '#00f0ff' : '#3b82f6';
+                const pillarShadow = isFullstack ? '0 0 8px rgba(0, 240, 255, 0.7)' : '0 0 8px rgba(59, 130, 246, 0.7)';
+                const titleHoverClass = isFullstack ? 'hover:text-cyan-400' : 'hover:text-blue-400';
+                const thumbBorder = isLight
+                  ? (isFullstack ? '#bae6fd' : '#bfdbfe')
+                  : (isFullstack ? 'rgba(0, 240, 255, 0.25)' : 'rgba(96, 165, 250, 0.28)');
+                const footerBorder = isLight
+                  ? (isFullstack ? '#e0f2fe' : '#dbeafe')
+                  : (isFullstack ? 'rgba(0, 240, 255, 0.18)' : 'rgba(96, 165, 250, 0.20)');
+
                 return (
-                  <Tilt3DCard
-                    key={project.id}
-                    isInteractive={domain === 'interactive'}
-                    className={`cyber-card border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-lg relative flex flex-col overflow-hidden group reveal-scale reveal-d${((pIdx % 3) + 1) as 1 | 2 | 3}`}
-                    style={{
-                      background: isLight
-                        ? 'linear-gradient(145deg, #f0fdfa 0%, #ffffff 60%, #f8fafc 100%)'
-                        : 'linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)',
-                      borderColor: isLight ? '#7dd3fc' : 'rgba(0, 240, 255, 0.35)',
-                      boxShadow: isLight
-                        ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 4px 20px rgba(0,0,0,0.04)'
-                        : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 240, 255, 0.1)',
-                    }}
-                  >
-                    {/* 1. 頂部通欄 Header：作品名稱（左）＋ 右邊標籤（右，嚴格單行絕對不折行） */}
-                    <div
-                      className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between gap-3 min-w-0"
+                  <div key={project.id} className={`${extraClasses} flex flex-col h-full`}>
+                    <Tilt3DCard
+                      isInteractive={!isFullstack}
+                      className={`cyber-card border cyber-cut-corner backdrop-blur-xl transition-all duration-300 shadow-lg relative flex flex-col justify-between h-full flex-1 overflow-hidden group reveal-scale reveal-d${((pIdx % 3) + 1) as 1 | 2 | 3}`}
                       style={{
-                        backgroundColor: isLight ? 'rgba(240, 253, 250, 0.9)' : 'rgba(0, 240, 255, 0.05)',
-                        borderColor: isLight ? '#bae6fd' : 'rgba(0, 240, 255, 0.22)',
+                        background: cardBg,
+                        borderColor: cardBorder,
+                        boxShadow: cardShadow,
                       }}
                     >
-                      <div className="flex items-center gap-2 min-w-0 flex-1">
-                        <div
-                          className="w-1.5 h-4 rounded-xs shrink-0 transition-all duration-300 group-hover:scale-y-125"
-                          style={{
-                            backgroundColor: '#00f0ff',
-                            boxShadow: '0 0 8px rgba(0, 240, 255, 0.7)',
-                          }}
-                        />
-                        <h4
-                          className="text-sm sm:text-base font-black font-hud uppercase tracking-tight cursor-pointer transition-colors leading-tight truncate hover:text-cyan-400"
-                          style={{ color: isLight ? '#0f172a' : '#ffffff' }}
-                          onClick={() => setSelectedProjectModal(project)}
-                          title={title}
-                        >
-                          {title}
-                        </h4>
-                      </div>
+                      {/* 1. 頂部通欄 Header：作品名稱（左）＋ 右邊標籤（右） */}
+                      <div
+                        className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-b flex items-center justify-between gap-3 min-w-0"
+                        style={{
+                          backgroundColor: headerBg,
+                          borderColor: headerBorder,
+                        }}
+                      >
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <div
+                            className="w-1.5 h-4 rounded-xs shrink-0 transition-all duration-300 group-hover:scale-y-125"
+                            style={{
+                              backgroundColor: pillarBg,
+                              boxShadow: pillarShadow,
+                            }}
+                          />
+                          <h4
+                            className={`text-sm sm:text-base font-black font-hud uppercase tracking-tight cursor-pointer transition-colors leading-tight truncate ${titleHoverClass}`}
+                            style={{ color: isLight ? '#0f172a' : '#ffffff' }}
+                            onClick={() => setSelectedProjectModal(project)}
+                            title={title}
+                          >
+                            {title}
+                          </h4>
+                        </div>
 
-                      <div className="flex items-center gap-2 shrink-0">
-                        {(project.isFullAi || project.aiAssisted) && (
+                        <div className="flex items-center gap-2 shrink-0">
+                          {(project.isFullAi || project.aiAssisted) && (
+                            <span
+                              className="px-2.5 py-1 border font-tech text-xs font-extrabold uppercase cyber-cut-sm flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap tracking-wide"
+                              style={{
+                                backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.15)',
+                                borderColor: isLight ? '#34d399' : '#10b981',
+                                color: isLight ? '#065f46' : '#34d399',
+                              }}
+                              title="AI-Assisted Dev"
+                            >
+                              <Cpu size={13} className="shrink-0 text-emerald-400" />
+                              <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
+                            </span>
+                          )}
                           <span
                             className="px-2.5 py-1 border font-tech text-xs font-extrabold uppercase cyber-cut-sm flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap tracking-wide"
                             style={{
-                              backgroundColor: isLight ? '#d1fae5' : 'rgba(16, 185, 129, 0.15)',
-                              borderColor: isLight ? '#34d399' : '#10b981',
-                              color: isLight ? '#065f46' : '#34d399',
+                              backgroundColor: isLight ? categoryObj.lightBg : categoryObj.darkBg,
+                              borderColor: isLight ? categoryObj.lightBorder : categoryObj.darkBorder,
+                              color: isLight ? categoryObj.lightText : categoryObj.darkText,
                             }}
-                            title="AI-Assisted Dev"
                           >
-                            <Cpu size={13} className="shrink-0 text-emerald-400" />
-                            <span>{lang === 'zh' ? 'AI 輔助開發' : 'AI-Assisted Dev'}</span>
+                            {renderCategoryIcon(categoryObj.iconName, 13, "shrink-0")}
+                            <span>{categoryLabel}</span>
                           </span>
-                        )}
-                        <span
-                          className="px-2.5 py-1 border font-tech text-xs font-extrabold uppercase cyber-cut-sm flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap tracking-wide"
+                        </div>
+                      </div>
+
+                      {/* 2. 中間主體：左側 16:9 圖片 vs 右側 敘述容器 (flex-1 搭配 h-full 實現左右卡片 100% 等高齊平) */}
+                      <div className="p-3.5 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 items-stretch flex-1">
+                        {/* 左側：圖片 保持 16 比 9 */}
+                        <div
+                          className="w-full aspect-video rounded-sm relative overflow-hidden bg-slate-950 border cyber-cut-sm cursor-pointer flex items-center justify-center group/thumb self-center"
+                          style={{ borderColor: thumbBorder }}
+                          onClick={() => setSelectedProjectModal(project)}
+                        >
+                          {isPlaceholder ? (
+                            <div className="w-full h-full aspect-video p-3 flex flex-col items-center justify-center text-center space-y-1 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 select-none">
+                              <div className="w-7 h-7 rounded-sm flex items-center justify-center border border-slate-700/80 bg-slate-800/60 text-slate-400 group-hover/thumb:text-blue-400 transition-colors">
+                                <Code2 size={15} />
+                              </div>
+                              <span className="font-tech text-[10px] font-bold text-slate-300 uppercase tracking-wider">
+                                {lang === 'zh' ? '即將推出' : 'IN DEV'}
+                              </span>
+                              <span className="font-tech text-[8px] text-slate-500 uppercase tracking-widest">
+                                PROTOTYPE
+                              </span>
+                            </div>
+                          ) : (
+                            <>
+                              <img
+                                src={getAssetUrl(project.image)}
+                                alt={title}
+                                width="640"
+                                height="360"
+                                className="w-full h-full aspect-video object-cover object-center transition-transform duration-500 group-hover/thumb:scale-105"
+                                loading="lazy"
+                                decoding="async"
+                              />
+                              <div className="card-scanline-laser opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
+                            </>
+                          )}
+                        </div>
+
+                        {/* 右側：敘述容器 (自適應填滿剩餘高度並垂直居中文字) */}
+                        <div
+                          className="p-3 sm:p-3.5 rounded-sm border flex items-center transition-colors h-full"
                           style={{
-                            backgroundColor: isLight ? categoryObj.lightBg : categoryObj.darkBg,
-                            borderColor: isLight ? categoryObj.lightBorder : categoryObj.darkBorder,
-                            color: isLight ? categoryObj.lightText : categoryObj.darkText,
+                            backgroundColor: isLight ? '#f1f5f9' : 'rgba(15, 23, 42, 0.45)',
+                            borderColor: isLight ? '#e2e8f0' : 'rgba(51, 65, 85, 0.5)',
                           }}
                         >
-                          {renderCategoryIcon(categoryObj.iconName, 13, "shrink-0")}
-                          <span>{categoryLabel}</span>
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* 2. 中間主體：左側 16:9 圖片 vs 右側 敘述容器 (完全符合手繪示意圖 50/50 左右配置) */}
-                    <div className="p-3.5 sm:p-4 grid grid-cols-1 sm:grid-cols-2 gap-3.5 sm:gap-4 items-stretch flex-1">
-                      {/* 左側：圖片 保持 16 比 9 */}
-                      <div
-                        className="w-full aspect-video rounded-sm relative overflow-hidden bg-slate-950 border cyber-cut-sm cursor-pointer flex items-center justify-center group/thumb self-center"
-                        style={{
-                          borderColor: isLight ? '#bae6fd' : 'rgba(0,240,255,0.25)',
-                        }}
-                        onClick={() => setSelectedProjectModal(project)}
-                      >
-                        {isPlaceholder ? (
-                          <div className="w-full h-full aspect-video p-3 flex flex-col items-center justify-center text-center space-y-1 bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 select-none">
-                            <div className="w-7 h-7 rounded-sm flex items-center justify-center border border-slate-700/80 bg-slate-800/60 text-slate-400 group-hover/thumb:text-blue-400 transition-colors">
-                              <Code2 size={15} />
-                            </div>
-                            <span className="font-tech text-[10px] font-bold text-slate-300 uppercase tracking-wider">
-                              {lang === 'zh' ? '即將推出' : 'IN DEV'}
-                            </span>
-                            <span className="font-tech text-[8px] text-slate-500 uppercase tracking-widest">
-                              PROTOTYPE
-                            </span>
-                          </div>
-                        ) : (
-                          <>
-                            <img
-                              src={getAssetUrl(project.image)}
-                              alt={title}
-                              width="640"
-                              height="360"
-                              className="w-full h-full aspect-video object-cover object-center transition-transform duration-500 group-hover/thumb:scale-105"
-                              loading="lazy"
-                              decoding="async"
-                            />
-                            <div className="card-scanline-laser opacity-75 group-hover:opacity-100 transition-opacity duration-300" />
-                          </>
-                        )}
+                          <p
+                            className="text-xs sm:text-[13px] font-tech leading-relaxed"
+                            style={{ color: isLight ? '#334155' : '#cbd5e1' }}
+                          >
+                            {desc}
+                          </p>
+                        </div>
                       </div>
 
-                      {/* 右側：敘述 (手繪圖黃色區塊：帶舒適背景與邊框的敘述專用區塊) */}
+                      {/* 3. 底部通欄：按鈕區域 (mt-auto 確保永遠釘在最底端，與對側按鈕水平切齊) */}
                       <div
-                        className="p-3 sm:p-3.5 rounded-sm border flex items-center transition-colors"
+                        className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-t mt-auto"
                         style={{
-                          backgroundColor: isLight ? '#f1f5f9' : 'rgba(15, 23, 42, 0.45)',
-                          borderColor: isLight ? '#e2e8f0' : 'rgba(51, 65, 85, 0.5)',
+                          backgroundColor: isLight ? '#f8fafc' : 'rgba(3, 7, 18, 0.6)',
+                          borderColor: footerBorder,
                         }}
                       >
-                        <p
-                          className="text-xs sm:text-[13px] font-tech leading-relaxed"
-                          style={{ color: isLight ? '#334155' : '#cbd5e1' }}
-                        >
-                          {desc}
-                        </p>
+                        {renderProjectActionButtons(project, true)}
                       </div>
-                    </div>
-
-                    {/* 3. 底部通欄：按鈕區域 (手繪圖紫色底層：整行滿寬排開，絕無窄欄擠壓) */}
-                    <div
-                      className="px-3.5 py-2.5 sm:px-4 sm:py-3 border-t mt-auto"
-                      style={{
-                        backgroundColor: isLight ? '#f8fafc' : 'rgba(3, 7, 18, 0.6)',
-                        borderColor: isLight ? '#e0f2fe' : 'rgba(0, 240, 255, 0.18)',
-                      }}
-                    >
-                      {renderProjectActionButtons(project, true)}
-                    </div>
-                  </Tilt3DCard>
+                    </Tilt3DCard>
+                  </div>
                 );
               };
 
               return (
-                <div key={idx} className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-stretch">
-                  {renderCompactCard(leftProject, 'interactive', idx)}
-                  {renderCompactCard(rightProject, 'fullstack', idx)}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-stretch">
+                  {/* ── 行 1：全端開發 領域標頭 (青色) ── */}
+                  <div
+                    className="order-1 lg:order-none lg:col-start-1 lg:row-start-1 flex items-center justify-center pb-2.5 border-b-2 relative"
+                    style={{ borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.45)' }}
+                  >
+                    <h3
+                      className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
+                      style={{ color: isLight ? '#0284c7' : '#00f0ff' }}
+                    >
+                      {lang === 'zh' ? categoryMap.fullstack.zh : categoryMap.fullstack.en}
+                    </h3>
+                  </div>
+
+                  {/* ── 行 1：互動應用開發 領域標頭 (藍色) ── */}
+                  <div
+                    className="order-6 lg:order-none lg:col-start-2 lg:row-start-1 flex items-center justify-center pb-2.5 border-b-2 relative"
+                    style={{ borderColor: isLight ? '#2563eb' : 'rgba(96, 165, 250, 0.55)' }}
+                  >
+                    <h3
+                      className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
+                      style={{ color: isLight ? '#1d4ed8' : '#60a5fa' }}
+                    >
+                      {lang === 'zh' ? categoryMap.interactive.zh : categoryMap.interactive.en}
+                    </h3>
+                  </div>
+
+                  {/* ── 行 2：配對 1 (左 1 全端 vs 右 1 互動，在同一 Row 嚴格等高切齊) ── */}
+                  {renderCompactCard(featuredFullstackProjects[0], 'fullstack', 0, 'order-2 lg:order-none lg:col-start-1 lg:row-start-2')}
+                  {renderCompactCard(featuredInteractiveProjects[0], 'interactive', 0, 'order-7 lg:order-none lg:col-start-2 lg:row-start-2')}
+
+                  {/* ── 行 3：配對 2 (左 2 全端 vs 右 2 互動，在同一 Row 嚴格等高切齊) ── */}
+                  {renderCompactCard(featuredFullstackProjects[1], 'fullstack', 1, 'order-3 lg:order-none lg:col-start-1 lg:row-start-3')}
+                  {renderCompactCard(featuredInteractiveProjects[1], 'interactive', 1, 'order-8 lg:order-none lg:col-start-2 lg:row-start-3')}
+
+                  {/* ── 行 4：配對 3 (左 3 全端 vs 右 3 互動，在同一 Row 嚴格等高切齊) ── */}
+                  {renderCompactCard(featuredFullstackProjects[2], 'fullstack', 2, 'order-4 lg:order-none lg:col-start-1 lg:row-start-4')}
+                  {renderCompactCard(featuredInteractiveProjects[2], 'interactive', 2, 'order-9 lg:order-none lg:col-start-2 lg:row-start-4')}
+
+                  {/* ── RWD 行動端專屬分隔線 (僅於 < lg 螢幕顯示，單純俐落一條線，銜接舒適間距) ── */}
+                  <div
+                    className="order-5 block lg:hidden my-6 border-t col-span-1"
+                    style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)' }}
+                  />
                 </div>
               );
-            })}
+            })()}
           </div>
         ) : (
           /* STANDARD DETAILED LIST VIEW */

@@ -69,16 +69,12 @@ describe('CMS 側邊欄排序與管理單元測試', () => {
     ]);
   });
 
-  it('點擊返回網站按鈕應觸發 onExitToSite 回調', () => {
-    const onExitToSite = vi.fn();
-    renderCmsSidebar({ onExitToSite });
+  it('側邊欄底部正確渲染 GitHub、Firebase 與 Cloudflare 外部管理連結', () => {
+    renderCmsSidebar({});
 
-    // 取得「返回使用者模式」按鈕
-    const exitButton = screen.getByRole('button', { name: /返回使用者模式|Return to User Mode/i });
-    expect(exitButton).toBeInTheDocument();
-
-    fireEvent.click(exitButton);
-    expect(onExitToSite).toHaveBeenCalledTimes(1);
+    expect(screen.getByTitle('GitHub Repository')).toBeInTheDocument();
+    expect(screen.getByTitle('Firebase Console')).toBeInTheDocument();
+    expect(screen.getByTitle('Cloudflare Pages Dashboard')).toBeInTheDocument();
   });
 
   it('模組點擊切換應正確呼叫 onSelectTab 回調', () => {
