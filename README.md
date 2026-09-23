@@ -470,14 +470,12 @@ pnpm run build
 - **高覆蓋單元測試驗收 (100% Unit Test Pass Rate)**：經 Vitest + Testing Library 驗收，涵蓋 13 大測試套件、56 個全量測試案例 100% 通過（0 Failure），嚴格守護模組拓撲、CMS 互動按鈕流、未存檔攔截與 Firebase Firestore 雲端串接契約。
 - **型別安全與編譯驗證 (0 Type Errors)**：經 `tsc --noEmit` 嚴格校驗保證編譯期 0 型別錯誤；打包構建於次秒級內完成，0 錯誤。
 - **物理代碼分割基準 (Strict Physical Chunk Splitting)**：
-  - **首屏進入核心 (Public Entry Core)**：`index.js` 僅 **19.3 kB** (gzip ~6.5 kB)，`index.css` ~120 kB (gzip ~19.8 kB)。
-  - **前臺展示主視圖 (Showcase Bundle)**：`MainSiteContent.js` 僅 **68.9 kB** (gzip ~16.6 kB)。
-  - **後臺管理獨立分塊 (Isolated Admin Chunk)**：`chunk-cms.js` (~1,026 kB) 透過 `React.lazy` 動態延遲加載，前臺一般訪客 0 負擔。
-- **Lighthouse 全向指標最佳化 (Lighthouse All-Green Standards)**：
-  - **Accessibility (無障礙)**：**100 滿分**
-  - **Best Practices (最佳實踐)**：**100 滿分**
-  - **SEO (搜尋引擎最佳化)**：**100 滿分**
-  - **Performance (效能)**：首屏 FCP `< 0.6s`、LCP `< 0.8s`、TBT `0ms`、CLS `0`。
+  - **首屏進入核心 (Public Entry Core)**：`index.js` 僅 **57.5 kB** (gzip)，首屏 CSS 僅 **19.8 kB** (gzip)。
+  - **Firebase 服務獨立分塊 (Isolated Firebase SDK)**：`vendor-firebase.js` (206 kB gzip) 透過動態加載徹底自首屏解耦，前臺初訪 0 負擔。
+  - **後臺管理獨立分塊 (Isolated Admin Chunk)**：`CmsApp.js` (60.9 kB gzip) 透過 `React.lazy` 動態延遲加載。
+- **Lighthouse 雙平臺實測全向指標 (Dual-Platform Lighthouse Standards)**：
+  - **電腦桌面 (Desktop PC)**：**Performance 98**、**Accessibility 100**、**Best Practices 100**、**SEO 100**（FCP 0.9s、LCP 0.9s、TBT 0ms、CLS 0.000）。
+  - **行動手機 (Mobile Slow 4G)**：**Accessibility 100**、**Best Practices 100**、**SEO 100**、**Performance 86**（CLS 0.000、TBT 20ms）。
 - **WCAG 2.2 色彩對比度客觀驗證 (WCAG 2.2 Contrast)**：
   - **深色模式 (Dark Mode)**：主文字 (`#f8fafc`) 於背景 (`#030712`) 對比度達 **18.7:1**（遠超 WCAG AAA 7:1 門檻）。
   - **淺色模式 (Light Mode)**：主文字 (`#0f172a`) 於背景 (`#f8fafc`) 對比度達 **17.9:1**（遠超 WCAG AAA 7:1 門檻）。

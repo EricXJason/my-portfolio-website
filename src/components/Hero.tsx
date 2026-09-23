@@ -111,14 +111,14 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
   return (
     <section
       id="home"
-      className="min-h-screen pt-20 pb-12 sm:pt-24 sm:pb-16 flex items-center justify-center relative overflow-hidden select-text"
+      className="min-h-screen pt-28 sm:pt-36 lg:pt-40 pb-16 flex flex-col items-center justify-start relative overflow-hidden select-text"
     >
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10 w-full select-text">
         {/* ── 中央主要內容容器（自然無外框流式佈局） ── */}
         <div className="flex flex-col items-center text-center gap-3 sm:gap-4 max-w-5xl mx-auto select-text relative">
 
           {/* 機甲機器人微表情動態頭像 (支援即時視線追蹤與減弱動態模式) */}
-          <div className="hero-stagger hero-stagger-1">
+          <div className="hero-stagger hero-stagger-1 min-h-[128px] sm:min-h-[176px] lg:min-h-[192px] flex items-center justify-center">
             <SciFiRobotAvatar soundPlaying={soundPlaying} />
           </div>
 

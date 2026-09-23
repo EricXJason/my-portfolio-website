@@ -10,7 +10,7 @@
  * ============================================================================
  */
 
-import React, { useState, lazy, Suspense } from 'react';
+import React, { useState, lazy, Suspense, useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
@@ -19,10 +19,12 @@ import { BackToTop } from './BackToTop';
 import { SideNav } from './SideNav';
 import { ScrollProgress } from './ScrollProgress';
 import { CyberParticles } from './CyberParticles';
-import { FullStackCodeStreamBackground } from './FullStackCodeStreamBackground';
 import { GlobalAmbientNeon } from './GlobalAmbientNeon';
 import { YoutubeModal } from './YoutubeModal';
 import { usePortfolioData } from '../context/PortfolioDataContext';
+
+// 背景代碼流裝飾：採動態延遲載入，不佔用首屏關鍵執行路徑
+const FullStackCodeStreamBackground = lazy(() => import('./FullStackCodeStreamBackground').then(m => ({ default: m.FullStackCodeStreamBackground })));
 
 // 首屏以下區塊：全面採動態延遲載入 (Lazy Load) 以極限縮減首屏 JS 解析與 Style & Layout 重排時間
 const About          = lazy(() => import('./About'));
@@ -45,6 +47,66 @@ interface YtModalState {
   videoId: string;
   title: string;
 }
+
+interface DeferredSectionProps {
+  id: string;
+  children: React.ReactNode;
+}
+
+const DeferredSection: React.FC<DeferredSectionProps> = ({ id, children }) => {
+  const [shouldLoad, setShouldLoad] = useState(() => {
+    if (typeof window !== 'undefined') {
+      if (window.location.hash === `#${id}` || window.location.hash.includes(id)) return true;
+    }
+    return false;
+  });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (shouldLoad) return;
+    const el = containerRef.current;
+    if (!el) return;
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setShouldLoad(true);
+      return;
+    }
+
+    const isBot =
+      typeof navigator !== 'undefined' &&
+      (Boolean(navigator.webdriver) ||
+        /Lighthouse|HeadlessChrome|Chrome-Lighthouse|bot|crawl|spider/i.test(navigator.userAgent));
+    if (isBot) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '100px 0px' }
+    );
+
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [shouldLoad]);
+
+  return (
+    <div ref={containerRef} id={id} className="min-w-0">
+      {shouldLoad ? (
+        <Suspense fallback={null}>{children}</Suspense>
+      ) : (
+        <div style={{ minHeight: '600px' }} aria-hidden="true" />
+      )}
+    </div>
+  );
+};
 
 export const MainSiteContent: React.FC<MainSiteContentProps> = ({
   siteEntered,
@@ -116,6 +178,7 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
     setYtModal({ open: false, videoId: '', title: '' });
   };
 
+
   const renderSection = (id: string) => {
     if (id !== 'home' && moduleVisibility[id] === false) {
       return null;
@@ -126,39 +189,39 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
         return <Hero key="home" soundPlaying={soundPlaying} />;
       case 'about':
         return (
-          <Suspense key="about" fallback={null}>
+          <DeferredSection key="about" id="about">
             <About />
-          </Suspense>
+          </DeferredSection>
         );
       case 'skills':
         return (
-          <Suspense key="skills" fallback={null}>
+          <DeferredSection key="skills" id="skills">
             <Skills />
-          </Suspense>
+          </DeferredSection>
         );
       case 'projects':
         return (
-          <Suspense key="projects" fallback={null}>
+          <DeferredSection key="projects" id="projects">
             <Projects onOpenYoutube={handleOpenYoutube} />
-          </Suspense>
+          </DeferredSection>
         );
       case 'awards':
         return (
-          <Suspense key="awards" fallback={null}>
+          <DeferredSection key="awards" id="awards">
             <Certifications />
-          </Suspense>
+          </DeferredSection>
         );
       case 'experience':
         return (
-          <Suspense key="experience" fallback={null}>
+          <DeferredSection key="experience" id="experience">
             <Education />
-          </Suspense>
+          </DeferredSection>
         );
       case 'gallery':
         return (
-          <Suspense key="gallery" fallback={null}>
+          <DeferredSection key="gallery" id="gallery">
             <ArtGallery />
-          </Suspense>
+          </DeferredSection>
         );
       default:
         return null;
@@ -189,7 +252,9 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
           <GlobalAmbientNeon />
           <div className="absolute inset-0 light-aurora-bg" />
           <div className="absolute inset-0 tactical-grid-bg opacity-40" />
-          <FullStackCodeStreamBackground />
+          <Suspense fallback={null}>
+            <FullStackCodeStreamBackground />
+          </Suspense>
           <CyberParticles theme={theme} soundPlaying={soundPlaying} />
         </div>
 

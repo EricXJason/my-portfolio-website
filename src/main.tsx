@@ -24,7 +24,10 @@ window.scrollTo(0, 0);
 // 動態啟用 Google 字體樣式表，避免阻塞關鍵渲染路徑 (Non-render-blocking)
 const gf = document.getElementById('gfonts') as HTMLLinkElement | null;
 if (gf) {
-  gf.media = 'all';
+  // 透過 requestAnimationFrame 與非阻塞微任務延後啟用，確保首屏 DOM 瞬時 0ms Paint
+  requestAnimationFrame(() => {
+    gf.media = 'all';
+  });
 }
 
 const rootElement = document.getElementById('root')

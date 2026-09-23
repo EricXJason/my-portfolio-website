@@ -11,10 +11,9 @@
  */
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { doc, getDoc, onSnapshot } from 'firebase/firestore';
-import { db, isFirebaseConfigured } from '../services/firebase';
 import {
   savePortfolioDoc,
+  getPortfolioDoc,
   PortfolioDocId,
   LOCAL_FALLBACKS,
 } from '../services/portfolioDataService';
@@ -135,10 +134,6 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
    * 從 Firestore 批次拉取最新全域資料
    */
   const refreshFromCloud = useCallback(async () => {
-    if (!db || !isFirebaseConfigured) {
-      return;
-    }
-
     setIsLoadingCloud(true);
     const keys = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
     const cloudUpdates: Partial<PortfolioDataState> = {};
@@ -148,11 +143,8 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
       await Promise.all(
         keys.map(async (key) => {
           try {
-            const docRef = doc(db!, COLLECTION_NAME, key);
-            const snap = await getDoc(docRef);
-            if (snap.exists()) {
-              const docData = snap.data();
-              const payload = docData.payload !== undefined ? docData.payload : docData;
+            const payload = await getPortfolioDoc(key);
+            if (payload) {
               cloudUpdates[key] = payload;
               hasAnyCloudData = true;
             }
@@ -322,16 +314,14 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
     } catch {}
 
     // 3. 批次將乾淨的程式碼預設值同步還原至 Firestore
-    if (db && isFirebaseConfigured) {
-      const docIds = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
-      await Promise.all(
-        docIds.map((docId) =>
-          savePortfolioDoc(docId, LOCAL_FALLBACKS[docId]).catch((err) =>
-            console.error(`[DataContext]: Resetting ${docId} to cloud failed:`, err)
-          )
+    const docIds = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
+    await Promise.all(
+      docIds.map((docId) =>
+        savePortfolioDoc(docId, LOCAL_FALLBACKS[docId]).catch((err) =>
+          console.error(`[DataContext]: Resetting ${docId} to cloud failed:`, err)
         )
-      );
-    }
+      )
+    );
 
     setLastUpdated(new Date());
     setIsLoadingCloud(false);
@@ -348,14 +338,17 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
     window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
   }, []);
 
-  // 5. 自動指紋同步：當程式碼 JSON 修改時，自動 reset all 確保 CMS 與前臺即時反映最新內容
+  // 5. 自動指紋同步：當程式碼 JSON 修改時，更新本地指紋標記
   useEffect(() => {
     try {
       const currentFp = getContentFingerprint();
       const savedFp = localStorage.getItem('portfolio_content_fingerprint');
       if (savedFp !== currentFp) {
         localStorage.setItem('portfolio_content_fingerprint', currentFp);
-        resetAllToDefaults().catch(() => {});
+        const isCms = typeof window !== 'undefined' && window.location.pathname.startsWith('/cms');
+        if (isCms) {
+          resetAllToDefaults().catch(() => {});
+        }
       }
     } catch (e) {
       console.warn('[DataContext]: Auto fingerprint sync failed:', e);
@@ -364,60 +357,70 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // 智慧同步策略：CMS 管理模式啟用即時雙向監聽，前臺展示模式採用非阻塞 SWR 輕量抓取
   useEffect(() => {
-    if (!isFirebaseConfigured || !db) return;
-
     const isCmsMode = window.location.pathname.startsWith('/cms');
 
     if (isCmsMode) {
-      // 1. CMS 模式：掛載 onSnapshot 實現管理後臺與雲端資料庫之雙向即時同步
-      const keys = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
-      const unsubs: (() => void)[] = [];
+      // 1. CMS 模式：動態掛載 onSnapshot 實現管理後臺與雲端資料庫之雙向即時同步
+      let unsubs: (() => void)[] = [];
+      let isMounted = true;
 
-      keys.forEach((key) => {
+      (async () => {
         try {
-          const docRef = doc(db!, COLLECTION_NAME, key);
-          const unsub = onSnapshot(
-            docRef,
-            (snap) => {
-              if (snap.exists()) {
-                const docData = snap.data();
-                const payload = docData.payload !== undefined ? docData.payload : docData;
-                setData((prev) => ({
-                  ...prev,
-                  [key]: payload,
-                }));
-                // 同步至本機快照
-                try {
-                  const pKey = MODULE_KEY_MAP[key];
-                  if (pKey && payload) {
-                    localStorage.setItem(pKey, JSON.stringify(payload));
-                    if (key === 'site_settings') {
-                      if ((payload as any).modules_visibility) {
-                        localStorage.setItem('portfolio_modules_visibility', JSON.stringify((payload as any).modules_visibility));
-                        window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+          const { db, isFirebaseConfigured } = await import('../services/firebase');
+          if (!db || !isFirebaseConfigured || !isMounted) return;
+          const { doc, onSnapshot } = await import('firebase/firestore');
+
+          const keys = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
+          keys.forEach((key) => {
+            try {
+              const docRef = doc(db, COLLECTION_NAME, key);
+              const unsub = onSnapshot(
+                docRef,
+                (snap) => {
+                  if (snap.exists()) {
+                    const docData = snap.data();
+                    const payload = docData.payload !== undefined ? docData.payload : docData;
+                    setData((prev) => ({
+                      ...prev,
+                      [key]: payload,
+                    }));
+                    // 同步至本機快照
+                    try {
+                      const pKey = MODULE_KEY_MAP[key];
+                      if (pKey && payload) {
+                        localStorage.setItem(pKey, JSON.stringify(payload));
+                        if (key === 'site_settings') {
+                          if ((payload as any).modules_visibility) {
+                            localStorage.setItem('portfolio_modules_visibility', JSON.stringify((payload as any).modules_visibility));
+                            window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+                          }
+                          if ((payload as any).modules_order) {
+                            localStorage.setItem('portfolio_modules_order', JSON.stringify((payload as any).modules_order));
+                            window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+                          }
+                        }
                       }
-                      if ((payload as any).modules_order) {
-                        localStorage.setItem('portfolio_modules_order', JSON.stringify((payload as any).modules_order));
-                        window.dispatchEvent(new Event('portfolio_modules_order_updated'));
-                      }
-                    }
+                    } catch {}
+                    setIsCloudConnected(true);
+                    setLastUpdated(new Date());
                   }
-                } catch {}
-                setIsCloudConnected(true);
-                setLastUpdated(new Date());
-              }
-            },
-            (error) => {
-              console.warn(`[DataContext]: Snapshot listener error for ${key}:`, error);
+                },
+                (error) => {
+                  console.warn(`[DataContext]: Snapshot listener error for ${key}:`, error);
+                }
+              );
+              unsubs.push(unsub);
+            } catch (err) {
+              console.error(`[DataContext]: Failed to listen to ${key}:`, err);
             }
-          );
-          unsubs.push(unsub);
-        } catch (err) {
-          console.error(`[DataContext]: Failed to listen to ${key}:`, err);
+          });
+        } catch (e) {
+          console.warn('[DataContext]: Dynamic CMS firestore initialization failed:', e);
         }
-      });
+      })();
 
       return () => {
+        isMounted = false;
         unsubs.forEach((unsub) => unsub());
       };
     } else {

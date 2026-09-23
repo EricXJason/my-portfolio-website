@@ -94,9 +94,11 @@ describe('CMS 側邊欄排序與管理單元測試', () => {
   it('當調整模組排序後應存入 localStorage 並觸發廣播事件', () => {
     renderCmsSidebar();
 
-    // 尋找具有上移/下移動作之按鈕
+    // 尋找具有上移/下移動作且未禁用的按鈕
     const moveButtons = screen.getAllByRole('button').filter(
-      (btn) => btn.getAttribute('title')?.includes('移') || btn.getAttribute('aria-label')?.includes('移')
+      (btn) =>
+        (btn.getAttribute('title')?.includes('移') || btn.getAttribute('aria-label')?.includes('移')) &&
+        !btn.hasAttribute('disabled')
     );
 
     if (moveButtons.length > 0) {

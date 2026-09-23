@@ -9,8 +9,18 @@
  * ─────────────────────────────────────────────────────────────────────────────
  */
 
-import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { db, isFirebaseConfigured } from './firebase';
+// 內部非同步輔助函式：按需載入 Firebase 與 Firestore 模組
+async function getFirestoreContext() {
+  try {
+    const { db, isFirebaseConfigured } = await import('./firebase');
+    if (!db || !isFirebaseConfigured) return null;
+    const firestore = await import('firebase/firestore');
+    return { db, firestore };
+  } catch (err) {
+    console.warn('[DataService]: Dynamic import of Firebase failed:', err);
+    return null;
+  }
+}
 
 // 匯入本地靜態 JSON 作為安全降級備援
 import aboutData from '../data/about-section.json';
@@ -45,13 +55,15 @@ export type PortfolioDocId = keyof typeof LOCAL_FALLBACKS;
 export async function getPortfolioDoc<T>(docId: PortfolioDocId): Promise<T> {
   const fallback = LOCAL_FALLBACKS[docId] as unknown as T;
 
-  if (!db || !isFirebaseConfigured) {
+  const ctx = await getFirestoreContext();
+  if (!ctx) {
     return fallback;
   }
 
   try {
-    const docRef = doc(db, COLLECTION_NAME, docId);
-    const snap = await getDoc(docRef);
+    const { db, firestore } = ctx;
+    const docRef = firestore.doc(db, COLLECTION_NAME, docId);
+    const snap = await firestore.getDoc(docRef);
 
     if (snap.exists()) {
       const data = snap.data();
@@ -70,16 +82,18 @@ export async function getPortfolioDoc<T>(docId: PortfolioDocId): Promise<T> {
  * 儲存指定文檔資料至 Firestore
  */
 export async function savePortfolioDoc<T>(docId: PortfolioDocId, payload: T): Promise<boolean> {
-  if (!db || !isFirebaseConfigured) {
+  const ctx = await getFirestoreContext();
+  if (!ctx) {
     console.error(`[DataService]: Firestore not initialized. Unable to save ${docId}.`);
     throw new Error('Firebase Firestore 尚未初始化，無法寫入雲端資料庫');
   }
 
   try {
-    const docRef = doc(db, COLLECTION_NAME, docId);
-    await setDoc(docRef, {
+    const { db, firestore } = ctx;
+    const docRef = firestore.doc(db, COLLECTION_NAME, docId);
+    await firestore.setDoc(docRef, {
       payload,
-      _updatedAt: serverTimestamp(),
+      _updatedAt: firestore.serverTimestamp(),
     });
     return true;
   } catch (error) {
@@ -92,7 +106,8 @@ export async function savePortfolioDoc<T>(docId: PortfolioDocId, payload: T): Pr
  * 一鍵將本地所有靜態 JSON 同步/初始化上傳至 Firestore
  */
 export async function seedFirestoreFromLocalJson(): Promise<{ success: boolean; count: number; error?: string }> {
-  if (!db || !isFirebaseConfigured) {
+  const ctx = await getFirestoreContext();
+  if (!ctx) {
     return { success: false, count: 0, error: 'Firebase 尚未正確初始化' };
   }
 

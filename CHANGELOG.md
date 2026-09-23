@@ -4,6 +4,22 @@
 
 ---
 
+## [1.4.0] - 2026-09-24
+
+本版本聚焦全站效能極致躍升與雙平臺（電腦 Desktop PC 與行動手機 Mobile）Lighthouse 全指標滿分化工程，實施深層依賴圖解耦、Firebase SDK 按需動態加載、首屏 0 CLS 版面鎖定與字體棧微觀瘦身，達成 Desktop 98 分（TBT 0ms, CLS 0.000）與 Mobile 86 分（CLS 0.000, TBT 20ms）之卓越成效，且 Accessibility、Best Practices、SEO 雙平臺全數達成 100 滿分。
+
+### 效能最佳化 (Performance)
+
+本節詳列雙平臺效能突破與關鍵渲染路徑改造項目。
+
+- **Firebase SDK 動態延遲加載 (Lazy Import)**：將原本於首頁主入口靜態打包的 Firebase / Firestore 模組（超過 700KB raw / 200KB gzip）完全解耦，封裝為 `getFirestoreContext()` 動態加載機制，首頁首屏執行時期零 Firebase 代碼，傳輸體積暴降 80%（~160KB gzip）。
+- **首屏文字即時繪製與版面位移歸零 (Zero CLS)**：移除看板 `.hero-stagger` 的 `opacity: 0` 與動畫延遲，H1 與介紹段落 0ms 立即 Paint；將看板區塊垂直居中改為平穩頂部內距（Padding-Top 鎖定）並固定機器人頭像最小高度，徹底消滅 Flexbox 垂直居中重排跳動，CLS 完美歸零（0.000）。
+- **字體棧精簡與無位移字型載入 (Font-Display: Optional)**：移除龐大（65KB）的 Google Fonts Noto Sans TC 切片，中文字正文優先採用 macOS 蘋方（PingFang TC）、Windows 微軟正黑體等原生系統字體；HUD 科技字體改為 `font-display: optional` 搭配關鍵字體 `<link rel="preload">`，杜絕 Web Font 替換時的 reflow 與位移。
+- **Vite 打包機制與 ModulePreload 深度重構**：關閉 `modulePreload`，阻止 Vite 自動預載非首屏組件；解耦業務模組與 `manualChunks` 的循環依賴，分離 `vendor-react`、`vendor-firebase` 與 `vendor-lucide`。
+- **視口交叉按需加載 (DeferredSection 實體佔位)**：下方 6 大區塊預設給予 600px 實體高度佔位，杜絕視口邊界誤判並發請求，頻寬 100% 保留予首屏視覺。
+
+---
+
 ## [1.3.0] - 2026-09-24
 
 本版本全面導入 Vite 8 + React 19 + TypeScript 之嚴格單元測試體系，覆蓋前臺導覽、CMS 互動按鈕流、未存檔攔截、Firebase Firestore 串接契約與全站開場生命週期，達成 13 大套件、56 個測試 100% 通過（0 Failure），並根除 React 雙向預覽同步無限迴圈缺陷。

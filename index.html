@@ -21,16 +21,22 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <!-- Step 2: Non-blocking async stylesheet (media=print trick) — activated in main.tsx -->
+  <!-- Step 2: Preload critical display font & non-blocking stylesheet with font-display: optional (Zero CLS) -->
+  <link
+    rel="preload"
+    href="https://fonts.gstatic.com/s/orbitron/v35/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1ny_CmBoWgzfDAlp7lk.woff2"
+    as="font"
+    type="font/woff2"
+    crossorigin />
   <link
     rel="stylesheet"
     id="gfonts"
-    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Chakra+Petch:wght@400;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Chakra+Petch:wght@400;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=optional"
     media="print" />
   <noscript>
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Chakra+Petch:wght@400;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Inter:wght@400;600&family=Noto+Sans+TC:wght@400;700&display=swap" />
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Chakra+Petch:wght@400;700&family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=optional" />
   </noscript>
 
   <!-- ── Primary SEO Meta Tags ────────────────────────────────────────────── -->

@@ -24,9 +24,7 @@ export default defineConfig({
     cssMinify: true,
     cssCodeSplit: true,
     chunkSizeWarningLimit: 600,
-    modulePreload: {
-      polyfill: false,
-    },
+    modulePreload: false,
     rollupOptions: {
       output: {
         // Fine-grained manual chunks: keeps vendor code separate from app code
@@ -41,40 +39,13 @@ export default defineConfig({
           ) {
             return "vendor-react";
           }
+          // ── Vendor: Firebase SDK (lazy loaded on SWR / CMS) ─────────────
+          if (id.includes("firebase") || id.includes("@firebase")) {
+            return "vendor-firebase";
+          }
           // ── Vendor: Lucide icons ────────────────────────────────────────
           if (id.includes("node_modules/lucide-react")) {
             return "vendor-lucide";
-          }
-          // ── Vendor: remaining node_modules ─────────────────────────────
-          if (id.includes("node_modules")) {
-            return "vendor";
-          }
-          // ── CMS Module: lazy loaded admin system ────────────────────────
-          if (id.includes("/src/cms/")) {
-            return "chunk-cms";
-          }
-          // ── App: heavy below-fold sections (lazy-loaded in MainSiteContent) ─
-          if (id.includes("/components/ArtGallery")) {
-            return "section-gallery";
-          }
-          if (id.includes("/components/Education")) {
-            return "section-education";
-          }
-          if (id.includes("/components/Certifications")) {
-            return "section-certifications";
-          }
-          if (id.includes("/components/Projects")) {
-            return "section-projects";
-          }
-          if (id.includes("/components/Skills")) {
-            return "section-skills";
-          }
-          if (id.includes("/components/About")) {
-            return "section-about";
-          }
-          // ── App: decorative background (desktop-only, large file) ───────
-          if (id.includes("/components/FullStackCodeStreamBackground")) {
-            return "bg-code-stream";
           }
         },
       },
