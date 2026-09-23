@@ -153,9 +153,6 @@ export const Navbar: React.FC<NavbarProps> = ({
   const moduleOrder = ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'];
 
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
-    if (data?.site_settings?.modules_visibility) {
-      return { home: true, ...data.site_settings.modules_visibility };
-    }
     try {
       const saved = localStorage.getItem('portfolio_modules_visibility');
       if (saved) {
@@ -165,10 +162,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         }
       }
     } catch {}
+    if (data?.site_settings?.modules_visibility) {
+      return { home: true, ...data.site_settings.modules_visibility };
+    }
     return { home: true };
   });
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem('portfolio_modules_visibility');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          setModuleVisibility({ home: true, ...parsed });
+          return;
+        }
+      }
+    } catch {}
     if (data?.site_settings?.modules_visibility) {
       setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
     }
