@@ -76,7 +76,7 @@ interface CmsHeroEditorProps {
 export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false }) => {
   const { lang } = useLang();
   const isEn = lang === 'en';
-  const { setIsDirty } = useCmsDirty();
+  const { isDirty, setIsDirty } = useCmsDirty();
   const { data, updateDocument } = usePortfolioData();
 
   const [formData, setFormData] = useState<HeroSectionFullData>(
@@ -84,10 +84,11 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
   );
 
   useEffect(() => {
-    if (data.hero) {
+    // 僅在非編輯（乾淨）狀態下才允許外部 data.hero 覆寫本地表單，徹底杜絕雙向同步無限迴圈
+    if (data.hero && !isDirty) {
       setFormData(data.hero as HeroSectionFullData);
     }
-  }, [data.hero]);
+  }, [data.hero, isDirty]);
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -125,12 +126,13 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
       isFirstHeroSync.current = false;
       return;
     }
+    if (!isDirty) return;
     updateDocument('hero', formData, true).catch(() => {});
     try {
       localStorage.setItem('portfolio_hero_data', JSON.stringify(formData));
       window.dispatchEvent(new Event('portfolio_hero_data_updated'));
     } catch {}
-  }, [formData, updateDocument]);
+  }, [formData, isDirty, updateDocument]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
