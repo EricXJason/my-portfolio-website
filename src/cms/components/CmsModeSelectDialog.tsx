@@ -81,6 +81,9 @@ export const CmsModeSelectDialog: React.FC = () => {
       confirmText: isEn ? 'Confirm Return' : '確認返回',
       cancelText: isEn ? 'Stay Here' : '留在本頁',
       onConfirm: () => {
+        try {
+          sessionStorage.setItem('portfolio_site_entered', 'true');
+        } catch {}
         setExitConfirm(EMPTY_DIALOG);
         navigate('/');
       },

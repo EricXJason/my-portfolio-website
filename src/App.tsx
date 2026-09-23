@@ -40,9 +40,17 @@ function PortfolioMainView() {
   })();
 
   // 三階段平滑開場載入生命週期：0-100% 科技進度條 -> 語系選擇視窗 -> 正式揭幕
-  const [preloaderDone, setPreloaderDone] = useState<boolean>(() => isBot);
-  const [siteEntered, setSiteEntered] = useState<boolean>(() => isBot);
+  const hasEnteredBefore = (() => {
+    if (isBot) return true;
+    try {
+      return sessionStorage.getItem('portfolio_site_entered') === 'true';
+    } catch {
+      return false;
+    }
+  })();
 
+  const [preloaderDone, setPreloaderDone] = useState<boolean>(() => hasEnteredBefore);
+  const [siteEntered, setSiteEntered] = useState<boolean>(() => hasEnteredBefore);
 
   // 正式進入網站前嚴格鎖定全域捲動條，防止背景溢出與跳動
   useEffect(() => {
@@ -78,13 +86,22 @@ function PortfolioMainView() {
 
       {/* 步驟一：開場載入動畫 (0% 至 100%) */}
       {!preloaderDone && (
-        <InitialPreloader onComplete={() => setPreloaderDone(true)} />
+        <InitialPreloader
+          onComplete={() => {
+            setPreloaderDone(true);
+          }}
+        />
       )}
 
       {/* 步驟二：多國語系選擇彈窗 (首幀底層預先渲染) */}
       <LangSelectModal
         isOpen={!siteEntered}
-        onSelectLanguage={() => setSiteEntered(true)}
+        onSelectLanguage={() => {
+          try {
+            sessionStorage.setItem('portfolio_site_entered', 'true');
+          } catch {}
+          setSiteEntered(true);
+        }}
       />
 
       {/* 步驟三：前臺主內容 */}

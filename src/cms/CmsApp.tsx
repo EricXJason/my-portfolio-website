@@ -89,6 +89,9 @@ const CmsAppInner: React.FC = () => {
     if (dest.type === 'tab') {
       setActiveTab(dest.target);
     } else if (dest.type === 'route') {
+      try {
+        sessionStorage.setItem('portfolio_site_entered', 'true');
+      } catch {}
       navigate(dest.target);
     } else if (dest.type === 'mode') {
       signOut();
@@ -104,6 +107,9 @@ const CmsAppInner: React.FC = () => {
     if (dest.type === 'tab') {
       setActiveTab(dest.target);
     } else if (dest.type === 'route') {
+      try {
+        sessionStorage.setItem('portfolio_site_entered', 'true');
+      } catch {}
       navigate(dest.target);
     } else if (dest.type === 'mode') {
       signOut();
@@ -143,6 +149,9 @@ const CmsAppInner: React.FC = () => {
           confirmText: isEn ? 'Confirm Return' : '確認返回',
           cancelText: isEn ? 'Stay on Page' : '留在本頁',
           onConfirm: () => {
+            try {
+              sessionStorage.setItem('portfolio_site_entered', 'true');
+            } catch {}
             setShowExitConfirmDialog(false);
             navigate('/');
           },

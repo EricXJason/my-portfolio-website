@@ -53,22 +53,25 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
   const isEn = lang === 'en';
 
   const handleReturnToSite = () => {
+    if (onExitToSite) {
+      onExitToSite();
+      return;
+    }
     setReturnToSiteDialog({
       isOpen: true,
-      type: 'delete',
-      title: isEn ? 'Return to Site' : '返回前臺網站',
+      type: 'save',
+      title: isEn ? 'Return to User Mode' : '返回使用者模式',
       message: isEn
         ? 'Are you sure you want to leave the CMS and return to the user-facing site?'
-        : '確定要離開 CMS 管理點並返回前臺網站嗎？',
-      confirmText: isEn ? 'Return to Site' : '確認返回',
-      cancelText: isEn ? 'Stay' : '留在 CMS',
+        : '確定要離開內容管理系統並返回使用者模式嗎？',
+      confirmText: isEn ? 'Confirm Return' : '確認返回',
+      cancelText: isEn ? 'Stay on Page' : '留在本頁',
       onConfirm: () => {
         setReturnToSiteDialog(EMPTY_DIALOG);
-        if (onExitToSite) {
-          onExitToSite();
-        } else {
-          navigate('/');
-        }
+        try {
+          sessionStorage.setItem('portfolio_site_entered', 'true');
+        } catch {}
+        navigate('/');
       },
     });
   };

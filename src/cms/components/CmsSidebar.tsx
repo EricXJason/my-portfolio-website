@@ -131,6 +131,7 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
   onSelectTab,
   isOpenMobile,
   onCloseMobile,
+  onExitToSite,
 }) => {
   const { lang } = useLang();
   const isEn = lang === 'en';
@@ -588,6 +589,22 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
 
         {/* 底部外部管理控制臺快速連結（GitHub、Firebase、Cloudflare Pages） */}
         <div className="p-3 border-t border-[var(--border-color)] bg-[var(--card-inner)]/50">
+          {onExitToSite && (
+            <button
+              type="button"
+              onClick={onExitToSite}
+              className="w-full mb-3 flex items-center justify-center gap-2 py-2 px-3 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold transition-all cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              style={{
+                backgroundColor: isLight ? 'rgba(16,185,129,0.08)' : 'rgba(52,211,153,0.1)',
+                borderColor: isLight ? '#10b981' : 'rgba(52,211,153,0.4)',
+                color: isLight ? '#059669' : '#34d399',
+              }}
+              title={isEn ? 'Return to User Mode' : '返回使用者模式 (前臺網站)'}
+            >
+              <User size={14} />
+              <span>{isEn ? 'Return to User Mode' : '返回使用者模式'}</span>
+            </button>
+          )}
           <div className="grid grid-cols-3 gap-2">
             {/* 1. GitHub 存放庫連結 */}
             <a
