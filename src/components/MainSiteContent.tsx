@@ -61,7 +61,7 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
    * 採用官方標準模組流向架構，提供訪客端高穩定性的展示拓撲。
    */
   const { data } = usePortfolioData();
-  const moduleOrder = ['home', 'about', 'skills', 'projects', 'awards', 'experience', 'gallery'];
+  const moduleOrder = ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'];
 
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
     if (data?.site_settings?.modules_visibility) {

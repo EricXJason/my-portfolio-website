@@ -4,6 +4,20 @@
 
 ---
 
+## [1.2.2] - 2026-09-24
+
+本版本依使用者展示優先級調整前臺與 CMS 之全域預設模組順序，突顯專案作品與實務歷程。
+
+### 變更 (Changed)
+
+本節詳列前臺展示與 CMS 管理預設模組順序之調整項目。
+
+- **全域預設模組順序調整**：全站預設模組流向調整為「首頁 $\rightarrow$ 關於我 $\rightarrow$ 專案作品 $\rightarrow$ 專業技能 $\rightarrow$ 經歷 $\rightarrow$ 專業證照 $\rightarrow$ 美術畫廊」(`['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery']`)。
+- **前臺導覽列與側邊導覽同步**：同步更新 `MainSiteContent.tsx`、`Navbar.tsx` 與 `SideNav.tsx` 之核心模組渲染拓撲與錨點順位。
+- **CMS 模組排序預設值校準**：同步更新 `CmsSidebar.tsx` 之 `DEFAULT_MODULE_ORDER`、`CMS_NAV_ITEMS` 與 `site-settings.json`，確保一鍵還原預設時準確對齊最新順位架構。
+
+---
+
 ## [1.2.1] - 2026-09-22
 
 本版本修正前臺 RWD 佈局缺陷、完善 CMS 操作防護機制，並依設計規範校正色彩系統。

@@ -37,14 +37,14 @@
 ```typescript
 interface SiteSettingsDoc {
   codeAnimationSpeed: number;             // 背景程式碼流速度倍率 (0.0x ~ 3.0x)
-  modules_order: string[];                // 全站模組前臺渲染順序 (例: ['home', 'about', ...])
+  modules_order: string[];                // 全站模組前臺渲染順序 (例: ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'])
   modules_visibility: {                   // 全站模組獨立前臺顯示開關 (true: 顯示, false: 隱藏)
     home: boolean;                        // 首頁 (恆常 true 置頂鎖定)
     about: boolean;                       // 關於我模組
-    skills: boolean;                      // 專業技能模組
     projects: boolean;                    // 專案作品模組
-    awards: boolean;                      // 專業證照模組
+    skills: boolean;                      // 專業技能模組
     experience: boolean;                  // 經歷模組
+    awards: boolean;                      // 專業證照模組
     gallery: boolean;                     // 美術畫廊模組
   };
   zh: {

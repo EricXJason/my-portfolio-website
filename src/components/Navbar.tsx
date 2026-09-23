@@ -150,7 +150,7 @@ export const Navbar: React.FC<NavbarProps> = ({
    * [導覽排版拓撲] 導覽列各項目之標準展示順序
    * 遵循全站模組架構，保持頂部導覽列與首頁內容章節完美對應。
    */
-  const moduleOrder = ['home', 'about', 'skills', 'projects', 'awards', 'experience', 'gallery'];
+  const moduleOrder = ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'];
 
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
     if (data?.site_settings?.modules_visibility) {

@@ -45,20 +45,20 @@ export interface NavItem {
 export const DEFAULT_MODULE_ORDER = [
   'home',
   'about',
-  'skills',
   'projects',
-  'awards',
+  'skills',
   'experience',
+  'awards',
   'gallery',
 ];
 
 export const DEFAULT_MODULE_VISIBILITY: Record<string, boolean> = {
   home: true,
   about: true,
-  skills: true,
   projects: true,
-  awards: true,
+  skills: true,
   experience: true,
+  awards: true,
   gallery: true,
 };
 
@@ -82,28 +82,28 @@ export const CMS_NAV_ITEMS: NavItem[] = [
     icon: User,
   },
   {
-    id: 'skills',
-    titleZh: '專業技能',
-    titleEn: 'Skills',
-    icon: Cpu,
-  },
-  {
     id: 'projects',
     titleZh: '專案作品',
     titleEn: 'Projects',
     icon: FolderGit2,
   },
   {
-    id: 'awards',
-    titleZh: '專業證照',
-    titleEn: 'Awards',
-    icon: Award,
+    id: 'skills',
+    titleZh: '專業技能',
+    titleEn: 'Skills',
+    icon: Cpu,
   },
   {
     id: 'experience',
     titleZh: '經歷',
     titleEn: 'Experience',
     icon: Briefcase,
+  },
+  {
+    id: 'awards',
+    titleZh: '專業證照',
+    titleEn: 'Awards',
+    icon: Award,
   },
   {
     id: 'gallery',

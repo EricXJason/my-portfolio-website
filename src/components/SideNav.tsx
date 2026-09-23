@@ -45,7 +45,7 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
    * 採用全域標準展示順序，與主頁面渲染管線保持嚴格一致。
    */
   const { data } = usePortfolioData();
-  const moduleOrder = ['home', 'about', 'skills', 'projects', 'awards', 'experience', 'gallery'];
+  const moduleOrder = ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'];
 
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
     if (data?.site_settings?.modules_visibility) {
