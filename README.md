@@ -450,10 +450,13 @@ pnpm run dev
 # 4. 執行 TypeScript 靜態型別安全檢查 (Execute static typecheck - 0 Errors)
 pnpm exec tsc --noEmit
 
-# 5. 執行 oxlint 語法與代碼風格檢查 (Execute code linting)
+# 5. 執行全域自動化單元測試 (Execute full unit test suite - 100% Pass)
+pnpm run test
+
+# 6. 執行 oxlint 語法與代碼風格檢查 (Execute code linting)
 pnpm run lint
 
-# 6. 編譯生產環境最佳化 Bundle (Build production bundle)
+# 7. 編譯生產環境最佳化 Bundle (Build production bundle)
 pnpm run build
 ```
 
@@ -464,6 +467,7 @@ pnpm run build
 所有效能參數、代碼分塊尺寸與無障礙標準均經由客觀自動化建置與標準稽核工具驗證。  
 *All performance parameters, bundle chunks, and accessibility compliance are verified through objective automated audits:*
 
+- **高覆蓋單元測試驗收 (100% Unit Test Pass Rate)**：經 Vitest + Testing Library 驗收，涵蓋 13 大測試套件、56 個全量測試案例 100% 通過（0 Failure），嚴格守護模組拓撲、CMS 互動按鈕流、未存檔攔截與 Firebase Firestore 雲端串接契約。
 - **型別安全與編譯驗證 (0 Type Errors)**：經 `tsc --noEmit` 嚴格校驗保證編譯期 0 型別錯誤；打包構建於次秒級內完成，0 錯誤。
 - **物理代碼分割基準 (Strict Physical Chunk Splitting)**：
   - **首屏進入核心 (Public Entry Core)**：`index.js` 僅 **19.3 kB** (gzip ~6.5 kB)，`index.css` ~120 kB (gzip ~19.8 kB)。

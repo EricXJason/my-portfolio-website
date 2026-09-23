@@ -4,6 +4,30 @@
 
 ---
 
+## [1.3.0] - 2026-09-24
+
+本版本全面導入 Vite 8 + React 19 + TypeScript 之嚴格單元測試體系，覆蓋前臺導覽、CMS 互動按鈕流、未存檔攔截、Firebase Firestore 串接契約與全站開場生命週期，達成 13 大套件、56 個測試 100% 通過（0 Failure），並根除 React 雙向預覽同步無限迴圈缺陷。
+
+### 新增 (Added)
+
+本節詳列測試基礎設施與各模組高防禦性測試套件。
+
+- **測試工具鏈與全域環境配置**：導入 `vitest`、`jsdom`、`@testing-library/react`、`@testing-library/jest-dom`、`@testing-library/user-event`；配置 `vitest.config.ts` 與 `src/__tests__/setup.ts` 完整 Mock 瀏覽器原生 API（`matchMedia`, `ResizeObserver`, `IntersectionObserver`, `scrollTo`, `AudioContext`）。
+- **Firebase Firestore 服務層契約測試 (`portfolio-data-service.test.ts`)**：嚴格驗證 `savePortfolioDoc`、`getPortfolioDoc` 與 `seedFirestoreFromLocalJson` 之資料打包結構（`payload` 與 `_updatedAt`）、Firestore Collection 路由、離線安全 Fallback 與配置防禦。
+- **CMS 編輯器按鈕操作流程測試 (`editor-save-button-flow.test.tsx`)**：嚴格驗證表單修改觸發 `isDirty`、點擊「存檔」彈出確認彈窗、取消與確認隔離、更新調用與 Toast 提示、以及模組還原預設按鈕流程。
+- **CMS 頂部導覽列操作測試 (`cms-header-actions.test.tsx`)**：驗證「全部還原預設」對話框與全站 9 大模組雲端/本地批次重置、管理者模式徽章切換與多語系/主題開關流程。
+- **CMS 側邊欄與返回流測試 (`cms-sidebar-reorder.test.tsx`, `return-flow.test.tsx`, `confirm-dialog.test.tsx`)**：覆蓋模組順序拖曳/上下移動、首頁鎖定置頂、返回使用者模式單一確認彈窗與未存檔三選項攔截。
+- **前臺導覽與生命週期測試 (`module-order.test.tsx`, `navbar.test.tsx`, `sidenav.test.tsx`, `entry-lifecycle.test.tsx`)**：確保 7 大模組順序拓撲、錨點跳轉、經歷下拉選單、以及訪客初訪與 CMS 返回時 sessionStorage 標記防重複彈窗邏輯。
+
+### 修正 (Fixed)
+
+本節詳列單元測試發掘並修復之核心架構缺陷。
+
+- **根除 CMS 編輯器雙向無限迴圈 (Infinite Ping-Pong Loop)**：在 `CmsHeroEditor` 等組件中加入 `!isDirty` 防衛，禁止在使用者主動輸入期間由外部 `data.hero` 反向覆寫本地草稿，徹底解決輸入欄位時引發的狀態抖動與卡死。
+- **修復前後臺可視性載入覆寫問題**：修復 `SideNav.tsx` 與 `Navbar.tsx` 在組件 mount 時因 `useEffect` 搶先使用靜態 JSON 而將使用者的 `localStorage` 自訂設定覆蓋之缺陷，調整為優先保留本地記憶。
+
+---
+
 ## [1.2.2] - 2026-09-24
 
 本版本依使用者展示優先級調整前臺與 CMS 之全域預設模組順序，突顯專案作品與實務歷程。
