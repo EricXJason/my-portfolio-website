@@ -51,7 +51,16 @@ function PortfolioMainView() {
   const hasEnteredBefore = (() => {
     if (isBot) return true;
     try {
-      return sessionStorage.getItem('portfolio_site_entered') === 'true';
+      const fromCms =
+        sessionStorage.getItem('portfolio_from_cms') === 'true' ||
+        sessionStorage.getItem('portfolio_site_entered') === 'true';
+      if (fromCms) {
+        // 從 CMS 返回時跳過開場與語系彈窗，並立即清除標記，確保後續訪客正常刷新恢復語系選擇視窗
+        sessionStorage.removeItem('portfolio_from_cms');
+        sessionStorage.removeItem('portfolio_site_entered');
+        return true;
+      }
+      return false;
     } catch {
       return false;
     }
@@ -105,9 +114,6 @@ function PortfolioMainView() {
       <LangSelectModal
         isOpen={!siteEntered}
         onSelectLanguage={() => {
-          try {
-            sessionStorage.setItem('portfolio_site_entered', 'true');
-          } catch {}
           setSiteEntered(true);
         }}
       />

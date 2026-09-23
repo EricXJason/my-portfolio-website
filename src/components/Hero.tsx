@@ -111,7 +111,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
   return (
     <section
       id="home"
-      className="min-h-screen pt-28 sm:pt-36 lg:pt-40 pb-16 flex flex-col items-center justify-start relative overflow-hidden select-text"
+      className="min-h-screen pt-16 pb-8 flex items-center justify-center relative overflow-hidden select-text"
     >
       <div className="max-w-7xl 2xl:max-w-[1440px] mx-auto px-6 sm:px-10 lg:px-16 relative z-10 w-full select-text">
         {/* ── 中央主要內容容器（自然無外框流式佈局） ── */}
