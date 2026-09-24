@@ -531,7 +531,7 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
           <div className="p-3.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] space-y-2.5">
             <div className="flex items-center justify-between">
               <label className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5 font-['Noto_Sans_TC']">
-                <Mail className="w-3.5 h-3.5 text-purple-400" />
+                <Mail className="w-3.5 h-3.5 text-blue-400" />
                 Email
               </label>
               <label className="relative inline-flex items-center cursor-pointer select-none">

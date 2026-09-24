@@ -66,6 +66,7 @@
 - **第二領域 (Tier 2 - Interactive / 3D Assets)**：藍色 (`#3b82f6` / `#1d4ed8`)，象徵即時互動與物件演算。
 - **第三領域 (Tier 3 - Software / 2D Sketches)**：紫色 (`#c084fc` / `#7c3aed`)，象徵工程架構與手繪骨架。
 - **第四領域 (Tier 4 - Multimedia / 2D Marker)**：綠色 (`#34d399` / `#059669`)，象徵色彩感知與視覺合成。
+- **看板聯絡資訊卡片 (Hero Contact Triplets)**：由左至右依序遵循「青、藍、綠」三色光譜：聯絡電話（青色）、電子郵件（藍色）、LINE ID（綠色），強化核心通訊鏈之視覺引導。
 
 ---
 

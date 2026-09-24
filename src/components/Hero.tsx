@@ -87,8 +87,8 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
       labelEn: 'EMAIL',
       value: contacts.email,
       Icon: Mail,
-      color: isLight ? '#6d28d9' : '#a855f7',
-      bgColor: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)',
+      color: isLight ? '#1d4ed8' : '#3b82f6',
+      bgColor: isLight ? '#eff6ff' : 'rgba(59,130,246,0.15)',
       visible: dataMap.showEmail !== false,
     },
     {
