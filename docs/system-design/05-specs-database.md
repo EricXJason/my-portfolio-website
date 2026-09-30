@@ -21,6 +21,7 @@
     'textColor': '#f8fafc',
     'lineColor': '#00f0ff',
     'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
     'attributeBackgroundColorOdd': '#060a14',
     'attributeBackgroundColorEven': '#0b0f19',
     'fontSize': '12px'

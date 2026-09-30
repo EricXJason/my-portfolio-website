@@ -4,6 +4,15 @@
 
 ---
 
+## [2026-10-01 00:41] - 徹底剷除 Mermaid ERD 關聯標籤灰色背景並納管全域表單統一設計規範
+- **改動原因**: 修復資料庫實體關聯圖中關係標籤文字（如 `contains`）因未宣告 `edgeLabelBackground` 導致渲染出預設灰色矩形底色之問題，並建立全域圖表文字背景零灰色與 ERD 實體表格色彩統一工程底線。
+- **具體內容**:
+  1. 於 `docs/system-design/05-specs-database.md` 的 Mermaid ERD `themeVariables` 中補齊 `'edgeLabelBackground': '#030712'`，使文字背景與深色底層無縫融合，100% 消除刺眼灰色方塊。
+  2. 於 `docs/system-design/07-ui-ux-standards.md` 第 4.1 節明訂「嚴禁字體背景灰色與未宣告色塊」守衛原則，強制所有圖表必須宣告 `'edgeLabelBackground': '#030712'`，且實體表格奇偶列底色強制統一為 `#060a14` 與 `#0b0f19`。
+  3. 於 `docs/system-design/07-ui-ux-standards.md` 第 4.3 節補齊標準「4. 資料庫實體關聯圖範本 (`erDiagram`)」。
+  4. 於中樞協定 `AGENTS.md` 第 4.3 節同步納管文字背景零灰色與 ERD 表格設計規範，防止未來任何 Agent 產生風格分裂。
+- **影響範圍**: `docs/system-design/05-specs-database.md`, `docs/system-design/07-ui-ux-standards.md`, `AGENTS.md`, `docs/change-log.md`。
+
 ## [2026-09-30 18:37] - 完成 push到master 生產環境全量發布與 README 逆向對齊
 - **改動原因**: 響應使用者「push到master」最高中樞發布指令，對齊規格庫、修訂歷程、README.md 並發布至正式生產環境。
 - **具體內容**:

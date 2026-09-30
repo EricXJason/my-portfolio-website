@@ -122,7 +122,8 @@ docs/
 全體 AI Agent 於產出或維護 `README.md`、`docs/system-design/` 與各類說明文檔之架構圖、流程圖、時序圖與資料庫模型時，強制貫徹以下視覺工程底線：
 1. **嚴禁純文字 ASCII 方塊圖**: 任何系統分層或資料流，**一律嚴禁使用 `┌─┐│└─┘` 等純文字方塊與純文字箭頭**，一律強制轉譯為具備高度可讀性之深色 Mermaid 圖表。
 2. **強制深色 HUD 霓虹科技風**: 所有 Mermaid 區塊第一行必須宣告 `%%{init: {...}}%%`，鎖定底層深黑 `#030712`、主卡片 `#0b0f19`、霓虹邊框與訊號線 `#00f0ff`、文字 `#f8fafc`、子群組 `#060a14`、邊框 `#1e293b`、連線 `curve: 'linear'`。
-3. **階梯卡片樣式標準與禁紫色**: 節點必須定義 `classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;`。**全域嚴禁使用紫色、洋紅等雜亂配色**，維持高階一致性。
-4. **長度限制與橫向優先 (`flowchart LR`)**: 嚴禁單純單列垂直堆疊過多節點形成細長高塔圖；分層架構、流程階段與管線優先採用 `flowchart LR` 橫向展開，文字精簡換行 $\le 2$ 行，高度 $\le 350\text{px}$，確保桌面視窗「一屏盡覽、免滾動閱讀」。
-5. **繁體中文為主與語法零容錯**: Docs 是寫給人看的，**節點與說明文字一律以臺灣繁體中文為主體**。節點含括號 `()` 或斜線 `/` 時強制以雙引號包裹 `["..."]`，連線標籤強制以 `-->|"標籤"|` 宣告，嚴格杜絕渲染報錯。
-6. **範本規格對齊**: 完整色票規格與標準範本庫（Flowchart, ClassDiagram, SequenceDiagram, ERD）嚴格對齊 `docs/system-design/07-ui-ux-standards.md` 第 4 節標準執行。
+3. **嚴禁字體背景灰色與未宣告色塊**: 所有圖表之 `themeVariables` **強制必須明確宣告 `'edgeLabelBackground': '#030712'`**，嚴格杜絕圖表連線標籤或關聯文字（如 ERD 關係線之 `contains` 等）出現預設灰色/白色矩形底色；ERD 實體表格奇偶列底色強制統一為 `'attributeBackgroundColorOdd': '#060a14'` 與 `'attributeBackgroundColorEven': '#0b0f19'`，確保全專案所有圖表與表單視覺風格完全統一且合理。
+4. **階梯卡片樣式標準與禁紫色**: 節點必須定義 `classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;`。**全域嚴禁使用紫色、洋紅等雜亂配色**，維持高階一致性。
+5. **長度限制與橫向優先 (`flowchart LR`)**: 嚴禁單純單列垂直堆疊過多節點形成細長高塔圖；分層架構、流程階段與管線優先採用 `flowchart LR` 橫向展開，文字精簡換行 $\le 2$ 行，高度 $\le 350\text{px}$，確保桌面視窗「一屏盡覽、免滾動閱讀」。
+6. **繁體中文為主與語法零容錯**: Docs 是寫給人看的，**節點與說明文字一律以臺灣繁體中文為主體**。節點含括號 `()` 或斜線 `/` 時強制以雙引號包裹 `["..."]`，連線標籤強制以 `-->|"標籤"|` 宣告，嚴格杜絕渲染報錯。
+7. **範本規格對齊**: 完整色票規格與標準範本庫（Flowchart, ClassDiagram, SequenceDiagram, ERD）嚴格對齊 `docs/system-design/07-ui-ux-standards.md` 第 4 節標準執行。

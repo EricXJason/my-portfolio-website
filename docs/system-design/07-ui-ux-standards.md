@@ -91,8 +91,9 @@
    - **橫向優先佈局 (`flowchart LR`)**: 分層架構、流程階段與管線，優先採用 `flowchart LR` 由左至右寬幅展開，符合 16:9 桌面螢幕視野。
    - **一屏完整可視 (Single Viewport)**: 節點文字高度精煉，內部換行控制在 1-2 行以內，圖表高度控制在 350px 內，保證一屏盡覽。
 6. **嚴禁紫色與雜亂配色 (Color Consistency)**: 全圖色彩嚴格收斂於深黑底 `#030712`、主卡片 `#0b0f19`、科技青 `#00f0ff`、白字 `#f8fafc` 與邊框灰 `#1e293b` / 冷調藍 `#38bdf8`。**嚴禁使用紫色、洋紅等雜亂配色**，維持高階科技感。
-7. **臺灣繁體中文優先 (Traditional Chinese First)**: Docs 內所有文檔與圖表是提供臺灣招募官與評審專家閱讀，**節點與流程文字一律以臺灣繁體中文為主體**，必要時採「中文 (英文專有名詞)」對照，嚴禁堆砌大段純英文。
-8. **嚴格語法防護 (Zero Syntax Error)**: 節點文字若含有括號 `()`、斜線 `/`、問號等特殊字元，必須強制使用雙引號包覆 `["..."]`；連線標籤強制使用 `-->|"標籤"|`，確保在 Mermaid 12.0+ 與各平臺預覽 100% 正常渲染零報錯。
+7. **嚴禁字體背景灰色與未宣告色塊 (No Grey Text Backgrounds)**: 嚴格禁止圖表連線標籤、關聯文字或表單節點出現 Mermaid 預設之灰色/白色矩形底色（如 ERD 關係線上的 `contains` 等文字標籤）。所有圖表 `themeVariables` **一律強制宣告 `'edgeLabelBackground': '#030712'`**，使其與深色背景融為一體；ERD 實體表格奇偶列底色強制統一為 `#060a14` 與 `#0b0f19`，確保全專案所有圖表與表單視覺風格完全統一且合理。
+8. **臺灣繁體中文優先 (Traditional Chinese First)**: Docs 內所有文檔與圖表是提供臺灣招募官與評審專家閱讀，**節點與流程文字一律以臺灣繁體中文為主體**，必要時採「中文 (英文專有名詞)」對照，嚴禁堆砌大段純英文。
+9. **嚴格語法防護 (Zero Syntax Error)**: 節點文字若含有括號 `()`、斜線 `/`、問號等特殊字元，必須強制使用雙引號包覆 `["..."]`；連線標籤強制使用 `-->|"標籤"|`，確保在 Mermaid 12.0+ 與各平臺預覽 100% 正常渲染零報錯。
 
 ### 4.2 全域統一色票規格 (Palette Specification)
 
@@ -105,7 +106,9 @@
 | `clusterBkg` | `#060a14` | Subgraph 邊界容器微暗底色。 |
 | `clusterBorder` | `#1e293b` | Subgraph 外圍分隔沉穩邊框。 |
 | `titleColor` | `#00f0ff` | 圖表主標題高亮色。 |
-| `edgeLabelBackground` | `#030712` | 連線文字標籤防遮擋深色底塊。 |
+| `edgeLabelBackground` | `#030712` | 連線文字標籤背景（**必設，杜絕預設灰色塊**）。 |
+| `attributeBackgroundColorOdd` | `#060a14` | ERD 實體表格奇數列底色。 |
+| `attributeBackgroundColorEven` | `#0b0f19` | ERD 實體表格偶數列底色。 |
 
 ### 4.3 標準 Mermaid HUD 範本庫
 
@@ -210,5 +213,35 @@ sequenceDiagram
     Svc->>DB: 寫入持久化資料
     DB-->>Svc: 確認寫入完成
     Svc-->>Admin: 回傳處理成功響應
+```
+
+#### 4. 資料庫實體關聯圖範本 (`erDiagram`)
+
+```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'attributeBackgroundColorOdd': '#060a14',
+    'attributeBackgroundColorEven': '#0b0f19',
+    'fontSize': '12px'
+  }
+}}%%
+erDiagram
+    COLLECTION_ROOT ||--o{ DOC_ITEM : "contains"
+
+    DOC_ITEM {
+        string id "唯一識別碼"
+        string title_zh "中文標題"
+        string title_en "英文標題"
+        boolean visible "顯示開關"
+    }
 ```
 
