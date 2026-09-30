@@ -1,0 +1,26 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. 全端專案履歷集合 (portfolio_fullstack_dev)
+    match /portfolio_fullstack_dev/{document=**} {
+      // 前臺訪客與搜尋引擎爬蟲享有公開唯讀權限
+      allow read: if true;
+      // 僅限通過 Firebase Auth 認證之管理員享有寫入、更新與刪除權限
+      allow write: if request.auth != null;
+    }
+
+    // 2. 互動應用專案履歷集合 (portfolio_interactive_app_dev)
+    match /portfolio_interactive_app_dev/{document=**} {
+      // 前臺訪客與搜尋引擎爬蟲享有公開唯讀權限
+      allow read: if true;
+      // 僅限通過 Firebase Auth 認證之管理員享有寫入、更新與刪除權限
+      allow write: if request.auth != null;
+    }
+
+    // 預設規則：阻斷其他未知路徑的所有存取
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
