@@ -2,10 +2,12 @@
  * ============================================================================
  * 檔案名稱: CmsApp.tsx
  * 所屬模組: Portfolio CMS (後臺管理系統根應用元件)
- * 責任描述: 負責管理 CMS 整體版面佈局、存取權限模式選擇阻斷、未儲存表單攔截與分頁模組動態渲染。
+ * 責任描述: 負責管理 CMS 整體版面佈局、存取權限模式選擇阻斷、未儲存表單攔截、
+ *           雙模板切換（portfolio_fullstack_dev ↔ portfolio_interactive_app_dev）與分頁模組動態渲染。
  * 架構分層: CMS Application Root Layer
- * 依賴關係: 依賴 React Router DOM、LangContext、ThemeContext、CmsDirtyContext、CmsModeContext 及各模組編輯器。
- * 邊界處理: 阻斷未授權模式存取、嚴密攔截未儲存頁面切換、支援對話框確認返回使用者模式。
+ * 依賴關係: 依賴 React Router DOM、LangContext、ThemeContext、CmsDirtyContext、CmsModeContext、
+ *           ProfileContext、PortfolioDataContext 及各模組編輯器。
+ * 邊界處理: 阻斷未授權模式存取、嚴密攔截未儲存頁面與模板切換、支援對話框確認返回使用者模式。
  * ============================================================================
  */
 
@@ -22,6 +24,8 @@ import { CmsCertificationsEditor } from './components/CmsCertificationsEditor';
 import { CmsExperienceEditor } from './components/CmsExperienceEditor';
 import { CmsGalleryEditor } from './components/CmsGalleryEditor';
 import { useLang } from '../context/LangContext';
+import { ProfileType, ProfileProvider, useProfile } from '../context/ProfileContext';
+import { PortfolioDataProvider } from '../context/PortfolioDataContext';
 import { CmsDirtyProvider, useCmsDirty } from './context/CmsDirtyContext';
 import { CmsModeProvider, useCmsMode } from './context/CmsModeContext';
 import { CmsModeSelectDialog } from './components/CmsModeSelectDialog';
@@ -29,18 +33,24 @@ import { CmsUnsavedModal } from './components/CmsUnsavedModal';
 import { CmsConfirmDialog } from './components/CmsConfirmDialog';
 import { BackToTop } from '../components/BackToTop';
 
-const CmsAppInner: React.FC = () => {
+interface CmsAppInnerProps {
+  onProfileChange: (p: ProfileType) => void;
+}
+
+const CmsAppInner: React.FC<CmsAppInnerProps> = ({ onProfileChange }) => {
   const [activeTab, setActiveTab] = useState<string>('site-settings');
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
-  const [pendingNav, setPendingNav] = useState<{ type: 'tab' | 'route' | 'mode'; target: string } | null>(null);
+  const [pendingNav, setPendingNav] = useState<{ type: 'tab' | 'route' | 'mode' | 'profile'; target: string } | null>(null);
   const [showExitConfirmDialog, setShowExitConfirmDialog] = useState<boolean>(false);
   const [showSwitchModeConfirmDialog, setShowSwitchModeConfirmDialog] = useState<boolean>(false);
+  const [showSwitchProfileConfirmDialog, setShowSwitchProfileConfirmDialog] = useState<boolean>(false);
 
   const { lang } = useLang();
   const isEn = lang === 'en';
   const navigate = useNavigate();
   const { isDirty, setIsDirty } = useCmsDirty();
   const { mode, signOut } = useCmsMode();
+  const { profile, setProfile } = useProfile();
 
   // 依據當前模式派生是否為純預覽狀態 (preview)
   const isPreview = mode === 'preview';
@@ -60,16 +70,27 @@ const CmsAppInner: React.FC = () => {
     }
   };
 
-  // 攔截返回使用者模式前臺之行為（對話框確認與未儲存變更攔截防衛）
+  // 攔截切換履歷模板之行為（若有未儲存變更彈出三選項防衛；無變更時彈出確認對話框）
+  const handleToggleProfile = () => {
+    const nextProfile: ProfileType = profile === 'fullstack' ? 'interactive' : 'fullstack';
+    if (isDirty && !isPreview) {
+      setPendingNav({ type: 'profile', target: nextProfile });
+    } else {
+      setShowSwitchProfileConfirmDialog(true);
+    }
+  };
+
+  // 攔截返回使用者模式前臺之行為（依當前模板返回對應路徑）
+  const targetSiteRoute = profile === 'interactive' ? '/i' : '/';
   const handleExitToSite = () => {
     if (isDirty && !isPreview) {
-      setPendingNav({ type: 'route', target: '/' });
+      setPendingNav({ type: 'route', target: targetSiteRoute });
     } else {
       setShowExitConfirmDialog(true);
     }
   };
 
-  // 攔截切換存取模式之行為（若有未儲存變更則彈出三選項防衛，無未儲存變更時亦彈出雙選項確認）
+  // 攔截切換存取模式之行為
   const handleSwitchMode = () => {
     if (isDirty && !isPreview) {
       setPendingNav({ type: 'mode', target: 'mode-select' });
@@ -99,6 +120,9 @@ const CmsAppInner: React.FC = () => {
       } catch {}
     } else if (dest.type === 'mode') {
       signOut();
+    } else if (dest.type === 'profile') {
+      setProfile(dest.target as ProfileType);
+      onProfileChange(dest.target as ProfileType);
     }
   };
 
@@ -121,6 +145,9 @@ const CmsAppInner: React.FC = () => {
       } catch {}
     } else if (dest.type === 'mode') {
       signOut();
+    } else if (dest.type === 'profile') {
+      setProfile(dest.target as ProfileType);
+      onProfileChange(dest.target as ProfileType);
     }
   };
 
@@ -134,7 +161,10 @@ const CmsAppInner: React.FC = () => {
     return <CmsModeSelectDialog />;
   }
 
-  // ── 已選擇權限模式後：渲染完整 Sidebar 與管理編輯面板 ──
+  const nextProfileName = profile === 'fullstack'
+    ? (isEn ? 'Interactive App Dev' : '互動應用開發')
+    : (isEn ? 'Fullstack Dev' : '全端開發');
+
   return (
     <div className="min-h-screen bg-[var(--bg-dark)] text-[var(--text-main)] flex flex-col font-['Inter',sans-serif] transition-colors duration-300">
       {/* ── 嚴格三鍵與 ESC 規範之未儲存對話框 ── */}
@@ -145,6 +175,28 @@ const CmsAppInner: React.FC = () => {
         onStayOnPage={handleStayOnPage}
       />
 
+      {/* ── 確認切換編輯模板對話框 (無未儲存變更時) ── */}
+      <CmsConfirmDialog
+        dialog={{
+          isOpen: showSwitchProfileConfirmDialog,
+          type: 'save',
+          title: isEn ? 'Switch Template Profile' : '切換編輯模板',
+          message: isEn
+            ? `Are you sure you want to switch CMS editing target to [${nextProfileName}]? Cloud sync and cache will switch to the corresponding collection.`
+            : `確定要切換編輯模板至【${nextProfileName}】嗎？CMS 雲端同步與本地快取將切換至對應集合。`,
+          confirmText: isEn ? 'Confirm Switch' : '確認切換',
+          cancelText: isEn ? 'Stay on Page' : '留在本頁',
+          onConfirm: () => {
+            setShowSwitchProfileConfirmDialog(false);
+            const nextP: ProfileType = profile === 'fullstack' ? 'interactive' : 'fullstack';
+            setProfile(nextP);
+            onProfileChange(nextP);
+          },
+        }}
+        onClose={() => setShowSwitchProfileConfirmDialog(false)}
+        isEn={isEn}
+      />
+
       {/* ── 確認返回使用者模式對話框 (無未儲存變更時) ── */}
       <CmsConfirmDialog
         dialog={{
@@ -152,8 +204,8 @@ const CmsAppInner: React.FC = () => {
           type: 'save',
           title: isEn ? 'Return to User Mode' : '返回使用者模式',
           message: isEn
-            ? 'Are you sure you want to return to User Mode (Front-End Site)?'
-            : '確定要離開內容管理系統並返回使用者模式嗎？',
+            ? `Are you sure you want to return to User Mode (${targetSiteRoute})?`
+            : `確定要離開內容管理系統並返回前臺展示 (${targetSiteRoute}) 嗎？`,
           confirmText: isEn ? 'Confirm Return' : '確認返回',
           cancelText: isEn ? 'Stay on Page' : '留在本頁',
           onConfirm: () => {
@@ -162,9 +214,9 @@ const CmsAppInner: React.FC = () => {
               sessionStorage.setItem('portfolio_from_cms', 'true');
             } catch {}
             setShowExitConfirmDialog(false);
-            navigate('/');
+            navigate(targetSiteRoute);
             try {
-              window.location.href = '/';
+              window.location.href = targetSiteRoute;
             } catch {}
           },
         }}
@@ -209,12 +261,16 @@ const CmsAppInner: React.FC = () => {
           onOpenMobile={() => setIsMobileSidebarOpen(true)}
           onExitToSite={handleExitToSite}
           onSwitchMode={handleSwitchMode}
+          profile={profile}
+          onToggleProfile={handleToggleProfile}
         />
+
+
 
         {/* 預覽模式頂部橫幅 */}
         {isPreview && (
           <div
-            className="mx-4 sm:mx-6 lg:mx-8 mt-4 flex items-center gap-3 px-4 py-3 border cyber-cut-sm text-xs font-['Noto_Sans_TC']"
+            className="mx-4 sm:mx-6 lg:mx-8 mt-3 flex items-center gap-3 px-4 py-3 border cyber-cut-sm text-xs font-['Noto_Sans_TC']"
             style={{
               backgroundColor: 'rgba(251,191,36,0.08)',
               borderColor: 'rgba(251,191,36,0.35)',
@@ -252,12 +308,18 @@ const CmsAppInner: React.FC = () => {
 };
 
 export const CmsApp: React.FC = () => {
+  const [profile, setProfile] = useState<ProfileType>('fullstack');
+
   return (
-    <CmsModeProvider>
-      <CmsDirtyProvider>
-        <CmsAppInner />
-      </CmsDirtyProvider>
-    </CmsModeProvider>
+    <ProfileProvider initialProfile={profile} currentProfile={profile} onProfileChange={setProfile}>
+      <PortfolioDataProvider profile={profile}>
+        <CmsModeProvider>
+          <CmsDirtyProvider>
+            <CmsAppInner onProfileChange={setProfile} />
+          </CmsDirtyProvider>
+        </CmsModeProvider>
+      </PortfolioDataProvider>
+    </ProfileProvider>
   );
 };
 

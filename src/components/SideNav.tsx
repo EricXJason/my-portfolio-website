@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { usePortfolioData } from '../context/PortfolioDataContext';
+import { getFallbacksByProfile } from '../services/portfolioDataService';
 
 interface SectionItem {
   id: string;
@@ -44,12 +45,14 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
    * [導覽模組拓撲] 浮動側邊導覽 (SideNav) 模組順序定義
    * 採用全域標準展示順序，與主頁面渲染管線保持嚴格一致。
    */
-  const { data } = usePortfolioData();
+  const { data, profile } = usePortfolioData();
   const moduleOrder = ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'];
 
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
     try {
-      const saved = localStorage.getItem('portfolio_modules_visibility');
+      const saved =
+        localStorage.getItem(`portfolio_${profile}_modules_visibility`) ||
+        localStorage.getItem('portfolio_modules_visibility');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
@@ -60,12 +63,15 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
     if (data?.site_settings?.modules_visibility) {
       return { home: true, ...data.site_settings.modules_visibility };
     }
-    return { home: true };
+    const fb = getFallbacksByProfile(profile);
+    return { home: true, ...((fb.site_settings as any)?.modules_visibility || {}) };
   });
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('portfolio_modules_visibility');
+      const saved =
+        localStorage.getItem(`portfolio_${profile}_modules_visibility`) ||
+        localStorage.getItem('portfolio_modules_visibility');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
@@ -77,12 +83,14 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
     if (data?.site_settings?.modules_visibility) {
       setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
     }
-  }, [data?.site_settings?.modules_visibility]);
+  }, [data?.site_settings?.modules_visibility, profile]);
 
   useEffect(() => {
     const handleVisUpdate = () => {
       try {
-        const saved = localStorage.getItem('portfolio_modules_visibility');
+        const saved =
+          localStorage.getItem(`portfolio_${profile}_modules_visibility`) ||
+          localStorage.getItem('portfolio_modules_visibility');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === 'object') {
@@ -91,19 +99,38 @@ export const SideNav: React.FC<SideNavProps> = ({ siteEntered = true }) => {
           }
         }
       } catch {}
-      setModuleVisibility({ home: true });
+      if (data?.site_settings?.modules_visibility) {
+        setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+      } else {
+        const fb = getFallbacksByProfile(profile);
+        setModuleVisibility({ home: true, ...((fb.site_settings as any)?.modules_visibility || {}) });
+      }
     };
 
+    window.addEventListener(`portfolio_${profile}_modules_visibility_updated`, handleVisUpdate);
     window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
     window.addEventListener('storage', handleVisUpdate);
     return () => {
+      window.removeEventListener(`portfolio_${profile}_modules_visibility_updated`, handleVisUpdate);
       window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
       window.removeEventListener('storage', handleVisUpdate);
     };
-  }, []);
+  }, [profile, data?.site_settings?.modules_visibility]);
+
+  const isSectionVisible = (id: string): boolean => {
+    if (id === 'home') return true;
+    if (moduleVisibility[id] !== undefined) {
+      return moduleVisibility[id];
+    }
+    if (data?.site_settings?.modules_visibility?.[id] !== undefined) {
+      return data.site_settings.modules_visibility[id];
+    }
+    const fb = getFallbacksByProfile(profile);
+    return (fb.site_settings as any)?.modules_visibility?.[id] ?? true;
+  };
 
   const sections = moduleOrder
-    .filter((id) => id === 'home' || moduleVisibility[id] !== false)
+    .filter((id) => isSectionVisible(id))
     .map((id) => BASE_SECTIONS[id])
     .filter(Boolean);
 

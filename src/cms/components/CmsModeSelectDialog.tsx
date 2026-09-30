@@ -11,7 +11,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Eye, EyeOff, ChevronRight, Lock, Sun, Moon, User, KeyRound, Loader2, AlertCircle, FlaskConical } from 'lucide-react';
+import { Shield, Eye, EyeOff, ChevronRight, Lock, Sun, Moon, User, KeyRound, Loader2, AlertCircle } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCmsMode } from '../context/CmsModeContext';

@@ -18,18 +18,17 @@ import {
   FolderLock,
   Plus,
   Trash2,
-  ExternalLink,
   ChevronUp,
   ChevronDown,
   GripVertical,
   Pencil,
-  Eye,
   EyeOff,
   BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
 import defaultCertsData from '../../data/certifications-section.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 import {
   CmsConfirmDialog,
   CmsConfirmDialogState,
@@ -86,7 +85,7 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -96,7 +95,8 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
     if (data.certifications) {
       return data.certifications as unknown as CertificationsFullData;
     }
-    const defaults = defaultCertsData as CertificationsFullData;
+    const templateDefault = getFallbacksByProfile(profile).certifications as CertificationsFullData;
+    const defaults = templateDefault || (defaultCertsData as CertificationsFullData);
     try {
       const saved = localStorage.getItem('portfolio_certifications_data');
       if (saved) {
@@ -132,15 +132,17 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
 
-  // 聆聽全域一鍵還原預設值事件
+  // 聆聽全域一鍵還原預設值事件（精準還原當前 profile 模板之預設值）
   useEffect(() => {
-    const handleResetAll = () => {
-      setFormData(defaultCertsData as unknown as CertificationsFullData);
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).certifications as CertificationsFullData;
+      setFormData(JSON.parse(JSON.stringify(targetDefault)));
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
     return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
-  }, [setIsDirty]);
+  }, [profile, setIsDirty]);
 
   // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
   const isFirstCertsSync = useRef(true);
@@ -471,15 +473,15 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
   /** handleSetDefault — 將當前證照資料設為預設值基準 */
   const handleSetDefault = () => {
     try {
-      localStorage.setItem('portfolio_certifications_baseline', JSON.stringify(formData));
-      showToast(isEn ? 'Current certifications set as module default!' : '當前「專業證照」內容已設為預設值！');
+      localStorage.setItem(`portfolio_${profile}_certifications_baseline`, JSON.stringify(formData));
+      showToast(isEn ? 'Current certifications set as module default!' : '當前「專業證照」內容已設為此模板預設值！');
     } catch {
       showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
     }
   };
 
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem('portfolio_certifications_baseline');
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_certifications_baseline`);
     const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
@@ -500,6 +502,7 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
   const doSave = async () => {
     setIsDirty(false);
     try {
+      localStorage.setItem(`portfolio_${profile}_certifications_data`, JSON.stringify(formData));
       localStorage.setItem('portfolio_certifications_data', JSON.stringify(formData));
       window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
       const saved = localStorage.getItem('portfolio_custom_translations');
@@ -524,10 +527,12 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
 
   const doReset = async () => {
     setIsDirty(false);
-    const baselineRaw = localStorage.getItem('portfolio_certifications_baseline');
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_certifications_baseline`);
     const isBaseline = !!baselineRaw;
-    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as CertificationsFullData) : (defaultCertsData as CertificationsFullData);
+    const templateDefault = getFallbacksByProfile(profile).certifications as CertificationsFullData;
+    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as CertificationsFullData) : JSON.parse(JSON.stringify(templateDefault));
     try {
+      localStorage.removeItem(`portfolio_${profile}_certifications_data`);
       localStorage.removeItem('portfolio_certifications_data');
       window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
       const saved = localStorage.getItem('portfolio_custom_translations');
@@ -540,7 +545,7 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
       setFormData(resetData);
       setAwardsMeta(DEFAULT_AWARDS_META);
       await updateDocument('certifications', resetData);
-      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Certifications" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專業證照」模組已還原為預設！'));
+      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Certifications" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專業證照」模組已還原為模板預設！'));
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
@@ -776,10 +781,10 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
                     <button
                       type="button"
                       onClick={() => confirmDeleteGroup(groupIdx)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/50 hover:bg-rose-500/10 cursor-pointer transition-colors"
+                      className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 cursor-pointer transition-colors shadow-xs"
                       title={isEn ? 'Delete category' : '刪除此分類'}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                     </button>
                   )}
                 </div>
@@ -868,10 +873,10 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
                           <button
                             type="button"
                             onClick={() => confirmDeleteCert(groupIdx, itemIdx)}
-                            className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/50 hover:bg-rose-500/10 cursor-pointer transition-colors"
+                            className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 cursor-pointer transition-colors shadow-xs"
                             title={isEn ? 'Delete certification' : '刪除此證照'}
                           >
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                           </button>
                         </div>
                       </div>

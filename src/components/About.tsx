@@ -70,7 +70,6 @@ export const About: React.FC = () => {
   const currentData: AboutSectionData = dataMap[lang] ?? dataMap.zh;
   const avatarSrc = (rawAbout as any)?.avatarUrl || getAssetUrl('/assets/images/personal.webp');
 
-  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
   const cyanCol = isLight ? '#0369a1' : '#00f0ff';
 
   return (
@@ -87,7 +86,7 @@ export const About: React.FC = () => {
             <UserCheck size={32} style={{ color: cyanCol }} className="shrink-0" />
             <span>{currentData.title}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-reading leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {currentData.intro}
           </p>
         </div>
@@ -98,19 +97,21 @@ export const About: React.FC = () => {
           className="cyber-card p-6 sm:p-10 cyber-cut-corner max-w-6xl mx-auto border shadow-2xl relative overflow-hidden backdrop-blur-xl"
           style={{
             background: isLight
-              ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.90) 0%, rgba(241, 245, 249, 0.80) 100%)'
+              ? '#ffffff'
               : 'linear-gradient(135deg, rgba(10, 18, 34, 0.52) 0%, rgba(5, 10, 20, 0.62) 100%)',
-            borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.35)',
+            borderColor: isLight ? '#e2e8f0' : 'rgba(0, 240, 255, 0.35)',
             boxShadow: isLight
-              ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 20px 40px rgba(15, 23, 42, 0.08)'
+              ? '0 10px 30px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(0, 0, 0, 0.05)'
               : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.18), inset 0 0 24px rgba(0, 240, 255, 0.05), 0 25px 50px -12px rgba(0, 0, 0, 0.75)',
           }}
         >
           {/* 微弱 HUD 科技微網紋裝飾 */}
           <div
-            className="absolute inset-0 pointer-events-none opacity-25 dark:opacity-15"
+            className="absolute inset-0 pointer-events-none opacity-20 dark:opacity-15"
             style={{
-              backgroundImage: 'radial-gradient(rgba(0, 240, 255, 0.18) 1px, transparent 1px)',
+              backgroundImage: isLight
+                ? 'radial-gradient(rgba(2, 132, 199, 0.12) 1px, transparent 1px)'
+                : 'radial-gradient(rgba(0, 240, 255, 0.18) 1px, transparent 1px)',
               backgroundSize: '24px 24px',
             }}
           />
@@ -120,20 +121,30 @@ export const About: React.FC = () => {
             {/* 個人形象照容器 */}
             <div className="lg:col-span-5 flex justify-center reveal-left">
               <div className="relative group w-60 h-60 sm:w-64 sm:h-64 lg:w-72 lg:h-72 select-none">
+                {/* 淺色模式專屬背後環境柔光 — 破除暗沉，賦予清爽高雅之科技透光感 */}
+                {isLight && (
+                  <div
+                    className="absolute -inset-3 rounded-2xl pointer-events-none blur-xl -z-10 transition-opacity duration-500"
+                    style={{
+                      background: 'radial-gradient(circle at center, rgba(56, 189, 248, 0.28) 0%, rgba(14, 165, 233, 0.10) 55%, transparent 75%)',
+                    }}
+                  />
+                )}
+
                 <div
                   className="relative w-full h-full border cyber-cut-corner p-2 shadow-xl hud-corner-brackets flex items-center justify-center overflow-hidden transition-all duration-500 backdrop-blur-md"
                   style={{
                     backgroundColor: isLight
-                      ? 'rgba(248, 250, 252, 0.88)'
+                      ? '#ffffff'
                       : 'rgba(5, 10, 22, 0.45)',
-                    borderColor: isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.45)',
+                    borderColor: isLight ? '#bae6fd' : 'rgba(0, 240, 255, 0.45)',
                     boxShadow: isLight
-                      ? '0 10px 30px rgba(2, 132, 199, 0.14), 0 0 0 1px #e2e8f0'
+                      ? '0 12px 32px -4px rgba(2, 132, 199, 0.14), 0 2px 8px rgba(0, 0, 0, 0.03), 0 0 0 1px #e0f2fe'
                       : '0 10px 35px rgba(0, 0, 0, 0.7), 0 0 22px rgba(0, 240, 255, 0.22)',
                   }}
                 >
-                  <div className="relative w-full h-full overflow-hidden cyber-cut-sm">
-                    {/* 個人形象照 — 支援 CMS 雲端自訂與預設資源 */}
+                  <div className="relative w-full h-full overflow-hidden cyber-cut-sm bg-transparent">
+                    {/* 個人形象照 — 支援 CMS 雲端自訂與預設資源，深色維持去背透明，淺色自然透亮 */}
                     <img
                       src={avatarSrc}
                       alt="許哲誠 (Che-Cheng Hsu) Portrait"
@@ -144,38 +155,38 @@ export const About: React.FC = () => {
                       className="w-full h-full object-cover object-center transition-all duration-700 group-hover:scale-105 select-none pointer-events-none"
                       style={{
                         filter: isLight
-                          ? 'brightness(1.0) contrast(1.02) saturate(1.02)'
-                          : 'brightness(0.88) contrast(1.06) saturate(0.96)',
+                          ? 'brightness(1.08) contrast(1.02) saturate(1.05)'
+                          : 'brightness(0.90) contrast(1.04)',
                       }}
                     />
 
-                    {/* 邊緣科技暗角 — 暗黑模式：青色光暈 / 明亮模式：柔和藍光 */}
-                    <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background: isLight
-                          ? 'radial-gradient(ellipse at center, transparent 55%, rgba(2, 132, 199, 0.07) 100%)'
-                          : 'radial-gradient(ellipse at center, transparent 52%, rgba(0, 240, 255, 0.14) 100%)',
-                        boxShadow: isLight
-                          ? 'inset 0 0 14px rgba(2, 132, 199, 0.10)'
-                          : 'inset 0 0 18px rgba(0, 240, 255, 0.18)',
-                      }}
-                    />
+                    {/* 邊緣科技光暈 — 僅在暗黑模式保留青色暗角光暈，淺色模式完全移除 */}
+                    {!isLight && (
+                      <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                          background: 'radial-gradient(ellipse at center, transparent 52%, rgba(0, 240, 255, 0.14) 100%)',
+                          boxShadow: 'inset 0 0 18px rgba(0, 240, 255, 0.18)',
+                        }}
+                      />
+                    )}
 
-                    {/* 掃描線覆蓋層 — 微弱細緻且不遮蔽面部 */}
-                    <div
-                      className="absolute inset-0 pointer-events-none"
-                      style={{
-                        background: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px)',
-                        opacity: isLight ? 0.35 : 0.45,
-                      }}
-                    />
+                    {/* 掃描線覆蓋層 — 僅在暗黑模式顯示科幻掃描線，淺色模式完全隱藏避免面部發黑 */}
+                    {!isLight && (
+                      <div
+                        className="absolute inset-0 pointer-events-none"
+                        style={{
+                          background: 'repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.06) 3px, rgba(0,0,0,0.06) 4px)',
+                          opacity: 0.45,
+                        }}
+                      />
+                    )}
 
                     {/* 戰術幾何轉角裝飾括號 */}
-                    <div className={`absolute top-1.5 left-1.5 w-3 h-3 border-t-2 border-l-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
-                    <div className={`absolute top-1.5 right-1.5 w-3 h-3 border-t-2 border-r-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
-                    <div className={`absolute bottom-1.5 left-1.5 w-3 h-3 border-b-2 border-l-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
-                    <div className={`absolute bottom-1.5 right-1.5 w-3 h-3 border-b-2 border-r-2 pointer-events-none ${isLight ? 'border-sky-600' : 'border-cyan-400'}`} />
+                    <div className={`absolute top-1.5 left-1.5 w-3 h-3 border-t-2 border-l-2 pointer-events-none ${isLight ? 'border-sky-500' : 'border-cyan-400'}`} />
+                    <div className={`absolute top-1.5 right-1.5 w-3 h-3 border-t-2 border-r-2 pointer-events-none ${isLight ? 'border-sky-500' : 'border-cyan-400'}`} />
+                    <div className={`absolute bottom-1.5 left-1.5 w-3 h-3 border-b-2 border-l-2 pointer-events-none ${isLight ? 'border-sky-500' : 'border-cyan-400'}`} />
+                    <div className={`absolute bottom-1.5 right-1.5 w-3 h-3 border-b-2 border-r-2 pointer-events-none ${isLight ? 'border-sky-500' : 'border-cyan-400'}`} />
                   </div>
                 </div>
               </div>
@@ -190,7 +201,7 @@ export const About: React.FC = () => {
                   {currentData.heading}
                 </h3>
 
-                <p className="text-sm sm:text-base leading-relaxed font-tech reveal-right reveal-d2" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                <p className="text-base sm:text-lg leading-relaxed font-reading reveal-right reveal-d2" style={{ color: isLight ? '#334155' : '#e2e8f0' }}>
                   {currentData.p1}
                 </p>
               </div>
@@ -268,7 +279,7 @@ export const About: React.FC = () => {
                             {st.title}
                           </span>
                         </div>
-                        <p className="text-xs font-tech font-bold leading-tight" style={{ color: isLight ? '#0f172a' : '#e2e8f0' }}>
+                        <p className="text-xs sm:text-sm font-reading font-medium leading-normal" style={{ color: isLight ? '#0f172a' : '#f1f5f9' }}>
                           {st.label}
                         </p>
                       </div>
@@ -368,11 +379,11 @@ export const About: React.FC = () => {
                       <span className="font-mono text-xs font-black px-1.5 py-0.5 rounded border" style={{ color: isLight ? '#0891b2' : '#00f0ff', borderColor: isLight ? '#7dd3fc' : 'rgba(0, 240, 255, 0.3)' }}>
                         01
                       </span>
-                      <h5 className="font-hud font-black text-sm sm:text-base tracking-wide" style={{ color: isLight ? '#0c4a6e' : '#e0f2fe' }}>
+                      <h5 className="font-hud font-bold text-base sm:text-lg tracking-wide" style={{ color: isLight ? '#0c4a6e' : '#e0f2fe' }}>
                         {currentData.bio.p1_title}
                       </h5>
                     </div>
-                    <p className="font-tech text-xs sm:text-sm leading-relaxed sm:leading-loose text-justify" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                    <p className="font-reading text-sm sm:text-base leading-relaxed sm:leading-loose text-justify" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                       {currentData.bio.p1}
                     </p>
                   </div>
@@ -390,11 +401,11 @@ export const About: React.FC = () => {
                       <span className="font-mono text-xs font-black px-1.5 py-0.5 rounded border" style={{ color: isLight ? '#0284c7' : '#38bdf8', borderColor: isLight ? '#93c5fd' : 'rgba(56, 189, 248, 0.3)' }}>
                         02
                       </span>
-                      <h5 className="font-hud font-black text-sm sm:text-base tracking-wide" style={{ color: isLight ? '#0369a1' : '#bae6fd' }}>
+                      <h5 className="font-hud font-bold text-base sm:text-lg tracking-wide" style={{ color: isLight ? '#0369a1' : '#bae6fd' }}>
                         {currentData.bio.p2_title}
                       </h5>
                     </div>
-                    <p className="font-tech text-xs sm:text-sm leading-relaxed sm:leading-loose text-justify" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                    <p className="font-reading text-sm sm:text-base leading-relaxed sm:leading-loose text-justify" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                       {currentData.bio.p2}
                     </p>
                   </div>
@@ -412,11 +423,11 @@ export const About: React.FC = () => {
                       <span className="font-mono text-xs font-black px-1.5 py-0.5 rounded border" style={{ color: isLight ? '#7e22ce' : '#c084fc', borderColor: isLight ? '#d8b4fe' : 'rgba(192, 132, 252, 0.3)' }}>
                         03
                       </span>
-                      <h5 className="font-hud font-black text-sm sm:text-base tracking-wide" style={{ color: isLight ? '#581c87' : '#f3e8ff' }}>
+                      <h5 className="font-hud font-bold text-base sm:text-lg tracking-wide" style={{ color: isLight ? '#581c87' : '#f3e8ff' }}>
                         {currentData.bio.p3_title}
                       </h5>
                     </div>
-                    <p className="font-tech text-xs sm:text-sm leading-relaxed sm:leading-loose text-justify" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                    <p className="font-reading text-sm sm:text-base leading-relaxed sm:leading-loose text-justify" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                       {currentData.bio.p3}
                     </p>
                   </div>

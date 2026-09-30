@@ -18,12 +18,8 @@ import {
   Briefcase,
   Plus,
   Trash2,
-  GripVertical,
   BookOpen,
   Award,
-  ArrowUp,
-  ArrowDown,
-  Eye,
   EyeOff,
   BookmarkCheck,
 } from 'lucide-react';
@@ -31,6 +27,7 @@ import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
 import defaultExpData from '../../data/experience-section.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 import { SectionTitleEditor } from './SectionTitleEditor';
 import { CmsDatePicker } from './CmsDatePicker';
 import { CmsIconPickerModal, getLucideIconByName } from './CmsIconPickerModal';
@@ -164,21 +161,6 @@ const COLOR_SEQUENCE = [
   { name: '綠色 (Green)', hex: '#10b981', lightHex: '#047857', badge: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' },
 ];
 
-/**
- * parseEndDateValue — 解析結束日期為可排序數值 (與 Education.tsx 前臺完全同步)
- * 支援格式：'YYYY/MM ~ YYYY/MM'、'YYYY.MM - YYYY.MM'、'YYYY/MM' 等
- */
-const parseEndDateValue = (dateStr?: string): number => {
-  if (!dateStr) return 0;
-  const parts = dateStr.split(/[~\u2013\u2014\-\u81f3]/);
-  const endPart = parts[parts.length - 1].trim();
-  const match = endPart.match(/(\d{4})[./\-](\d{1,2})/);
-  if (match) return parseInt(match[1], 10) * 100 + parseInt(match[2], 10);
-  const yearMatch = endPart.match(/(\d{4})/);
-  if (yearMatch) return parseInt(yearMatch[1], 10) * 100;
-  return 0;
-};
-
 interface CmsExperienceEditorProps {
   isPreview?: boolean;
 }
@@ -198,7 +180,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   const isLight = theme === 'light';
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -209,33 +191,8 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     if (data.experience) {
       return data.experience as unknown as ExperienceFullData;
     }
-    const defaults = defaultExpData as unknown as ExperienceFullData;
-    try {
-      const saved = localStorage.getItem('portfolio_experience_data');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && (parsed.zh || parsed.en)) {
-          return {
-            driveLinks: { ...defaults.driveLinks, ...(parsed.driveLinks || {}) },
-            zh: {
-              degrees: (parsed.zh?.degrees && parsed.zh.degrees.length >= defaults.zh.degrees.length) ? parsed.zh.degrees : defaults.zh.degrees,
-              workExperiences: (parsed.zh?.workExperiences && parsed.zh.workExperiences.length >= defaults.zh.workExperiences.length) ? parsed.zh.workExperiences : defaults.zh.workExperiences,
-              workshops: (parsed.zh?.workshops && parsed.zh.workshops.length >= defaults.zh.workshops.length) ? parsed.zh.workshops : defaults.zh.workshops,
-              theses: (parsed.zh?.theses && parsed.zh.theses.length >= defaults.zh.theses.length) ? parsed.zh.theses : defaults.zh.theses,
-            },
-            en: {
-              degrees: (parsed.en?.degrees && parsed.en.degrees.length >= defaults.en.degrees.length) ? parsed.en.degrees : defaults.en.degrees,
-              workExperiences: (parsed.en?.workExperiences && parsed.en.workExperiences.length >= defaults.en.workExperiences.length) ? parsed.en.workExperiences : defaults.en.workExperiences,
-              workshops: (parsed.en?.workshops && parsed.en.workshops.length >= defaults.en.workshops.length) ? parsed.en.workshops : defaults.en.workshops,
-              theses: (parsed.en?.theses && parsed.en.theses.length >= defaults.en.theses.length) ? parsed.en.theses : defaults.en.theses,
-            },
-          };
-        }
-      }
-    } catch {
-      // 解析失敗回退至預設值
-    }
-    return defaults;
+    const templateDefault = getFallbacksByProfile(profile).experience as unknown as ExperienceFullData;
+    return templateDefault || (defaultExpData as unknown as ExperienceFullData);
   });
 
   useEffect(() => {
@@ -259,15 +216,17 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
 
-  // 聆聽全域一鍵還原預設值事件
+  // 聆聽全域一鍵還原預設值事件（精準還原當前 profile 模板之預設值）
   useEffect(() => {
-    const handleResetAll = () => {
-      setFormData(defaultExpData as unknown as ExperienceFullData);
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).experience as unknown as ExperienceFullData;
+      setFormData(JSON.parse(JSON.stringify(targetDefault)));
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
     return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
-  }, [setIsDirty]);
+  }, [profile, setIsDirty]);
 
   // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
   const isFirstExpSync = useRef(true);
@@ -386,7 +345,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     if (!dateStr) return 0;
     const parts = dateStr.split(/[~–—\-至]/);
     const endPart = parts[parts.length - 1].trim();
-    const match = endPart.match(/(\d{4})[./\-](\d{1,2})/);
+    const match = endPart.match(/(\d{4})[./-](\d{1,2})/);
     if (match) {
       const year = parseInt(match[1], 10);
       const month = parseInt(match[2], 10);
@@ -867,14 +826,16 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   };
 
   const handleResetConfirm = async () => {
-    // 優先還原使用者設定的「基準值」，若無則還原原始 JSON
-    const baselineRaw = localStorage.getItem('portfolio_experience_baseline');
+    // 優先還原使用者設定的「基準值」，若無則還原當前 profile 模板之預設資料
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_experience_baseline`);
+    const templateDefault = getFallbacksByProfile(profile).experience as unknown as ExperienceFullData;
     const defaults = baselineRaw
       ? (JSON.parse(baselineRaw) as ExperienceFullData)
-      : (defaultExpData as unknown as ExperienceFullData);
+      : JSON.parse(JSON.stringify(templateDefault));
     const isBaseline = !!baselineRaw;
 
     try {
+      localStorage.removeItem(`portfolio_${profile}_experience_data`);
       localStorage.removeItem('portfolio_experience_data');
       const savedTrans = localStorage.getItem('portfolio_custom_translations');
       if (savedTrans) {
@@ -896,7 +857,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
       await updateDocument('experience', defaults);
       showToast(isEn
         ? (isBaseline ? 'Restored to baseline data' : 'Reset to default data')
-        : (isBaseline ? '已還原至基準資料' : '已重設回預設資料'));
+        : (isBaseline ? '已還原至基準資料' : '已重設回模板預設資料'));
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
@@ -906,8 +867,8 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   /** handleSetDefault — 將當前經歷資料儲存為預設值基準，reset 時優先還原此預設 */
   const handleSetDefault = () => {
     try {
-      localStorage.setItem('portfolio_experience_baseline', JSON.stringify(formData));
-      showToast(isEn ? 'Current data set as module default. Reset will restore to this state.' : '當前「經歷」內容已設為預設值，還原預設將回到此狀態！');
+      localStorage.setItem(`portfolio_${profile}_experience_baseline`, JSON.stringify(formData));
+      showToast(isEn ? 'Current data set as module default. Reset will restore to this state.' : '當前「經歷」內容已設為此模板預設值，還原預設將回到此狀態！');
     } catch {
       showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
     }
@@ -1253,10 +1214,10 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       type="button"
                       disabled={isPreview}
                       onClick={() => triggerDeleteDegreeDialog(idx)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-40"
+                      className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 transition-colors cursor-pointer disabled:opacity-40 shadow-xs"
                       title={isEn ? 'Delete degree' : '刪除此筆學歷'}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                     </button>
                   </div>
                 </div>
@@ -1434,10 +1395,10 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       type="button"
                       disabled={isPreview}
                       onClick={() => triggerDeleteWorkDialog(idx)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-40"
+                      className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 transition-colors cursor-pointer disabled:opacity-40 shadow-xs"
                       title={isEn ? 'Delete work experience' : '刪除此筆經歷'}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                     </button>
                   </div>
                 </div>
@@ -1637,10 +1598,10 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       type="button"
                       disabled={isPreview}
                       onClick={() => triggerDeleteWorkshopDialog(idx)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-40"
+                      className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 transition-colors cursor-pointer disabled:opacity-40 shadow-xs"
                       title={isEn ? 'Delete workshop' : '刪除此筆研習歷程'}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                     </button>
                   </div>
                 </div>
@@ -1838,10 +1799,10 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                       type="button"
                       disabled={isPreview}
                       onClick={() => triggerDeleteThesisDialog(idx)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-40"
+                      className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 transition-colors cursor-pointer disabled:opacity-40 shadow-xs"
                       title={isEn ? 'Delete thesis' : '刪除此論文/期刊'}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                     </button>
                   </div>
                 </div>

@@ -14,14 +14,12 @@ import {
   Save,
   RotateCcw,
   Check,
-  Layers,
   Code2,
   Plus,
   Trash2,
   GripVertical,
   ArrowUp,
   ArrowDown,
-  Eye,
   EyeOff,
   BookmarkCheck,
 } from 'lucide-react';
@@ -38,6 +36,7 @@ import { CmsTagListEditor } from './CmsTagListEditor';
 import { getLucideIconByName } from './CmsIconPickerModal';
 import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import defaultSkillsData from '../../data/skills-section.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 import { splitSkillTokens } from '../../utils/skillsHelper';
 
 interface SkillItem {
@@ -79,14 +78,10 @@ const DEFAULT_SKILLS_META: Record<'zh' | 'en', SkillsMeta> = {
 };
 
 
-/** Automatic CIS category dot color indicator — 青(全端)→藍(互動)→紫(通用軟體)→綠(多媒體設計) */
-const getCategoryDotColor = (catType: string, idx: number): string => {
-  if (catType === 'fullstack') return '#00f0ff'; // 青
-  if (catType === 'game')      return '#3b82f6'; // 藍
-  if (catType === 'common')    return '#a855f7'; // 紫
-  if (catType === 'media')     return '#10b981'; // 綠 (Emerald/Green)
-  const palette = ['#00f0ff', '#3b82f6', '#a855f7', '#10b981'];
-  return palette[idx % palette.length];
+/** 全站標準順位色指示器 — 1.青(#00f0ff) → 2.藍(#3b82f6) → 3.紫(#a855f7) → 4.綠(#10b981) */
+const SEQUENCE_DOT_COLORS = ['#00f0ff', '#3b82f6', '#a855f7', '#10b981'];
+const getCategoryDotColor = (_catType: string, idx: number): string => {
+  return SEQUENCE_DOT_COLORS[idx] || '#00f0ff';
 };
 
 interface CmsSkillsEditorProps {
@@ -97,7 +92,7 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -107,22 +102,8 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     if (data.skills) {
       return data.skills as unknown as SkillsFullData;
     }
-    const defaults = defaultSkillsData as SkillsFullData;
-    try {
-      const saved = localStorage.getItem('portfolio_skills_data');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && (parsed.zh || parsed.en)) {
-          return {
-            zh: parsed.zh || defaults.zh,
-            en: parsed.en || defaults.en,
-          };
-        }
-      }
-    } catch {
-      // 解析失敗回退至預設值
-    }
-    return defaults;
+    const templateDefault = getFallbacksByProfile(profile).skills as unknown as SkillsFullData;
+    return templateDefault || (defaultSkillsData as SkillsFullData);
   });
 
   useEffect(() => {
@@ -131,15 +112,17 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     }
   }, [data.skills]);
 
-  // 聆聽全域一鍵還原預設值事件
+  // 聆聽全域一鍵還原預設值事件（精準還原當前 profile 模板之預設值）
   useEffect(() => {
-    const handleResetAll = () => {
-      setFormData(defaultSkillsData as unknown as SkillsFullData);
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).skills as unknown as SkillsFullData;
+      setFormData(JSON.parse(JSON.stringify(targetDefault)));
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
     return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
-  }, [setIsDirty]);
+  }, [profile, setIsDirty]);
 
   // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照
   const isFirstSkillsSync = useRef(true);
@@ -367,10 +350,35 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     });
   };
 
+  /**
+   * [主修順位互換] 僅允許切換前兩大主修 (index 0 與 index 1)
+   * 第 3 順位「通用軟體工程」與第 4 順位「多媒體設計」絕對鎖定，禁止調動！
+   */
+  const handleSwapPrimaryMajors = () => {
+    if (isPreview) return;
+    setIsDirty(true);
+    setFormData((prev) => {
+      const swapList = (list: SkillCategory[]) => {
+        if (!list || list.length < 2) return list;
+        const copy = [...list];
+        const temp = copy[0];
+        copy[0] = copy[1];
+        copy[1] = temp;
+        // 保證 index 2 (通用軟體工程) 與 index 3 (多媒體設計) 順序完全不變
+        return copy;
+      };
+      return {
+        zh: swapList(prev.zh),
+        en: swapList(prev.en),
+      };
+    });
+    setActiveCategoryIndex((prevIdx) => (prevIdx === 0 ? 1 : prevIdx === 1 ? 0 : prevIdx));
+  };
+
   /** handleSetDefault — 將當前內容設為模組預設值基準 */
   const handleSetDefault = () => {
     try {
-      localStorage.setItem('portfolio_skills_baseline', JSON.stringify(formData));
+      localStorage.setItem(`portfolio_${profile}_skills_baseline`, JSON.stringify(formData));
       showToast(isEn ? 'Current skills set as module default!' : '當前「專業技能」內容已設為預設值！');
     } catch {
       showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
@@ -378,7 +386,7 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
   };
 
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem('portfolio_skills_baseline');
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_skills_baseline`);
     const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
@@ -390,8 +398,10 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
       confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
       onConfirm: async () => {
         setIsDirty(false);
-        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as SkillsFullData) : (defaultSkillsData as SkillsFullData);
+        const templateDefault = getFallbacksByProfile(profile).skills as unknown as SkillsFullData;
+        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as SkillsFullData) : JSON.parse(JSON.stringify(templateDefault));
         try {
+          localStorage.removeItem(`portfolio_${profile}_skills_data`);
           localStorage.removeItem('portfolio_skills_data');
           window.dispatchEvent(new Event('portfolio_skills_data_updated'));
           const existingCustom = localStorage.getItem('portfolio_custom_translations');
@@ -468,38 +478,59 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
         isPreview={isPreview}
       />
 
-      {/* 4 大主專業技能分類標籤頁 */}
-      <div className="flex flex-wrap gap-2.5">
-        {categories.map((cat, idx) => {
-          const isActive = idx === activeCategoryIndex;
-          const dotColor = getCategoryDotColor(cat.catType, idx);
-          return (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => setActiveCategoryIndex(idx)}
-              style={
-                isActive
-                  ? {
-                      backgroundColor: `${dotColor}18`,
-                      borderColor: dotColor,
-                      color: dotColor,
-                      boxShadow: `0 0 15px ${dotColor}35`,
-                    }
-                  : undefined
-              }
-              className={`px-4 py-2.5 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
-                isActive
-                  ? ''
-                  : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
-              }`}
-            >
-              <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
-              <span>{cat.category}</span>
-              <span className="text-[10px] font-mono opacity-70">({cat.items.length})</span>
-            </button>
-          );
-        })}
+      {/* 4 大主專業技能分類標籤頁與主修順位調配 */}
+      <div className="space-y-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          {categories.map((cat, idx) => {
+            const isActive = idx === activeCategoryIndex;
+            const dotColor = getCategoryDotColor(cat.catType, idx);
+
+            return (
+              <React.Fragment key={idx}>
+                <button
+                  type="button"
+                  onClick={() => setActiveCategoryIndex(idx)}
+                  style={
+                    isActive
+                      ? {
+                          backgroundColor: `${dotColor}18`,
+                          borderColor: dotColor,
+                          color: dotColor,
+                          boxShadow: `0 0 15px ${dotColor}35`,
+                        }
+                      : undefined
+                  }
+                  className={`px-3.5 py-2 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    isActive
+                      ? ''
+                      : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
+                  }`}
+                >
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
+                  <span>{cat.category}</span>
+                </button>
+
+                {/* 前兩大主修之間的交換按鈕 (1 ⇄ 2) */}
+                {idx === 0 && (
+                  <button
+                    type="button"
+                    onClick={handleSwapPrimaryMajors}
+                    disabled={isPreview}
+                    title={isEn ? 'Swap order of Top 2 Majors (1 ⇄ 2)' : '切換前兩大主修順位 (1 ⇄ 2)'}
+                    aria-label={isEn ? 'Swap Top 2 Majors' : '切換前兩大主修順位'}
+                    className={`w-8 h-8 border cyber-cut-sm flex items-center justify-center font-mono text-sm font-bold transition-all shrink-0 ${
+                      isPreview
+                        ? 'opacity-40 cursor-not-allowed border-[var(--border-color)] text-[var(--text-sub)]'
+                        : 'bg-[var(--card-inner)] border-[var(--neon-cyan)]/50 text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/20 hover:border-[var(--neon-cyan)] hover:scale-105 active:scale-95 cursor-pointer shadow-[0_0_10px_rgba(0,240,255,0.15)]'
+                    }`}
+                  >
+                    ⇄
+                  </button>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
       </div>
 
       {/* 當前選取主技能類別與子項目編輯區 */}
@@ -656,10 +687,10 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
                         <button
                           type="button"
                           onClick={() => triggerDeleteItemDialog(activeCategoryIndex, itemIdx)}
-                          className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 cursor-pointer transition-colors"
+                          className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 cursor-pointer transition-colors shadow-xs"
                           title={isEn ? 'Delete item' : '刪除此項目'}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 text-rose-400" />
                         </button>
                       </div>
                     )}

@@ -11,9 +11,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
-import { useLang } from '../context/LangContext';
 
 interface SciFiRobotAvatarProps {
   soundPlaying?: boolean;
@@ -21,7 +19,6 @@ interface SciFiRobotAvatarProps {
 
 export const SciFiRobotAvatar: React.FC<SciFiRobotAvatarProps> = ({ soundPlaying = false }) => {
   const { theme } = useTheme();
-  const { lang } = useLang();
   const isLight = theme === 'light';
 
   const avatarRef     = useRef<HTMLDivElement | null>(null);

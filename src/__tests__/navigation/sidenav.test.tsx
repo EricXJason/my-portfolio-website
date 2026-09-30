@@ -14,12 +14,13 @@ import { SideNav } from '../../components/SideNav';
 import { LangProvider } from '../../context/LangContext';
 import { ThemeProvider } from '../../context/ThemeContext';
 import { PortfolioDataProvider, getContentFingerprint } from '../../context/PortfolioDataContext';
+import { ProfileType } from '../../context/ProfileContext';
 
-const renderSideNav = (siteEntered = true) => {
+const renderSideNav = (siteEntered = true, profile: ProfileType = 'interactive') => {
   return render(
     <ThemeProvider>
       <LangProvider>
-        <PortfolioDataProvider>
+        <PortfolioDataProvider profile={profile}>
           <SideNav siteEntered={siteEntered} />
         </PortfolioDataProvider>
       </LangProvider>
@@ -35,8 +36,8 @@ describe('SideNav 側邊浮動導覽單元測試', () => {
     vi.clearAllMocks();
   });
 
-  it('應呈現正確的 7 大模組順序 (首頁 -> 關於我 -> 專案作品 -> 專業技能 -> 經歷 -> 專業證照 -> 美術畫廊)', () => {
-    renderSideNav(true);
+  it('在 interactive 模式應呈現正確的 7 大模組順序 (含美術畫廊)', () => {
+    renderSideNav(true, 'interactive');
     const navLinks = screen.getAllByRole('link');
     const hrefs = navLinks.map((link) => link.getAttribute('href'));
 
@@ -48,6 +49,21 @@ describe('SideNav 側邊浮動導覽單元測試', () => {
       '#experience',
       '#awards',
       '#gallery',
+    ]);
+  });
+
+  it('在 fullstack 模式應排除隱藏的美術畫廊 (呈現 6 大模組)', () => {
+    renderSideNav(true, 'fullstack');
+    const navLinks = screen.getAllByRole('link');
+    const hrefs = navLinks.map((link) => link.getAttribute('href'));
+
+    expect(hrefs).toEqual([
+      '#home',
+      '#about',
+      '#projects',
+      '#skills',
+      '#experience',
+      '#awards',
     ]);
   });
 

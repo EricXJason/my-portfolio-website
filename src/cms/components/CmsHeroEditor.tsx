@@ -14,7 +14,6 @@ import {
   Save,
   RotateCcw,
   Check,
-  ExternalLink,
   Phone,
   Mail,
   MessageSquare,
@@ -23,13 +22,12 @@ import {
   Cpu,
   FileText,
   Link as LinkIcon,
-  Eye,
-  EyeOff,
   BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
 import defaultHeroData from '../../data/hero-section.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 import { TechIcon } from '../../components/icons/TechIcon';
 import { CmsUrlInput } from './CmsUrlInput';
 import {
@@ -77,11 +75,15 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { isDirty, setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
-  const [formData, setFormData] = useState<HeroSectionFullData>(
-    (data.hero as HeroSectionFullData) || (defaultHeroData as HeroSectionFullData)
-  );
+  const [formData, setFormData] = useState<HeroSectionFullData>(() => {
+    if (data.hero) {
+      return data.hero as HeroSectionFullData;
+    }
+    const templateDefault = getFallbacksByProfile(profile).hero as unknown as HeroSectionFullData;
+    return templateDefault || (defaultHeroData as HeroSectionFullData);
+  });
 
   useEffect(() => {
     // 僅在非編輯（乾淨）狀態下才允許外部 data.hero 覆寫本地表單，徹底杜絕雙向同步無限迴圈
@@ -109,15 +111,17 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
 
-  // 聆聽全域一鍵還原預設值事件
+  // 聆聽全域一鍵還原預設值事件（精準還原當前 profile 模板之預設值）
   useEffect(() => {
-    const handleResetAll = () => {
-      setFormData(defaultHeroData as unknown as HeroSectionFullData);
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).hero as unknown as HeroSectionFullData;
+      setFormData(JSON.parse(JSON.stringify(targetDefault)));
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
     return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
-  }, [setIsDirty]);
+  }, [profile, setIsDirty]);
 
   // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
   const isFirstHeroSync = useRef(true);
@@ -220,15 +224,15 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
   /** handleSetDefault — 將當前首頁資料設為預設值基準 */
   const handleSetDefault = () => {
     try {
-      localStorage.setItem('portfolio_hero_baseline', JSON.stringify(formData));
-      showToast(isEn ? 'Current home data set as module default!' : '當前「首頁」內容已設為預設值！');
+      localStorage.setItem(`portfolio_${profile}_hero_baseline`, JSON.stringify(formData));
+      showToast(isEn ? 'Current home data set as module default!' : '當前「首頁」內容已設為此模板預設值！');
     } catch {
       showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
     }
   };
 
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem('portfolio_hero_baseline');
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_hero_baseline`);
     const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
@@ -240,9 +244,13 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
       confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
-        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as HeroSectionFullData) : (defaultHeroData as HeroSectionFullData);
+        const templateDefault = getFallbacksByProfile(profile).hero as unknown as HeroSectionFullData;
+        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as HeroSectionFullData) : JSON.parse(JSON.stringify(templateDefault));
         setFormData(resetData);
         try {
+          localStorage.removeItem(`portfolio_${profile}_hero_data`);
+          localStorage.removeItem('portfolio_hero_data');
+          window.dispatchEvent(new Event('portfolio_hero_data_updated'));
           await updateDocument('hero', resetData);
           showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Home" restored to initial defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「首頁」模組已還原為初始預設資料！'));
         } catch (err) {

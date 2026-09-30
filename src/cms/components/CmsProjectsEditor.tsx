@@ -38,7 +38,6 @@ import { CmsImagePicker } from './CmsImagePicker';
 import { CmsTagListEditor } from './CmsTagListEditor';
 import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import { TechIcon } from '../../components/icons/TechIcon';
-import { ExternalLink } from 'lucide-react';
 import { CmsUrlInput } from './CmsUrlInput';
 import {
   CmsConfirmDialog,
@@ -47,6 +46,7 @@ import {
 } from './CmsConfirmDialog';
 import { usePortfolioData } from '../../context/PortfolioDataContext';
 import defaultProjectsData from '../../data/projects-section.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 
 interface ProjectItem {
   id: string;
@@ -102,7 +102,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -112,7 +112,8 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     if (data.projects && Array.isArray(data.projects)) {
       return data.projects as ProjectItem[];
     }
-    const defaults = defaultProjectsData as ProjectItem[];
+    const templateDefault = getFallbacksByProfile(profile).projects as ProjectItem[];
+    const defaults = templateDefault || (defaultProjectsData as ProjectItem[]);
     try {
       const saved = localStorage.getItem('portfolio_projects_data');
       if (saved) {
@@ -177,15 +178,17 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     }
   }, [data.projects]);
 
-  // 聆聽全域一鍵還原預設值廣播事件
+  // 聆聽全域一鍵還原預設值廣播事件（精準還原當前 profile 模板之預設值）
   useEffect(() => {
-    const handleResetAll = () => {
-      setProjects(defaultProjectsData as ProjectItem[]);
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).projects as ProjectItem[];
+      setProjects(JSON.parse(JSON.stringify(targetDefault)));
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
     return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
-  }, [setIsDirty]);
+  }, [profile, setIsDirty]);
 
   // 聆聽廣播存檔事件
   useEffect(() => {
@@ -544,15 +547,15 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
   /** handleSetDefault — 將當前專案資料設為預設值基準 */
   const handleSetDefault = () => {
     try {
-      localStorage.setItem('portfolio_projects_baseline', JSON.stringify(projects));
-      showToast(isEn ? 'Current projects set as module default!' : '當前「專案作品」內容已設為預設值！');
+      localStorage.setItem(`portfolio_${profile}_projects_baseline`, JSON.stringify(projects));
+      showToast(isEn ? 'Current projects set as module default!' : '當前「專案作品」內容已設為此模板預設值！');
     } catch {
       showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
     }
   };
 
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem('portfolio_projects_baseline');
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_projects_baseline`);
     const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
@@ -564,8 +567,10 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
       confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
-        const defaultList = baselineRaw ? (JSON.parse(baselineRaw) as ProjectItem[]) : (defaultProjectsData as ProjectItem[]);
+        const templateDefault = getFallbacksByProfile(profile).projects as ProjectItem[];
+        const defaultList = baselineRaw ? (JSON.parse(baselineRaw) as ProjectItem[]) : JSON.parse(JSON.stringify(templateDefault));
         try {
+          localStorage.removeItem(`portfolio_${profile}_projects_data`);
           localStorage.removeItem('portfolio_projects_data');
           window.dispatchEvent(new Event('portfolio_projects_data_updated'));
 
@@ -1117,7 +1122,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                 {activeProject.visible !== false ? (
                   <Eye className="w-4 h-4 text-[var(--neon-cyan)]" />
                 ) : (
-                  <EyeOff className="w-4 h-4 text-slate-500" />
+                  <EyeOff className="w-4 h-4 text-rose-500" />
                 )}
                 <div>
                   <span className="text-xs sm:text-sm font-bold font-['Noto_Sans_TC'] text-[var(--text-main)] block">

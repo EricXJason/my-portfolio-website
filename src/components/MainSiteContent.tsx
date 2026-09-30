@@ -22,6 +22,7 @@ import { CyberParticles } from './CyberParticles';
 import { GlobalAmbientNeon } from './GlobalAmbientNeon';
 import { YoutubeModal } from './YoutubeModal';
 import { usePortfolioData } from '../context/PortfolioDataContext';
+import { getFallbacksByProfile } from '../services/portfolioDataService';
 
 // 背景代碼流裝飾：採動態延遲載入，不佔用首屏關鍵執行路徑
 const FullStackCodeStreamBackground = lazy(() => import('./FullStackCodeStreamBackground').then(m => ({ default: m.FullStackCodeStreamBackground })));
@@ -122,7 +123,7 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
    * [模組渲染順序] 主頁面核心區塊渲染順序定義
    * 採用官方標準模組流向架構，提供訪客端高穩定性的展示拓撲。
    */
-  const { data } = usePortfolioData();
+  const { data, profile } = usePortfolioData();
   const moduleOrder = ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'];
 
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
@@ -130,7 +131,7 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
       return { home: true, ...data.site_settings.modules_visibility };
     }
     try {
-      const saved = localStorage.getItem('portfolio_modules_visibility');
+      const saved = localStorage.getItem(`portfolio_${profile}_modules_visibility`);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
@@ -138,19 +139,23 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
         }
       }
     } catch {}
-    return { home: true };
+    const fb = getFallbacksByProfile(profile);
+    return { home: true, ...((fb.site_settings as any)?.modules_visibility || {}) };
   });
 
   React.useEffect(() => {
     if (data?.site_settings?.modules_visibility) {
       setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+    } else {
+      const fb = getFallbacksByProfile(profile);
+      setModuleVisibility({ home: true, ...((fb.site_settings as any)?.modules_visibility || {}) });
     }
-  }, [data?.site_settings?.modules_visibility]);
+  }, [data?.site_settings?.modules_visibility, profile]);
 
   React.useEffect(() => {
     const handleVisUpdate = () => {
       try {
-        const saved = localStorage.getItem('portfolio_modules_visibility');
+        const saved = localStorage.getItem(`portfolio_${profile}_modules_visibility`);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === 'object') {
@@ -159,16 +164,23 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
           }
         }
       } catch {}
-      setModuleVisibility({ home: true });
+      if (data?.site_settings?.modules_visibility) {
+        setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+      } else {
+        const fb = getFallbacksByProfile(profile);
+        setModuleVisibility({ home: true, ...((fb.site_settings as any)?.modules_visibility || {}) });
+      }
     };
 
+    window.addEventListener(`portfolio_${profile}_modules_visibility_updated`, handleVisUpdate);
     window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
     window.addEventListener('storage', handleVisUpdate);
     return () => {
+      window.removeEventListener(`portfolio_${profile}_modules_visibility_updated`, handleVisUpdate);
       window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
       window.removeEventListener('storage', handleVisUpdate);
     };
-  }, []);
+  }, [profile, data?.site_settings?.modules_visibility]);
 
   const handleOpenYoutube = (videoId: string, title: string) => {
     setYtModal({ open: true, videoId, title });
@@ -178,9 +190,20 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
     setYtModal({ open: false, videoId: '', title: '' });
   };
 
+  const isSectionVisible = (id: string) => {
+    if (id === 'home') return true;
+    if (moduleVisibility[id] !== undefined) {
+      return moduleVisibility[id];
+    }
+    if (data?.site_settings?.modules_visibility?.[id] !== undefined) {
+      return data.site_settings.modules_visibility[id];
+    }
+    const fb = getFallbacksByProfile(profile);
+    return (fb.site_settings as any)?.modules_visibility?.[id] ?? true;
+  };
 
   const renderSection = (id: string) => {
-    if (id !== 'home' && moduleVisibility[id] === false) {
+    if (!isSectionVisible(id)) {
       return null;
     }
 

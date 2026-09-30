@@ -19,11 +19,15 @@ import { useCmsMode } from '../context/CmsModeContext';
 import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { CmsConfirmDialog, CmsConfirmDialogState, EMPTY_DIALOG } from './CmsConfirmDialog';
 
+import { ProfileType } from '../../context/ProfileContext';
+
 interface CmsHeaderProps {
   currentTabName: string;
   onOpenMobile: () => void;
   onExitToSite?: () => void;
   onSwitchMode?: () => void;
+  profile?: ProfileType;
+  onToggleProfile?: () => void;
 }
 
 /**
@@ -37,6 +41,8 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
   onOpenMobile,
   onExitToSite,
   onSwitchMode,
+  profile = 'fullstack',
+  onToggleProfile,
 }) => {
   const { theme, toggleTheme } = useTheme();
   const { lang, toggleLang } = useLang();
@@ -193,6 +199,46 @@ export const CmsHeader: React.FC<CmsHeaderProps> = ({
 
       {/* 右側：功能動作按鈕與 4 色核心控制群（支援橫向安全防禦與階梯式響應字級） */}
       <div className="flex items-center gap-1.5 sm:gap-2 md:gap-2.5 shrink-0">
+        {/* 雙模板切換 Toggle (一邊 F 一邊 I，與雙語模式風格一致) */}
+        {onToggleProfile && (
+          <button
+            type="button"
+            onClick={onToggleProfile}
+            className="w-[48px] sm:w-[56px] h-[28px] sm:h-[30px] border cyber-cut-sm relative p-[2px] flex items-center transition-all duration-300 cursor-pointer font-tech text-xs font-bold active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none overflow-hidden"
+            style={{
+              backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
+              borderColor: borderCol,
+            }}
+            aria-label={profile === 'fullstack' ? '切換為 Interactive 模板 (I)' : '切換為 Fullstack 模板 (F)'}
+            title={profile === 'fullstack' ? '當前: Fullstack (F) · 點擊切換為 Interactive (I)' : '當前: Interactive (I) · 點擊切換為 Fullstack (F)'}
+          >
+            <div className="w-full h-full flex items-center justify-between pointer-events-none z-0">
+              <span
+                className="w-1/2 text-center text-[10px] sm:text-xs font-bold"
+                style={{ color: profile === 'fullstack' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}
+              >
+                F
+              </span>
+              <span
+                className="w-1/2 text-center text-[10px] sm:text-xs font-bold"
+                style={{ color: profile === 'interactive' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}
+              >
+                I
+              </span>
+            </div>
+            <div
+              className="absolute top-[2px] bottom-[2px] left-[2px] w-[calc(50%-2px)] cyber-cut-sm flex items-center justify-center transition-transform duration-300 ease-out z-10 shadow-sm text-[10px] sm:text-xs font-black"
+              style={{
+                transform: profile === 'interactive' ? 'translateX(100%)' : 'translateX(0%)',
+                backgroundColor: isLight ? '#0369a1' : '#00f0ff',
+                color: isLight ? '#ffffff' : '#030712',
+              }}
+            >
+              {profile === 'fullstack' ? 'F' : 'I'}
+            </div>
+          </button>
+        )}
+
         {/* 語系切換器 (與前臺導覽列一致之風格) */}
         <button
           onClick={toggleLang}

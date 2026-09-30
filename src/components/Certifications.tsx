@@ -58,7 +58,6 @@ export const Certifications: React.FC = () => {
     setExpandedGroups((prev) => ({ ...prev, [gIdx]: !prev[gIdx] }));
   };
 
-  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
   const cyanCol = isLight ? '#0369a1' : '#00f0ff';
 
   const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;

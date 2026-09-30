@@ -13,6 +13,7 @@ import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { usePortfolioData } from '../context/PortfolioDataContext';
+import { useProfile } from '../context/ProfileContext';
 import projectsData from '../data/projects-section.json';
 import {
   Trophy,
@@ -98,35 +99,86 @@ interface CategoryStyle {
   iconName?: string;
 }
 
-const categoryMap: Record<string, CategoryStyle> = {
-  fullstack: {
-    zh: '全端開發',
-    en: 'Fullstack Dev',
-    darkBg: 'rgba(0, 240, 255, 0.12)',
-    darkBorder: 'rgba(0, 240, 255, 0.45)',
-    darkText: '#00f0ff',
-    lightBg: '#e0f2fe',
-    lightBorder: '#0284c7',
-    lightText: '#0369a1',
-    iconName: 'fullstack',
-  },
-  interactive: {
-    zh: '互動應用開發',
-    en: 'Interactive App',
-    darkBg: 'rgba(59, 130, 246, 0.16)',
-    darkBorder: 'rgba(96, 165, 250, 0.55)',
-    darkText: '#60a5fa',
-    lightBg: '#eff6ff',
-    lightBorder: '#3b82f6',
-    lightText: '#1d4ed8',
-    iconName: 'interactive',
-  },
+// 順序色第 1 順位：青色 (Cyan #00f0ff)
+const PRIMARY_MAJOR_STYLE = {
+  darkBg: 'rgba(0, 240, 255, 0.12)',
+  darkBorder: 'rgba(0, 240, 255, 0.45)',
+  darkText: '#00f0ff',
+  lightBg: '#e0f2fe',
+  lightBorder: '#0284c7',
+  lightText: '#0369a1',
+  activeDarkBg: 'rgba(0, 240, 255, 0.16)',
+  activeDarkBorder: '#00f0ff',
+  activeDarkText: '#00f0ff',
+  activeDarkShadow: '0 0 14px rgba(0, 240, 255, 0.45)',
+  activeLightBg: '#0284c7',
+  activeLightBorder: '#0284c7',
+  activeLightText: '#ffffff',
+  activeLightShadow: '0 4px 14px rgba(2, 132, 199, 0.35)',
+  hoverClass: 'hover:border-cyan-400 hover:text-cyan-300',
+};
+
+// 順序色第 2 順位：藍色 (Blue #60a5fa)
+const SECONDARY_MAJOR_STYLE = {
+  darkBg: 'rgba(59, 130, 246, 0.16)',
+  darkBorder: 'rgba(96, 165, 250, 0.55)',
+  darkText: '#60a5fa',
+  lightBg: '#eff6ff',
+  lightBorder: '#3b82f6',
+  lightText: '#1d4ed8',
+  activeDarkBg: 'rgba(59, 130, 246, 0.18)',
+  activeDarkBorder: '#3b82f6',
+  activeDarkText: '#60a5fa',
+  activeDarkShadow: '0 0 14px rgba(59, 130, 246, 0.45)',
+  activeLightBg: '#2563eb',
+  activeLightBorder: '#2563eb',
+  activeLightText: '#ffffff',
+  activeLightShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
+  hoverClass: 'hover:border-blue-400 hover:text-blue-300',
 };
 
 export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutube }) => {
   const { t, lang } = useLang();
   const { theme } = useTheme();
   const isLight = theme === 'light';
+
+  let isInteractiveMode = false;
+  try {
+    const profCtx = useProfile();
+    isInteractiveMode = profCtx.isInteractive;
+  } catch {}
+
+  // 顏色嚴格根據順序機制：第 1 順位永遠配青色 (Cyan)，第 2 順位永遠配藍色 (Blue)
+  const categoryMap: Record<string, CategoryStyle> = useMemo(() => {
+    const isFirstInteractive = isInteractiveMode;
+    const interactiveStyle = isFirstInteractive ? PRIMARY_MAJOR_STYLE : SECONDARY_MAJOR_STYLE;
+    const fullstackStyle = isFirstInteractive ? SECONDARY_MAJOR_STYLE : PRIMARY_MAJOR_STYLE;
+
+    return {
+      fullstack: {
+        zh: '全端開發',
+        en: 'Fullstack Dev',
+        darkBg: fullstackStyle.darkBg,
+        darkBorder: fullstackStyle.darkBorder,
+        darkText: fullstackStyle.darkText,
+        lightBg: fullstackStyle.lightBg,
+        lightBorder: fullstackStyle.lightBorder,
+        lightText: fullstackStyle.lightText,
+        iconName: 'fullstack',
+      },
+      interactive: {
+        zh: '互動應用開發',
+        en: 'Interactive App',
+        darkBg: interactiveStyle.darkBg,
+        darkBorder: interactiveStyle.darkBorder,
+        darkText: interactiveStyle.darkText,
+        lightBg: interactiveStyle.lightBg,
+        lightBorder: interactiveStyle.lightBorder,
+        lightText: interactiveStyle.lightText,
+        iconName: 'interactive',
+      },
+    };
+  }, [isInteractiveMode]);
 
   // 渲染分類對應的 Lucide 圖示
   const renderCategoryIcon = (iconName?: string, size = 13, className = '') => {
@@ -227,13 +279,20 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const isFeaturedSideBySideView = filter === 'featured';
 
-  // 專案類別篩選順序：精選作品 -> 全部作品 -> 全端開發 -> 互動應用
-  const filters = [
-    { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
-    { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
-    { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
-    { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
-  ];
+  // 專案類別篩選順序：依當前模式動態調整順序 (全端優先 vs 互動優先)
+  const filters = isInteractiveMode
+    ? [
+        { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
+        { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
+        { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
+        { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
+      ]
+    : [
+        { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
+        { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
+        { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
+        { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
+      ];
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
   const cyanCol = isLight ? '#0369a1' : '#00f0ff';
@@ -457,7 +516,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             <FolderGit2 size={32} style={{ color: cyanCol }} className="shrink-0" />
             <span>{t('projects_title')}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-reading leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('projects_note')}
           </p>
         </div>
@@ -492,24 +551,16 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                   boxShadow: isLight ? '0 4px 14px rgba(15, 23, 42, 0.30)' : '0 0 14px rgba(255, 255, 255, 0.45)',
                 };
               }
-            } else if (f.key === 'fullstack') {
-              hoverClass = 'hover:border-cyan-400 hover:text-cyan-300';
+            } else if (f.key === 'fullstack' || f.key === 'interactive') {
+              const isFirstMajor = isInteractiveMode ? f.key === 'interactive' : f.key === 'fullstack';
+              const styleConfig = isFirstMajor ? PRIMARY_MAJOR_STYLE : SECONDARY_MAJOR_STYLE;
+              hoverClass = styleConfig.hoverClass;
               if (isActive) {
                 customActiveStyle = {
-                  backgroundColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.16)',
-                  color: isLight ? '#ffffff' : '#00f0ff',
-                  borderColor: isLight ? '#0284c7' : '#00f0ff',
-                  boxShadow: isLight ? '0 4px 14px rgba(2, 132, 199, 0.35)' : '0 0 14px rgba(0, 240, 255, 0.45)',
-                };
-              }
-            } else if (f.key === 'interactive') {
-              hoverClass = 'hover:border-blue-400 hover:text-blue-300';
-              if (isActive) {
-                customActiveStyle = {
-                  backgroundColor: isLight ? '#2563eb' : 'rgba(59, 130, 246, 0.18)',
-                  color: isLight ? '#ffffff' : '#60a5fa',
-                  borderColor: isLight ? '#2563eb' : '#3b82f6',
-                  boxShadow: isLight ? '0 4px 14px rgba(37, 99, 235, 0.35)' : '0 0 14px rgba(59, 130, 246, 0.45)',
+                  backgroundColor: isLight ? styleConfig.activeLightBg : styleConfig.activeDarkBg,
+                  color: isLight ? styleConfig.activeLightText : styleConfig.activeDarkText,
+                  borderColor: isLight ? styleConfig.activeLightBorder : styleConfig.activeDarkBorder,
+                  boxShadow: isLight ? styleConfig.activeLightShadow : styleConfig.activeDarkShadow,
                 };
               }
             }
@@ -544,11 +595,18 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         {/* 精選作品模式：六個方塊完整左右對齊，RWD 依序排列且純線分隔 (Dual-Domain 6-Box Symmetrical Aligned Showcase) */}
         {isFeaturedSideBySideView ? (
           <div ref={gridRef} className="max-w-6xl mx-auto">
-            {/* 宣告式卡片渲染輔助函式 (左側全端為青色系、右側互動為藍色系，內部自適應 stretch 實現 100% 左右等高) */}
+            {/* 宣告式卡片渲染輔助函式 (左側永遠為青色順位色、右側永遠為藍色順位色，內部自適應 stretch 實現 100% 左右等高) */}
             {(() => {
-              const renderCompactCard = (project: ProjectItem | undefined, domain: 'fullstack' | 'interactive', pIdx: number, extraClasses = '') => {
+              const renderCompactCard = (
+                project: ProjectItem | undefined,
+                domain: 'fullstack' | 'interactive',
+                pIdx: number,
+                columnSide: 'left' | 'right',
+                extraClasses = ''
+              ) => {
                 if (!project) return null;
 
+                const isLeftSide = columnSide === 'left';
                 const isFullstack = domain === 'fullstack';
                 const title = lang === 'zh' ? project.title_zh : (project.title_en || project.title_zh);
                 const desc = lang === 'zh' ? project.desc : (project.desc_en || project.desc);
@@ -556,31 +614,42 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 const categoryLabel = lang === 'zh' ? categoryObj.zh : categoryObj.en;
                 const isPlaceholder = !project.image || project.image.includes('placeholder');
 
-                // 顏色系統：左邊全端為青色 (Cyan)，右邊互動應用為藍色 (Blue)
+                // 順位顏色系統：左欄永遠固定為青色 (Cyan)，右欄永遠固定為藍色 (Blue)
                 const cardBorder = isLight
-                  ? (isFullstack ? '#7dd3fc' : '#93c5fd')
-                  : (isFullstack ? 'rgba(0, 240, 255, 0.35)' : 'rgba(96, 165, 250, 0.45)');
+                  ? (isLeftSide ? '#7dd3fc' : '#93c5fd')
+                  : (isLeftSide ? 'rgba(0, 240, 255, 0.35)' : 'rgba(96, 165, 250, 0.45)');
                 const cardBg = isLight
-                  ? (isFullstack ? 'linear-gradient(145deg, #f0fdfa 0%, #ffffff 60%, #f8fafc 100%)' : 'linear-gradient(145deg, #eff6ff 0%, #ffffff 60%, #f8fafc 100%)')
-                  : (isFullstack ? 'linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)' : 'linear-gradient(145deg, rgba(59, 130, 246, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)');
+                  ? (isLeftSide ? 'linear-gradient(145deg, #f0fdfa 0%, #ffffff 60%, #f8fafc 100%)' : 'linear-gradient(145deg, #eff6ff 0%, #ffffff 60%, #f8fafc 100%)')
+                  : (isLeftSide ? 'linear-gradient(145deg, rgba(0, 240, 255, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)' : 'linear-gradient(145deg, rgba(59, 130, 246, 0.08) 0%, rgba(13, 23, 42, 0.52) 45%, rgba(6, 12, 24, 0.62) 100%)');
                 const cardShadow = isLight
                   ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 4px 20px rgba(0,0,0,0.04)'
-                  : (isFullstack ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 240, 255, 0.1)' : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(59, 130, 246, 0.1)');
+                  : (isLeftSide ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(0, 240, 255, 0.1)' : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 8px 32px rgba(59, 130, 246, 0.1)');
                 const headerBg = isLight
-                  ? (isFullstack ? 'rgba(240, 253, 250, 0.9)' : 'rgba(239, 246, 255, 0.9)')
-                  : (isFullstack ? 'rgba(0, 240, 255, 0.05)' : 'rgba(59, 130, 246, 0.05)');
+                  ? (isLeftSide ? 'rgba(240, 253, 250, 0.9)' : 'rgba(239, 246, 255, 0.9)')
+                  : (isLeftSide ? 'rgba(0, 240, 255, 0.05)' : 'rgba(59, 130, 246, 0.05)');
                 const headerBorder = isLight
-                  ? (isFullstack ? '#bae6fd' : '#bfdbfe')
-                  : (isFullstack ? 'rgba(0, 240, 255, 0.22)' : 'rgba(96, 165, 250, 0.25)');
-                const pillarBg = isFullstack ? '#00f0ff' : '#3b82f6';
-                const pillarShadow = isFullstack ? '0 0 8px rgba(0, 240, 255, 0.7)' : '0 0 8px rgba(59, 130, 246, 0.7)';
-                const titleHoverClass = isFullstack ? 'hover:text-cyan-400' : 'hover:text-blue-400';
+                  ? (isLeftSide ? '#bae6fd' : '#bfdbfe')
+                  : (isLeftSide ? 'rgba(0, 240, 255, 0.22)' : 'rgba(96, 165, 250, 0.25)');
+                const pillarBg = isLeftSide ? '#00f0ff' : '#3b82f6';
+                const pillarShadow = isLeftSide ? '0 0 8px rgba(0, 240, 255, 0.7)' : '0 0 8px rgba(59, 130, 246, 0.7)';
+                const titleHoverClass = isLeftSide ? 'hover:text-cyan-400' : 'hover:text-blue-400';
                 const thumbBorder = isLight
-                  ? (isFullstack ? '#bae6fd' : '#bfdbfe')
-                  : (isFullstack ? 'rgba(0, 240, 255, 0.25)' : 'rgba(96, 165, 250, 0.28)');
+                  ? (isLeftSide ? '#bae6fd' : '#bfdbfe')
+                  : (isLeftSide ? 'rgba(0, 240, 255, 0.25)' : 'rgba(96, 165, 250, 0.28)');
                 const footerBorder = isLight
-                  ? (isFullstack ? '#e0f2fe' : '#dbeafe')
-                  : (isFullstack ? 'rgba(0, 240, 255, 0.18)' : 'rgba(96, 165, 250, 0.20)');
+                  ? (isLeftSide ? '#e0f2fe' : '#dbeafe')
+                  : (isLeftSide ? 'rgba(0, 240, 255, 0.18)' : 'rgba(96, 165, 250, 0.20)');
+                const bracketColor = isLeftSide
+                  ? (isLight ? '#0369a1' : '#00f0ff')
+                  : (isLight ? '#1d4ed8' : '#60a5fa');
+
+                const columnBadgeStyle = isLeftSide
+                  ? (isLight
+                      ? { bg: '#e0f2fe', border: '#0284c7', text: '#0369a1' }
+                      : { bg: 'rgba(0, 240, 255, 0.12)', border: 'rgba(0, 240, 255, 0.45)', text: '#00f0ff' })
+                  : (isLight
+                      ? { bg: '#eff6ff', border: '#3b82f6', text: '#1d4ed8' }
+                      : { bg: 'rgba(59, 130, 246, 0.16)', border: 'rgba(96, 165, 250, 0.55)', text: '#60a5fa' });
 
                 return (
                   <div key={project.id} className={`${extraClasses} flex flex-col h-full`}>
@@ -591,6 +660,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                         background: cardBg,
                         borderColor: cardBorder,
                         boxShadow: cardShadow,
+                        ['--card-bracket-color' as any]: bracketColor,
                       }}
                     >
                       {/* 1. 頂部通欄 Header：作品名稱（左）＋ 右邊標籤（右） */}
@@ -637,9 +707,9 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           <span
                             className="px-2.5 py-1 border font-tech text-xs font-extrabold uppercase cyber-cut-sm flex items-center gap-1.5 shadow-xs shrink-0 whitespace-nowrap tracking-wide"
                             style={{
-                              backgroundColor: isLight ? categoryObj.lightBg : categoryObj.darkBg,
-                              borderColor: isLight ? categoryObj.lightBorder : categoryObj.darkBorder,
-                              color: isLight ? categoryObj.lightText : categoryObj.darkText,
+                              backgroundColor: columnBadgeStyle.bg,
+                              borderColor: columnBadgeStyle.border,
+                              color: columnBadgeStyle.text,
                             }}
                           >
                             {renderCategoryIcon(categoryObj.iconName, 13, "shrink-0")}
@@ -693,7 +763,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           }}
                         >
                           <p
-                            className="text-xs sm:text-[13px] font-tech leading-relaxed"
+                            className="text-xs sm:text-[13px] font-reading leading-relaxed"
                             style={{ color: isLight ? '#334155' : '#cbd5e1' }}
                           >
                             {desc}
@@ -716,9 +786,19 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                 );
               };
 
+              // 左右兩欄的資料陣列與領域標頭（依當前模式決定誰在左誰在右，左欄永遠固定青色、右欄永遠固定藍色）
+              const leftCategoryKey: 'fullstack' | 'interactive' = isInteractiveMode ? 'interactive' : 'fullstack';
+              const rightCategoryKey: 'fullstack' | 'interactive' = isInteractiveMode ? 'fullstack' : 'interactive';
+
+              const leftProjects = isInteractiveMode ? featuredInteractiveProjects : featuredFullstackProjects;
+              const rightProjects = isInteractiveMode ? featuredFullstackProjects : featuredInteractiveProjects;
+
+              const leftTitle = lang === 'zh' ? categoryMap[leftCategoryKey].zh : categoryMap[leftCategoryKey].en;
+              const rightTitle = lang === 'zh' ? categoryMap[rightCategoryKey].zh : categoryMap[rightCategoryKey].en;
+
               return (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-stretch">
-                  {/* ── 行 1：全端開發 領域標頭 (青色) ── */}
+                  {/* ── 行 1：左欄領域標頭 (永遠為第一順位色：青色) ── */}
                   <div
                     className="order-1 lg:order-none lg:col-start-1 lg:row-start-1 flex items-center justify-center pb-2.5 border-b-2 relative"
                     style={{ borderColor: isLight ? '#0284c7' : 'rgba(0, 240, 255, 0.45)' }}
@@ -727,11 +807,11 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                       className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
                       style={{ color: isLight ? '#0284c7' : '#00f0ff' }}
                     >
-                      {lang === 'zh' ? categoryMap.fullstack.zh : categoryMap.fullstack.en}
+                      {leftTitle}
                     </h3>
                   </div>
 
-                  {/* ── 行 1：互動應用開發 領域標頭 (藍色) ── */}
+                  {/* ── 行 1：右欄領域標頭 (永遠為第二順位色：藍色) ── */}
                   <div
                     className="order-6 lg:order-none lg:col-start-2 lg:row-start-1 flex items-center justify-center pb-2.5 border-b-2 relative"
                     style={{ borderColor: isLight ? '#2563eb' : 'rgba(96, 165, 250, 0.55)' }}
@@ -740,21 +820,21 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                       className="text-base sm:text-lg font-black font-hud uppercase tracking-wider text-center"
                       style={{ color: isLight ? '#1d4ed8' : '#60a5fa' }}
                     >
-                      {lang === 'zh' ? categoryMap.interactive.zh : categoryMap.interactive.en}
+                      {rightTitle}
                     </h3>
                   </div>
 
-                  {/* ── 行 2：配對 1 (左 1 全端 vs 右 1 互動，在同一 Row 嚴格等高切齊) ── */}
-                  {renderCompactCard(featuredFullstackProjects[0], 'fullstack', 0, 'order-2 lg:order-none lg:col-start-1 lg:row-start-2')}
-                  {renderCompactCard(featuredInteractiveProjects[0], 'interactive', 0, 'order-7 lg:order-none lg:col-start-2 lg:row-start-2')}
+                  {/* ── 行 2：配對 1 (左 1 vs 右 1，在同一 Row 嚴格等高切齊) ── */}
+                  {renderCompactCard(leftProjects[0], leftCategoryKey, 0, 'left', 'order-2 lg:order-none lg:col-start-1 lg:row-start-2')}
+                  {renderCompactCard(rightProjects[0], rightCategoryKey, 0, 'right', 'order-7 lg:order-none lg:col-start-2 lg:row-start-2')}
 
-                  {/* ── 行 3：配對 2 (左 2 全端 vs 右 2 互動，在同一 Row 嚴格等高切齊) ── */}
-                  {renderCompactCard(featuredFullstackProjects[1], 'fullstack', 1, 'order-3 lg:order-none lg:col-start-1 lg:row-start-3')}
-                  {renderCompactCard(featuredInteractiveProjects[1], 'interactive', 1, 'order-8 lg:order-none lg:col-start-2 lg:row-start-3')}
+                  {/* ── 行 3：配對 2 (左 2 vs 右 2，在同一 Row 嚴格等高切齊) ── */}
+                  {renderCompactCard(leftProjects[1], leftCategoryKey, 1, 'left', 'order-3 lg:order-none lg:col-start-1 lg:row-start-3')}
+                  {renderCompactCard(rightProjects[1], rightCategoryKey, 1, 'right', 'order-8 lg:order-none lg:col-start-2 lg:row-start-3')}
 
-                  {/* ── 行 4：配對 3 (左 3 全端 vs 右 3 互動，在同一 Row 嚴格等高切齊) ── */}
-                  {renderCompactCard(featuredFullstackProjects[2], 'fullstack', 2, 'order-4 lg:order-none lg:col-start-1 lg:row-start-4')}
-                  {renderCompactCard(featuredInteractiveProjects[2], 'interactive', 2, 'order-9 lg:order-none lg:col-start-2 lg:row-start-4')}
+                  {/* ── 行 4：配對 3 (左 3 vs 右 3，在同一 Row 嚴格等高切齊) ── */}
+                  {renderCompactCard(leftProjects[2], leftCategoryKey, 2, 'left', 'order-4 lg:order-none lg:col-start-1 lg:row-start-4')}
+                  {renderCompactCard(rightProjects[2], rightCategoryKey, 2, 'right', 'order-9 lg:order-none lg:col-start-2 lg:row-start-4')}
 
                   {/* ── RWD 行動端專屬分隔線 (僅於 < lg 螢幕顯示，單純俐落一條線，銜接舒適間距) ── */}
                   <div
@@ -859,7 +939,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                           </div>
                         </div>
 
-                        <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                        <p className="text-sm sm:text-base font-reading leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                           {desc}
                         </p>
 
@@ -869,7 +949,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                             <p className="text-xs sm:text-sm font-hud font-bold uppercase tracking-wider" style={{ color: isLight ? categoryObj.lightText : categoryObj.darkText }}>
                               {lang === 'zh' ? '核心技術亮點：' : 'KEY HIGHLIGHTS:'}
                             </p>
-                            <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1 pl-1" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                            <ul className="list-disc list-inside text-xs sm:text-sm font-reading space-y-1.5 pl-1" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
                               {contribList.map((cItem, cIdx) => (
                                 <li key={cIdx} className="leading-relaxed">{cItem}</li>
                               ))}
@@ -879,7 +959,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
                         {honorsList && honorsList.length > 0 && (
                           <div
-                            className="p-3.5 border font-tech text-xs sm:text-sm space-y-1 cyber-cut-sm"
+                            className="p-3.5 border font-reading text-xs sm:text-sm space-y-1 cyber-cut-sm"
                             style={{
                               backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.15)',
                               borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.35)',
@@ -933,7 +1013,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             <h3 className="text-lg sm:text-xl font-bold font-hud uppercase tracking-wider" style={{ color: isLight ? '#0f172a' : '#ffffff' }}>
               {lang === 'zh' ? '目前尚無相關專案' : 'No Projects Available Yet'}
             </h3>
-            <p className="text-xs sm:text-sm font-tech leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+            <p className="text-xs sm:text-sm font-reading leading-relaxed" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
               {lang === 'zh' ? '專案準備中，敬請期待最新開發作品！' : 'Projects in development, stay tuned for upcoming releases!'}
             </p>
           </div>
@@ -1125,7 +1205,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                     </div>
 
                     {/* 詳細內容描述 */}
-                    <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                    <p className="text-sm sm:text-base font-reading leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                       {lang === 'zh' ? selectedProjectModal.desc : (selectedProjectModal.desc_en || selectedProjectModal.desc)}
                     </p>
 
@@ -1135,7 +1215,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                         <p className="text-xs sm:text-sm font-hud font-bold uppercase tracking-wider" style={{ color: isLight ? (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).lightText : (categoryMap[selectedProjectModal.category] ?? fallbackCategoryStyle).darkText }}>
                           {lang === 'zh' ? '核心技術亮點：' : 'KEY HIGHLIGHTS:'}
                         </p>
-                        <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1 pl-1" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                        <ul className="list-disc list-inside text-xs sm:text-sm font-reading space-y-1.5 pl-1" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
                           {((lang === 'zh' ? selectedProjectModal.contributions : (selectedProjectModal.contributions_en || selectedProjectModal.contributions)) || []).map((cItem, cIdx) => (
                             <li key={cIdx} className="leading-relaxed">{cItem}</li>
                           ))}
@@ -1146,7 +1226,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                     {/* 榮譽與獲獎紀錄 (若存在) */}
                     {((lang === 'zh' ? selectedProjectModal.honors : (selectedProjectModal.honors_en || selectedProjectModal.honors)) || []).length > 0 && (
                       <div
-                        className="p-3.5 border font-tech text-xs sm:text-sm space-y-1 cyber-cut-sm"
+                        className="p-3.5 border font-reading text-xs sm:text-sm space-y-1 cyber-cut-sm"
                         style={{
                           backgroundColor: isLight ? '#fffbeb' : 'rgba(245,158,11,0.15)',
                           borderColor: isLight ? '#fcd34d' : 'rgba(245,158,11,0.35)',

@@ -30,6 +30,8 @@ import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
 import { usePortfolioData } from '../../context/PortfolioDataContext';
+import { ProfileType } from '../../context/ProfileContext';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 import { TechIcon } from '../../components/icons/TechIcon';
 import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 
@@ -131,16 +133,37 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
   onSelectTab,
   isOpenMobile,
   onCloseMobile,
-  onExitToSite,
+  onExitToSite: _onExitToSite,
 }) => {
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { theme } = useTheme();
   const isLight = theme === 'light';
+  const { isDirty: _isDirty, setIsDirty } = useCmsDirty();
+  const { data, updateDocument, profile } = usePortfolioData();
 
+  // 取得當前 profile 模板之預設可見度對照
+  const getFallbackVisibility = (p: ProfileType): Record<string, boolean> => {
+    const fb = getFallbacksByProfile(p);
+    return {
+      home: true,
+      ...((fb.site_settings as any)?.modules_visibility || {}),
+    };
+  };
+
+  const getFallbackOrder = (p: ProfileType): string[] => {
+    const fb = getFallbacksByProfile(p);
+    return (fb.site_settings as any)?.modules_order || DEFAULT_MODULE_ORDER;
+  };
+
+  // ── 模組排序狀態（以 data.site_settings.modules_order 為權威真實來源 SSOT）──
   const [moduleOrder, setModuleOrder] = useState<string[]>(() => {
+    if (data.site_settings?.modules_order && Array.isArray(data.site_settings.modules_order)) {
+      const withoutHome = data.site_settings.modules_order.filter((id: string) => id !== 'home' && NAV_ITEM_MAP[id]);
+      return ['home', ...withoutHome];
+    }
     try {
-      const saved = localStorage.getItem('portfolio_modules_order');
+      const saved = localStorage.getItem(`portfolio_${profile}_modules_order`) || localStorage.getItem('portfolio_modules_order');
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -148,10 +171,8 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
           return ['home', ...withoutHome];
         }
       }
-    } catch {
-      // 解析失敗回退至預設值
-    }
-    return DEFAULT_MODULE_ORDER;
+    } catch {}
+    return getFallbackOrder(profile);
   });
 
   // 側邊選單模組拖放排序狀態
@@ -159,10 +180,22 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
 
+  // 當 data.site_settings.modules_order 或 profile 改變時，自動同步更新 moduleOrder
+  useEffect(() => {
+    if (data.site_settings?.modules_order && Array.isArray(data.site_settings.modules_order)) {
+      const withoutHome = data.site_settings.modules_order.filter((id: string) => id !== 'home' && NAV_ITEM_MAP[id]);
+      setModuleOrder(['home', ...withoutHome]);
+    } else {
+      const order = getFallbackOrder(profile);
+      const withoutHome = order.filter((id: string) => id !== 'home' && NAV_ITEM_MAP[id]);
+      setModuleOrder(['home', ...withoutHome]);
+    }
+  }, [data.site_settings?.modules_order, profile]);
+
   useEffect(() => {
     const handleOrderUpdate = () => {
       try {
-        const saved = localStorage.getItem('portfolio_modules_order');
+        const saved = localStorage.getItem(`portfolio_${profile}_modules_order`) || localStorage.getItem('portfolio_modules_order');
         if (saved) {
           const parsed = JSON.parse(saved);
           if (Array.isArray(parsed) && parsed.length > 0) {
@@ -171,76 +204,107 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
             return;
           }
         }
-      } catch {
-        // 解析失敗回退至預設順序
-      }
-      setModuleOrder(DEFAULT_MODULE_ORDER);
+      } catch {}
+      setModuleOrder(getFallbackOrder(profile));
     };
 
+    window.addEventListener(`portfolio_${profile}_modules_order_updated`, handleOrderUpdate);
     window.addEventListener('portfolio_modules_order_updated', handleOrderUpdate);
     window.addEventListener('storage', handleOrderUpdate);
     return () => {
+      window.removeEventListener(`portfolio_${profile}_modules_order_updated`, handleOrderUpdate);
       window.removeEventListener('portfolio_modules_order_updated', handleOrderUpdate);
       window.removeEventListener('storage', handleOrderUpdate);
     };
-  }, []);
+  }, [profile]);
 
-  // 模組可見度狀態（除首頁恆常置頂鎖定外，其餘皆可個別於前臺開關）
+  // ── 模組可見度狀態（以 data.site_settings.modules_visibility 為權威真實來源 SSOT）──
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
+    if (data.site_settings?.modules_visibility) {
+      return { home: true, ...data.site_settings.modules_visibility };
+    }
     try {
-      const saved = localStorage.getItem('portfolio_modules_visibility');
+      const saved = localStorage.getItem(`portfolio_${profile}_modules_visibility`);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
-          return { ...DEFAULT_MODULE_VISIBILITY, ...parsed, home: true };
+          return { ...getFallbackVisibility(profile), ...parsed, home: true };
         }
       }
     } catch {}
-    return DEFAULT_MODULE_VISIBILITY;
+    return getFallbackVisibility(profile);
   });
+
+  // 當 data.site_settings.modules_visibility 或 profile 改變時，自動即時同步更新 moduleVisibility
+  useEffect(() => {
+    if (data.site_settings?.modules_visibility) {
+      setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+    } else {
+      setModuleVisibility(getFallbackVisibility(profile));
+    }
+  }, [data.site_settings?.modules_visibility, profile]);
 
   useEffect(() => {
     const handleVisUpdate = () => {
       try {
-        const saved = localStorage.getItem('portfolio_modules_visibility');
+        const saved = localStorage.getItem(`portfolio_${profile}_modules_visibility`);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === 'object') {
-            setModuleVisibility({ ...DEFAULT_MODULE_VISIBILITY, ...parsed, home: true });
+            setModuleVisibility({ ...getFallbackVisibility(profile), ...parsed, home: true });
             return;
           }
         }
       } catch {}
-      setModuleVisibility(DEFAULT_MODULE_VISIBILITY);
+      setModuleVisibility(getFallbackVisibility(profile));
     };
 
+    window.addEventListener(`portfolio_${profile}_modules_visibility_updated`, handleVisUpdate);
     window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
     window.addEventListener('storage', handleVisUpdate);
     return () => {
+      window.removeEventListener(`portfolio_${profile}_modules_visibility_updated`, handleVisUpdate);
       window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
       window.removeEventListener('storage', handleVisUpdate);
     };
-  }, []);
+  }, [profile]);
 
-  const { isDirty: _isDirty, setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  /**
+   * 計算模組在前臺展示之最終判定（防禦 undefined 誤判為 true）
+   */
+  const isModuleVisible = (id: string): boolean => {
+    if (id === 'home') return true;
+    if (moduleVisibility[id] !== undefined) {
+      return moduleVisibility[id];
+    }
+    if (data.site_settings?.modules_visibility?.[id] !== undefined) {
+      return data.site_settings.modules_visibility[id];
+    }
+    return getFallbackVisibility(profile)[id] ?? true;
+  };
 
   const handleToggleModuleVisibility = async (moduleId: string, visible: boolean) => {
     if (moduleId === 'home') return;
-    const next = { ...moduleVisibility, [moduleId]: visible, home: true };
+    const currentBase = { ...getFallbackVisibility(profile), ...moduleVisibility };
+    const next = { ...currentBase, [moduleId]: visible, home: true };
     setModuleVisibility(next);
     setIsDirty(true); // 標記未存檔狀態，離開時強制跳出警告確認
     try {
-      localStorage.setItem('portfolio_modules_visibility', JSON.stringify(next));
+      localStorage.setItem(`portfolio_${profile}_modules_visibility`, JSON.stringify(next));
+      window.dispatchEvent(new Event(`portfolio_${profile}_modules_visibility_updated`));
       window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
     } catch {}
 
     // 即時同步推送到 Firestore 的 site_settings
     try {
-      const curSettings = data.site_settings || {};
+      const curSettings = data.site_settings || (getFallbacksByProfile(profile).site_settings as any) || {};
+      const sanitized: Record<string, boolean> = {};
+      Object.entries(next).forEach(([k, v]) => {
+        if (v !== undefined) sanitized[k] = v;
+      });
       await updateDocument('site_settings', {
         ...curSettings,
-        modules_visibility: next,
+        modules_visibility: sanitized,
       });
     } catch (e) {
       console.error('[CmsSidebar]: Failed to persist modules_visibility to Firestore:', e);
@@ -256,7 +320,9 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
     setModuleOrder(sanitized);
     setIsDirty(true); // 標記未存檔狀態
     try {
+      localStorage.setItem(`portfolio_${profile}_modules_order`, JSON.stringify(sanitized));
       localStorage.setItem('portfolio_modules_order', JSON.stringify(sanitized));
+      window.dispatchEvent(new Event(`portfolio_${profile}_modules_order_updated`));
       window.dispatchEvent(new Event('portfolio_modules_order_updated'));
     } catch {
       // 忽略例外
@@ -275,11 +341,14 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
   };
 
   const resetOrder = async () => {
-    setModuleOrder(DEFAULT_MODULE_ORDER);
+    const templateOrder = (getFallbacksByProfile(profile).site_settings as any)?.modules_order || DEFAULT_MODULE_ORDER;
+    setModuleOrder(templateOrder);
     setIsDirty(true); // 標記未存檔狀態
     try {
+      localStorage.removeItem(`portfolio_${profile}_modules_order`);
       localStorage.removeItem('portfolio_modules_order');
       window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+      window.dispatchEvent(new Event(`portfolio_${profile}_modules_order_updated`));
     } catch {
       // 忽略例外
     }
@@ -288,7 +357,7 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
       const curSettings = data.site_settings || {};
       await updateDocument('site_settings', {
         ...curSettings,
-        modules_order: DEFAULT_MODULE_ORDER,
+        modules_order: templateOrder,
       });
     } catch (e) {
       console.error('[CmsSidebar]: Failed to reset modules_order in Firestore:', e);
@@ -522,11 +591,11 @@ export const CmsSidebar: React.FC<CmsSidebarProps> = ({
                       <div className="flex items-center gap-1.5">
                         <div onClick={(e) => e.stopPropagation()}>
                           <CmsVisibilityToggle
-                            checked={moduleVisibility[item.id] !== false}
+                            checked={isModuleVisible(item.id)}
                             onChange={(val) => handleToggleModuleVisibility(item.id, val)}
                             size="sm"
                             title={
-                              moduleVisibility[item.id] !== false
+                              isModuleVisible(item.id)
                                 ? (isEn ? 'Visible on website — Click to hide' : '於前臺展示中（點擊隱藏此模組）')
                                 : (isEn ? 'Hidden from website — Click to show' : '已從前臺隱藏（點擊恢復展示）')
                             }

@@ -123,4 +123,91 @@ describe('CMS 側邊欄排序與管理單元測試', () => {
       expect(saved === null || JSON.parse(saved)[1] === 'about').toBe(true);
     }
   });
+
+  describe('美術畫廊與雙模板連動嚴格測試', () => {
+    it('Fullstack 模式下，側邊欄美術畫廊開關必須預設為「關閉 (隱藏)」狀態', () => {
+      render(
+        <ThemeProvider>
+          <LangProvider>
+            <PortfolioDataProvider profile="fullstack">
+              <CmsDirtyProvider>
+                <CmsSidebar
+                  activeTab="gallery"
+                  onSelectTab={vi.fn()}
+                  isOpenMobile={false}
+                  onCloseMobile={vi.fn()}
+                />
+              </CmsDirtyProvider>
+            </PortfolioDataProvider>
+          </LangProvider>
+        </ThemeProvider>
+      );
+
+      // 精準定位「美術畫廊」項目的開關按鈕
+      const galleryItem = screen.getByText('美術畫廊');
+      const galleryRow = galleryItem.closest('.group');
+      expect(galleryRow).not.toBeNull();
+      const toggleBtn = galleryRow!.querySelector('button[aria-checked]');
+      expect(toggleBtn).toBeInTheDocument();
+      expect(toggleBtn!.getAttribute('aria-checked')).toBe('false');
+      expect(toggleBtn!.getAttribute('title')).toContain('已從前臺隱藏');
+    });
+
+    it('Interactive 模式下，側邊欄美術畫廊開關必須預設為「開啟 (展示)」狀態', () => {
+      render(
+        <ThemeProvider>
+          <LangProvider>
+            <PortfolioDataProvider profile="interactive">
+              <CmsDirtyProvider>
+                <CmsSidebar
+                  activeTab="gallery"
+                  onSelectTab={vi.fn()}
+                  isOpenMobile={false}
+                  onCloseMobile={vi.fn()}
+                />
+              </CmsDirtyProvider>
+            </PortfolioDataProvider>
+          </LangProvider>
+        </ThemeProvider>
+      );
+
+      // 精準定位「美術畫廊」項目的開關按鈕
+      const galleryItem = screen.getByText('美術畫廊');
+      const galleryRow = galleryItem.closest('.group');
+      expect(galleryRow).not.toBeNull();
+      const toggleBtn = galleryRow!.querySelector('button[aria-checked]');
+      expect(toggleBtn).toBeInTheDocument();
+      expect(toggleBtn!.getAttribute('aria-checked')).toBe('true');
+      expect(toggleBtn!.getAttribute('title')).toContain('於前臺展示中');
+    });
+
+    it('點擊 Fullstack 側邊欄美術畫廊開關，應正確切換為開啟並儲存至 local 與廣播事件', () => {
+      render(
+        <ThemeProvider>
+          <LangProvider>
+            <PortfolioDataProvider profile="fullstack">
+              <CmsDirtyProvider>
+                <CmsSidebar
+                  activeTab="gallery"
+                  onSelectTab={vi.fn()}
+                  isOpenMobile={false}
+                  onCloseMobile={vi.fn()}
+                />
+              </CmsDirtyProvider>
+            </PortfolioDataProvider>
+          </LangProvider>
+        </ThemeProvider>
+      );
+
+      const galleryItem = screen.getByText('美術畫廊');
+      const galleryRow = galleryItem.closest('.group');
+      const toggleBtn = galleryRow!.querySelector('button[aria-checked]');
+      fireEvent.click(toggleBtn!);
+
+      const saved = localStorage.getItem('portfolio_fullstack_modules_visibility');
+      expect(saved).not.toBeNull();
+      const parsed = JSON.parse(saved!);
+      expect(parsed.gallery).toBe(true);
+    });
+  });
 });

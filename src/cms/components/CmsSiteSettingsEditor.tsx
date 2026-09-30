@@ -25,6 +25,7 @@ import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
 import defaultSiteSettings from '../../data/site-settings.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 import {
   CmsConfirmDialog,
   CmsConfirmDialogState,
@@ -150,7 +151,7 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const { setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -160,23 +161,8 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
     if (data.site_settings) {
       return data.site_settings as unknown as SiteSettingsFullData;
     }
-    try {
-      const saved = localStorage.getItem('portfolio_site_settings');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        return {
-          codeAnimationSpeed:
-            typeof parsed.codeAnimationSpeed === 'number'
-              ? parsed.codeAnimationSpeed
-              : ((defaultSiteSettings as unknown as SiteSettingsFullData).codeAnimationSpeed ?? 1.0),
-          zh: parsed.zh || defaultSiteSettings.zh,
-          en: parsed.en || defaultSiteSettings.en,
-        };
-      }
-    } catch {
-      // 解析失敗回退至預設設定
-    }
-    return defaultSiteSettings as unknown as SiteSettingsFullData;
+    const templateDefault = getFallbacksByProfile(profile).site_settings as unknown as SiteSettingsFullData;
+    return templateDefault || (defaultSiteSettings as unknown as SiteSettingsFullData);
   });
 
   useEffect(() => {
@@ -199,6 +185,18 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
     window.addEventListener('portfolio_cms_trigger_save', handleTriggerSave);
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
+
+  // 聆聽全域一鍵還原預設值事件（精準還原當前 profile 模板之預設值）
+  useEffect(() => {
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).site_settings as unknown as SiteSettingsFullData;
+      setFormData(JSON.parse(JSON.stringify(targetDefault)));
+      setIsDirty(false);
+    };
+    window.addEventListener('portfolio_cms_reset_all', handleResetAll);
+    return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
+  }, [profile, setIsDirty]);
 
   // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
   const isFirstSettingsSync = useRef(true);
@@ -262,13 +260,15 @@ export const CmsSiteSettingsEditor: React.FC<CmsSiteSettingsEditorProps> = ({ is
 
   const doReset = async () => {
     setIsDirty(false);
-    const resetData = defaultSiteSettings as unknown as SiteSettingsFullData;
+    const templateDefault = getFallbacksByProfile(profile).site_settings as unknown as SiteSettingsFullData;
+    const resetData = JSON.parse(JSON.stringify(templateDefault));
     try {
+      localStorage.removeItem(`portfolio_${profile}_site_settings`);
       localStorage.removeItem('portfolio_site_settings');
       window.dispatchEvent(new Event('portfolio_site_settings_updated'));
       setFormData(resetData);
       await updateDocument('site_settings', resetData);
-      showToast(isEn ? '"Site Settings" module restored to defaults!' : '「網站設定」模組已還原為初始預設資料！');
+      showToast(isEn ? '"Site Settings" module restored to defaults!' : '「網站設定」模組已還原為模板預設資料！');
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }

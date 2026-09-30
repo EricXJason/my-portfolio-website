@@ -66,7 +66,7 @@ describe('Firebase 前端服務層串接測試 (PortfolioDataService)', () => {
       // 驗證 doc 路徑
       expect(mockDoc).toHaveBeenCalledWith(
         expect.anything(),
-        'portfolio_content',
+        'portfolio_fullstack_dev',
         'projects'
       );
       // 驗證送出的資料結構必須具備 payload 與 serverTimestamp
@@ -116,7 +116,7 @@ describe('Firebase 前端服務層串接測試 (PortfolioDataService)', () => {
       expect(data).toEqual({ headline: '雲端最新標題' });
       expect(mockDoc).toHaveBeenCalledWith(
         expect.anything(),
-        'portfolio_content',
+        'portfolio_fullstack_dev',
         'hero'
       );
     });
@@ -173,7 +173,7 @@ describe('Firebase 前端服務層串接測試 (PortfolioDataService)', () => {
       expectedModules.forEach((modId) => {
         expect(mockDoc).toHaveBeenCalledWith(
           expect.anything(),
-          'portfolio_content',
+          'portfolio_fullstack_dev',
           modId
         );
       });

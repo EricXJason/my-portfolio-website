@@ -14,8 +14,10 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLang } from '../context/LangContext';
 import { useTheme } from '../context/ThemeContext';
 import { usePortfolioData } from '../context/PortfolioDataContext';
+import { useProfile } from '../context/ProfileContext';
 import { Volume2, VolumeX, Sun, Moon, ChevronDown } from 'lucide-react';
 import defaultSiteSettings from '../data/site-settings.json';
+import { getFallbacksByProfile } from '../services/portfolioDataService';
 
 interface NavbarProps {
   soundPlaying: boolean;
@@ -39,6 +41,20 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [desktopExpOpen, setDesktopExpOpen] = useState(false);
   const [mobileExpOpen, setMobileExpOpen] = useState(false);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
+
+  // [DEV-TEST-TOGGLE] 取得當前 Profile 並提供切換函式
+  let currentProfile = 'fullstack';
+  try {
+    const profCtx = useProfile();
+    currentProfile = profCtx.profile;
+  } catch {}
+
+  const handleToggleProfile = () => {
+    const target = currentProfile === 'fullstack' ? '/i' : '/f';
+    if (typeof window !== 'undefined') {
+      window.location.href = target;
+    }
+  };
 
   /**
    * [全域設定管理] 網站全域設定 (網頁標題、雙層導覽列品牌名稱、動畫速度)
@@ -153,8 +169,11 @@ export const Navbar: React.FC<NavbarProps> = ({
   const moduleOrder = ['home', 'about', 'projects', 'skills', 'experience', 'awards', 'gallery'];
 
   const [moduleVisibility, setModuleVisibility] = useState<Record<string, boolean>>(() => {
+    if (data?.site_settings?.modules_visibility) {
+      return { home: true, ...data.site_settings.modules_visibility };
+    }
     try {
-      const saved = localStorage.getItem('portfolio_modules_visibility');
+      const saved = localStorage.getItem(`portfolio_${currentProfile}_modules_visibility`);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
@@ -162,32 +181,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         }
       }
     } catch {}
-    if (data?.site_settings?.modules_visibility) {
-      return { home: true, ...data.site_settings.modules_visibility };
-    }
-    return { home: true };
+    const fb = getFallbacksByProfile(currentProfile as any);
+    return { home: true, ...((fb.site_settings as any)?.modules_visibility || {}) };
   });
 
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('portfolio_modules_visibility');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && typeof parsed === 'object') {
-          setModuleVisibility({ home: true, ...parsed });
-          return;
-        }
-      }
-    } catch {}
     if (data?.site_settings?.modules_visibility) {
       setModuleVisibility({ home: true, ...data.site_settings.modules_visibility });
+    } else {
+      const fb = getFallbacksByProfile(currentProfile as any);
+      setModuleVisibility({ home: true, ...((fb.site_settings as any)?.modules_visibility || {}) });
     }
-  }, [data?.site_settings?.modules_visibility]);
+  }, [data?.site_settings?.modules_visibility, currentProfile]);
 
   useEffect(() => {
     const handleVisUpdate = () => {
       try {
-        const saved = localStorage.getItem('portfolio_modules_visibility');
+        const saved = localStorage.getItem(`portfolio_${currentProfile}_modules_visibility`);
         if (saved) {
           const parsed = JSON.parse(saved);
           if (parsed && typeof parsed === 'object') {
@@ -196,16 +206,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           }
         }
       } catch {}
-      setModuleVisibility({ home: true });
+      const fb = getFallbacksByProfile(currentProfile as any);
+      setModuleVisibility({ home: true, ...((fb.site_settings as any)?.modules_visibility || {}) });
     };
 
+    window.addEventListener(`portfolio_${currentProfile}_modules_visibility_updated`, handleVisUpdate);
     window.addEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
     window.addEventListener('storage', handleVisUpdate);
     return () => {
+      window.removeEventListener(`portfolio_${currentProfile}_modules_visibility_updated`, handleVisUpdate);
       window.removeEventListener('portfolio_modules_visibility_updated', handleVisUpdate);
       window.removeEventListener('storage', handleVisUpdate);
     };
-  }, []);
+  }, [currentProfile]);
 
   const expSubItems = [
     { key: 'nav_sub_degrees', href: '#education-degrees' },
@@ -224,8 +237,23 @@ export const Navbar: React.FC<NavbarProps> = ({
     gallery: { key: 'nav_gallery', href: '#gallery' },
   };
 
+  /**
+   * 判定導覽項目是否應於當前 Profile 模式下顯示
+   */
+  const isNavVisible = (id: string): boolean => {
+    if (id === 'home') return true;
+    if (moduleVisibility[id] !== undefined) {
+      return moduleVisibility[id];
+    }
+    if (data?.site_settings?.modules_visibility?.[id] !== undefined) {
+      return data.site_settings.modules_visibility[id];
+    }
+    const fb = getFallbacksByProfile(currentProfile as any);
+    return (fb.site_settings as any)?.modules_visibility?.[id] ?? true;
+  };
+
   const mainNavItems = moduleOrder
-    .filter((id) => id === 'home' || moduleVisibility[id] !== false)
+    .filter((id) => isNavVisible(id))
     .map((id) => baseNavMap[id])
     .filter(Boolean);
 
@@ -483,6 +511,43 @@ export const Navbar: React.FC<NavbarProps> = ({
                 ) : (
                   <Moon size={13} className="fill-current text-slate-900" />
                 )}
+              </div>
+            </button>
+
+            {/* 雙履歷模板切換開關 (F: Fullstack | I: Interactive) */}
+            <button
+              onClick={handleToggleProfile}
+              className="w-[48px] sm:w-[56px] h-[28px] sm:h-[30px] border cyber-cut-sm relative p-[2px] flex items-center transition-all duration-300 cursor-pointer font-tech text-xs font-bold active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+              style={{
+                backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
+                borderColor: borderCol,
+              }}
+              aria-label={currentProfile === 'fullstack' ? '切換為 Interactive 模板 (I)' : '切換為 Fullstack 模板 (F)'}
+              title={currentProfile === 'fullstack' ? '當前: Fullstack (F) · 點擊切換為 Interactive (I)' : '當前: Interactive (I) · 點擊切換為 Fullstack (F)'}
+            >
+              <div className="w-full h-full flex items-center justify-between pointer-events-none z-0">
+                <span
+                  className="w-1/2 text-center text-[10px] sm:text-xs font-bold"
+                  style={{ color: currentProfile === 'fullstack' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}
+                >
+                  F
+                </span>
+                <span
+                  className="w-1/2 text-center text-[10px] sm:text-xs font-bold"
+                  style={{ color: currentProfile === 'interactive' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}
+                >
+                  I
+                </span>
+              </div>
+              <div
+                className="absolute top-[2px] bottom-[2px] left-[2px] w-[calc(50%-2px)] cyber-cut-sm flex items-center justify-center transition-transform duration-300 ease-out z-10 shadow-sm text-[10px] sm:text-xs font-black"
+                style={{
+                  transform: currentProfile === 'interactive' ? 'translateX(100%)' : 'translateX(0%)',
+                  backgroundColor: isLight ? '#0369a1' : '#00f0ff',
+                  color: isLight ? '#ffffff' : '#030712',
+                }}
+              >
+                {currentProfile === 'fullstack' ? 'F' : 'I'}
               </div>
             </button>
 

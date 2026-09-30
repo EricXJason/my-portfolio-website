@@ -2,17 +2,17 @@
   "avatarUrl": "/assets/images/personal.webp",
   "zh": {
     "title": "關於我",
-    "intro": "具備新媒體藝術碩士背景，專注於全端網頁開發與互動應用架構設計。",
+    "intro": "畢業於臺藝大新媒體藝術碩士，專注於全端網頁開發與即時互動應用。",
     "heading": "核心專長與專業定位",
-    "p1": "許哲誠，國立臺灣藝術大學新媒體藝術碩士。專精於全端系統架構、即時互動應用開發與現代多媒體視覺工程。具備獨立系統設計能力、前後端垂直整合與高效跨領域協作實務，擅長自主技術調研與工程落地，專注於建構兼具嚴謹資料邏輯與流暢互動體驗的現代數位系統。",
+    "p1": "我是許哲誠，擁有新媒體藝術與程式開發的跨領域背景。平時主要使用 React、Node.js 與 Java Spring Boot 開發全端網頁，並具備 Unity (C#) 互動專案經驗。在開發過程中，我重視程式碼的易讀性與好維護性，能獨立處理從資料庫、後端 API 到前端畫面的完整串接，致力於做出穩定、好用的數位產品。",
     "bio": {
       "title": "個人自傳",
-      "p1_title": "從遊戲程式到探索資工",
-      "p1": "大學時因為著迷於互動體驗，從 Unity C# 踏入程式世界，為了把專題做得更完整，還主動挑戰自學 Unreal Engine。過程中我意識到底層原理的重要，便跨系去選修與旁聽計算機概論、資料結構及演算法，把基本功打穩。大學三年也跟隨教授參與科技部計畫，在無數次排查與實作中，確立了自己想深耕軟體工程的熱情。",
-      "p2_title": "系統架構思維與全端垂直整合",
-      "p2": "進研究所開發大型互動系統時，我碰到了系統維護與擴充上的瓶頸。早期開發習慣著重在功能實現，但隨著專案規模擴大，模組間的耦合常導致系統牽一髮動全身。這促使我反思軟體工程的本質，開始將 Clean Code、SOLID 原則與設計模式落實在架構重構中。隨後我更將工程範疇延伸至現代全端體系，深耕後端服務分層設計、資料庫架構與前端狀態管理。過往在即時渲染引擎打下的邏輯底子，讓我能順暢銜接分散式網路架構，具備從資料存取層到使用者互動層的完整垂直整合能力。",
-      "p3_title": "工程信念：系統架構與代碼品質的極致把關",
-      "p3": "在開發工具與自動化日益普及的現代，工程師的核心價值更在於對系統架構的宏觀判斷與程式碼品質的嚴謹把關。工具能加速原型試錯與基礎樣板產出，但決定分散式系統是否穩固、服務模組是否解耦的關鍵，始終是工程師對底層邏輯與設計模式的深刻理解。我期許自己持續優化工程工作流，同時堅守架構品質，打造兼具效能與可維護性的優秀數位產品。"
+      "p1_title": "從 Unity 互動到打穩資工基礎",
+      "p1": "大學時因為喜歡做出好玩的互動體驗，從 Unity C# 開始寫程式。做專題時發現想要系統跑得順，底層基礎非常重要，因此主動跨系去修了計算機概論、資料結構與演算法，把觀念打穩。求學期間也連續三年擔任教授的研究助理參與國科會計畫，在無數次寫原型、排查問題與除錯的過程中，確定了自己想走軟體開發這條路。",
+      "p2_title": "模組拆分與前後端實作經驗",
+      "p2": "碩士班開發較複雜的互動專案時，曾體會過模組耦合嚴重、改一個功能到處報錯的痛苦，這讓我學會注重模組拆分與物件導向設計，把畫面邏輯和資料處理分開。之後我也把開發範疇延伸到全端 Web，動手實作 Spring Boot / Node.js 後端服務、關聯式資料庫設計與 React 前端狀態管理。過往在遊戲引擎打下的程式邏輯，讓我在串接前後端資料時能更順暢地綜觀全局。",
+      "p3_title": "務實的工程態度與工作思維",
+      "p3": "現在有許多 AI 輔助工具能加快寫程式的速度，但我認為工程師的關鍵價值，在於能否真正把關邏輯細節與程式碼好不好讀。我始終維持務實的開發習慣：把變數命名清楚、注意邊界條件、把架構理順，用踏實的態度寫出對團隊和使用者都好維護的穩定程式。"
     },
     "stats": [
       {
@@ -24,15 +24,15 @@
       },
       {
         "id": "projects",
-        "title": "多種核心專案",
-        "label": "涵蓋多種專案類型的開發經驗",
+        "title": "多元核心專案",
+        "label": "涵蓋全端與互動系統實務",
         "icon": "briefcase",
         "visible": true
       },
       {
         "id": "toeic",
         "title": "TOEIC 755",
-        "label": "英文多益檢定成績",
+        "label": "英文多益國際檢定",
         "icon": "award",
         "visible": true
       }
@@ -40,17 +40,17 @@
   },
   "en": {
     "title": "About",
-    "intro": "Combining an M.A. in New Media Art with software engineering, focusing on high-reliability fullstack architectures and real-time interactive systems.",
+    "intro": "M.A. graduate in New Media Art, focusing on full-stack web development and real-time interactive applications.",
     "heading": "Core Competency & Specialization",
-    "p1": "Che-Cheng Hsu holds an M.A. in New Media Art from National Taiwan University of Arts. Specializing in full-stack system architecture, real-time interactive application development, and modern multimedia visual engineering. Possesses strong independent system design capability, vertical full-stack integration skills, and efficient cross-functional collaboration experience. Excels in autonomous technical research and engineering delivery, dedicated to building modern digital systems that seamlessly combine rigorous data logic with fluid interactive experiences.",
+    "p1": "I am Che-Cheng Hsu, bringing an interdisciplinary background across multimedia design and software engineering. Experienced in building full-stack applications with React, Node.js, and Spring Boot, alongside interactive 3D systems in Unity (C#). I value clean, readable code and maintainable structures, with hands-on capability spanning database modeling, backend APIs, and responsive frontends.",
     "bio": {
       "title": "Personal Biography",
-      "p1_title": "From Game Dev to CS Foundations",
-      "p1": "Fascinated by interactive experiences during college, I started coding with Unity C# and taught myself Unreal Engine to build an ambitious graduation project. Realizing the importance of fundamentals, I cross-enrolled in and audited CS courses like Data Structures and Algorithms. Serving as an assistant on NSTC research projects for three years solidified my passion for software engineering.",
-      "p2_title": "Architectural Thinking & Full-Stack Integration",
-      "p2": "Developing large-scale interactive systems in graduate school exposed significant bottlenecks in maintenance and scalability. Early on, development focused primarily on feature delivery, but as system scale expanded, high component coupling made changes precarious. This prompted me to re-evaluate the core of software engineering, actively implementing Clean Code, SOLID principles, and design patterns into architectural refactoring. I subsequently expanded my engineering domain into modern full-stack web environments, focusing on layered backend service design, relational database modeling, and frontend state management. My grounding in real-time rendering logic allows me to seamlessly connect with distributed web architectures, establishing robust vertical integration from persistence layers to interactive UIs.",
-      "p3_title": "Engineering Conviction: Rigorous Architectural & Code Quality Governance",
-      "p3": "In an era of ubiquitous developer tooling and automation, an engineer's true value lies in architectural discernment and uncompromising code quality governance. While modern tools accelerate prototyping and boilerplate generation, the foundation of resilient distributed systems and decoupled services still rests on deep comprehension of underlying logic and design patterns. I aspire to continually refine my engineering workflows while safeguarding architectural integrity, delivering performant, maintainable, and purposeful digital software."
+      "p1_title": "From Unity Interactions to CS Fundamentals",
+      "p1": "My programming journey started with Unity C# out of enthusiasm for interactive media. Realizing that stability and performance stem from strong foundations, I actively cross-enrolled in core CS courses such as Data Structures and Algorithms. Serving as a research assistant on NSTC research projects for three consecutive years solidified my practical debugging, rapid prototyping, and engineering mindset.",
+      "p2_title": "Modular Architecture & Full-Stack Practices",
+      "p2": "Leading larger interactive projects in graduate school taught me the hard lessons of code coupling. This spurred me to practice modular decoupling and object-oriented design, separating business logic from presentation. I then extended my skill set to full-stack web development, working with Spring Boot, Node.js backends, relational databases, and React frontends. The computational rigor from game engines allows me to navigate end-to-end data flows with clarity.",
+      "p3_title": "Pragmatic Engineering Mindset",
+      "p3": "While modern developer tools and AI accelerate code generation, an engineer's true value lies in verifying edge cases and ensuring code maintainability. I consistently practice solid engineering fundamentals: meaningful naming, defensive logic, and decoupled structure, dedicated to shipping robust, user-friendly software."
     },
     "stats": [
       {

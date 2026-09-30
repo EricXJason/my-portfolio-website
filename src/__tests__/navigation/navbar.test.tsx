@@ -13,10 +13,11 @@ import { Navbar } from '../../components/Navbar';
 import { PortfolioDataProvider } from '../../context/PortfolioDataContext';
 import { LangProvider } from '../../context/LangContext';
 import { ThemeProvider } from '../../context/ThemeContext';
+import { ProfileType } from '../../context/ProfileContext';
 
-const renderNavbar = (lang: 'zh' | 'en' = 'zh') => {
+const renderNavbar = (lang: 'zh' | 'en' = 'zh', profile: ProfileType = 'interactive') => {
   return render(
-    <PortfolioDataProvider>
+    <PortfolioDataProvider profile={profile}>
       <LangProvider>
         <ThemeProvider>
           <Navbar
@@ -33,8 +34,8 @@ const renderNavbar = (lang: 'zh' | 'en' = 'zh') => {
 };
 
 describe('前臺頂部導覽列 Navbar 測試', () => {
-  it('正確渲染首頁、關於我、專案作品、專業技能、經歷、專業證照、美術畫廊各大導覽項目', () => {
-    renderNavbar('zh');
+  it('在 interactive 模式下正確渲染首頁、關於我、專案作品、專業技能、經歷、專業證照、美術畫廊各大導覽項目', () => {
+    renderNavbar('zh', 'interactive');
 
     // 檢查導覽列中各區塊文字是否存在
     expect(screen.getByText('首頁')).toBeInTheDocument();
@@ -44,6 +45,11 @@ describe('前臺頂部導覽列 Navbar 測試', () => {
     expect(screen.getByText('經歷')).toBeInTheDocument();
     expect(screen.getByText('專業證照')).toBeInTheDocument();
     expect(screen.getByText('美術畫廊')).toBeInTheDocument();
+  });
+
+  it('在 fullstack 模式下應自動隱藏美術畫廊', () => {
+    renderNavbar('zh', 'fullstack');
+    expect(screen.queryByText('美術畫廊')).not.toBeInTheDocument();
   });
 
   it('導覽連結的 href 錨點必須對齊各區塊 id，且經歷下拉選單項目完整', () => {

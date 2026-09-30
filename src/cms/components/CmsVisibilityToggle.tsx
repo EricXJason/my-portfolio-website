@@ -49,6 +49,8 @@ export const CmsVisibilityToggle: React.FC<CmsVisibilityToggleProps> = ({
   return (
     <button
       type="button"
+      role="switch"
+      aria-checked={isVisible}
       disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
@@ -65,7 +67,7 @@ export const CmsVisibilityToggle: React.FC<CmsVisibilityToggleProps> = ({
       } ${
         isVisible
           ? 'text-[var(--neon-cyan)]'
-          : 'text-slate-500 hover:text-slate-300'
+          : 'text-rose-500 hover:text-rose-400'
       } ${className}`}
       style={{
         outline: 'none',
@@ -75,7 +77,7 @@ export const CmsVisibilityToggle: React.FC<CmsVisibilityToggleProps> = ({
       {isVisible ? (
         <Eye className={size === 'sm' ? 'w-4 h-4' : 'w-4.5 h-4.5'} style={{ color: '#00f0ff' }} />
       ) : (
-        <EyeOff className={size === 'sm' ? 'w-4 h-4' : 'w-4.5 h-4.5'} />
+        <EyeOff className={size === 'sm' ? 'w-4 h-4' : 'w-4.5 h-4.5'} style={{ color: '#f43f5e' }} />
       )}
       {showLabel && (
         <span className="font-semibold tracking-wider font-mono text-xs">{displayText}</span>

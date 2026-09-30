@@ -1,17 +1,18 @@
 /**
  * ============================================================================
  * 檔案名稱: App.tsx
- * 所屬模組: Root Application Layer (前端主應用程式與路由分流模組)
- * 責任描述: 負責配置全域語系與主題 Provider、前臺展示與 CMS 後臺路由分流，以及三階段開場載入生命週期。
+ * 所屬模組: Root Application Layer (前端主應用程式與雙履歷模板路由分流中樞)
+ * 責任描述: 負責配置全域語系與主題 Provider、前臺雙模板展示分流 (/ 與 /f 為 fullstack，/i 為 interactive)
+ *           以及 CMS 後臺管理入口，前臺展示完全資料驅動，展示層零硬編碼。
  * 架構分層: Application Root Layer (Router & Shell)
- 根應用協調者模式 (Root Coordinator) 結合 Suspense 動態代碼分割與預熱機制。
- * 依賴關係: 依賴 LangProvider、ThemeProvider、MainSiteContent、CmsApp 與 bgmSynth。
+ * 依賴關係: 依賴 ProfileProvider、PortfolioDataProvider、LangProvider、ThemeProvider、MainSiteContent 與 CmsApp。
  * 邊界處理: 開場期間鎖定 body 捲動條、路由不匹配時自動導回根路徑。
  * ============================================================================
  */
 
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ProfileType, ProfileProvider } from './context/ProfileContext';
 import { LangProvider } from './context/LangContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { PortfolioDataProvider } from './context/PortfolioDataContext';
@@ -130,38 +131,59 @@ function PortfolioMainView() {
   );
 }
 
+/**
+ * 前臺展示路由包裝元件：
+ * 依據傳入之 profile 自動注入 ProfileProvider 與 PortfolioDataProvider，
+ * 前臺展示層完全不寫寫死條件判斷，由資料源決定一切順位。
+ */
+function ProfileSiteRoute({ profile }: { profile: ProfileType }) {
+  return (
+    <ProfileProvider initialProfile={profile} currentProfile={profile}>
+      <PortfolioDataProvider profile={profile}>
+        <PortfolioMainView />
+      </PortfolioDataProvider>
+    </ProfileProvider>
+  );
+}
+
 export function App() {
   return (
     <BrowserRouter>
-      <PortfolioDataProvider>
-        <LangProvider>
-          <ThemeProvider>
-            <Routes>
-              {/* 前臺正式個人作品集首頁 */}
-              <Route path="/" element={<PortfolioMainView />} />
+      <LangProvider>
+        <ThemeProvider>
+          <Routes>
+            {/* 1. 根目錄預設指向 Fullstack 模板 (維持網址為 /，不重定向) */}
+            <Route path="/" element={<ProfileSiteRoute profile="fullstack" />} />
 
-              {/* 非同步代碼分割之 CMS 後臺管理入口 */}
-              <Route
-                path="/cms/*"
-                element={
-                  <Suspense
-                    fallback={
-                      <div className="min-h-screen bg-[#030712] flex items-center justify-center">
-                        <div className="w-8 h-8 border-2 border-[var(--neon-cyan)] border-t-transparent rounded-full animate-spin" />
-                      </div>
-                    }
-                  >
-                    <CmsApp />
-                  </Suspense>
-                }
-              />
+            {/* 2. /f 與 /f/* 明確指向 Fullstack 模板 */}
+            <Route path="/f" element={<ProfileSiteRoute profile="fullstack" />} />
+            <Route path="/f/*" element={<ProfileSiteRoute profile="fullstack" />} />
 
-              {/* 未知路由回退重定向至首頁 */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </ThemeProvider>
-        </LangProvider>
-      </PortfolioDataProvider>
+            {/* 3. /i 與 /i/* 明確指向 Interactive App Dev 模板 */}
+            <Route path="/i" element={<ProfileSiteRoute profile="interactive" />} />
+            <Route path="/i/*" element={<ProfileSiteRoute profile="interactive" />} />
+
+            {/* 4. 非同步代碼分割之 CMS 後臺管理入口 */}
+            <Route
+              path="/cms/*"
+              element={
+                <Suspense
+                  fallback={
+                    <div className="min-h-screen bg-[#030712] flex items-center justify-center">
+                      <div className="w-8 h-8 border-2 border-[var(--neon-cyan)] border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  }
+                >
+                  <CmsApp />
+                </Suspense>
+              }
+            />
+
+            {/* 5. 未知路由回退重定向至首頁 */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </ThemeProvider>
+      </LangProvider>
     </BrowserRouter>
   );
 }

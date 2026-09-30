@@ -23,7 +23,9 @@ export default defineConfig({
     minify: true,
     cssMinify: true,
     cssCodeSplit: true,
-    chunkSizeWarningLimit: 600,
+    chunkSizeWarningLimit: 800,
+    // Skip compressed-size reporting in CI to speed up build output
+    reportCompressedSize: false,
     modulePreload: false,
     rollupOptions: {
       output: {

@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Calendar, ArrowRight, Clock, Edit3 } from 'lucide-react';
+import { Calendar, ArrowRight, Edit3 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import { useLang } from '../../context/LangContext';
 

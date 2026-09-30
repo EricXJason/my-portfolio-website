@@ -155,9 +155,9 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
 
           {/* 詳細內容描述 (高對比度文字與防穿透文字陰影) */}
           <p
-            className="text-sm sm:text-base max-w-3xl lg:max-w-4xl leading-relaxed font-normal select-text text-balance mx-auto hero-stagger hero-stagger-4"
+            className="text-base sm:text-lg max-w-3xl lg:max-w-4xl leading-relaxed font-reading select-text text-balance mx-auto hero-stagger hero-stagger-4"
             style={{
-              color: isLight ? '#1e293b' : '#cbd5e1',
+              color: isLight ? '#1e293b' : '#e2e8f0',
               textShadow: isLight ? 'none' : '0 1px 12px rgba(3, 7, 18, 0.95), 0 0 4px rgba(0, 0, 0, 0.8)',
             }}
           >
@@ -242,7 +242,7 @@ export const Hero: React.FC<HeroProps> = ({ soundPlaying }) => {
 
                       <div className="text-left select-text min-w-0">
                         {/* 次要標籤字色維持高對比度 (Slate-300 / Slate-700) */}
-                        <p className="text-[10px] font-tech font-bold uppercase tracking-wider select-text leading-none mb-0.5" style={{ color: isLight ? '#334155' : '#cbd5e1' }}>
+                        <p className="text-xs font-hud font-bold uppercase tracking-wider select-text leading-none mb-1" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
                           {label}
                         </p>
                         <p

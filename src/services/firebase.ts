@@ -31,7 +31,6 @@ export const isFirebaseConfigured = Boolean(
 );
 
 let appInstance: FirebaseApp | null = null;
-let authInstance: Auth | null = null;
 let dbInstance: Firestore | null = null;
 let storageInstance: FirebaseStorage | null = null;
 

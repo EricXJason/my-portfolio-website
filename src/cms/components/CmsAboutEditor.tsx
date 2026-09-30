@@ -34,6 +34,7 @@ import { usePortfolioData } from '../../context/PortfolioDataContext';
 import { CmsImagePicker } from './CmsImagePicker';
 import { CmsVisibilityToggle } from './CmsVisibilityToggle';
 import defaultAboutData from '../../data/about-section.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 
 interface StatItem {
   id: string;
@@ -76,7 +77,7 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
   const { lang } = useLang();
   const isEn = lang === 'en';
   const { setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -86,22 +87,8 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     if (data.about) {
       return data.about as unknown as AboutFullData;
     }
-    const defaults = defaultAboutData as unknown as AboutFullData;
-    try {
-      const saved = localStorage.getItem('portfolio_about_data');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (parsed && (parsed.zh || parsed.en)) {
-          return {
-            ...defaults,
-            ...parsed,
-          };
-        }
-      }
-    } catch {
-      // 解析失敗回退至預設值
-    }
-    return defaults;
+    const templateDefault = getFallbacksByProfile(profile).about as unknown as AboutFullData;
+    return templateDefault || (defaultAboutData as unknown as AboutFullData);
   });
 
   useEffect(() => {
@@ -150,15 +137,17 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [formData, isPreview, updateDocument]);
 
-  // 聆聽全域一鍵還原預設值事件
+  // 聆聽全域一鍵還原預設值事件（精準還原當前 profile 模板之預設值）
   useEffect(() => {
-    const handleResetAll = () => {
-      setFormData(defaultAboutData as unknown as AboutFullData);
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).about as unknown as AboutFullData;
+      setFormData(JSON.parse(JSON.stringify(targetDefault)));
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
     return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
-  }, [setIsDirty]);
+  }, [profile, setIsDirty]);
 
   // 本地全域即時同步效應：開關或欄位變更時即時同步至本地 Context 與快照，前臺立即反應
   const isFirstAboutSync = useRef(true);
@@ -359,15 +348,15 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
   /** handleSetDefault — 將當前關於我資料設為預設值基準 */
   const handleSetDefault = () => {
     try {
-      localStorage.setItem('portfolio_about_baseline', JSON.stringify(formData));
-      showToast(isEn ? 'Current about data set as module default!' : '當前「關於我」內容已設為預設值！');
+      localStorage.setItem(`portfolio_${profile}_about_baseline`, JSON.stringify(formData));
+      showToast(isEn ? 'Current about data set as module default!' : '當前「關於我」內容已設為此模板預設值！');
     } catch {
       showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
     }
   };
 
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem('portfolio_about_baseline');
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_about_baseline`);
     const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
@@ -379,8 +368,10 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
       confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
-        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as unknown as AboutFullData) : (defaultAboutData as unknown as AboutFullData);
+        const templateDefault = getFallbacksByProfile(profile).about as unknown as AboutFullData;
+        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as unknown as AboutFullData) : JSON.parse(JSON.stringify(templateDefault));
         try {
+          localStorage.removeItem(`portfolio_${profile}_about_data`);
           localStorage.removeItem('portfolio_about_data');
           window.dispatchEvent(new Event('portfolio_about_data_updated'));
           setFormData(resetData);

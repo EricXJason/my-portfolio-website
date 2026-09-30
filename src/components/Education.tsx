@@ -124,7 +124,6 @@ export const Education: React.FC = () => {
   const [showAllWorkshops, setShowAllWorkshops] = useState(false);
   const [showAllTheses, setShowAllTheses] = useState(false);
 
-  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
   const cyanCol = isLight ? '#0369a1' : '#00f0ff';
 
   const headerRef    = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
@@ -171,20 +170,6 @@ export const Education: React.FC = () => {
     text: isLight ? '#0891b2' : '#00f0ff',
   };
 
-  /** 論文區塊專屬按鈕樣式（對應赤珊瑚紅與琥珀微光） */
-  const publicationBtnStyles: Record<string, { bg: string; border: string; text: string }> = {
-    paper: {
-      bg: isLight ? '#ecfeff' : 'rgba(0, 240, 255, 0.15)',
-      border: isLight ? '#0891b2' : '#00f0ff',
-      text: isLight ? '#0891b2' : '#00f0ff',
-    },
-    slides: {
-      bg: isLight ? '#eff6ff' : 'rgba(59, 130, 246, 0.15)',
-      border: isLight ? '#2563eb' : '#3b82f6',
-      text: isLight ? '#2563eb' : '#93c5fd',
-    },
-  };
-
   // 頂級科幻毛玻璃面板風格 (Sci-Fi Glassmorphism Section Style: 真正清透半透明 0.52~0.62 + 頂部 1px 鏡面高光)
   const glassSectionCardStyle: React.CSSProperties = {
     background: isLight
@@ -201,7 +186,7 @@ export const Education: React.FC = () => {
     if (!dateStr) return 0;
     const parts = dateStr.split(/[~–—\-至]/);
     const endPart = parts[parts.length - 1].trim();
-    const match = endPart.match(/(\d{4})[./\-](\d{1,2})/);
+    const match = endPart.match(/(\d{4})[./-](\d{1,2})/);
     if (match) {
       const year = parseInt(match[1], 10);
       const month = parseInt(match[2], 10);
@@ -298,7 +283,7 @@ export const Education: React.FC = () => {
             <Briefcase size={32} className="shrink-0" style={{ color: isLight ? '#0369a1' : '#22d3ee' }} />
             <span>{t('exp_title')}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-reading leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('exp_intro')}
           </p>
         </div>
@@ -442,7 +427,7 @@ export const Education: React.FC = () => {
                           })()}
                         </div>
 
-                        <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                        <p className="text-sm sm:text-base font-reading leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                           {deg.desc}
                         </p>
 
@@ -623,18 +608,18 @@ export const Education: React.FC = () => {
                           })()}
                         </div>
 
-                        <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                        <p className="text-sm sm:text-base font-reading leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                           {lang === 'zh' ? job.summary : (job.summary_en || job.summary)}
                         </p>
 
                         {/* 關鍵專案貢獻與亮點清單 */}
                         {job.projects && (
                           <div className="space-y-2 pt-1">
-                            <p className="font-tech text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
+                            <p className="font-hud text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
                               <FolderGit2 size={16} className="shrink-0" />
                               <span>{lang === 'zh' ? job.projectsHeader : (job.projectsHeader_en || job.projectsHeader)}：</span>
                             </p>
-                            <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1.5 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                            <ul className="list-disc list-inside text-xs sm:text-sm font-reading space-y-1.5 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
                               {(lang === 'zh' ? job.projects : (job.projects_en || job.projects)).map((proj, pIdx) => (
                                 <li key={pIdx} className="leading-relaxed">{proj}</li>
                               ))}
@@ -798,7 +783,7 @@ export const Education: React.FC = () => {
                                 </h4>
                               );
                             })()}
-                            <p className="text-xs sm:text-sm font-tech font-semibold pl-6 mt-1" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
+                            <p className="text-xs sm:text-sm font-reading font-medium pl-6 mt-1" style={{ color: isLight ? '#475569' : '#cbd5e1' }}>
                               {ws.org}
                             </p>
                           </div>
@@ -827,11 +812,11 @@ export const Education: React.FC = () => {
                         {/* 研習技能詳細條列清單 */}
                         {ws.skills && ws.skills.length > 0 && (
                           <div className="space-y-1.5">
-                            <p className="font-tech text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
+                            <p className="font-hud text-xs sm:text-sm font-bold uppercase flex items-center gap-1.5" style={{ color: accent.main }}>
                               <CheckCircle2 size={15} className="shrink-0" />
                               <span>{ws.skillsHeader || (lang === 'zh' ? '專業內容與技能學習：' : 'SKILLS & KEY LEARNINGS:')}</span>
                             </p>
-                            <ul className="list-disc list-inside text-xs sm:text-sm font-tech space-y-1 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
+                            <ul className="list-disc list-inside text-xs sm:text-sm font-reading space-y-1 pl-2" style={{ color: isLight ? '#1e293b' : '#cbd5e1' }}>
                               {ws.skills.map((sk, skIdx) => (
                                 <li key={skIdx} className="leading-relaxed">{sk}</li>
                               ))}
@@ -1054,13 +1039,13 @@ export const Education: React.FC = () => {
                           </div>
 
                           {/* 詳細內容描述 */}
-                          <p className="text-sm sm:text-base font-tech leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+                          <p className="text-sm sm:text-base font-reading leading-relaxed" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
                             {th.desc}
                           </p>
 
                           {th.award && (
                             <div
-                              className="p-3.5 border font-tech text-xs sm:text-sm font-bold flex items-center gap-2 cyber-cut-sm"
+                              className="p-3.5 border font-reading text-xs sm:text-sm font-semibold flex items-center gap-2 cyber-cut-sm"
                               style={{
                                 backgroundColor: isLight ? '#d1fae5' : 'rgba(16,185,129,0.15)',
                                 borderColor: isLight ? '#34d399' : 'rgba(16,185,129,0.35)',

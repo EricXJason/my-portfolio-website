@@ -21,7 +21,6 @@ import {
   Star,
   ArrowUp,
   ArrowDown,
-  Eye,
   EyeOff,
   BookmarkCheck,
 } from 'lucide-react';
@@ -29,6 +28,7 @@ import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
 import defaultGalleryData from '../../data/gallery-section.json';
+import { getFallbacksByProfile } from '../../services/portfolioDataService';
 import { SectionTitleEditor } from './SectionTitleEditor';
 import { CmsImagePicker } from './CmsImagePicker';
 import { CmsUrlInput } from './CmsUrlInput';
@@ -86,7 +86,7 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
   const { theme } = useTheme();
   const isLight = theme === 'light';
   const { setIsDirty } = useCmsDirty();
-  const { data, updateDocument } = usePortfolioData();
+  const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -96,7 +96,8 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
     if (data.gallery && Array.isArray(data.gallery)) {
       return data.gallery as GalleryItem[];
     }
-    const defaults = defaultGalleryData as GalleryItem[];
+    const templateDefault = getFallbacksByProfile(profile).gallery as GalleryItem[];
+    const defaults = templateDefault || (defaultGalleryData as GalleryItem[]);
     try {
       const saved = localStorage.getItem('portfolio_gallery_data');
       if (saved) {
@@ -142,15 +143,17 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
     return () => window.removeEventListener('portfolio_cms_trigger_save', handleTriggerSave);
   }, [items, isPreview, updateDocument]);
 
-  // 聆聽全域一鍵還原預設值事件
+  // 聆聽全域一鍵還原預設值事件（精準還原當前 profile 模板之預設值）
   useEffect(() => {
-    const handleResetAll = () => {
-      setItems(defaultGalleryData as GalleryItem[]);
+    const handleResetAll = (e?: Event) => {
+      const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
+      const targetDefault = getFallbacksByProfile(evtProfile).gallery as GalleryItem[];
+      setItems(JSON.parse(JSON.stringify(targetDefault)));
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
     return () => window.removeEventListener('portfolio_cms_reset_all', handleResetAll);
-  }, [setIsDirty]);
+  }, [profile, setIsDirty]);
 
   // 本地全域即時同步效應：開關或項目變更時即時同步至本地 Context 與快照，前臺立即反應
   const isFirstGallerySync = useRef(true);
@@ -460,8 +463,8 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
   /** handleSetDefault — 將當前畫廊資料設為預設值基準 */
   const handleSetDefault = () => {
     try {
-      localStorage.setItem('portfolio_gallery_baseline', JSON.stringify(items));
-      showToast(isEn ? 'Current gallery set as module default!' : '當前「美術畫廊」內容已設為預設值！');
+      localStorage.setItem(`portfolio_${profile}_gallery_baseline`, JSON.stringify(items));
+      showToast(isEn ? 'Current gallery set as module default!' : '當前「美術畫廊」內容已設為此模板預設值！');
     } catch {
       showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
     }
@@ -469,10 +472,12 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
 
   const doReset = async () => {
     setIsDirty(false);
-    const baselineRaw = localStorage.getItem('portfolio_gallery_baseline');
+    const baselineRaw = localStorage.getItem(`portfolio_${profile}_gallery_baseline`);
     const isBaseline = !!baselineRaw;
-    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as GalleryItem[]) : (defaultGalleryData as GalleryItem[]);
+    const templateDefault = getFallbacksByProfile(profile).gallery as GalleryItem[];
+    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as GalleryItem[]) : JSON.parse(JSON.stringify(templateDefault));
     try {
+      localStorage.removeItem(`portfolio_${profile}_gallery_data`);
       localStorage.removeItem('portfolio_gallery_data');
       window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
 
@@ -493,7 +498,7 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
       setItems(resetData);
       setGalleryMeta(DEFAULT_GALLERY_META);
       await updateDocument('gallery', resetData);
-      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Art Gallery" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「美術畫廊」模組已還原為初始預設資料！'));
+      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Art Gallery" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「美術畫廊」模組已還原為模板預設資料！'));
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
@@ -776,10 +781,10 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
                       type="button"
                       disabled={isPreview}
                       onClick={() => handleDeleteItem(actualIndex)}
-                      className="p-1.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-rose-400 hover:border-rose-400/40 hover:bg-rose-500/10 transition-colors cursor-pointer disabled:opacity-40"
+                      className="p-1.5 border cyber-cut-sm bg-rose-500/10 border-rose-500/40 text-rose-400 hover:text-rose-300 hover:border-rose-400 hover:bg-rose-500/20 transition-colors cursor-pointer disabled:opacity-40 shadow-xs"
                       title={isEn ? 'Delete artwork' : '刪除此作品'}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      <Trash2 className="w-3.5 h-3.5 text-rose-400" />
                     </button>
                   </div>
                 </div>

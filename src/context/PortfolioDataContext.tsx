@@ -3,20 +3,22 @@
  * 檔案名稱: PortfolioDataContext.tsx
  * 所屬模組: Data State Layer (全站雲端與本機快取資料狀態中樞)
  * 責任描述: 負責統籌前臺各大展示模組與 CMS 之資料來源，實作「離線快取優先 + 雲端即時同步 (Offline-First SWR)」
- *           機制。首屏採用本地靜態 JSON 實現 0ms 瞬時載入，掛載後自動非同步獲取 Firestore 最新雲端內容並平滑替換。
+ *           機制。支援雙模板模式 (`portfolio_fullstack_dev` 與 `portfolio_interactive_app_dev`) 完整資料與快取隔離。
  * 架構分層: Application State Layer (React Context API)
- * 依賴關係: 依賴 Firebase Firestore (db, isFirebaseConfigured) 與本地靜態 JSON 備援資料庫。
+ * 依賴關係: 依賴 Firebase Firestore (db, isFirebaseConfigured)、ProfileContext 與 portfolioDataService 雙模板備援資料庫。
  * 邊界處理: 支援網路離線或雲端異常時自動平滑回退本地快取、防禦性深拷貝防污染。
  * ============================================================================
  */
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import {
   savePortfolioDoc,
   getPortfolioDoc,
   PortfolioDocId,
-  LOCAL_FALLBACKS,
+  getFallbacksByProfile,
+  getCollectionName,
 } from '../services/portfolioDataService';
+import { ProfileType, useProfile } from './ProfileContext';
 
 // 9 大模組之型別定義集合
 export interface PortfolioDataState {
@@ -33,6 +35,7 @@ export interface PortfolioDataState {
 
 interface PortfolioDataContextType {
   data: PortfolioDataState;
+  profile: ProfileType;
   isLoadingCloud: boolean;
   isCloudConnected: boolean;
   lastUpdated: Date | null;
@@ -41,9 +44,16 @@ interface PortfolioDataContextType {
   resetAllToDefaults: () => Promise<void>;
 }
 
-const COLLECTION_NAME = 'portfolio_content';
+export function getModuleStorageKey(docId: PortfolioDocId, profile: ProfileType): string {
+  return `portfolio_${profile}_${docId}_data`;
+}
 
-const MODULE_KEY_MAP: Record<PortfolioDocId, string> = {
+export function getPreviewStorageKey(docId: PortfolioDocId, profile: ProfileType): string {
+  return `portfolio_preview_${profile}_${docId}`;
+}
+
+// 舊版單集合 key 映射（作為向後相容備援）
+const LEGACY_KEY_MAP: Record<PortfolioDocId, string> = {
   projects: 'portfolio_projects_data',
   about: 'portfolio_about_data',
   skills: 'portfolio_skills_data',
@@ -58,44 +68,63 @@ const MODULE_KEY_MAP: Record<PortfolioDocId, string> = {
 /**
  * 計算本地靜態資料指紋，當程式碼中的 JSON 變更時自動偵測並同步最新設定
  */
-export const getContentFingerprint = (): string => {
+export const getContentFingerprint = (profile: ProfileType = 'fullstack'): string => {
   try {
+    const fallbacks = getFallbacksByProfile(profile);
     const raw = JSON.stringify({
-      aboutBioP1: LOCAL_FALLBACKS.about?.zh?.bio?.p1 || '',
-      aboutBioP2: LOCAL_FALLBACKS.about?.zh?.bio?.p2 || '',
-      aboutBioP3: LOCAL_FALLBACKS.about?.zh?.bio?.p3 || '',
-      aboutTitle: LOCAL_FALLBACKS.about?.zh?.bio?.title || '',
-      heroDesc: LOCAL_FALLBACKS.hero?.zh?.description || '',
-      buildVer: '2026.09.22.bio.v6',
+      aboutBioP1: fallbacks.about?.zh?.bio?.p1 || '',
+      aboutBioP2: fallbacks.about?.zh?.bio?.p2 || '',
+      aboutBioP3: fallbacks.about?.zh?.bio?.p3 || '',
+      aboutTitle: fallbacks.about?.zh?.bio?.title || '',
+      heroDesc: fallbacks.hero?.zh?.description || '',
+      heroSubtitle: fallbacks.hero?.zh?.subtitle || '',
+      galleryVis: (fallbacks.site_settings as any)?.modules_visibility?.gallery ?? true,
+      workXacVis: (fallbacks.experience as any)?.zh?.workExperiences?.[1]?.visible ?? true,
+      profile,
+      buildVer: '2026.09.30.dual_profile.v3_strict_sync_fixed',
     });
     let hash = 0;
     for (let i = 0; i < raw.length; i++) {
       hash = ((hash << 5) - hash) + raw.charCodeAt(i);
       hash |= 0;
     }
-    return `fp_${Math.abs(hash)}`;
+    return `fp_${profile}_${Math.abs(hash)}`;
   } catch {
-    return 'fp_init';
+    return `fp_${profile}_init`;
   }
 };
 
 /**
  * 讀取本機快取優先資料（支援 preview 與一般持久化快取）
  */
-const getInitialModuleData = <T,>(docId: PortfolioDocId): T => {
+const getInitialModuleData = <T,>(docId: PortfolioDocId, profile: ProfileType): T => {
+  const fallbacks = getFallbacksByProfile(profile);
+  const fallbackVal = fallbacks[docId] as unknown as T;
+
   if (typeof window === 'undefined') {
-    return LOCAL_FALLBACKS[docId] as unknown as T;
+    return fallbackVal;
   }
   try {
-    // 若靜態代碼指紋與本機快取指紋不符，優先以最新 LOCAL_FALLBACKS 呈現，達成即時同步
-    const currentFp = getContentFingerprint();
-    const savedFp = localStorage.getItem('portfolio_content_fingerprint');
+    // 指紋檢查
+    const currentFp = getContentFingerprint(profile);
+    const savedFp = localStorage.getItem(`portfolio_${profile}_fingerprint`);
     if (savedFp !== currentFp) {
-      return LOCAL_FALLBACKS[docId] as unknown as T;
+      return fallbackVal;
     }
 
-    const primaryKey = MODULE_KEY_MAP[docId];
-    const saved = localStorage.getItem(primaryKey) || localStorage.getItem(`portfolio_preview_${docId}`);
+    const primaryKey = getModuleStorageKey(docId, profile);
+    const previewKey = getPreviewStorageKey(docId, profile);
+    // 嚴格隔離：site_settings 與 experience 涉及雙模板特異化開關與可見度，禁止讀取舊版未分模板之 legacyKey
+    const legacyKey =
+      profile === 'fullstack' && docId !== 'site_settings' && docId !== 'experience'
+        ? LEGACY_KEY_MAP[docId]
+        : null;
+
+    const saved =
+      localStorage.getItem(primaryKey) ||
+      localStorage.getItem(previewKey) ||
+      (legacyKey ? localStorage.getItem(legacyKey) : null);
+
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed !== null && parsed !== undefined) {
@@ -105,26 +134,62 @@ const getInitialModuleData = <T,>(docId: PortfolioDocId): T => {
       }
     }
   } catch (e) {
-    console.warn(`[DataContext]: Failed to load cached ${docId}:`, e);
+    console.warn(`[DataContext]: Failed to load cached ${docId} for ${profile}:`, e);
   }
-  return LOCAL_FALLBACKS[docId] as unknown as T;
+  return fallbackVal;
 };
 
 const PortfolioDataContext = createContext<PortfolioDataContextType | undefined>(undefined);
 
-export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // 初始狀態以本機快取優先初始化，若無快取才回退本地靜態 JSON，確保 0ms 首屏極速且反映最新修改
+interface PortfolioDataProviderProps {
+  children: React.ReactNode;
+  profile?: ProfileType;
+}
+
+export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
+  children,
+  profile: explicitProfile,
+}) => {
+  // 嘗試從外部 prop 或 ProfileContext 取得 profile，預設降級為 'fullstack'
+  let contextProfile: ProfileType = 'fullstack';
+  try {
+    // 若在 ProfileProvider 內呼叫
+    const profCtx = useProfile();
+    contextProfile = profCtx.profile;
+  } catch {
+    // 若獨立使用（如特定單元測試），容錯為 fullstack
+    contextProfile = 'fullstack';
+  }
+
+  const profile = explicitProfile || contextProfile;
+
+  // 初始狀態以本機快取優先初始化
   const [data, setData] = useState<PortfolioDataState>(() => ({
-    hero: getInitialModuleData('hero'),
-    site_settings: getInitialModuleData('site_settings'),
-    about: getInitialModuleData('about'),
-    skills: getInitialModuleData('skills'),
-    projects: getInitialModuleData('projects'),
-    experience: getInitialModuleData('experience'),
-    certifications: getInitialModuleData('certifications'),
-    gallery: getInitialModuleData('gallery'),
-    site_translations: getInitialModuleData('site_translations'),
+    hero: getInitialModuleData('hero', profile),
+    site_settings: getInitialModuleData('site_settings', profile),
+    about: getInitialModuleData('about', profile),
+    skills: getInitialModuleData('skills', profile),
+    projects: getInitialModuleData('projects', profile),
+    experience: getInitialModuleData('experience', profile),
+    certifications: getInitialModuleData('certifications', profile),
+    gallery: getInitialModuleData('gallery', profile),
+    site_translations: getInitialModuleData('site_translations', profile),
   }));
+
+  // 當 profile 改變時，重新讀取該 profile 的本地快取
+  useEffect(() => {
+    setData({
+      hero: getInitialModuleData('hero', profile),
+      site_settings: getInitialModuleData('site_settings', profile),
+      about: getInitialModuleData('about', profile),
+      skills: getInitialModuleData('skills', profile),
+      projects: getInitialModuleData('projects', profile),
+      experience: getInitialModuleData('experience', profile),
+      certifications: getInitialModuleData('certifications', profile),
+      gallery: getInitialModuleData('gallery', profile),
+      site_translations: getInitialModuleData('site_translations', profile),
+    });
+  }, [profile]);
 
   const [isLoadingCloud, setIsLoadingCloud] = useState<boolean>(false);
   const [isCloudConnected, setIsCloudConnected] = useState<boolean>(false);
@@ -135,7 +200,8 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
    */
   const refreshFromCloud = useCallback(async () => {
     setIsLoadingCloud(true);
-    const keys = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
+    const fallbacks = getFallbacksByProfile(profile);
+    const keys = Object.keys(fallbacks) as PortfolioDocId[];
     const cloudUpdates: Partial<PortfolioDataState> = {};
     let hasAnyCloudData = false;
 
@@ -143,13 +209,13 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
       await Promise.all(
         keys.map(async (key) => {
           try {
-            const payload = await getPortfolioDoc(key);
+            const payload = await getPortfolioDoc(key, profile);
             if (payload) {
               cloudUpdates[key] = payload;
               hasAnyCloudData = true;
             }
           } catch (err) {
-            console.warn(`[DataContext]: Fetching ${key} failed, keeping current data.`, err);
+            console.warn(`[DataContext]: Fetching ${key} (${profile}) failed, keeping current data.`, err);
           }
         })
       );
@@ -159,20 +225,20 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
           ...prev,
           ...cloudUpdates,
         }));
-        // 同步覆蓋本地快照，達成 0ms 下次直接呈現最新雲端內容
+        // 同步覆蓋本地快照
         try {
           Object.entries(cloudUpdates).forEach(([k, v]) => {
-            const pKey = MODULE_KEY_MAP[k as PortfolioDocId];
+            const pKey = getModuleStorageKey(k as PortfolioDocId, profile);
             if (pKey && v) {
               localStorage.setItem(pKey, JSON.stringify(v));
               if (k === 'site_settings' && v) {
                 if ((v as any).modules_visibility) {
-                  localStorage.setItem('portfolio_modules_visibility', JSON.stringify((v as any).modules_visibility));
-                  window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+                  localStorage.setItem(`portfolio_${profile}_modules_visibility`, JSON.stringify((v as any).modules_visibility));
+                  window.dispatchEvent(new Event(`portfolio_${profile}_modules_visibility_updated`));
                 }
                 if ((v as any).modules_order) {
-                  localStorage.setItem('portfolio_modules_order', JSON.stringify((v as any).modules_order));
-                  window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+                  localStorage.setItem(`portfolio_${profile}_modules_order`, JSON.stringify((v as any).modules_order));
+                  window.dispatchEvent(new Event(`portfolio_${profile}_modules_order_updated`));
                 }
               }
             }
@@ -182,17 +248,14 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
         setLastUpdated(new Date());
       }
     } catch (globalErr) {
-      console.error('[DataContext]: Global cloud refresh failed:', globalErr);
+      console.error(`[DataContext]: Global cloud refresh failed (${profile}):`, globalErr);
     } finally {
       setIsLoadingCloud(false);
     }
-  }, []);
+  }, [profile]);
 
   /**
    * 更新指定文檔並同步寫入 Firestore 與本地狀態
-   * @param docId 模組文檔識別碼
-   * @param newPayload 最新模組資料物件
-   * @param skipCloud 若為 true 則僅更新本機/預覽狀態，不寫入雲端資料庫（供 Preview 模式使用）
    */
   const updateDocument = useCallback(
     async (docId: PortfolioDocId, newPayload: any, skipCloud = false): Promise<boolean> => {
@@ -204,7 +267,7 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // 2. 本地預覽快照持久化
       try {
-        localStorage.setItem(`portfolio_preview_${docId}`, JSON.stringify(newPayload));
+        localStorage.setItem(getPreviewStorageKey(docId, profile), JSON.stringify(newPayload));
       } catch (e) {
         console.warn(`[DataContext]: Failed to write local preview for ${docId}:`, e);
       }
@@ -214,111 +277,102 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
         return true;
       }
 
-      // 3. 非同步寫入 Firestore 雲端資料庫與本機持久化快照
+      // 3. 非同步寫入 Firestore 與本機持久化快照
       try {
-        if (MODULE_KEY_MAP[docId]) {
-          try {
-            localStorage.setItem(MODULE_KEY_MAP[docId], JSON.stringify(newPayload));
-            // 特殊連動：若為 site_settings 且含 modules_visibility 或 modules_order，同步寫入獨立鍵
-            if (docId === 'site_settings' && newPayload) {
-              if (newPayload.modules_visibility) {
-                localStorage.setItem('portfolio_modules_visibility', JSON.stringify(newPayload.modules_visibility));
-                window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
-              }
-              if (newPayload.modules_order) {
-                localStorage.setItem('portfolio_modules_order', JSON.stringify(newPayload.modules_order));
-                window.dispatchEvent(new Event('portfolio_modules_order_updated'));
-              }
+        const storageKey = getModuleStorageKey(docId, profile);
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(newPayload));
+          if (docId === 'site_settings' && newPayload) {
+            if (newPayload.modules_visibility) {
+              localStorage.setItem(`portfolio_${profile}_modules_visibility`, JSON.stringify(newPayload.modules_visibility));
+              window.dispatchEvent(new Event(`portfolio_${profile}_modules_visibility_updated`));
             }
-            window.dispatchEvent(new Event(`portfolio_${docId}_data_updated`));
-          } catch {}
-        }
-        await savePortfolioDoc(docId, newPayload);
+            if (newPayload.modules_order) {
+              localStorage.setItem(`portfolio_${profile}_modules_order`, JSON.stringify(newPayload.modules_order));
+              window.dispatchEvent(new Event(`portfolio_${profile}_modules_order_updated`));
+            }
+          }
+          window.dispatchEvent(new Event(`portfolio_${profile}_${docId}_data_updated`));
+          window.dispatchEvent(new Event(`portfolio_${docId}_data_updated`));
+        } catch {}
+
+        await savePortfolioDoc(docId, newPayload, profile);
         setLastUpdated(new Date());
         return true;
       } catch (error) {
-        console.error(`[DataContext]: Failed to persist ${docId} to Firestore:`, error);
+        console.error(`[DataContext]: Failed to persist ${docId} to Firestore (${profile}):`, error);
         throw error;
       }
     },
-    []
+    [profile]
   );
 
   /**
-   * 一鍵還原全模組至專案最原始預設資料 (Reset All to Local Fallbacks)
-   * 1. 重設 React 內部狀態至 LOCAL_FALLBACKS 深拷貝
-   * 2. 清空所有 localStorage 本地快取與預覽暫存
-   * 3. 批次將 LOCAL_FALLBACKS 寫入 Firestore 雲端資料庫
-   * 4. 廣播全域重置事件，通知所有已掛載之 CMS 編輯器與前臺重新讀取
+   * 一鍵還原當前 Profile 至最原始預設資料 (Reset All to Defaults)
    */
   const resetAllToDefaults = useCallback(async (): Promise<void> => {
     setIsLoadingCloud(true);
+    const fallbacks = getFallbacksByProfile(profile);
 
     const targetDefaults: PortfolioDataState = {
-      hero: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.hero)),
-      site_settings: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.site_settings)),
-      about: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.about)),
-      skills: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.skills)),
-      projects: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.projects)),
-      experience: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.experience)),
-      certifications: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.certifications)),
-      gallery: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.gallery)),
-      site_translations: JSON.parse(JSON.stringify(LOCAL_FALLBACKS.site_translations)),
+      hero: JSON.parse(JSON.stringify(fallbacks.hero)),
+      site_settings: JSON.parse(JSON.stringify(fallbacks.site_settings)),
+      about: JSON.parse(JSON.stringify(fallbacks.about)),
+      skills: JSON.parse(JSON.stringify(fallbacks.skills)),
+      projects: JSON.parse(JSON.stringify(fallbacks.projects)),
+      experience: JSON.parse(JSON.stringify(fallbacks.experience)),
+      certifications: JSON.parse(JSON.stringify(fallbacks.certifications)),
+      gallery: JSON.parse(JSON.stringify(fallbacks.gallery)),
+      site_translations: JSON.parse(JSON.stringify(fallbacks.site_translations)),
     };
 
     // 1. 立即重置本地 React 狀態
     setData(targetDefaults);
 
-    // 2. 清除所有編輯暫存 localStorage 與任何 baseline 快取
-    const keysMap: Record<string, any> = {
-      portfolio_projects_data: targetDefaults.projects,
-      portfolio_about_data: targetDefaults.about,
-      portfolio_skills_data: targetDefaults.skills,
-      portfolio_experience_data: targetDefaults.experience,
-      portfolio_gallery_data: targetDefaults.gallery,
-      portfolio_certifications_data: targetDefaults.certifications,
-      portfolio_hero_data: targetDefaults.hero,
-      portfolio_site_settings_data: targetDefaults.site_settings,
-    };
-
-    Object.entries(keysMap).forEach(([k, v]) => {
+    // 2. 清除該 profile 的所有快取與預覽暫存
+    const docIds = Object.keys(fallbacks) as PortfolioDocId[];
+    docIds.forEach((docId) => {
       try {
-        localStorage.setItem(k, JSON.stringify(v));
+        const key = getModuleStorageKey(docId, profile);
+        localStorage.setItem(key, JSON.stringify(targetDefaults[docId]));
+        localStorage.removeItem(getPreviewStorageKey(docId, profile));
       } catch {}
     });
 
+    // 清理所有 preview 與 baseline 暫存
     try {
-      if (targetDefaults.site_translations) {
-        localStorage.setItem('portfolio_custom_translations', JSON.stringify(targetDefaults.site_translations));
+      const keysToRemove: string[] = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('portfolio_preview_') || k.endsWith('_baseline'))) {
+          keysToRemove.push(k);
+        }
       }
+      keysToRemove.forEach((k) => localStorage.removeItem(k));
+    } catch {}
+
+    try {
       if (targetDefaults.site_settings) {
         if (targetDefaults.site_settings.modules_visibility) {
           localStorage.setItem('portfolio_modules_visibility', JSON.stringify(targetDefaults.site_settings.modules_visibility));
+          localStorage.setItem(`portfolio_${profile}_modules_visibility`, JSON.stringify(targetDefaults.site_settings.modules_visibility));
           window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
+          window.dispatchEvent(new Event(`portfolio_${profile}_modules_visibility_updated`));
         }
         if (targetDefaults.site_settings.modules_order) {
           localStorage.setItem('portfolio_modules_order', JSON.stringify(targetDefaults.site_settings.modules_order));
+          localStorage.setItem(`portfolio_${profile}_modules_order`, JSON.stringify(targetDefaults.site_settings.modules_order));
           window.dispatchEvent(new Event('portfolio_modules_order_updated'));
+          window.dispatchEvent(new Event(`portfolio_${profile}_modules_order_updated`));
         }
       }
     } catch {}
 
-    // 清理所有 preview 與 baseline 暫存
-    try {
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && (key.startsWith('portfolio_preview_') || key.endsWith('_baseline'))) {
-          localStorage.removeItem(key);
-        }
-      }
-    } catch {}
-
-    // 3. 批次將乾淨的程式碼預設值同步還原至 Firestore
-    const docIds = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
+    // 3. 批次同步還原至 Firestore 對應集合
     await Promise.all(
       docIds.map((docId) =>
-        savePortfolioDoc(docId, LOCAL_FALLBACKS[docId]).catch((err) =>
-          console.error(`[DataContext]: Resetting ${docId} to cloud failed:`, err)
+        savePortfolioDoc(docId, fallbacks[docId], profile).catch((err) =>
+          console.error(`[DataContext]: Resetting ${docId} (${profile}) to cloud failed:`, err)
         )
       )
     );
@@ -327,7 +381,7 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
     setIsLoadingCloud(false);
 
     // 4. 廣播全域重置事件
-    window.dispatchEvent(new CustomEvent('portfolio_cms_reset_all'));
+    window.dispatchEvent(new CustomEvent('portfolio_cms_reset_all', { detail: { profile } }));
     window.dispatchEvent(new Event('portfolio_data_updated'));
     window.dispatchEvent(new Event('portfolio_projects_data_updated'));
     window.dispatchEvent(new Event('portfolio_translations_updated'));
@@ -336,31 +390,54 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
     window.dispatchEvent(new Event('portfolio_experience_data_updated'));
     window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
     window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
-  }, []);
+  }, [profile]);
 
   // 5. 自動指紋同步：當程式碼 JSON 修改時，更新本地指紋標記
   useEffect(() => {
     try {
-      const currentFp = getContentFingerprint();
-      const savedFp = localStorage.getItem('portfolio_content_fingerprint');
+      const currentFp = getContentFingerprint(profile);
+      const fpKey = `portfolio_${profile}_fingerprint`;
+      const savedFp = localStorage.getItem(fpKey);
       if (savedFp !== currentFp) {
-        localStorage.setItem('portfolio_content_fingerprint', currentFp);
+        localStorage.setItem(fpKey, currentFp);
+        // 清理所有舊版未分 Profile 之全域干擾快取，杜絕跨模板污染
+        try {
+          localStorage.removeItem('portfolio_modules_visibility');
+          localStorage.removeItem('portfolio_site_settings_data');
+          localStorage.removeItem(`portfolio_${profile}_site_settings_data`);
+          localStorage.removeItem(`portfolio_${profile}_modules_visibility`);
+          localStorage.removeItem(`portfolio_${profile}_experience_data`);
+        } catch {}
+
         const isCms = typeof window !== 'undefined' && window.location.pathname.startsWith('/cms');
         if (isCms) {
           resetAllToDefaults().catch(() => {});
+        } else {
+          // 前臺展示模式立即更新為當前模板的安全降級資料
+          setData({
+            hero: getInitialModuleData('hero', profile),
+            site_settings: getInitialModuleData('site_settings', profile),
+            about: getInitialModuleData('about', profile),
+            skills: getInitialModuleData('skills', profile),
+            projects: getInitialModuleData('projects', profile),
+            experience: getInitialModuleData('experience', profile),
+            certifications: getInitialModuleData('certifications', profile),
+            gallery: getInitialModuleData('gallery', profile),
+            site_translations: getInitialModuleData('site_translations', profile),
+          });
         }
       }
     } catch (e) {
-      console.warn('[DataContext]: Auto fingerprint sync failed:', e);
+      console.warn(`[DataContext]: Auto fingerprint sync failed for ${profile}:`, e);
     }
-  }, [resetAllToDefaults]);
+  }, [profile, resetAllToDefaults]);
 
-  // 智慧同步策略：CMS 管理模式啟用即時雙向監聽，前臺展示模式採用非阻塞 SWR 輕量抓取
+  // 智慧同步策略：CMS 管理模式啟用即時雙向監聽，前臺展示模式採用非阻塞 SWR
   useEffect(() => {
-    const isCmsMode = window.location.pathname.startsWith('/cms');
+    const isCmsMode = typeof window !== 'undefined' && window.location.pathname.startsWith('/cms');
+    const collectionName = getCollectionName(profile);
 
     if (isCmsMode) {
-      // 1. CMS 模式：動態掛載 onSnapshot 實現管理後臺與雲端資料庫之雙向即時同步
       let unsubs: (() => void)[] = [];
       let isMounted = true;
 
@@ -370,10 +447,10 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
           if (!db || !isFirebaseConfigured || !isMounted) return;
           const { doc, onSnapshot } = await import('firebase/firestore');
 
-          const keys = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
+          const keys = Object.keys(getFallbacksByProfile(profile)) as PortfolioDocId[];
           keys.forEach((key) => {
             try {
-              const docRef = doc(db, COLLECTION_NAME, key);
+              const docRef = doc(db, collectionName, key);
               const unsub = onSnapshot(
                 docRef,
                 (snap) => {
@@ -384,21 +461,10 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
                       ...prev,
                       [key]: payload,
                     }));
-                    // 同步至本機快照
                     try {
-                      const pKey = MODULE_KEY_MAP[key];
+                      const pKey = getModuleStorageKey(key, profile);
                       if (pKey && payload) {
                         localStorage.setItem(pKey, JSON.stringify(payload));
-                        if (key === 'site_settings') {
-                          if ((payload as any).modules_visibility) {
-                            localStorage.setItem('portfolio_modules_visibility', JSON.stringify((payload as any).modules_visibility));
-                            window.dispatchEvent(new Event('portfolio_modules_visibility_updated'));
-                          }
-                          if ((payload as any).modules_order) {
-                            localStorage.setItem('portfolio_modules_order', JSON.stringify((payload as any).modules_order));
-                            window.dispatchEvent(new Event('portfolio_modules_order_updated'));
-                          }
-                        }
                       }
                     } catch {}
                     setIsCloudConnected(true);
@@ -406,12 +472,12 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
                   }
                 },
                 (error) => {
-                  console.warn(`[DataContext]: Snapshot listener error for ${key}:`, error);
+                  console.warn(`[DataContext]: Snapshot listener error for ${key} (${profile}):`, error);
                 }
               );
               unsubs.push(unsub);
             } catch (err) {
-              console.error(`[DataContext]: Failed to listen to ${key}:`, err);
+              console.error(`[DataContext]: Failed to listen to ${key} (${profile}):`, err);
             }
           });
         } catch (e) {
@@ -424,8 +490,6 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
         unsubs.forEach((unsub) => unsub());
       };
     } else {
-      // 2. 前臺展示模式 (Offline-First SWR)：首屏 0ms 靜態呈現
-      // 自動化稽核或爬蟲環境直通本地極速快照，避免背景請求打斷 network idle
       const isBot =
         typeof navigator !== 'undefined' &&
         (Boolean(navigator.webdriver) ||
@@ -440,11 +504,11 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       }, 5000);
 
-      // 本地模組 0 毫秒即時同步更新函式
       const syncModuleFromLocal = (docId: PortfolioDocId) => {
         try {
-          const primaryKey = MODULE_KEY_MAP[docId];
-          const saved = localStorage.getItem(primaryKey) || localStorage.getItem(`portfolio_preview_${docId}`);
+          const primaryKey = getModuleStorageKey(docId, profile);
+          const previewKey = getPreviewStorageKey(docId, profile);
+          const saved = localStorage.getItem(primaryKey) || localStorage.getItem(previewKey);
           if (saved) {
             const parsed = JSON.parse(saved);
             if (parsed !== null && parsed !== undefined) {
@@ -455,94 +519,51 @@ export const PortfolioDataProvider: React.FC<{ children: React.ReactNode }> = ({
               return;
             }
           }
-          // 若快取被清空則回退預設值
+          const fallbacks = getFallbacksByProfile(profile);
           setData((prev) => ({
             ...prev,
-            [docId]: LOCAL_FALLBACKS[docId],
+            [docId]: fallbacks[docId],
           }));
         } catch (e) {
-          console.warn(`[DataContext]: syncModuleFromLocal failed for ${docId}:`, e);
+          console.warn(`[DataContext]: syncModuleFromLocal failed for ${docId} (${profile}):`, e);
         }
       };
 
       const syncAllFromLocal = () => {
-        const keys = Object.keys(LOCAL_FALLBACKS) as PortfolioDocId[];
+        const keys = Object.keys(getFallbacksByProfile(profile)) as PortfolioDocId[];
         keys.forEach(syncModuleFromLocal);
       };
 
-      // 監聽同源自訂事件（同 Tab 0ms 熱更新）
-      const onProjectsUpdate = () => syncModuleFromLocal('projects');
-      const onAboutUpdate = () => syncModuleFromLocal('about');
-      const onSkillsUpdate = () => syncModuleFromLocal('skills');
-      const onExpUpdate = () => syncModuleFromLocal('experience');
-      const onCertsUpdate = () => syncModuleFromLocal('certifications');
-      const onGalleryUpdate = () => syncModuleFromLocal('gallery');
-      const onHeroUpdate = () => syncModuleFromLocal('hero');
-      const onSiteSettingsUpdate = () => syncModuleFromLocal('site_settings');
-      const onTransUpdate = () => syncModuleFromLocal('site_translations');
-      const onAllUpdate = () => syncAllFromLocal();
-
-      window.addEventListener('portfolio_projects_data_updated', onProjectsUpdate);
-      window.addEventListener('portfolio_about_data_updated', onAboutUpdate);
-      window.addEventListener('portfolio_skills_data_updated', onSkillsUpdate);
-      window.addEventListener('portfolio_experience_data_updated', onExpUpdate);
-      window.addEventListener('portfolio_certifications_data_updated', onCertsUpdate);
-      window.addEventListener('portfolio_gallery_data_updated', onGalleryUpdate);
-      window.addEventListener('portfolio_hero_data_updated', onHeroUpdate);
-      window.addEventListener('portfolio_site_settings_data_updated', onSiteSettingsUpdate);
-      window.addEventListener('portfolio_translations_updated', onTransUpdate);
-      window.addEventListener('portfolio_data_updated', onAllUpdate);
-      window.addEventListener('portfolio_cms_reset_all', onAllUpdate);
-
-      // 監聽原生 StorageEvent（跨 Tab 0ms 即時同步）
-      const onStorageEvent = (e: StorageEvent) => {
-        if (!e.key) return;
-        if (e.key === 'portfolio_projects_data' || e.key === 'portfolio_preview_projects') syncModuleFromLocal('projects');
-        else if (e.key === 'portfolio_about_data' || e.key === 'portfolio_preview_about') syncModuleFromLocal('about');
-        else if (e.key === 'portfolio_skills_data' || e.key === 'portfolio_preview_skills') syncModuleFromLocal('skills');
-        else if (e.key === 'portfolio_experience_data' || e.key === 'portfolio_preview_experience') syncModuleFromLocal('experience');
-        else if (e.key === 'portfolio_certifications_data' || e.key === 'portfolio_preview_certifications') syncModuleFromLocal('certifications');
-        else if (e.key === 'portfolio_gallery_data' || e.key === 'portfolio_preview_gallery') syncModuleFromLocal('gallery');
-        else if (e.key === 'portfolio_hero_data' || e.key === 'portfolio_preview_hero') syncModuleFromLocal('hero');
-        else if (e.key === 'portfolio_site_settings_data' || e.key === 'portfolio_preview_site_settings') syncModuleFromLocal('site_settings');
-        else if (e.key === 'portfolio_custom_translations' || e.key === 'portfolio_preview_site_translations') syncModuleFromLocal('site_translations');
-      };
-      window.addEventListener('storage', onStorageEvent);
+      const onProfileSpecificUpdate = () => syncAllFromLocal();
+      window.addEventListener(`portfolio_${profile}_data_updated`, onProfileSpecificUpdate);
+      window.addEventListener('portfolio_data_updated', onProfileSpecificUpdate);
+      window.addEventListener('portfolio_cms_reset_all', onProfileSpecificUpdate);
 
       return () => {
         isCancelled = true;
         clearTimeout(idleTimer);
-        window.removeEventListener('portfolio_projects_data_updated', onProjectsUpdate);
-        window.removeEventListener('portfolio_about_data_updated', onAboutUpdate);
-        window.removeEventListener('portfolio_skills_data_updated', onSkillsUpdate);
-        window.removeEventListener('portfolio_experience_data_updated', onExpUpdate);
-        window.removeEventListener('portfolio_certifications_data_updated', onCertsUpdate);
-        window.removeEventListener('portfolio_gallery_data_updated', onGalleryUpdate);
-        window.removeEventListener('portfolio_hero_data_updated', onHeroUpdate);
-        window.removeEventListener('portfolio_site_settings_data_updated', onSiteSettingsUpdate);
-        window.removeEventListener('portfolio_translations_updated', onTransUpdate);
-        window.removeEventListener('portfolio_data_updated', onAllUpdate);
-        window.removeEventListener('portfolio_cms_reset_all', onAllUpdate);
-        window.removeEventListener('storage', onStorageEvent);
+        window.removeEventListener(`portfolio_${profile}_data_updated`, onProfileSpecificUpdate);
+        window.removeEventListener('portfolio_data_updated', onProfileSpecificUpdate);
+        window.removeEventListener('portfolio_cms_reset_all', onProfileSpecificUpdate);
       };
     }
-  }, [refreshFromCloud]);
+  }, [profile, refreshFromCloud]);
 
-  return (
-    <PortfolioDataContext.Provider
-      value={{
-        data,
-        isLoadingCloud,
-        isCloudConnected,
-        lastUpdated,
-        refreshFromCloud,
-        updateDocument,
-        resetAllToDefaults,
-      }}
-    >
-      {children}
-    </PortfolioDataContext.Provider>
+  const value = useMemo(
+    () => ({
+      data,
+      profile,
+      isLoadingCloud,
+      isCloudConnected,
+      lastUpdated,
+      refreshFromCloud,
+      updateDocument,
+      resetAllToDefaults,
+    }),
+    [data, profile, isLoadingCloud, isCloudConnected, lastUpdated, refreshFromCloud, updateDocument, resetAllToDefaults]
   );
+
+  return <PortfolioDataContext.Provider value={value}>{children}</PortfolioDataContext.Provider>;
 };
 
 /**

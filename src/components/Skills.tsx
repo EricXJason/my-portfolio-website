@@ -27,11 +27,9 @@ import {
   Cloud,
   Wrench,
   GitBranch,
-  PenTool,
   Bot,
   Box,
   Boxes,
-  Workflow,
   LineChart,
   Glasses,
   Wifi,
@@ -113,8 +111,6 @@ export const Skills: React.FC = () => {
       ...s,
       items: s.items.filter((item) => item.visible !== false),
     }));
-  const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
-
   const primarySkills = currentSkills.filter((s) => s.catTier === 'primary');
   const [primaryActiveTab, setPrimaryActiveTab] = useState(0);
   const commonSkills  = currentSkills.filter((s) => s.catTier === 'common');
@@ -125,16 +121,14 @@ export const Skills: React.FC = () => {
     fullstack: { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)',   border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)'   }, // 1. 青色
     game:      { main: isLight ? '#1d4ed8' : '#60a5fa', bg: isLight ? '#eff6ff' : 'rgba(96,165,250,0.15)', border: isLight ? '#93c5fd' : 'rgba(96,165,250,0.4)'  }, // 2. 藍色（更鑑和）
     common:    { main: isLight ? '#7c3aed' : '#c084fc', bg: isLight ? '#f3e8ff' : 'rgba(168,85,247,0.12)', border: isLight ? '#c084fc' : 'rgba(168,85,247,0.35)' }, // 3. 紫色
-    media:     { main: isLight ? '#059669' : '#34d399', bg: isLight ? '#ecfdf5' : 'rgba(16,185,129,0.14)', border: isLight ? '#6ee7b7' : 'rgba(52,211,153,0.42)' }, // 4. 綠色 (第四順位嚴格遵照青藍紫綠)
+    media:     { main: isLight ? '#059669' : '#34d399', bg: isLight ? '#ecfdf5' : 'rgba(168,85,247,0.14)', border: isLight ? '#6ee7b7' : 'rgba(52,211,153,0.42)' }, // 4. 綠色 (第四順位嚴格遵照青藍紫綠)
   };
 
   const primaryColor   = isLight ? '#0369a1' : '#00f0ff'; // 青 — 全端開發
-  const commonColor    = isLight ? '#7c3aed' : '#c084fc'; // 紫 — 通用工程
   const secondaryColor = isLight ? '#7e22ce' : '#c084fc'; // 紫 — 輔助技能統一紫色
 
   const headerRef   = useScrollReveal(0.15) as React.RefObject<HTMLDivElement>;
   const primaryRef  = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
-  const commonRef   = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
   const secondaryRef = useScrollReveal(0.06) as React.RefObject<HTMLDivElement>;
 
   return (
@@ -151,7 +145,7 @@ export const Skills: React.FC = () => {
             <Cpu size={32} style={{ color: primaryColor }} className="shrink-0" />
             <span>{t('skills_title')}</span>
           </h2>
-          <p className="text-base sm:text-lg font-tech leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
+          <p className="text-base sm:text-lg font-reading leading-relaxed reveal-up reveal-d2" style={{ color: isLight ? '#1e293b' : '#e2e8f0' }}>
             {t('skills_intro')}
           </p>
         </div>
@@ -171,7 +165,11 @@ export const Skills: React.FC = () => {
               style={{ borderColor: isLight ? '#cbd5e1' : 'rgba(0,240,255,0.2)' }}
             >
               {primarySkills.map((cat, idx) => {
-                const accent = catAccents[cat.catType] || catAccents.game;
+                const primarySequenceAccents = [
+                  { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)', border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)' },
+                  { main: isLight ? '#1d4ed8' : '#60a5fa', bg: isLight ? '#eff6ff' : 'rgba(96,165,250,0.15)', border: isLight ? '#93c5fd' : 'rgba(96,165,250,0.4)' },
+                ];
+                const accent = primarySequenceAccents[idx % primarySequenceAccents.length];
                 const isActive = primaryActiveTab === idx;
                 return (
                   <button
@@ -194,7 +192,12 @@ export const Skills: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
             {primarySkills.map((cat, idx) => {
               const CatIcon = (cat.icon ? getLucideIconByName(cat.icon) : null) || CAT_ICON_MAP[cat.catType] || Gamepad2;
-              const accent = catAccents[cat.catType] || catAccents.game;
+              // 顏色根據順序：左欄第 1 順位永遠為青色 (Cyan)，右欄第 2 順位永遠為藍色 (Blue)
+              const primarySequenceAccents = [
+                { main: isLight ? '#0369a1' : '#00f0ff', bg: isLight ? '#e0f2fe' : 'rgba(0,240,255,0.12)', border: isLight ? '#7dd3fc' : 'rgba(0,240,255,0.35)' },
+                { main: isLight ? '#1d4ed8' : '#60a5fa', bg: isLight ? '#eff6ff' : 'rgba(96,165,250,0.15)', border: isLight ? '#93c5fd' : 'rgba(96,165,250,0.4)' },
+              ];
+              const accent = primarySequenceAccents[idx % primarySequenceAccents.length];
 
               return (
                 <div
@@ -204,10 +207,11 @@ export const Skills: React.FC = () => {
                     background: isLight
                       ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
                       : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
-                    borderColor: isLight ? accent.border : borderCol,
+                    borderColor: accent.border,
                     boxShadow: isLight
                       ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
-                      : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
+                      : `inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px ${accent.bg}`,
+                    ['--card-bracket-color' as any]: accent.main,
                   }}
                 >
                   <div className="space-y-5">
@@ -267,7 +271,7 @@ export const Skills: React.FC = () => {
                               {tokens.map((sub, sIdx) => (
                                 <span
                                   key={sIdx}
-                                  className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm skill-tag-reveal"
+                                  className="px-3 py-1 text-xs sm:text-sm font-reading font-medium border tech-tag cyber-cut-sm skill-tag-reveal"
                                   style={{
                                     backgroundColor: isLight ? '#ffffff' : 'rgba(0,0,0,0.4)',
                                     borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',
@@ -324,10 +328,11 @@ export const Skills: React.FC = () => {
                         background: isLight
                           ? 'linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(241, 245, 249, 0.85) 100%)'
                           : 'linear-gradient(135deg, rgba(13, 23, 42, 0.52) 0%, rgba(6, 12, 24, 0.62) 100%)',
-                        borderColor: isLight ? accent.border : borderCol,
+                        borderColor: accent.border,
                         boxShadow: isLight
                           ? 'inset 0 1px 0 0 rgba(255, 255, 255, 0.9), 0 12px 30px rgba(15, 23, 42, 0.06)'
-                          : 'inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5)',
+                          : `inset 0 1px 0 0 rgba(255, 255, 255, 0.12), 0 16px 36px rgba(0, 0, 0, 0.5), 0 0 20px ${accent.bg}`,
+                        ['--card-bracket-color' as any]: accent.main,
                       }}
                     >
                       {/* 卡片標題列 */}
@@ -375,7 +380,7 @@ export const Skills: React.FC = () => {
                                 {tokens.map((sub, sIdx) => (
                                   <span
                                     key={sIdx}
-                                    className="px-3 py-1 text-xs sm:text-sm font-tech font-semibold border tech-tag cyber-cut-sm skill-tag-reveal"
+                                    className="px-3 py-1 text-xs sm:text-sm font-reading font-medium border tech-tag cyber-cut-sm skill-tag-reveal"
                                     style={{
                                       backgroundColor: isLight ? '#ffffff' : 'rgba(0,0,0,0.4)',
                                       borderColor: isLight ? '#cbd5e1' : 'rgba(255,255,255,0.15)',

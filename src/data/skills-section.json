@@ -19,7 +19,8 @@
       "catType": "game",
       "items": [
         { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
-        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
+        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
+        { "label": "性能優化", "rowType": "tech", "content": "Unity Profiler / Addressables" },
         { "label": "動畫與相機", "rowType": "tech", "content": "Timeline / Cinemachine / DOTween Pro" },
         { "label": "XR 實境開發", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
         { "label": "多人連線框架", "rowType": "tech", "content": "Netcode / Photon Pun" }
@@ -66,7 +67,8 @@
       "catType": "game",
       "items": [
         { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
-        { "label": "Core Technologies", "rowType": "text", "content": "URP / Shader Graph / Addressables / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
+        { "label": "Core Technologies", "rowType": "text", "content": "URP / Shader Graph / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
+        { "label": "Performance Optimization", "rowType": "tech", "content": "Unity Profiler / Addressables" },
         { "label": "Animation & Camera", "rowType": "tech", "content": "Timeline / Cinemachine / DOTween Pro" },
         { "label": "XR Development", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
         { "label": "Multiplayer Frameworks", "rowType": "tech", "content": "Netcode / Photon Pun" }
