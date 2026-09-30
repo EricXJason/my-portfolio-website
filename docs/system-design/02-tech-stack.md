@@ -1,74 +1,53 @@
-# 技術選型評估與依賴套件庫規範 | Technology Stack & Dependency Evaluation
+# 技術選型矩陣與版本理由 (02-tech-stack.md)
 
-> **專案作者 / Author**: 許哲誠 (HSU, CHE-CHENG)  
-> **協定標準 / Compliance**: 依據《AGENTS.md》全域最高工程中樞協定規範建置。定義專案技術選型決策矩陣、架構權衡取捨、核心依賴套件庫與工程品質保證鏈。  
-> *Release: 2026-09*
-
----
-
-## 1. 選型決策矩陣 | Technology Selection Matrix
-
-本專案經過嚴格之效能、型別安全、可維護性與維運成本評估，選定下列核心技術矩陣，達成前端極致效能與雲端無伺服器整合。
-
-| 技術範疇 (Category) | 選定技術與版本 (Technology & Version) | 角色職責 (Role & Responsibility) |
-| :--- | :--- | :--- |
-| **前端框架 (Frontend UI)** | React 19 (19.2+) | 宣告式組件驅動架構、極致 Virtual DOM 渲染與並發管線 / Declarative component architecture & optimized concurrent reconciliation |
-| **程式語言 (Language)** | TypeScript 5.8+ | 強型別防禦、介面契約保證與靜態編譯期型別安全 / Strict type safety, interface contracts & compile-time error defense |
-| **建置工具 (Build Tooling)** | Vite 8+ | 次秒級極速熱模組替換 (HMR) 與基於 Rollup 之高效代碼分割 / Sub-second HMR & Rollup-based intelligent chunk splitting |
-| **樣式體系 (Styling & Design)** | Tailwind CSS 4 + Vanilla CSS3 | 現代 utility-first 樣式結合自研 Cyber HUD 變數與雷射動效 / Modern atomic styling combined with bespoke Cyber HUD variables |
-| **雲端資料庫 (Cloud Database)** | Firebase Firestore | NoSQL 雲端文檔集合、毫秒級 `onSnapshot` 雙向串流即時監聽與離線快取 / Real-time document store & streaming |
-| **身分驗證 (Authentication)** | Firebase Auth | 官方安全性金鑰與 Email/Password 鑑別門禁防護 / Official secure credentials & token lifecycle management |
-| **多媒體雲端儲存 (Media Storage)**| Firebase Storage | 高解析度圖檔、3D 模型與多媒體資材雲端儲存與非同步管線 / Cloud multimedia asset management |
-| **持續整合 (CI Pipeline)** | GitHub Actions (CI) | 自動化品質閘門、型別校驗與構建檢查 / Automated CI validation gates & typecheck enforcement |
-| **持續部署與邊緣運算 (CD & Edge)**| Cloudflare Workers (CD) | 邊緣運算執行環境與全球 Anycast 邊緣節點極速分發 / Global Anycast edge distribution & Workers runtime |
+> **專案作者**: 許哲誠 (HSU, CHE-CHENG)  
+> **更新日期**: 2026-09-30  
+> **基準依據**: `package.json`、`pnpm-lock.yaml` 與專案實體配置
 
 ---
 
-## 2. 選型理由與權衡取捨 | Architectural Trade-offs & Rationales
+## 1. 核心技術選型矩陣
 
-本節深入探討本專案核心架構決策之權衡取捨（Trade-offs）與技術選型依據。
-
-### 2.1 為何選擇 React + Vite SPA 而非 Next.js SSR？ | Why React + Vite SPA over Next.js SSR?
-
-本決策以極限前端渲染效能與零伺服器維護負擔為核心出發點。
-
-- **效能極限化 (Maximized Performance)**：本專案為個人作品集與展示型 SPA，靜態資產可 100% 預先編譯並部署至 Cloudflare Workers 邊緣快取，無需 Node.js 伺服器常駐維護，杜絕 SSR 冷啟動延遲。  
-  *As an interactive portfolio SPA, all static bundles are pre-compiled and edge-cached on Cloudflare Workers, eliminating Node.js server overhead and SSR cold-start latency.*
-- **邊緣分發成本 (Edge Zero-Maintenance)**：Cloudflare 邊緣網絡提供無限頻寬與零實體主機維護成本，具備全球 Anycast 邊緣網絡即時加速。  
-  *Cloudflare delivers unlimited bandwidth and globally distributed Anycast edge routing with zero maintenance overhead.*
-- **雙向串流同步架構 (Streaming Architecture Alignment)**：前端透過 `PortfolioDataContext` 與 Firebase Firestore `onSnapshot` 直接串接，實現客戶端無感熱更新，無需透過繁瑣的中繼 SSR 轉換。  
-  *The client-side streaming model seamlessly bridges with Firebase Firestore real-time listeners for instant hot updates without intermediary SSR layers.*
-
-### 2.2 為何選擇 Firebase BaaS 而非自行架設 Express / NestJS？ | Why Firebase BaaS over Custom Backend?
-
-選用 BaaS 架構大幅壓縮系統維護面，專注於前端互動與資產管理。
-
-- **架構簡約與零負擔 (Architectural Simplicity)**：個人作品集之後臺以多媒體上傳與 JSON/Document 結構管理為主，Firebase 提供開箱即用之身分鑑別、即時資料庫與雲端儲存，免除實體資料庫維運、作業系統安全修補與後端連線池管理。  
-  *The admin workflow emphasizes media asset staging and structured document management. Firebase delivers battle-tested authentication, real-time database, and cloud storage without server patching or database connection pooling overhead.*
-- **安全攻擊面收斂 (Attack Surface Minimization)**：客戶端透過官方安全驗證與 Security Rules 保護，杜絕私有伺服器遭注入或提權之風險。  
-  *Confining external state mutations to authenticated client-side sandboxes drastically narrows the public network attack surface.*
+| 類別 | 技術 / 套件名稱 | 鎖定版本 | 選型理由與工程價值 |
+| :--- | :--- | :--- | :--- |
+| **套件管理器** | **pnpm** | `10.5.2` | 採用硬連結 (Hard link) 與符號連結節省磁碟空間，嚴格隔離幻影依賴 (Phantom Dependencies)，安裝速度為 npm 3 倍以上。 |
+| **建置工具** | **Vite** | `^8.1.1` (執行時 `8.1.5`) | 次世代前端建置工具，具備極致 ESM 模組熱重載 (HMR) 速度；生產環境整合 Rolldown / Rollup 進行代碼分割與樹搖最佳化 (Tree-shaking)。 |
+| **核心前端框架** | **React** | `^19.2.7` | 最穩定現代化 UI 函式庫，支援 React Server Components 邊界相容、`useActionState` 與改進的非同步狀態更新與並行渲染。 |
+| **型別系統** | **TypeScript** | `^5.8.2` | 提供端到端型別安全與契約檢查，杜絕前端常見的 `undefined` 與 `null` 執行期錯誤，搭配嚴格型別定義確保資料模型一致。 |
+| **樣式引擎** | **Tailwind CSS** | `^4.3.3` | Tailwind v4 全新核心架構，原生效能由 Rust 重構之 Oxide 引擎驅動，無需繁雜的 PostCSS 配置，直接透過 `@tailwindcss/vite` 外掛無縫整合。 |
+| **CSS 最佳化** | **lightningcss** | `^1.33.0` | Rust 編寫之極速 CSS 轉換、壓縮與 Polyfill 工具，極大壓縮最終 Bundle 體積並提升解析效能。 |
+| **圖標庫** | **lucide-react** | `^1.25.0` | 現代化、模組化 SVG 圖標庫，支援純 Tree-shaking，僅打包實際使用的幾何圖形，避免傳統圖標字型包的冗餘體積。 |
+| **前端路由** | **react-router-dom** | `^7.18.3` | 工業級 SPA 宣告式客戶端路由，支援雙專業角色分流 (`/`、`/f`、`/i`) 與 CMS (`/cms/*`) 之動態代碼分割加載。 |
+| **雲端持久化** | **firebase** | `^12.19.0` | 整合 Google Cloud 企業級託管服務，包含 Cloud Firestore (NoSQL)、Firebase Storage (媒體儲存) 與 Firebase Authentication (管理員登入)。 |
+| **靜態代碼檢驗** | **oxlint** | `^1.71.0` | 基於 Rust 的高效能靜態分析檢驗工具，執行速度比傳統 ESLint 快 50-100 倍，秒級掃除未使用的變數、死碼與語法隱患。 |
+| **單元與整合測試** | **vitest** | `^5.0.1` | 與 Vite 共用相同的轉換管線與配置，執行效能極高，提供原生 Jest 語法相容之斷言與 Mock 支援。 |
+| **測試環境支援** | **@testing-library/react** | `^16.3.3` | 秉持「站在使用者角度測試介面」的測試哲學，結合 `@testing-library/jest-dom` 提供清晰可讀的 DOM 語法斷言。 |
+| **DOM 模擬** | **jsdom** | `^30.1.1` | 純 Node.js 環境下的 W3C DOM 與 HTML 標準實作，使全體前端單元測試無需依賴真實瀏覽器即能高速運行。 |
+| **邊緣託管配置** | **wrangler** | - | Cloudflare 邊緣開發工具，支援 Cloudflare Pages 與 Workers 靜態部署，提供全球 Anycast 節點超低延遲存取。 |
 
 ---
 
-## 3. 核心相依套件庫清單 | Core Dependencies Inventory
+## 2. 安全防護與版本覆寫策略 (Overrides)
 
-本專案嚴格遵循最少依賴原則（Zero Bloat），杜絕過度打包與幽靈依賴，確保代碼庫精純高效。
+為防止 npm 生態鏈供應鏈攻擊與已知 CVE 漏洞，本專案在 `package.json` 採取明確的安全鎖定策略：
 
-| 套件名稱 (Package) | 模組分層 (Layer) | 用途描述 (Purpose) |
-| :--- | :--- | :--- |
-| `react`, `react-dom` | UI Core | 核心視圖元件渲染 / Component rendering engine |
-| `lucide-react` | Icons | 介面功能圖示集（如 Eye, EyeOff, Save, Trash2 等）/ Functional interface icons |
-| `firebase` | Cloud BaaS | Firestore 即時資料庫、Auth 鑑別與 Storage 多媒體庫 / Identity, database & cloud assets |
-| `vite` | Tooling | 構建引擎與極速開發伺服器 / Next-gen build engine & dev server |
-| `tailwindcss`, `@tailwindcss/vite` | Styling | 現代原子化樣式編譯器 / Utility-first CSS compiler |
-| `typescript` | Language | 靜態型別分析與編譯期防禦 / Static type analysis & contract enforcement |
+```json
+"pnpm": {
+  "overrides": {
+    "nanoid": "^3.3.18"
+  }
+}
+```
+
+- **CVE 漏洞防禦**: 強制將間接依賴之 `nanoid` 鎖定在修復漏洞之安全版本 `^3.3.18`，防止非預期隨機數生成安全隱患。
+- **Sharp 圖片處理器升級**: 本地圖片處理相依之 `sharp` 明確升級至 `^0.35.4`，修復底層 libvips 記憶體安全隱患。
+- **執行成果**: `pnpm audit` 達成全專案 **0 已知安全漏洞 (No known vulnerabilities found)**。
 
 ---
 
-## 4. 品質保證與工程規範 | Quality Assurance & Engineering Standards
+## 3. 技術決策權衡 (Trade-Off Analysis)
 
-本節定義專案在開發與交付過程中必須通過的各項品質檢驗閘門。
-
-- **靜態型別檢查 (Type Safety Gate)**：每次提交與構建前強制執行 `pnpm exec tsc --noEmit`，保證 0 型別錯誤。
-- **生產構建驗證 (Production Build Gate)**：強制執行 `pnpm run build`，Rollup 代碼分塊嚴密壓制於最佳 gzip 尺寸。
-- **無障礙對比標準 (WCAG Standards)**：深淺色模式 100% 符合 WCAG 2.2 AAA/AA 標準（本文文字對比度 ≥ 7:1 / 4.5:1）。
+### 3.1 為什麼選擇「全客戶端 SPA + Firebase」而非「Next.js 全端 SSR」？
+- **運維成本極致精簡**: 個人作品集重視高可用性與全球低延遲存取，純 SPA 架構可直接部署至 Cloudflare Pages 或 GitHub Pages 等邊緣 CDN，零伺服器維護負擔、零冷啟動 (Cold Start) 延遲，每月營運成本為零。
+- **資料可離線備援**: 結合本地靜態 JSON，就算第三方雲端平臺發生異常，網站依然 100% 正常向招募方呈現。
+- **豐富互動體驗**: 專案包含自研 Web Audio API 音訊合成器、自訂動態游標、科技感粒子背景與 Canvas 代碼流動畫，純前端架構能最大化發揮瀏覽器硬體加速與流暢渲染優勢。

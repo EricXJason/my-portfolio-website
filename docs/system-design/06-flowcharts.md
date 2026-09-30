@@ -1,83 +1,12 @@
-# 核心業務流程圖與狀態轉移 | Flowcharts & State Machine Specifications
+# 系統業務流程與狀態機圖表 (06-flowcharts.md)
 
-> **專案作者 / Author**: 許哲誠 (HSU, CHE-CHENG)  
-> **協定標準 / Compliance**: 依據《AGENTS.md》全域最高工程中樞協定規範建置。本文件定義系統之使用者操作路徑、業務邏輯流程 (Flowchart) 與核心狀態機轉移 (State Diagram)。  
-> *Release: 2026-09*
-
----
-
-## 1. 首屏造訪與語言門禁載入流程 | Initial Visit & Language Selection Flowchart
-
-本流程定義訪客首次進入網站時之多階段加載動畫、多媒體資產非同步預載、以及多語系初始化之完整路徑。
-
-```mermaid
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'darkMode': true,
-    'background': '#030712',
-    'mainBkg': '#0b0f19',
-    'nodeBorder': '#00f0ff',
-    'textColor': '#f8fafc',
-    'lineColor': '#00f0ff',
-    'edgeLabelBackground': '#030712',
-    'fontSize': '12px'
-  },
-  'flowchart': {
-    'curve': 'linear'
-  }
-}}%%
-flowchart TD
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
-
-    Start(["用戶發起 HTTP 造訪<br>User Initiates Visit"]):::hudCard --> Step1["階段一: InitialPreloader 科技載入動畫<br>Phase 1: Preloader HUD Progress"]:::hudCard
-    Step1 --> Preload["非同步預載關鍵 WebP 圖片、SVG 圖標與字體<br>Async Preload Media, Icons & Fonts"]:::hudCard
-    Preload --> Step2["階段二: LangSelectModal 語言偏好設定彈窗<br>Phase 2: Language Preference Modal"]:::hudCard
-    Step2 --> UserChoice["使用者選定語系<br>Language Preference Chosen"]:::hudCard
-    UserChoice -->|"選擇 zh 或 en"| SetLang["寫入 LangContext 與派發 HTML lang 屬性<br>Update LangContext & HTML Attributes"]:::hudCard
-    SetLang --> Step3["階段三: siteEntered = true 全站平滑淡入<br>Phase 3: Smooth Scene Fade-in"]:::hudCard
-    Step3 --> MainView(["呈現前臺首頁 MainSiteContent<br>Public Showcase Rendered"]):::hudCard
-```
+> **專案作者**: 許哲誠 (HSU, CHE-CHENG)  
+> **更新日期**: 2026-09-30  
+> **圖表標準**: Mermaid 流程圖 (Flowchart) 與時序圖 (Sequence Diagram) 統一採深色霓虹科技風 (Tech HUD Style)，全篇以臺灣繁體中文為核心閱讀語言，嚴禁任何紫色雜色與語法解析錯誤。
 
 ---
 
-## 2. CMS 官方身分驗證門禁流程 | CMS Official Auth Security Flowchart
-
-本流程規範從前臺切換至管理員後臺時之官方憑證校驗與防護阻斷邏輯。
-
-```mermaid
-%%{init: {
-  'theme': 'base',
-  'themeVariables': {
-    'darkMode': true,
-    'background': '#030712',
-    'mainBkg': '#0b0f19',
-    'nodeBorder': '#00f0ff',
-    'textColor': '#f8fafc',
-    'lineColor': '#00f0ff',
-    'edgeLabelBackground': '#030712',
-    'fontSize': '12px'
-  },
-  'flowchart': {
-    'curve': 'linear'
-  }
-}}%%
-flowchart TD
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
-
-    ClickGear["點擊導覽列 CMS 入口按鈕<br>Click CMS in Navbar"]:::hudCard --> OpenDialog["彈出 CmsModeSelectDialog 門禁視窗<br>Open Auth Dialog"]:::hudCard
-    OpenDialog --> InputCreds["輸入管理者 Email 與密碼憑據<br>Input Official Admin Credentials"]:::hudCard
-    InputCreds --> Validating["呼叫 signInWithEmailAndPassword 驗證<br>Validate Identity via Firebase Auth"]:::hudCard
-    Validating -->|"驗證失敗或密碼錯誤"| ShowErr["顯示錯誤提示並強制攔截<br>Display Error & Block Access"]:::hudCard
-    Validating -->|"驗證成功"| GrantAdmin["寫入會話狀態並解鎖後臺管理權限<br>Grant Full Administrative Access"]:::hudCard
-    GrantAdmin --> CMSView(["進入 CmsApp 管理後臺主畫面<br>Mount CmsApp View"]):::hudCard
-```
-
----
-
-## 3. CMS 未存檔狀態智慧阻斷狀態轉移機 | Unsaved State Guard State Machine
-
-本狀態機規範當管理者修改表單欄位後，觸發切換模組、點擊外部連結或關閉視窗時之防誤觸多層防禦狀態轉移。
+## 1. 訪客進入與開場生命週期流程 (Site Entry Lifecycle)
 
 ```mermaid
 %%{init: {
@@ -101,31 +30,31 @@ flowchart TD
 }}%%
 flowchart TD
     classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef decision fill:#060a14,stroke:#00f0ff,stroke-width:1.5px,color:#00f0ff;
 
-    Init(["系統初始 / Init"]):::hudCard --> Pristine["乾淨初始態<br>Pristine State (isDirty = false)"]:::hudCard
-    Pristine -->|"修改欄位"| Dirty["編輯異動態<br>Dirty State (isDirty = true)"]:::hudCard
-    Dirty -->|"儲存設定"| Pristine
-
-    subgraph GuardSub ["未存檔跳轉防護攔截 (Safety Navigation Guard)"]
-        Dirty -->|"觸發切換"| Prompt["彈出防護視窗<br>CmsUnsavedModal Active"]:::hudCard
-        Prompt --> Choice["選擇處置方案<br>Select Option"]:::hudCard
-        Choice -->|"放棄變更"| Discard["放棄暫存異動<br>Discard Mutations"]:::hudCard
-        Choice -->|"儲存變更"| Save["寫入 Firestore 與本地快取<br>Save to Cloud & Cache"]:::hudCard
-        Choice -->|"取消跳轉"| Stay["留在當前編輯器<br>Continue Editing"]:::hudCard
-    end
-
-    Discard --> Pristine
-    Save --> Pristine
-    Stay --> Dirty
-
-    style GuardSub fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    Start["訪客載入網址"]:::hudCard --> CheckEnv{"是否為測試或爬蟲環境？"}:::decision
+    CheckEnv -->|"是 (爬蟲或效能測試)"| Bypass["跳過開場動畫與語系彈窗"]:::hudCard
+    CheckEnv -->|"否 (真人訪客)"| CheckCmsSession{"是否由 CMS 預覽返回？"}:::decision
+    
+    CheckCmsSession -->|"是"| Bypass
+    CheckCmsSession -->|"否"| ShowPreloader["階段一：呈現 0% 至 100% 科技進度動畫"]:::hudCard
+    
+    ShowPreloader --> PreloaderFinish{"進度是否抵達 100%？"}:::decision
+    PreloaderFinish -->|"是"| LockScroll["鎖定全域捲動條 (避免畫面位移)"]:::hudCard
+    LockScroll --> ShowLangModal["階段二：彈出臺灣繁中與英文語系選擇視窗"]:::hudCard
+    
+    Bypass --> EnterDirect["直接解鎖並進入主站內容"]:::hudCard
+    ShowLangModal --> UserChooseLang["訪客點選目標語系"]:::hudCard
+    UserChooseLang --> SetLangState["寫入狀態中樞並記憶本地偏好"]:::hudCard
+    SetLangState --> UnlockScroll["恢復全域捲動條正常捲動"]:::hudCard
+    UnlockScroll --> RevealMainSite["階段三：揭開主站視覺與背景粒子動畫"]:::hudCard
+    EnterDirect --> RevealMainSite
+    RevealMainSite --> End["進入正常互動瀏覽模式"]:::hudCard
 ```
 
 ---
 
-## 4. 美術畫廊多媒體與 3D 嵌入檢視流程 | Art Gallery & 3D Embed Viewer Flowchart
-
-本流程定義前臺畫廊多模式展示（精選 3D 輪盤與分類響應式網格）、燈箱預覽（ArtStation 3D 嵌入檢視器與 2D 靜態作品燈箱）之動態展示路徑。
+## 2. 雙專業角色路徑分流與資料注入流程 (Dual-Profile Routing Flow)
 
 ```mermaid
 %%{init: {
@@ -137,6 +66,9 @@ flowchart TD
     'nodeBorder': '#00f0ff',
     'textColor': '#f8fafc',
     'lineColor': '#00f0ff',
+    'clusterBkg': '#060a14',
+    'clusterBorder': '#1e293b',
+    'titleColor': '#00f0ff',
     'edgeLabelBackground': '#030712',
     'fontSize': '12px'
   },
@@ -146,23 +78,115 @@ flowchart TD
 }}%%
 flowchart TD
     classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef decision fill:#060a14,stroke:#00f0ff,stroke-width:1.5px,color:#00f0ff;
 
-    GalleryEnter["進入美術專區 ArtGallery<br>Navigate to Art Gallery"]:::hudCard --> ViewMode["選擇檢視模式<br>Active Tab Mode"]:::hudCard
+    RouteReq["瀏覽器路由請求"]:::hudCard --> MatchPath{"匹配目標路徑"}:::decision
     
-    ViewMode -->|"精選模式 (featured)"| RouletteView["3D 封面輪盤展示 (Roulette Layout)<br>自動輪播與手勢滑動監聽"]:::hudCard
-    ViewMode -->|"分類模式 (all / 3D / 2D)"| GridView["響應式網格渲染卡片<br>Responsive Card Grid"]:::hudCard
-
-    RouletteView --> SelectCard["點擊作品卡片檢視細節<br>Click Artwork Card"]:::hudCard
-    GridView --> SelectCard
-
-    SelectCard --> CheckType["判斷作品是否含 3D 嵌入連結<br>Check embedUrl"]:::hudCard
+    MatchPath -->|"路徑為根目錄 / 或 /f"| SetFullstack["設定專業角色為：全端軟體開發"]:::hudCard
+    MatchPath -->|"路徑為 /i"| SetInteractive["設定專業角色為：互動應用開發"]:::hudCard
+    MatchPath -->|"路徑為 /cms"| LazyLoadCms["動態代碼分割載入 CMS 管理後臺"]:::hudCard
+    MatchPath -->|"其他未知路徑"| RedirectHome["自動重新導向至首頁"]:::hudCard
     
-    CheckType -->|"3D 立體模型 (含 embedUrl)"| Open3DModal["渲染響應式 3D 嵌入 iframe<br>Render Sandbox 3D Viewer"]:::hudCard
-    CheckType -->|"2D 平面作品 (僅含 img)"| Open2DModal["渲染高解析度平面圖形燈箱<br>Render Image Lightbox"]:::hudCard
+    SetFullstack --> MapCollectionF["綁定資料庫集合：portfolio_fullstack_dev"]:::hudCard
+    SetInteractive --> MapCollectionI["綁定資料庫集合：portfolio_interactive_app_dev"]:::hudCard
+    
+    MapCollectionF --> InjectContext["注入全域狀態中樞與資料提供者"]:::hudCard
+    MapCollectionI --> InjectContext
+    
+    InjectContext --> ReadData{"讀取本地快照快取"}:::decision
+    ReadData -->|"存在有效快取"| RenderFast["立即渲染前臺頁面 (零延遲首屏直出)"]:::hudCard
+    ReadData -->|"無快取或初次開啟"| FetchRemote["向雲端資料庫發起非同步請求"]:::hudCard
+    
+    RenderFast --> FetchRemoteSync["背景非同步向雲端校驗最新資料"]:::hudCard
+    FetchRemote --> CheckFetch{"遠端資料庫是否成功回應？"}:::decision
+    FetchRemoteSync --> CheckFetch
+    
+    CheckFetch -->|"成功取得資料"| UpdateCache["更新本地快取並重新賦值"]:::hudCard
+    CheckFetch -->|"離線或網路異常"| FallbackJSON["無感自動降級回退本地打包靜態資料"]:::hudCard
+```
 
-    Open3DModal --> Interaction["互動體驗: 上下張切換與鍵盤導覽<br>Interactive Controls"]:::hudCard
-    Open2DModal --> Interaction
+---
 
-    Interaction --> CloseAction["點擊關閉 / ESC 鍵 / 背景遮罩<br>Dismiss Modal Action"]:::hudCard
-    CloseAction --> ResetModal["關閉燈箱視窗並恢復自訂游標狀態<br>Reset activeImage"]:::hudCard
+## 3. CMS 內容編輯與雲端持久化時序圖 (CMS Persistence Flow)
+
+```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'actorBkg': '#0b0f19',
+    'actorBorder': '#00f0ff',
+    'actorTextColor': '#f8fafc',
+    'actorLineColor': '#334155',
+    'signalColor': '#00f0ff',
+    'signalTextColor': '#f8fafc',
+    'labelBoxBkgColor': '#0b0f19',
+    'labelBoxBorderColor': '#334155',
+    'labelTextColor': '#f8fafc',
+    'noteBorderColor': '#00f0ff',
+    'noteBkgColor': '#08131e',
+    'noteTextColor': '#f8fafc'
+  }
+}}%%
+sequenceDiagram
+    autonumber
+    actor Admin as 系統管理者 (許哲誠)
+    participant CMS as CMS 模組編輯器
+    participant Storage as 雲端儲存服務 (Storage)
+    participant Context as 資料狀態中樞 (DataContext)
+    participant Firestore as 雲端資料庫 (Firestore)
+    participant View as 前臺展示畫面
+
+    Admin->>CMS: 選取封面圖片並發起上傳
+    CMS->>Storage: 上傳二進位圖片串流
+    Storage-->>CMS: 回傳永久 HTTPS 下載連結
+    Admin->>CMS: 編輯中英雙語文案與顯隱開關
+    Admin->>CMS: 點擊「儲存變更」按鈕
+    CMS->>Context: 派發更新文檔請求
+    Context->>Firestore: 寫入雲端目標集合
+    Firestore-->>Context: 寫入成功確認回執
+    Context->>View: 觸發前臺狀態即時熱更新
+    View-->>Admin: 前臺展示畫面零重載即時呈現
+```
+
+---
+
+## 4. 離線與網路異常防護狀態轉移圖 (Offline Resilient State Flow)
+
+```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'clusterBkg': '#060a14',
+    'clusterBorder': '#1e293b',
+    'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
+flowchart LR
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef alertCard fill:#0b0f19,stroke:#38bdf8,stroke-width:1.5px,color:#f8fafc;
+
+    S1["系統初始化中"]:::hudCard -->|"讀取本地快照成功"| S2["本地快取生效 (零延遲)"]:::hudCard
+    S1 -->|"無快取狀態"| S3["載入內建靜態備援"]:::hudCard
+
+    S2 -->|"發起雲端連線"| S4["同步遠端資料庫中"]:::hudCard
+    S3 -->|"發起雲端連線"| S4
+
+    S4 -->|"連線成功且資料一致"| S5["雲端在線同步就緒"]:::hudCard
+    S4 -->|"偵測離線或資料庫異常"| S6["觸發安全降級保護 (純本地運作)"]:::alertCard
+
+    S6 -->|"瀏覽器重新連網 (online)"| S4
+    S5 -->|"跨分頁或手動刷新"| S4
 ```

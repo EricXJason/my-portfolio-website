@@ -1,108 +1,14 @@
-# 系統架構、目錄拓撲與模組相依性 | System Architecture, Directory Topology & Dependencies
+# 分層結構與模組依賴 (03-architecture.md)
 
-> **專案作者 / Author**: 許哲誠 (HSU, CHE-CHENG)  
-> **協定標準 / Compliance**: 依據《AGENTS.md》全域最高工程中樞協定規範建置。本文件定義專案之代碼庫架構、DDD 職責分層、目錄樹狀拓撲與核心模組間之依賴邊界。  
-> *Release: 2026-09*
-
----
-
-## 1. 目錄樹狀結構拓撲 | Directory Tree Topology
-
-本專案遵循現代 Web 前端工程標準命名慣例（一般檔案與目錄採用 `kebab-case`、React 組件採用 `PascalCase.tsx`）。
-
-```text
-my-portfolio-website/
-├── docs/                      # 全域系統設計文檔庫 (SSOT) / System Design Architecture Suite
-│   └── system-design/         # 系統分析規格清單 (遵循 AGENTS.md 條款 3.2 拓撲)
-│       ├── 01-overview.md     # 願景、承載力與 C4 模型 / Vision, Capacity & C4 Diagrams
-│       ├── 02-tech-stack.md   # 技術選型與依賴庫規範 / Tech Stack Matrix & Trade-offs
-│       ├── 03-architecture.md # 代碼庫結構與模組拓撲 / Architecture & Module Topology
-│       ├── 04-specs-frontend.md # 前端展示模組與 UI 規格 / Frontend & CMS Specifications
-│       ├── 05-specs-database.md # 資料庫集合與 SWR 快取 / Database ERD & SWR Cache
-│       ├── 06-flowcharts.md   # 核心操作流程與狀態機 / Core Business Flowcharts
-│       ├── 07-uml-diagrams.md # UML 類別圖與循序圖 / UML Class & Sequence Diagrams
-│       ├── 08-ui-ux-standards.md # Cyber HUD 與無障礙標準 / UI/UX & Accessibility Standards
-│       └── 09-devops-deployment.md # 邊緣運算部署與 CI/CD / Edge Deployment & CI/CD
-├── public/                    # 靜態公開資產與 SEO 規範檔案 / Static Public Assets & SEO Artifacts
-│   ├── assets/                # 本地 WebP 圖片與多媒體 / Compressed WebP Media Assets
-│   ├── tech-icons/            # 實體 SVG 技術圖示庫 / Localized Vector Brand Icons
-│   ├── favicon.svg            # 向量網站圖標 / Scalable Vector Favicon
-│   ├── llms.txt               # AI 爬蟲標準規格檔 / AI Agent Web Crawler Specification
-│   ├── robots.txt             # 搜尋引擎檢索指令 / Search Engine Crawling Rules
-│   ├── sitemap.xml            # 網站地圖 / XML Sitemap
-│   └── site.webmanifest       # PWA 清單檔案 / Progressive Web App Manifest
-├── src/
-│   ├── cms/                   # 自研 CMS 視覺化管理後臺 (獨立代碼分割) / In-House Visual CMS Suite
-│   │   ├── components/        # 各模組獨立編輯器 / Modular Editors (Hero, Skills, Projects, etc.)
-│   │   ├── context/           # 未儲存狀態阻斷防護 / Unsaved State Guard (CmsDirtyContext)
-│   │   └── CmsApp.tsx         # CMS 管理後臺主入口 / CMS Admin Root Application
-│   ├── components/            # 前臺展示核心組件 / Public Showcase Components (PascalCase.tsx)
-│   │   ├── icons/             # 集中式 TechIcon 渲染器 / Centralized TechIcon Dispatcher
-│   │   ├── Hero.tsx           # 首頁看板與微表情機甲機器人 / Hero Banner & Interactive Robot
-│   │   ├── About.tsx          # 關於我與核心指標卡 / About Me & Experience Metric Cards
-│   │   ├── Skills.tsx         # 專業技能矩陣 / Professional Skills & Radar Clusters
-│   │   ├── Projects.tsx       # 專案作品矩陣與燈箱 / Featured Projects & Media Lightbox
-│   │   ├── Education.tsx      # 學歷、經歷、研習與論文 / Academics, Experience & Publications
-│   │   ├── Certifications.tsx # 專業證照與檢定庫 / Professional Licenses & Certifications
-│   │   ├── ArtGallery.tsx     # 美術畫廊與 3D 檢視器 / Multimedia Art Gallery & 3D Viewer
-│   │   ├── Navbar.tsx         # 導覽列與即時開關 / Header Navigation & Mode Switches
-│   │   └── ...                # 輔助音效、粒子背景與無障礙組件 / Ambient & Accessibility Helpers
-│   ├── context/               # 全域 Context (PortfolioDataContext, LangContext, ThemeContext)
-│   ├── data/                  # 靜態與預設結構化 JSON 資料庫 / Baseline JSON Databases
-│   ├── hooks/                 # 自定義 Hooks (useScrollReveal, useAudio 等)
-│   ├── services/              # 雲端與外部服務層 (firebase.ts, portfolioDataService.ts)
-│   ├── types/                 # 全域型別合約定義 (portfolio.ts)
-│   ├── utils/                 # 工具函式庫 (audioSynth, seo 等)
-│   ├── App.tsx                # 前端主應用入口與視圖分流路由 / App Entrypoint & Route Dispatcher
-│   ├── index.css              # 全域 CSS 變數、Cyber Cut 樣式與動畫 / Global Design Tokens
-│   └── main.tsx               # DOM 渲染掛載起點 / DOM Mount Root
-├── CHANGELOG.md               # 唯一全域修訂歷程紀錄 (SSOT)
-├── package.json
-├── tsconfig.json
-├── vite.config.js
-└── wrangler.json
-```
+> **專案作者**: 許哲誠 (HSU, CHE-CHENG)  
+> **更新日期**: 2026-09-30  
+> **軟體工程準則**: 貫徹 SOLID 設計原則、Clean Code 與單一職責分離 (SRP)
 
 ---
 
-## 2. 模組分層與職責邊界 | Layered Architecture & Responsibilities
+## 1. 系統分層架構 (Layered Architecture)
 
-本節確立各代碼模組之單一職責原則 (SRP) 與高內聚低耦合防線。
-
-### 2.1 領域模型與型別層 (`src/types/`) | Domain Models & Types
-
-本層定義全站核心實體契約，杜絕 `any` 弱型別傳遞，確保編譯期嚴格防禦。
-
-- `portfolio.ts`：宣告 `HeroData`, `ProjectItem`, `SkillCategory`, `CertificationItem`, `ExperienceItem`, `ArtItem`, `SiteSettings` 等全站九大資料實體規格，作為前後臺與資料庫通訊的唯一契約。
-
-### 2.2 服務與雲端基礎設施層 (`src/services/`) | Services & Infrastructure
-
-本層封裝外部通訊細節，隔離 Firebase SDK 與業務邏輯。
-
-- `firebase.ts`：初始化 Firebase App、Firestore、Auth 與 Storage，統一管理連線狀態。
-- `portfolioDataService.ts`：提供資料庫讀取、寫入與初始資料播種函式，嚴格落實例外拋出防禦，杜絕靜默吞例外。
-
-### 2.3 狀態與雙向串流中樞層 (`src/context/`) | Context & Streaming State Hub
-
-本層架構離線優先快取（SWR）與即時串流監聽管線。
-
-- `PortfolioDataContext.tsx`：以本地靜態 JSON 為 0ms 首屏底座，同時透過 Firestore `onSnapshot` 監聽 9 大文檔集合，實現前臺零整理無感熱更新。
-- `LangContext.tsx`：管理全站多語系狀態（繁中 / 英文），同步 HTML lang 標籤。
-- `ThemeContext.tsx`：管理全站主題態（深色賽博龐克 / 現代簡約淺色）。
-- `CmsDirtyContext.tsx`：追蹤 CMS 編輯器表單之異動狀態（`isDirty`），提供未存檔導航阻斷防護。
-
-### 2.4 呈現展示層 (`src/components/`, `src/cms/components/`) | Presentation Layer
-
-前臺展示組件與 CMS 編輯器組件物理隔離。
-
-- **前臺組件**：專注於次秒級極速渲染、流暢 60fps 動態視覺與 WCAG AAA 無障礙展示。
-- **CMS 編輯器**：專注於直覺式的即時編輯體驗，提供可視性開關、表單檢驗與安全儲存操作。
-
----
-
-## 3. 模組依賴關係拓撲圖 | Dependency Topology Diagram
-
-本圖揭示系統各層檔案之引用階層、單向資料流向以及前臺與 CMS 之首屏物理分割邊界。
+本系統採行嚴格的垂直分層與單向依賴架構，徹底杜絕展示層與資料基礎設施層的緊耦合：
 
 ```mermaid
 %%{init: {
@@ -124,43 +30,170 @@ my-portfolio-website/
     'curve': 'linear'
   }
 }}%%
-flowchart TB
+flowchart LR
     classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
 
-    subgraph Core ["入口與全域狀態層 (Core & Context Layer)"]
-        Main["main.tsx (掛載起點)"]:::hudCard --> App["App.tsx (視圖分流路由)"]:::hudCard
-        App --> DataCtx["context/PortfolioDataContext.tsx (SWR 狀態中樞)"]:::hudCard
-        App --> LangCtx["context/LangContext.tsx (多語系)"]:::hudCard
-        App --> ThemeCtx["context/ThemeContext.tsx (主題態)"]:::hudCard
+    subgraph Layer1 ["1. 展示層 (Presentation)"]
+        L1["前臺展示元件矩陣<br>自研 CMS 視覺化後臺"]:::hudCard
     end
 
-    subgraph Services ["雲端服務層 (Services & Types)"]
-        DataCtx --> DataService["services/portfolioDataService.ts"]:::hudCard
-        DataService --> FBSdk["services/firebase.ts (Firebase SDK)"]:::hudCard
-        DataService --> TypeDef["types/portfolio.ts (型別定義)"]:::hudCard
+    subgraph Layer2 ["2. 應用狀態層 (Application)"]
+        L2["全域狀態中樞與雙軌分流<br>Profile / Lang / Data Context"]:::hudCard
     end
 
-    subgraph Frontend ["前臺展示層 (Public Showcase - 0ms 首屏物理載入)"]
-        App --> MainSite["MainSiteContent.tsx (展示主外殼)"]:::hudCard
-        MainSite --> Hero["Hero.tsx & SciFiRobotAvatar.tsx"]:::hudCard
-        MainSite --> About["About.tsx (自傳背景)"]:::hudCard
-        MainSite --> Skills["Skills.tsx (技能矩陣)"]:::hudCard
-        MainSite --> Projects["Projects.tsx (專案作品)"]:::hudCard
-        MainSite --> Certs["Certifications.tsx (證照清單)"]:::hudCard
-        MainSite --> Edu["Education.tsx (學歷經歷)"]:::hudCard
-        MainSite --> Gallery["ArtGallery.tsx (畫廊與3D檢視)"]:::hudCard
-        MainSite --> Nav["Navbar.tsx & SideNav.tsx"]:::hudCard
+    subgraph Layer3 ["3. 領域模型層 (Domain)"]
+        L3["單一真實資料契約<br>portfolio.ts (SSOT)"]:::hudCard
     end
 
-    subgraph CmsModule ["自研 CMS 管理系統 (chunk-cms 獨立延遲載入)"]
-        App -.->|"非同步動態載入 / Dynamic import"| CmsApp["cms/CmsApp.tsx (後臺主入口)"]:::hudCard
-        CmsApp --> CmsDirty["cms/context/CmsDirtyContext.tsx (未存檔阻斷)"]:::hudCard
-        CmsApp --> CmsEditors["cms/components/Cms*Editor.tsx (各模組編輯器)"]:::hudCard
-        CmsEditors --> DataCtx
+    subgraph Layer4 ["4. 資料設施層 (Infrastructure)"]
+        L4["Firebase 雲端持久化服務<br>本地靜態 JSON 降級備援"]:::hudCard
     end
 
-    style Core fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
-    style Services fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
-    style Frontend fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
-    style CmsModule fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    Layer1 -->|"訂閱狀態 / 派發事件"| Layer2
+    Layer2 -->|"調用領域實體契約"| Layer3
+    Layer3 -->|"底層資料持久化與備援"| Layer4
+
+    style Layer1 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style Layer2 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style Layer3 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style Layer4 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
 ```
+
+---
+
+## 2. 各層職責與邊界定義
+
+### 2.1 展示層 (Presentation Layer)
+- **位置**: `src/components/`, `src/cms/components/`
+- **職責邊界**:
+  - 專注於使用者介面渲染、樣式排版、CSS 動畫、動態互動反饋與無障礙標籤。
+  - **展示層零硬編碼**: 嚴格禁止元件內部自行根據 URL 或狀態執行條件寫死（例如 `if (profile === 'fullstack')`）。元件只依賴 Context 傳入的真實資料陣列進行渲染。
+  - **懶載入保護**: 後臺管理介面 (`src/cms/`) 透過 `React.lazy` 動態載入，與主站展示代碼進行物理切分，絕不污染前臺主資源包。
+
+### 2.2 應用狀態層 (Application & Context Layer)
+- **位置**: `src/context/`, `src/cms/context/`
+- **核心 Context 矩陣**:
+  1. **`ProfileContext`**: 管理當前專業身份路徑 (`fullstack` | `interactive`)，負責網址路由與資料集合對應。
+  2. **`PortfolioDataContext`**: 系統核心 SSOT。負責整合遠端 Firestore、本地 LocalStorage 快取與靜態 JSON 降級，並對外提供即時資料與儲存介面。
+  3. **`LangContext`**: 提供多國語系切換 (`zh` | `en`) 與本地偏好記憶。
+  4. **`ThemeContext`**: 提供主題切換 (`dark` | `light`)，並動態將主題變數注入 `:root` 與 `document.documentElement`。
+  5. **`CmsDirtyContext`**: 監控 CMS 編輯器欄位異動狀態，提供使用者未儲存防呆警告與離開攔截。
+  6. **`CmsModeContext`**: 控制 CMS 目前操作之目標 Profile，支援雙專業獨立資料維護。
+
+### 2.3 領域模型層 (Domain Layer)
+- **位置**: `src/types/portfolio.ts`
+- **職責邊界**:
+  - 定義全站作品集前端展示與 CMS 編輯之統一資料模型契約 (Single Source of Truth)。
+  - 包含 `HeroSectionData`, `AboutSectionData`, `SkillsSectionData`, `ProjectsSectionData`, `ExperienceSectionData`, `CertificationsSectionData`, `GallerySectionData`, `SiteSettingsData`。
+  - 嚴格區隔多語系欄位 (`zh` / `en`) 與跨語系共用結構（如日期、排序序號、外連網址、標籤陣列）。
+
+### 2.4 資料基礎設施層 (Data & Infrastructure Layer)
+- **位置**: `src/services/`, `src/data/`
+- **職責邊界**:
+  - `portfolioDataService.ts`: 封裝所有與 Firebase Firestore 的 CRUD 互動。提供 `getPortfolioDoc`、`savePortfolioDoc`、`seedFirestoreFromLocalJson` 等原子方法。
+  - `firebase.ts`: 初始化 Firebase App、Firestore 與 Storage 實例。具備未配置保護與錯誤降級。
+  - `storageService.ts`: 處理媒體圖片上傳、路徑組織與 URL 獲取。
+  - `src/data/*.json`: 內建靜態備援資料庫，確保在完全無網路或未配置 Firebase 時前臺依然完美運行。
+
+---
+
+## 3. 模組依賴結構圖 (Mermaid)
+
+```mermaid
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'darkMode': true,
+    'background': '#030712',
+    'mainBkg': '#0b0f19',
+    'nodeBorder': '#00f0ff',
+    'textColor': '#f8fafc',
+    'lineColor': '#00f0ff',
+    'clusterBkg': '#060a14',
+    'clusterBorder': '#1e293b',
+    'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
+    'fontSize': '12px'
+  },
+  'flowchart': {
+    'curve': 'linear'
+  }
+}}%%
+flowchart TD
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef lazyCard fill:#0b0f19,stroke:#38bdf8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#f8fafc;
+
+    subgraph EntryTier ["入口與路由中樞 (Routing and Shell Tier)"]
+        App["主應用入口<br>App.tsx"]:::hudCard
+        ProfileProvider["身份路由映射<br>ProfileContext"]:::hudCard
+        LangProvider["多語系中樞<br>LangContext"]:::hudCard
+        ThemeProvider["雙模色彩中樞<br>ThemeContext"]:::hudCard
+    end
+
+    subgraph StateTier ["單一真實狀態層 (SSOT Data Engine)"]
+        DataProvider["全站資料驅動中樞<br>PortfolioDataContext"]:::hudCard
+        DataService["資料持久化服務<br>portfolioDataService.ts"]:::hudCard
+        FirebaseSDK["雲端資料庫 SDK<br>firebase.ts"]:::hudCard
+        LocalFallback["離線靜態降級資料<br>src/data/*.json"]:::hudCard
+    end
+
+    subgraph ShowcaseTier ["前臺展示模組矩陣 (Showcase Presentation)"]
+        MainSite["主頁面容器<br>MainSiteContent.tsx"]:::hudCard
+        HeroSec["首頁問候<br>Hero.tsx"]:::hudCard
+        AboutSec["自傳經歷<br>About.tsx"]:::hudCard
+        SkillsSec["技能矩陣<br>Skills.tsx"]:::hudCard
+        ProjectsSec["專案作品<br>Projects.tsx"]:::hudCard
+        EduSec["學經歷與成果<br>Education.tsx"]:::hudCard
+        CertsSec["證照與專利<br>Certifications.tsx"]:::hudCard
+        GallerySec["互動畫廊<br>ArtGallery.tsx"]:::hudCard
+    end
+
+    subgraph CmsTier ["自研後臺管理套件 (Lazy-Loaded CMS Suite)"]
+        CmsEntry["後臺主入口<br>CmsApp.tsx"]:::lazyCard
+        CmsSidebar["導覽與排序列<br>CmsSidebar.tsx"]:::lazyCard
+        CmsEditors["各模組獨立編輯器<br>Cms*Editor.tsx"]:::lazyCard
+        StorageSvc["媒體上傳服務<br>storageService.ts"]:::hudCard
+    end
+
+    App --> ProfileProvider
+    App --> LangProvider
+    App --> ThemeProvider
+    ProfileProvider --> DataProvider
+
+    DataProvider --> DataService
+    DataService --> FirebaseSDK
+    DataService --> LocalFallback
+
+    DataProvider --> MainSite
+    MainSite --> HeroSec
+    MainSite --> AboutSec
+    MainSite --> SkillsSec
+    MainSite --> ProjectsSec
+    MainSite --> EduSec
+    MainSite --> CertsSec
+    MainSite --> GallerySec
+
+    App -.->|"React.lazy 動態加載"| CmsEntry
+    CmsEntry --> CmsSidebar
+    CmsEntry --> CmsEditors
+    CmsEditors --> DataProvider
+    CmsEditors --> StorageSvc
+
+    style EntryTier fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style StateTier fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style ShowcaseTier fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+    style CmsTier fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
+```
+
+---
+
+## 4. SOLID 原則實踐事實
+
+1. **單一職責原則 (SRP)**:
+   - 每個區塊編輯器（如 `CmsProjectsEditor.tsx`, `CmsSkillsEditor.tsx`）僅專注於該領域表單與互動；底層網路傳輸全部委託 `portfolioDataService`，不涉及 UI 細節。
+2. **開放封閉原則 (OCP)**:
+   - 全站資料模型 `portfolio.ts` 透過泛型與可擴充介面定義，新增欄位或模組只需擴充介面與對應子元件，無須修改主路由中樞與狀態廣播核心。
+3. **介面隔離原則 (ISP)**:
+   - 多語系字典結構與設定結構細粒化拆分，例如 `SiteLanguageSetting` 與 `HeroLocaleData` 各自獨立，避免出現包羅萬象的「胖資料結構」。
+4. **依賴反轉原則 (DIP)**:
+   - 展示層元件不直接實例化 Firestore SDK，而是依賴 `PortfolioDataContext` 提供的抽象狀態與回呼函式，具備高度可測試性與可抽換性。
