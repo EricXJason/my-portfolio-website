@@ -85,13 +85,17 @@
 1. **嚴禁純文字 ASCII 方塊圖**: 任何系統分層、階層架構或資料流，**一律禁止使用 `┌─┐│└─┘` 等純文字方塊或純文字箭頭**，一律強制轉譯為高清晰度的深色 Mermaid 圖表。
 2. **嚴禁預設白底與醜陋配色**: 嚴格禁止使用 Mermaid 預設淺灰底色、粗圓弧線或未定義 `themeVariables` 的白底圖表。
 3. **強制宣告 `init` 主題變數**: 所有 Mermaid 區塊必須於第一行宣告 `%%{init: {...}}%%`，鎖定專案專屬之科技青藍與深藍黑配色。
-4. **階梯卡片樣式標準**: 節點必須定義 `classDef hudCard`，背景為 `#0b0f19`，邊框為 `#00f0ff`，文字為 `#f8fafc`。
+4. **全域統一非圓角 (直角) HUD 設計 (Sharp Corners Only)**:
+   - 為維持賽博龐克戰術 HUD 之硬朗科技美學，**所有系統架構圖、時序圖、類別圖與 ERD 實體表格，一律強制統一採用非圓角（直角 Sharp Corner，`rx: 0px, ry: 0px`）設計，嚴禁使用圓角**。
+   - **唯一例外**：僅限業界專門語意標準規範要求之特殊符號（例如：流程圖之條件判斷菱形 `{}`、狀態轉移之起點/終點圓形），其餘所有一般卡片、服務節點、Actor/Participant 矩形全面強制直角。
 5. **長度限制與橫向優先 (Horizontal-First & Viewport Fit)**:
    - **嚴禁細長垂直高塔圖**: 嚴格禁止單列由上往下堆疊 4 個以上 subgraph / 節點，避免造成讀者需滾動多屏才能看完。
    - **橫向優先佈局 (`flowchart LR`)**: 分層架構、流程階段與管線，優先採用 `flowchart LR` 由左至右寬幅展開，符合 16:9 桌面螢幕視野。
    - **一屏完整可視 (Single Viewport)**: 節點文字高度精煉，內部換行控制在 1-2 行以內，圖表高度控制在 350px 內，保證一屏盡覽。
 6. **嚴禁紫色與雜亂配色 (Color Consistency)**: 全圖色彩嚴格收斂於深黑底 `#030712`、主卡片 `#0b0f19`、科技青 `#00f0ff`、白字 `#f8fafc` 與邊框灰 `#1e293b` / 冷調藍 `#38bdf8`。**嚴禁使用紫色、洋紅等雜亂配色**，維持高階科技感。
-7. **嚴禁字體背景灰色與未宣告色塊 (No Grey Text Backgrounds)**: 嚴格禁止圖表連線標籤、關聯文字或表單節點出現 Mermaid 預設之灰色/白色矩形底色（如 ERD 關係線上的 `contains` 等文字標籤）。因 Mermaid ERD 之 `.er.relationshipLabelBox` 預設在 SVG 中硬編碼為灰色且無法由 `edgeLabelBackground` 完全覆蓋，所有 `erDiagram` **強制注入 `themeCSS` 宣告 `.er.relationshipLabelBox { fill: #030712 !important; stroke: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; }`**，使其與深色背景融為一體；ERD 實體表格奇偶列底色強制統一為 `#060a14` 與 `#0b0f19`，確保全專案所有圖表與表單視覺風格完全統一且合理。
+7. **連線文字與關係標籤零字體背景原則 (No Text Background Boxes)**:
+   - 連線上的說明文字必須保持純淨透明無背景（如時序圖與流程圖），嚴禁任何帶底色之灰色/白色矩形包覆字體。
+   - **ERD 關係線嚴禁出現 `contains` 灰框**: 因 Mermaid ERD 底層 `.er.relationshipLabelBox` 預設硬編碼灰框，所有 ERD 關係線強制採用 `: " "`（空標籤），回歸資料庫標準 Crow's foot 符號（`||--o{` / `||--||`）本身之明確包含語意；同時必須注入 `themeCSS: '.er.relationshipLabelBox { display: none !important; }'`，100% 杜絕任何殘留灰色方塊。
 8. **臺灣繁體中文優先 (Traditional Chinese First)**: Docs 內所有文檔與圖表是提供臺灣招募官與評審專家閱讀，**節點與流程文字一律以臺灣繁體中文為主體**，必要時採「中文 (英文專有名詞)」對照，嚴禁堆砌大段純英文。
 9. **嚴格語法防護 (Zero Syntax Error)**: 節點文字若含有括號 `()`、斜線 `/`、問號等特殊字元，必須強制使用雙引號包覆 `["..."]`；連線標籤強制使用 `-->|"標籤"|`，確保在 Mermaid 12.0+ 與各平臺預覽 100% 正常渲染零報錯。
 
@@ -100,19 +104,19 @@
 | 屬性變數 | 色票代碼 | 視覺定位與使用情境 |
 | :--- | :--- | :--- |
 | `background` | `#030712` | 圖表底層全域暗黑背景，無縫融入 GitHub 深色模式。 |
-| `mainBkg` | `#0b0f19` | 核心卡片、節點容器深藍底色。 |
+| `mainBkg` | `#0b0f19` | 核心卡片、節點容器深藍底色（強制直角）。 |
 | `nodeBorder` / `lineColor` | `#00f0ff` | 霓虹科技青色（高亮科技邊框與資料訊號流連線）。 |
 | `textColor` | `#f8fafc` | 高對比亮白文字，確保極致可讀性。 |
 | `clusterBkg` | `#060a14` | Subgraph 邊界容器微暗底色。 |
 | `clusterBorder` | `#1e293b` | Subgraph 外圍分隔沉穩邊框。 |
 | `titleColor` | `#00f0ff` | 圖表主標題高亮色。 |
-| `edgeLabelBackground` | `#030712` | 連線文字標籤背景（**必設，杜絕預設灰色塊**）。 |
+| `edgeLabelBackground` | `#030712` | 連線文字標籤背景（純淨深黑，杜絕預設灰塊）。 |
 | `attributeBackgroundColorOdd` | `#060a14` | ERD 實體表格奇數列底色。 |
 | `attributeBackgroundColorEven` | `#0b0f19` | ERD 實體表格偶數列底色。 |
 
 ### 4.3 標準 Mermaid HUD 範本庫
 
-#### 1. 流程圖與架構圖標準範本 (`flowchart LR`)
+#### 1. 流程圖與架構圖標準範本 (`flowchart LR`，直角非圓角)
 
 ```mermaid
 %%{init: {
@@ -132,10 +136,11 @@
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     subgraph Tier1 ["層級 1：存取端"]
         Node1["請求角色<br>訪客 / 管理者"]:::hudCard
@@ -151,7 +156,7 @@ flowchart LR
     style Tier2 fill:#060a14,stroke:#1e293b,stroke-width:1px,color:#00f0ff
 ```
 
-#### 2. UML 類別關聯圖範本 (`classDiagram`)
+#### 2. UML 類別關聯圖範本 (`classDiagram`，直角非圓角)
 
 ```mermaid
 %%{init: {
@@ -165,7 +170,8 @@ flowchart LR
     'lineColor': '#00f0ff',
     'edgeLabelBackground': '#030712',
     'fontSize': '12px'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 classDiagram
     direction TB
@@ -178,11 +184,11 @@ classDiagram
         +updateData() 更新狀態
     }
     App *-- DataContext : 依賴注入
-    style App fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style DataContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style App fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
+    style DataContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
 ```
 
-#### 3. 循序時序圖範本 (`sequenceDiagram`)
+#### 3. 循序時序圖範本 (`sequenceDiagram`，直角非圓角與無背景文字)
 
 ```mermaid
 %%{init: {
@@ -196,13 +202,14 @@ classDiagram
     'actorLineColor': '#334155',
     'signalColor': '#00f0ff',
     'signalTextColor': '#f8fafc',
-    'labelBoxBkgColor': '#0b0f19',
-    'labelBoxBorderColor': '#334155',
+    'labelBoxBkgColor': 'transparent',
+    'labelBoxBorderColor': 'none',
     'labelTextColor': '#f8fafc',
     'noteBorderColor': '#00f0ff',
     'noteBkgColor': '#08131e',
     'noteTextColor': '#f8fafc'
-  }
+  },
+  'themeCSS': 'rect, rect.actor { rx: 0px !important; ry: 0px !important; }'
 }}%%
 sequenceDiagram
     autonumber
@@ -215,7 +222,7 @@ sequenceDiagram
     Svc-->>Admin: 回傳處理成功響應
 ```
 
-#### 4. 資料庫實體關聯圖範本 (`erDiagram`)
+#### 4. 資料庫實體關聯圖範本 (`erDiagram`，直角非圓角與零文字背景)
 
 ```mermaid
 %%{init: {
@@ -233,10 +240,10 @@ sequenceDiagram
     'attributeBackgroundColorEven': '#0b0f19',
     'fontSize': '12px'
   },
-  'themeCSS': '.er.relationshipLabelBox { fill: #030712 !important; stroke: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
+  'themeCSS': 'rect, .node rect, rect.actor { rx: 0px !important; ry: 0px !important; } .er.relationshipLabelBox { fill: none !important; stroke: none !important; display: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; rx: 0px !important; ry: 0px !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
 }}%%
 erDiagram
-    COLLECTION_ROOT ||--o{ DOC_ITEM : "contains"
+    COLLECTION_ROOT ||--o{ DOC_ITEM : " "
 
     DOC_ITEM {
         string id "唯一識別碼"
@@ -245,4 +252,5 @@ erDiagram
         boolean visible "顯示開關"
     }
 ```
+
 

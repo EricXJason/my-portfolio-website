@@ -26,11 +26,12 @@
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
-    classDef distCard fill:#060a14,stroke:#38bdf8,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
+    classDef distCard fill:#060a14,stroke:#38bdf8,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     A["依賴安裝<br>pnpm install"]:::hudCard --> B["靜態語法檢驗<br>oxlint"]:::hudCard
     B --> C["測試驗證 (77 項)<br>vitest run"]:::hudCard

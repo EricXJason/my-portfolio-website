@@ -26,10 +26,11 @@
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart TD
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
     classDef decision fill:#060a14,stroke:#00f0ff,stroke-width:1.5px,color:#00f0ff;
 
     Start["訪客載入網址"]:::hudCard --> CheckEnv{"是否為測試或爬蟲環境？"}:::decision
@@ -74,10 +75,11 @@ flowchart TD
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart TD
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
     classDef decision fill:#060a14,stroke:#00f0ff,stroke-width:1.5px,color:#00f0ff;
 
     RouteReq["瀏覽器路由請求"]:::hudCard --> MatchPath{"匹配目標路徑"}:::decision
@@ -121,13 +123,14 @@ flowchart TD
     'actorLineColor': '#334155',
     'signalColor': '#00f0ff',
     'signalTextColor': '#f8fafc',
-    'labelBoxBkgColor': '#0b0f19',
-    'labelBoxBorderColor': '#334155',
+    'labelBoxBkgColor': 'transparent',
+    'labelBoxBorderColor': 'none',
     'labelTextColor': '#f8fafc',
     'noteBorderColor': '#00f0ff',
     'noteBkgColor': '#08131e',
     'noteTextColor': '#f8fafc'
-  }
+  },
+  'themeCSS': 'rect, rect.actor { rx: 0px !important; ry: 0px !important; }'
 }}%%
 sequenceDiagram
     autonumber
@@ -172,11 +175,12 @@ sequenceDiagram
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
-    classDef alertCard fill:#0b0f19,stroke:#38bdf8,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
+    classDef alertCard fill:#0b0f19,stroke:#38bdf8,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     S1["系統初始化中"]:::hudCard -->|"讀取本地快照成功"| S2["本地快取生效 (零延遲)"]:::hudCard
     S1 -->|"無快取狀態"| S3["載入內建靜態備援"]:::hudCard

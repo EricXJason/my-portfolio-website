@@ -26,17 +26,17 @@
     'attributeBackgroundColorEven': '#0b0f19',
     'fontSize': '12px'
   },
-  'themeCSS': '.er.relationshipLabelBox { fill: #030712 !important; stroke: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
+  'themeCSS': 'rect, .node rect, rect.actor { rx: 0px !important; ry: 0px !important; } .er.relationshipLabelBox { fill: none !important; stroke: none !important; display: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; rx: 0px !important; ry: 0px !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
 }}%%
 erDiagram
-    COLLECTION_PORTFOLIO ||--|| DOC_HERO : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_ABOUT : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_SKILLS : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_PROJECTS : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_EXPERIENCE : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_CERTIFICATIONS : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_GALLERY : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_SITE_SETTINGS : contains
+    COLLECTION_PORTFOLIO ||--|| DOC_HERO : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_ABOUT : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_SKILLS : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_PROJECTS : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_EXPERIENCE : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_CERTIFICATIONS : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_GALLERY : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_SITE_SETTINGS : " "
 
     DOC_HERO {
         string showGithub
@@ -173,11 +173,12 @@ erDiagram
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
-    classDef fallbackCard fill:#060a14,stroke:#38bdf8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
+    classDef fallbackCard fill:#060a14,stroke:#38bdf8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#f8fafc,rx:0px,ry:0px;
 
     L1["Level 1: 記憶體狀態<br>React Context (0ms)"]:::hudCard
     L2["Level 2: 本地快照<br>LocalStorage (~2ms)"]:::hudCard

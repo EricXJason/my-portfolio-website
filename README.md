@@ -82,10 +82,11 @@
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     subgraph UserLayer ["使用者角色端"]
         Visitor["訪客與評審專家"]:::hudCard
@@ -133,10 +134,11 @@ flowchart LR
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     Edit["欄位編輯與修改"]:::hudCard
     Guard["標記髒污狀態 (Dirty)"]:::hudCard
@@ -172,17 +174,17 @@ flowchart LR
     'attributeBackgroundColorEven': '#0b0f19',
     'fontSize': '12px'
   },
-  'themeCSS': '.er.relationshipLabelBox { fill: #030712 !important; stroke: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
+  'themeCSS': 'rect, .node rect, rect.actor { rx: 0px !important; ry: 0px !important; } .er.relationshipLabelBox { fill: none !important; stroke: none !important; display: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; rx: 0px !important; ry: 0px !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
 }}%%
 erDiagram
-    PORTFOLIO_STATE ||--o{ HERO_DOC : contains
-    PORTFOLIO_STATE ||--o{ ABOUT_DOC : contains
-    PORTFOLIO_STATE ||--o{ SKILLS_DOC : contains
-    PORTFOLIO_STATE ||--o{ PROJECTS_DOC : contains
-    PORTFOLIO_STATE ||--o{ EXPERIENCES_DOC : contains
-    PORTFOLIO_STATE ||--o{ CERTIFICATES_DOC : contains
-    PORTFOLIO_STATE ||--o{ GALLERY_DOC : contains
-    PORTFOLIO_STATE ||--o{ SETTINGS_DOC : contains
+    PORTFOLIO_STATE ||--o{ HERO_DOC : " "
+    PORTFOLIO_STATE ||--o{ ABOUT_DOC : " "
+    PORTFOLIO_STATE ||--o{ SKILLS_DOC : " "
+    PORTFOLIO_STATE ||--o{ PROJECTS_DOC : " "
+    PORTFOLIO_STATE ||--o{ EXPERIENCES_DOC : " "
+    PORTFOLIO_STATE ||--o{ CERTIFICATES_DOC : " "
+    PORTFOLIO_STATE ||--o{ GALLERY_DOC : " "
+    PORTFOLIO_STATE ||--o{ SETTINGS_DOC : " "
 
     HERO_DOC {
         string name_zh "姓名中文"

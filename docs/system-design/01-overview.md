@@ -48,10 +48,11 @@
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart TD
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     subgraph Tier1 ["層級 1：存取角色端"]
         Visitor["一般訪客與評審主管"]:::hudCard
@@ -109,10 +110,11 @@ flowchart TD
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     subgraph Browser ["客戶端瀏覽器環境"]
         SPA["單頁應用核心<br>React 19 + TypeScript"]:::hudCard
@@ -158,7 +160,8 @@ flowchart LR
     'lineColor': '#00f0ff',
     'edgeLabelBackground': '#030712',
     'fontSize': '12px'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 classDiagram
     direction TB
@@ -211,13 +214,13 @@ classDiagram
     ProjectsSection ..> IconHelper : resolves icons
     CmsProjectsEditor ..> IconHelper : resolves icons
 
-    style App fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style PortfolioDataContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style StorageService fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style IconHelper fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style ProjectsSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsApp fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
-    style CmsProjectsEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc
+    style App fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
+    style PortfolioDataContext fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
+    style StorageService fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
+    style IconHelper fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
+    style ProjectsSection fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
+    style CmsApp fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
+    style CmsProjectsEditor fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px
 ```
 
 ---

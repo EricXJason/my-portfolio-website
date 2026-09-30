@@ -4,6 +4,17 @@
 
 ---
 
+## [2026-10-01 00:50] - 全域圖表統一採用非圓角 (直角) HUD 設計並徹底移除 ERD contains 灰色標籤框
+- **改動原因**: 徹底解決使用者反映之 ERD `contains` 帶灰底字體背景問題，並依使用者要求全面統一圖表與表單為硬朗戰術「非圓角（直角）」HUD 風格，嚴禁雜亂圓角。
+- **具體內容**:
+  1. 於 `docs/system-design/05-specs-database.md`、`README.md` 及 `07-ui-ux-standards.md` 中，將 ERD 關係線之 `contains` 標籤全數移除改為標準空標籤 `: " "`，回歸 Crow's foot 符號本身之語意，且注入 `.er.relationshipLabelBox { display: none !important; }`，徹底杜絕任何灰底方塊。
+  2. 全面推行「非圓角（直角）」HUD 設計規範：
+     - 在 `01-overview.md`、`03-architecture.md`、`05-specs-database.md`、`06-flowcharts.md`、`07-ui-ux-standards.md`、`08-devops.md` 與 `README.md` 的所有圖表（Flowchart、SequenceDiagram、ClassDiagram、ERD）中，全面注入 `themeCSS: 'rect, .node rect, rect.actor { rx: 0px !important; ry: 0px !important; }'`，並於所有 `classDef` 顯式標註 `rx:0px,ry:0px`。
+     - 時序圖的 Actor/Participant 矩形（如「核心服務」、「系統管理者」）全面由圓角轉為硬朗直角卡片。
+     - 唯一的圓弧/非直角例外嚴格鎖定業界專業語意標準符號（如條件判斷菱形 `{}`）。
+  3. 於中樞協定 `AGENTS.md` 第 4.3 節與 `07-ui-ux-standards.md` 第 4.1 節明文確立「全域統一非圓角 (直角) HUD 設計」與「連線文字零背景原則」兩大工程底線。
+- **影響範圍**: `AGENTS.md`, `README.md`, `docs/system-design/*` (01, 03, 05, 06, 07, 08), `docs/change-log.md`。
+
 ## [2026-10-01 00:44] - 注入 themeCSS 徹底覆蓋 Mermaid ERD SVG relationshipLabelBox 灰色填色
 - **改動原因**: 查證 Mermaid ERD 底層渲染機制，發現 `.er.relationshipLabelBox` 屬 SVG 矩形元素，不讀取 high-level 之 `edgeLabelBackground` 變數而直接硬編碼預設灰色，造成預覽器依然顯示灰色色塊。
 - **具體內容**:
