@@ -166,12 +166,13 @@ flowchart LR
     'nodeBorder': '#00f0ff',
     'textColor': '#f8fafc',
     'lineColor': '#00f0ff',
-    'clusterBkg': '#060a14',
-    'clusterBorder': '#1e293b',
     'titleColor': '#00f0ff',
     'edgeLabelBackground': '#030712',
+    'attributeBackgroundColorOdd': '#060a14',
+    'attributeBackgroundColorEven': '#0b0f19',
     'fontSize': '12px'
-  }
+  },
+  'themeCSS': '.er.relationshipLabelBox { fill: #030712 !important; stroke: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
 }}%%
 erDiagram
     PORTFOLIO_STATE ||--o{ HERO_DOC : contains

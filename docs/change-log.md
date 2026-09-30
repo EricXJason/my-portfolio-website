@@ -4,6 +4,14 @@
 
 ---
 
+## [2026-10-01 00:44] - 注入 themeCSS 徹底覆蓋 Mermaid ERD SVG relationshipLabelBox 灰色填色
+- **改動原因**: 查證 Mermaid ERD 底層渲染機制，發現 `.er.relationshipLabelBox` 屬 SVG 矩形元素，不讀取 high-level 之 `edgeLabelBackground` 變數而直接硬編碼預設灰色，造成預覽器依然顯示灰色色塊。
+- **具體內容**:
+  1. 於 `docs/system-design/05-specs-database.md`、`README.md` 及 `07-ui-ux-standards.md` 之 ERD 宣告中，全面注入 `themeCSS`：強制宣告 `.er.relationshipLabelBox { fill: #030712 !important; stroke: none !important; }` 與 `.er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; }`，徹底強制消除灰色背景並提亮標籤文字。
+  2. 補強 `themeCSS` 中實體表格樣式（`.er.entityBox`, `.er.entityLabel`, `.er.attributeBoxOdd`, `.er.attributeBoxEven`），確保表單風格 100% 統一。
+  3. 於 `07-ui-ux-standards.md` 與 `AGENTS.md` 規範庫寫明此底層機制與強制注入 `themeCSS` 之必備條款。
+- **影響範圍**: `docs/system-design/05-specs-database.md`, `README.md`, `docs/system-design/07-ui-ux-standards.md`, `AGENTS.md`, `docs/change-log.md`。
+
 ## [2026-10-01 00:41] - 徹底剷除 Mermaid ERD 關聯標籤灰色背景並納管全域表單統一設計規範
 - **改動原因**: 修復資料庫實體關聯圖中關係標籤文字（如 `contains`）因未宣告 `edgeLabelBackground` 導致渲染出預設灰色矩形底色之問題，並建立全域圖表文字背景零灰色與 ERD 實體表格色彩統一工程底線。
 - **具體內容**:
