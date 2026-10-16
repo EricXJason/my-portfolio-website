@@ -99,43 +99,68 @@ interface CategoryStyle {
   iconName?: string;
 }
 
-// 順序色第 1 順位：青色 (Cyan #00f0ff)
-const PRIMARY_MAJOR_STYLE = {
-  darkBg: 'rgba(0, 240, 255, 0.12)',
-  darkBorder: 'rgba(0, 240, 255, 0.45)',
-  darkText: '#00f0ff',
-  lightBg: '#e0f2fe',
-  lightBorder: '#0284c7',
-  lightText: '#0369a1',
-  activeDarkBg: 'rgba(0, 240, 255, 0.16)',
-  activeDarkBorder: '#00f0ff',
-  activeDarkText: '#00f0ff',
-  activeDarkShadow: '0 0 14px rgba(0, 240, 255, 0.45)',
-  activeLightBg: '#0284c7',
-  activeLightBorder: '#0284c7',
-  activeLightText: '#ffffff',
-  activeLightShadow: '0 4px 14px rgba(2, 132, 199, 0.35)',
-  hoverClass: 'hover:border-cyan-400 hover:text-cyan-300',
-};
-
-// 順序色第 2 順位：藍色 (Blue #60a5fa)
-const SECONDARY_MAJOR_STYLE = {
-  darkBg: 'rgba(59, 130, 246, 0.16)',
-  darkBorder: 'rgba(96, 165, 250, 0.55)',
-  darkText: '#60a5fa',
-  lightBg: '#eff6ff',
-  lightBorder: '#3b82f6',
-  lightText: '#1d4ed8',
-  activeDarkBg: 'rgba(59, 130, 246, 0.18)',
-  activeDarkBorder: '#3b82f6',
-  activeDarkText: '#60a5fa',
-  activeDarkShadow: '0 0 14px rgba(59, 130, 246, 0.45)',
-  activeLightBg: '#2563eb',
-  activeLightBorder: '#2563eb',
-  activeLightText: '#ffffff',
-  activeLightShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
-  hoverClass: 'hover:border-blue-400 hover:text-blue-300',
-};
+/**
+ * 專案分類順位色系配置（嚴格依順位分配，青、藍、紫）：
+ * - 第 1 順位 (Index 0)：青色 (Cyan #00f0ff)
+ * - 第 2 順位 (Index 1)：藍色 (Blue #3b82f6 / #60a5fa)
+ * - 第 3 順位 (Index 2)：紫色 (Purple #a855f7 / #c084fc)
+ */
+const POSITION_CATEGORY_STYLES = [
+  // 順位 1：青色 (Cyan #00f0ff)
+  {
+    darkBg: 'rgba(0, 240, 255, 0.12)',
+    darkBorder: 'rgba(0, 240, 255, 0.45)',
+    darkText: '#00f0ff',
+    lightBg: '#e0f2fe',
+    lightBorder: '#0284c7',
+    lightText: '#0369a1',
+    activeDarkBg: 'rgba(0, 240, 255, 0.16)',
+    activeDarkBorder: '#00f0ff',
+    activeDarkText: '#00f0ff',
+    activeDarkShadow: '0 0 14px rgba(0, 240, 255, 0.45)',
+    activeLightBg: '#0284c7',
+    activeLightBorder: '#0284c7',
+    activeLightText: '#ffffff',
+    activeLightShadow: '0 4px 14px rgba(2, 132, 199, 0.35)',
+    hoverClass: 'hover:border-cyan-400 hover:text-cyan-300',
+  },
+  // 順位 2：藍色 (Blue #3b82f6 / #60a5fa)
+  {
+    darkBg: 'rgba(59, 130, 246, 0.16)',
+    darkBorder: 'rgba(96, 165, 250, 0.55)',
+    darkText: '#60a5fa',
+    lightBg: '#eff6ff',
+    lightBorder: '#3b82f6',
+    lightText: '#1d4ed8',
+    activeDarkBg: 'rgba(59, 130, 246, 0.18)',
+    activeDarkBorder: '#3b82f6',
+    activeDarkText: '#60a5fa',
+    activeDarkShadow: '0 0 14px rgba(59, 130, 246, 0.45)',
+    activeLightBg: '#2563eb',
+    activeLightBorder: '#2563eb',
+    activeLightText: '#ffffff',
+    activeLightShadow: '0 4px 14px rgba(37, 99, 235, 0.35)',
+    hoverClass: 'hover:border-blue-400 hover:text-blue-300',
+  },
+  // 順位 3：紫色 (Purple #a855f7 / #c084fc)
+  {
+    darkBg: 'rgba(168, 85, 247, 0.14)',
+    darkBorder: 'rgba(192, 132, 252, 0.50)',
+    darkText: '#c084fc',
+    lightBg: '#f5f3ff',
+    lightBorder: '#9333ea',
+    lightText: '#7e22ce',
+    activeDarkBg: 'rgba(168, 85, 247, 0.18)',
+    activeDarkBorder: '#a855f7',
+    activeDarkText: '#c084fc',
+    activeDarkShadow: '0 0 14px rgba(168, 85, 247, 0.45)',
+    activeLightBg: '#9333ea',
+    activeLightBorder: '#9333ea',
+    activeLightText: '#ffffff',
+    activeLightShadow: '0 4px 14px rgba(147, 51, 234, 0.35)',
+    hoverClass: 'hover:border-purple-400 hover:text-purple-300',
+  },
+];
 
 export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutube }) => {
   const { t, lang } = useLang();
@@ -147,49 +172,6 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     const profCtx = useProfile();
     isInteractiveMode = profCtx.isInteractive;
   } catch {}
-
-  // 顏色嚴格根據順序機制：第 1 順位永遠配青色 (Cyan)，第 2 順位永遠配藍色 (Blue)
-  const categoryMap: Record<string, CategoryStyle> = useMemo(() => {
-    const isFirstInteractive = isInteractiveMode;
-    const interactiveStyle = isFirstInteractive ? PRIMARY_MAJOR_STYLE : SECONDARY_MAJOR_STYLE;
-    const fullstackStyle = isFirstInteractive ? SECONDARY_MAJOR_STYLE : PRIMARY_MAJOR_STYLE;
-
-    return {
-      fullstack: {
-        zh: '全端開發',
-        en: 'Fullstack Dev',
-        darkBg: fullstackStyle.darkBg,
-        darkBorder: fullstackStyle.darkBorder,
-        darkText: fullstackStyle.darkText,
-        lightBg: fullstackStyle.lightBg,
-        lightBorder: fullstackStyle.lightBorder,
-        lightText: fullstackStyle.lightText,
-        iconName: 'fullstack',
-      },
-      frontend: {
-        zh: '前端開發',
-        en: 'Frontend Dev',
-        darkBg: 'rgba(56, 189, 248, 0.12)',
-        darkBorder: 'rgba(56, 189, 248, 0.45)',
-        darkText: '#38bdf8',
-        lightBg: '#f0f9ff',
-        lightBorder: '#0ea5e9',
-        lightText: '#0284c7',
-        iconName: 'frontend',
-      },
-      interactive: {
-        zh: '互動應用開發',
-        en: 'Interactive App',
-        darkBg: interactiveStyle.darkBg,
-        darkBorder: interactiveStyle.darkBorder,
-        darkText: interactiveStyle.darkText,
-        lightBg: interactiveStyle.lightBg,
-        lightBorder: interactiveStyle.lightBorder,
-        lightText: interactiveStyle.lightText,
-        iconName: 'interactive',
-      },
-    };
-  }, [isInteractiveMode]);
 
   // 渲染分類對應的 Lucide 圖示
   const renderCategoryIcon = (iconName?: string, size = 13, className = '') => {
@@ -257,6 +239,53 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
       ? ['interactive', 'fullstack', 'frontend']
       : ['fullstack', 'frontend', 'interactive'];
   }, [data.site_settings, isInteractiveMode]);
+
+  // 顏色嚴格根據順位機制（青、藍、紫）：不論內容為何，順位 1 永遠配青色、順位 2 永遠配藍色、順位 3 永遠配紫色
+  const categoryMap: Record<string, CategoryStyle> = useMemo(() => {
+    const defaultMeta: Record<string, { zh: string; en: string; iconName: string }> = {
+      fullstack: { zh: '全端開發', en: 'Fullstack Dev', iconName: 'fullstack' },
+      frontend: { zh: '前端開發', en: 'Frontend Dev', iconName: 'frontend' },
+      interactive: { zh: '互動應用開發', en: 'Interactive App', iconName: 'interactive' },
+    };
+
+    const map: Record<string, CategoryStyle> = {};
+    categoryOrder.forEach((catKey, index) => {
+      const styleConfig = POSITION_CATEGORY_STYLES[index % POSITION_CATEGORY_STYLES.length];
+      const meta = defaultMeta[catKey] || { zh: catKey, en: catKey, iconName: catKey };
+      map[catKey] = {
+        zh: meta.zh,
+        en: meta.en,
+        iconName: meta.iconName,
+        darkBg: styleConfig.darkBg,
+        darkBorder: styleConfig.darkBorder,
+        darkText: styleConfig.darkText,
+        lightBg: styleConfig.lightBg,
+        lightBorder: styleConfig.lightBorder,
+        lightText: styleConfig.lightText,
+      };
+    });
+
+    ['fullstack', 'frontend', 'interactive'].forEach((key) => {
+      if (!map[key]) {
+        const orderIdx = categoryOrder.indexOf(key);
+        const styleConfig = POSITION_CATEGORY_STYLES[(orderIdx >= 0 ? orderIdx : 0) % POSITION_CATEGORY_STYLES.length];
+        const meta = defaultMeta[key];
+        map[key] = {
+          zh: meta.zh,
+          en: meta.en,
+          iconName: meta.iconName,
+          darkBg: styleConfig.darkBg,
+          darkBorder: styleConfig.darkBorder,
+          darkText: styleConfig.darkText,
+          lightBg: styleConfig.lightBg,
+          lightBorder: styleConfig.lightBorder,
+          lightText: styleConfig.lightText,
+        };
+      }
+    });
+
+    return map;
+  }, [categoryOrder]);
 
   // 依精選排序權重 (featuredOrder) 與分類自訂順位進行專案穩定排序
   const allProjectsSorted = useMemo(() => {
@@ -573,7 +602,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             const isLastOdd = idx === filters.length - 1 && filters.length % 2 !== 0;
             const isActive = filter === f.key;
 
-            // 篩選按鈕專屬色系（精選為金色、全部為白色、全端為青色、互動為藍色）
+            // 篩選按鈕專屬色系：精選為金色、全部為白色，其餘分類嚴格依順位（第 1 為青、第 2 為藍、第 3 為紫）
             let customActiveStyle: React.CSSProperties = {};
             let hoverClass = '';
 
@@ -597,19 +626,12 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                   boxShadow: isLight ? '0 4px 14px rgba(15, 23, 42, 0.30)' : '0 0 14px rgba(255, 255, 255, 0.45)',
                 };
               }
-            } else if (f.key === 'frontend') {
-              hoverClass = 'hover:border-sky-400 hover:text-sky-300';
-              if (isActive) {
-                customActiveStyle = {
-                  backgroundColor: isLight ? '#0284c7' : 'rgba(14, 165, 233, 0.18)',
-                  color: isLight ? '#ffffff' : '#38bdf8',
-                  borderColor: isLight ? '#0284c7' : '#38bdf8',
-                  boxShadow: isLight ? '0 4px 14px rgba(2, 132, 199, 0.35)' : '0 0 14px rgba(56, 189, 248, 0.45)',
-                };
-              }
-            } else if (f.key === 'fullstack' || f.key === 'interactive') {
-              const isFirstMajor = isInteractiveMode ? f.key === 'interactive' : f.key === 'fullstack';
-              const styleConfig = isFirstMajor ? PRIMARY_MAJOR_STYLE : SECONDARY_MAJOR_STYLE;
+            } else {
+              // 分類按鈕：不論內容為何，第 1 順位為青色、第 2 順位為藍色、第 3 順位為紫色
+              const catOrderIdx = categoryOrder.indexOf(f.key);
+              const styleIdx = (catOrderIdx >= 0 ? catOrderIdx : 0) % POSITION_CATEGORY_STYLES.length;
+              const styleConfig = POSITION_CATEGORY_STYLES[styleIdx];
+
               hoverClass = styleConfig.hoverClass;
               if (isActive) {
                 customActiveStyle = {

@@ -4,6 +4,18 @@
 
 ---
 
+## [2026-10-16 09:05] - 專案分類按鈕全面改為順位驅動色（青、藍、紫）與 CMS 分類拖曳排序支援
+- **改動原因**: 依使用者設計指示，專案分類色彩嚴格改為依順位位置決定（不論內容為何，第 1 順位永遠配青色、第 2 順位永遠配藍色、第 3 順位永遠配紫色）；同時淨化 CMS 介面，移除分類標籤上的固有色彩圓點，並支援在 CMS 中直接透過水平拖曳調配專案作品分類順序。
+- **具體內容**:
+  1. **前臺順位色彩體系重構 ([src/components/Projects.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/components/Projects.tsx))**:
+     - 定義 `POSITION_CATEGORY_STYLES` 順位三色陣列（0: 青色 Cyan `#00f0ff`、1: 藍色 Blue `#3b82f6`、2: 紫色 Purple `#c084fc`）。
+     - 分類篩選按鈕與 `categoryMap` 全面改為依當前順位索引動態指派樣式與發光色彩，徹底脫鉤固定分類名稱，達成「順序由 CMS 決定，排第 1 是青、排第 2 是藍、排第 3 是紫」之精確呈現。
+  2. **CMS 分類按鈕純淨化與拖曳排序 ([src/cms/components/CmsProjectsEditor.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/cms/components/CmsProjectsEditor.tsx))**:
+     - 移除分類按鈕上的彩色小圓點與固有色背景邊框，按鈕統一採用科技暗色卡片風格，選中時一致呈現青色微光。
+     - 實作分類標籤 HTML5 水平拖曳排序機制（`handleCatDragStart`、`handleCatDrop` 等），支援直接拖放分類標籤調整順位，同時保留 `⇄` 快速交換按鈕雙軌操作。
+     - 專業技能模組完全維持原樣不動。
+- **影響範圍**: `src/components/Projects.tsx`、`src/cms/components/CmsProjectsEditor.tsx`、`docs/change-log.md`。
+
 ## [2026-10-16 06:51] - 全面移除 CMS「設為預設值」功能與按鈕，預設基準回歸 IDE 程式碼維護
 - **改動原因**: 依使用者明確工程決策，CMS 後臺責任邊界為「編輯、存檔與還原」，嚴禁於 CMS 介面中修改或覆蓋系統預設值（預設值永遠由工程師於 IDE 原始碼維護），故徹底清除全站所有模組之「設為預設值」按鈕與 Baseline 機制。
 - **具體內容**:

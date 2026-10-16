@@ -97,19 +97,6 @@ interface CmsProjectsEditorProps {
   isPreview?: boolean;
 }
 
-const getCategoryDotColor = (catKey: string): string => {
-  switch (catKey) {
-    case 'fullstack':
-      return '#00f0ff'; // 青色
-    case 'frontend':
-      return '#38bdf8'; // 天藍色
-    case 'interactive':
-      return '#60a5fa'; // 藍色
-    default:
-      return '#00f0ff';
-  }
-};
-
 const getCategoryName = (key: string, isEn: boolean): string => {
   switch (key) {
     case 'fullstack':
@@ -346,6 +333,75 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
         : ['fullstack', 'frontend', 'interactive']
     );
   }, [profile, data.site_settings]);
+
+  // 分類標籤拖放狀態 (支援拖曳調配專案作品分類順位)
+  const catDragRef = useRef<number | null>(null);
+  const [catDragging, setCatDragging] = useState<number | null>(null);
+  const [catDragOver, setCatDragOver] = useState<number | null>(null);
+
+  const handleCatDragStart = (e: React.DragEvent, index: number) => {
+    if (isPreview) return;
+    catDragRef.current = index;
+    setCatDragging(index);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+  const handleCatDragEnd = () => {
+    setCatDragging(null);
+    setCatDragOver(null);
+    catDragRef.current = null;
+  };
+  const handleCatDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    if (catDragRef.current !== index) {
+      setCatDragOver(index);
+    }
+  };
+  const handleCatDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
+    const sourceIndex = catDragRef.current;
+    if (sourceIndex === null || sourceIndex === targetIndex || isPreview) {
+      setCatDragging(null);
+      setCatDragOver(null);
+      catDragRef.current = null;
+      return;
+    }
+    setIsDirty(true);
+    setCategoryOrder((prev) => {
+      const newOrder = [...prev];
+      const [removed] = newOrder.splice(sourceIndex, 1);
+      newOrder.splice(targetIndex, 0, removed);
+
+      try {
+        localStorage.setItem(`portfolio_${profile}_project_categories_order`, JSON.stringify(newOrder));
+        window.dispatchEvent(new Event('portfolio_project_categories_order_updated'));
+      } catch {}
+
+      showToast(
+        isEn
+          ? `Reordered category: ${getCategoryName(newOrder[targetIndex], isEn)}`
+          : `已更新分類順位：${getCategoryName(newOrder[targetIndex], isEn)}！`
+      );
+
+      // 自動將專案清單依新分類順序排序置頂
+      setProjects((prevProjects) => {
+        const sorted = [...prevProjects].sort((a, b) => {
+          const catIdxA = newOrder.indexOf(a.category);
+          const catIdxB = newOrder.indexOf(b.category);
+          const rankA = catIdxA === -1 ? 99 : catIdxA;
+          const rankB = catIdxB === -1 ? 99 : catIdxB;
+          if (rankA !== rankB) return rankA - rankB;
+          return (a.order ?? 999) - (b.order ?? 999);
+        }).map((p, i) => ({ ...p, order: i + 1 }));
+        return sorted;
+      });
+
+      return newOrder;
+    });
+
+    setCatDragging(null);
+    setCatDragOver(null);
+    catDragRef.current = null;
+  };
 
   /** 切換兩相鄰分類順位 (1 ⇄ 2 / 2 ⇄ 3) */
   const handleSwapCategoryOrder = (idx1: number, idx2: number) => {
@@ -950,35 +1006,47 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
             <span className="text-[10px] font-mono opacity-80">({projects.length})</span>
           </button>
 
-          {/* 各分類標籤頁與主修順位調配按鈕 */}
+          {/* 各分類標籤頁（不標個別色彩、純淨統一，支援水平拖曳調配順序與點擊切換） */}
           {categoryOrder.map((catKey, idx) => {
             const isActive = filterCategory === catKey;
-            const dotColor = getCategoryDotColor(catKey);
             const count = projects.filter((p) => p.category === catKey).length;
             const catName = getCategoryName(catKey, isEn);
+            const isDraggingThis = catDragging === idx;
+            const isOverThis = catDragOver === idx;
 
             return (
               <React.Fragment key={catKey}>
                 <button
                   type="button"
+                  draggable={!isPreview}
+                  onDragStart={(e) => handleCatDragStart(e, idx)}
+                  onDragEnd={handleCatDragEnd}
+                  onDragOver={(e) => handleCatDragOver(e, idx)}
+                  onDragLeave={() => setCatDragOver(null)}
+                  onDrop={(e) => handleCatDrop(e, idx)}
                   onClick={() => setFilterCategory(catKey)}
                   style={
                     isActive
                       ? {
-                          backgroundColor: `${dotColor}18`,
-                          borderColor: dotColor,
-                          color: dotColor,
-                          boxShadow: `0 0 15px ${dotColor}35`,
+                          backgroundColor: 'rgba(0, 240, 255, 0.12)',
+                          borderColor: 'var(--neon-cyan)',
+                          color: 'var(--neon-cyan)',
+                          boxShadow: '0 0 14px rgba(0, 240, 255, 0.25)',
                         }
                       : undefined
                   }
-                  className={`px-3.5 py-2 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                  title={isEn ? 'Click to filter, drag horizontally to reorder' : '點擊篩選專案，拖曳可調整分類順位'}
+                  className={`group px-3.5 py-2 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-1.5 cursor-grab active:cursor-grabbing ${
+                    isDraggingThis ? 'opacity-40 scale-95' : ''
+                  } ${isOverThis ? 'ring-2 ring-[var(--neon-cyan)] shadow-lg' : ''} ${
                     isActive
                       ? ''
                       : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
                   }`}
                 >
-                  <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
+                  {!isPreview && (
+                    <GripVertical className="w-3 h-3 text-[var(--text-sub)] opacity-40 group-hover:opacity-100 transition-opacity shrink-0" />
+                  )}
                   <span>{catName}</span>
                   <span className="text-[10px] font-mono opacity-80">({count})</span>
                 </button>
