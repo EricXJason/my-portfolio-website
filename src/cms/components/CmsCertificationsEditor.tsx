@@ -23,7 +23,6 @@ import {
   GripVertical,
   Pencil,
   EyeOff,
-  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -470,26 +469,14 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
     });
   };
 
-  /** handleSetDefault — 將當前證照資料設為預設值基準 */
-  const handleSetDefault = () => {
-    try {
-      localStorage.setItem(`portfolio_${profile}_certifications_baseline`, JSON.stringify(formData));
-      showToast(isEn ? 'Current certifications set as module default!' : '當前「專業證照」內容已設為此模板預設值！');
-    } catch {
-      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
-    }
-  };
-
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_certifications_baseline`);
-    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Restore Defaults' : '確認還原此模組預設',
       message: isEn
-        ? (isBaseline ? 'Reset the "Certifications" module to the pinned default state?' : 'Reset the "Certifications" module to its original defaults? Other modules are not affected.')
-        : (isBaseline ? '確定要將「專業證照」還原至設定的預設值嗎？' : '確定要將「專業證照」模組還原為初始預設值嗎？此操作不會影響其他模組。'),
+        ? 'Reset the "Certifications" module to repository defaults? Other modules are not affected.'
+        : '確定要將「專業證照」模組還原為初始預設值嗎？此操作不會影響其他模組。',
       confirmText: isEn ? 'Restore' : '確定還原預設',
       onConfirm: doReset,
     });
@@ -527,10 +514,8 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
 
   const doReset = async () => {
     setIsDirty(false);
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_certifications_baseline`);
-    const isBaseline = !!baselineRaw;
     const templateDefault = getFallbacksByProfile(profile).certifications as CertificationsFullData;
-    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as CertificationsFullData) : JSON.parse(JSON.stringify(templateDefault));
+    const resetData = JSON.parse(JSON.stringify(templateDefault));
     try {
       localStorage.removeItem(`portfolio_${profile}_certifications_data`);
       localStorage.removeItem('portfolio_certifications_data');
@@ -545,7 +530,7 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
       setFormData(resetData);
       setAwardsMeta(DEFAULT_AWARDS_META);
       await updateDocument('certifications', resetData);
-      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Certifications" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專業證照」模組已還原為模板預設！'));
+      showToast(isEn ? '"Certifications" restored to defaults!' : '「專業證照」模組已還原為模板預設！');
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
@@ -586,15 +571,15 @@ export const CmsCertificationsEditor: React.FC<CmsCertificationsEditorProps> = (
           </button>
           <button
             type="button"
-            onClick={isPreview ? undefined : handleSetDefault}
+            onClick={isPreview ? undefined : triggerSaveDialog}
             disabled={isPreview}
-            title={isEn ? 'Pin current certifications as module default' : '將當前專業證照內容設為預設值'}
-            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
-              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
+            title={isPreview ? (isEn ? 'Preview mode — read only' : '預覽模式 — 唯讀') : undefined}
+            className={`px-5 py-2 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold bg-[var(--neon-cyan)] text-[var(--neon-cyan-fg)] flex items-center gap-1.5 transition-all ${
+              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-[var(--neon-cyan)]/90 shadow-[0_0_15px_rgba(0,240,255,0.3)] cursor-pointer'
             }`}
           >
-            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
+            <Save className="w-4 h-4" />
+            <span>{isEn ? 'Save Changes' : '存檔'}</span>
           </button>
           <button
             type="button"

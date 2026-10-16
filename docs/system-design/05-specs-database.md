@@ -21,62 +21,98 @@
     'textColor': '#f8fafc',
     'lineColor': '#00f0ff',
     'titleColor': '#00f0ff',
+    'edgeLabelBackground': '#030712',
     'attributeBackgroundColorOdd': '#060a14',
     'attributeBackgroundColorEven': '#0b0f19',
     'fontSize': '12px'
-  }
+  },
+  'themeCSS': 'rect, .node rect, rect.actor { rx: 0px !important; ry: 0px !important; } .er.relationshipLabelBox { fill: none !important; stroke: none !important; display: none !important; } .er.relationshipLabel { fill: #00f0ff !important; font-weight: bold; } .er.entityBox { fill: #0b0f19 !important; stroke: #00f0ff !important; rx: 0px !important; ry: 0px !important; } .er.entityLabel { fill: #00f0ff !important; } .er.attributeBoxOdd { fill: #060a14 !important; stroke: #1e293b !important; } .er.attributeBoxEven { fill: #0b0f19 !important; stroke: #1e293b !important; }'
 }}%%
 erDiagram
-    COLLECTION_PORTFOLIO ||--|| DOC_HERO : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_ABOUT : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_SKILLS : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_PROJECTS : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_EXPERIENCE : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_CERTIFICATIONS : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_GALLERY : contains
-    COLLECTION_PORTFOLIO ||--|| DOC_SITE_SETTINGS : contains
+    COLLECTION_PORTFOLIO ||--|| DOC_HERO : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_ABOUT : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_SKILLS : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_PROJECTS : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_EXPERIENCE : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_CERTIFICATIONS : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_GALLERY : " "
+    COLLECTION_PORTFOLIO ||--|| DOC_SITE_SETTINGS : " "
+
+    DOC_SKILLS ||--o{ SKILL_CATEGORY : " "
+    SKILL_CATEGORY ||--o{ SKILL_ITEM : " "
+    DOC_PROJECTS ||--o{ PROJECT_ITEM : " "
+    DOC_EXPERIENCE ||--o{ EXPERIENCE_ITEM : " "
+    DOC_CERTIFICATIONS ||--o{ CERTIFICATE_ITEM : " "
+    DOC_SITE_SETTINGS ||--|| SITE_CONFIG : " "
 
     DOC_HERO {
-        string showGithub
-        string showArtstation
-        object links
-        array contacts
-        object zh
-        object en
+        string showGithub "是否顯示 GitHub 按鈕"
+        string showArtstation "是否顯示 ArtStation 按鈕"
+        map links "外部社群連結集合"
+        array contacts "聯絡方式清單"
+        map zh "中文問候文案與職稱"
+        map en "英文問候文案與職稱"
     }
 
     DOC_ABOUT {
-        string avatarUrl
-        object zh
-        object en
+        string avatarUrl "個人照片/頭像網址"
+        array stats "統計成就數據矩陣"
+        map zh "中文自傳與職涯描述"
+        map en "英文自傳與職涯描述"
     }
 
-    DOC_SKILLS {
-        array categories
+    SKILL_CATEGORY {
+        string id "分類鍵值 (frontend/backend/interactive)"
+        string title "分類展示標題"
+        string icon "Lucide 圖標識別碼"
+        number order "展示權重序號"
     }
 
-    DOC_PROJECTS {
-        array projects
+    SKILL_ITEM {
+        string name "技能技術名稱"
+        number level "掌握程度百分比 (1-100)"
+        string icon "專屬技術圖標名稱"
+        boolean visible "前臺可見性開關"
     }
 
-    DOC_EXPERIENCE {
-        array items
+    PROJECT_ITEM {
+        string id "專案唯一識別鍵"
+        string category "專案所屬類別"
+        string image "專案主視覺圖片網址"
+        string githubUrl "GitHub 原始碼連結"
+        string liveUrl "線上即時展示連結"
+        boolean visible "前臺顯示狀態"
+        number order "列表展示順序"
+        map zh "中文專案標題與描述規格"
+        map en "英文專案標題與描述規格"
     }
 
-    DOC_CERTIFICATIONS {
-        array items
+    EXPERIENCE_ITEM {
+        string id "經歷識別識別碼"
+        string period "任職/在學時間區間"
+        string role "擔任角色與職稱"
+        string company "任職機構或組織名稱"
+        array tags "相關技術領域標籤"
+        boolean visible "前臺可見性開關"
+        map zh "中文工作職責與成果"
+        map en "英文工作職責與成果"
     }
 
-    DOC_GALLERY {
-        array items
+    CERTIFICATE_ITEM {
+        string id "證照唯一識別碼"
+        string title "證照/獎項名稱"
+        string issuer "發照單位或主辦組織"
+        string date "獲取或發布日期"
+        string credentialUrl "線上驗證或證明連結"
+        boolean visible "前臺可見性開關"
     }
 
-    DOC_SITE_SETTINGS {
-        number codeAnimationSpeed
-        object modules_visibility
-        array module_order
-        object zh
-        object en
+    SITE_CONFIG {
+        number codeAnimationSpeed "代碼雨背景動畫流速"
+        map modules_visibility "全域八大模組顯隱字典"
+        array module_order "前臺導航與區塊排列順序"
+        string theme_default "預設色彩模式 (dark/light)"
+        string lang_default "預設語言介面 (zh/en)"
     }
 ```
 
@@ -171,11 +207,12 @@ erDiagram
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
-    classDef fallbackCard fill:#060a14,stroke:#38bdf8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
+    classDef fallbackCard fill:#060a14,stroke:#38bdf8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#f8fafc,rx:0px,ry:0px;
 
     L1["Level 1: 記憶體狀態<br>React Context (0ms)"]:::hudCard
     L2["Level 2: 本地快照<br>LocalStorage (~2ms)"]:::hudCard

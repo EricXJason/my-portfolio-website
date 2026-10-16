@@ -21,7 +21,6 @@ import {
   ArrowUp,
   ArrowDown,
   EyeOff,
-  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -375,31 +374,19 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
     setActiveCategoryIndex((prevIdx) => (prevIdx === 0 ? 1 : prevIdx === 1 ? 0 : prevIdx));
   };
 
-  /** handleSetDefault — 將當前內容設為模組預設值基準 */
-  const handleSetDefault = () => {
-    try {
-      localStorage.setItem(`portfolio_${profile}_skills_baseline`, JSON.stringify(formData));
-      showToast(isEn ? 'Current skills set as module default!' : '當前「專業技能」內容已設為預設值！');
-    } catch {
-      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
-    }
-  };
-
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_skills_baseline`);
-    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? (isBaseline ? 'Reset this module to the pinned default state?' : 'Are you sure you want to reset the "Skills" module to default?')
-        : (isBaseline ? '確定要將「專業技能」還原至設定的預設值嗎？' : '確定要將「專業技能」模組還原為初始預設值嗎？'),
+        ? 'Are you sure you want to reset the "Skills" module to repository defaults?'
+        : '確定要將「專業技能」模組還原為初始預設值嗎？此操作僅會重置專業技能模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Reset This Module' : '確定還原此模組',
       onConfirm: async () => {
         setIsDirty(false);
         const templateDefault = getFallbacksByProfile(profile).skills as unknown as SkillsFullData;
-        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as SkillsFullData) : JSON.parse(JSON.stringify(templateDefault));
+        const resetData = JSON.parse(JSON.stringify(templateDefault));
         try {
           localStorage.removeItem(`portfolio_${profile}_skills_data`);
           localStorage.removeItem('portfolio_skills_data');
@@ -416,7 +403,7 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
           setSkillsMeta(DEFAULT_SKILLS_META);
           setActiveCategoryIndex(0);
           await updateDocument('skills', resetData);
-          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Skills" module restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專業技能」模組已還原為初始預設資料！'));
+          showToast(isEn ? '"Skills" module restored to defaults!' : '「專業技能」模組已還原為初始預設資料！');
         } catch {
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
         }
@@ -451,11 +438,6 @@ export const CmsSkillsEditor: React.FC<CmsSkillsEditorProps> = ({ isPreview = fa
           <button type="button" onClick={isPreview ? undefined : triggerResetDialog} disabled={isPreview}
             className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-rose-500/10 hover:text-rose-400 hover:border-rose-500/30 cursor-pointer'}`}>
             <RotateCcw className="w-3.5 h-3.5" /><span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
-          </button>
-          <button type="button" onClick={isPreview ? undefined : handleSetDefault} disabled={isPreview}
-            title={isEn ? 'Pin current skills as module default' : '將當前專業技能內容設為預設值'}
-            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'}`}>
-            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" /><span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
           <button type="button" onClick={isPreview ? undefined : triggerSaveDialog} disabled={isPreview}
             className={`px-5 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-bold bg-[var(--neon-cyan)] text-[var(--neon-cyan-fg)] flex items-center gap-1.5 transition-all ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-[var(--neon-cyan)]/90 shadow-[0_0_15px_rgba(0,240,255,0.3)] cursor-pointer'}`}>

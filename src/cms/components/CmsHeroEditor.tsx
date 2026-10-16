@@ -22,7 +22,6 @@ import {
   Cpu,
   FileText,
   Link as LinkIcon,
-  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -221,38 +220,26 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
     });
   };
 
-  /** handleSetDefault — 將當前首頁資料設為預設值基準 */
-  const handleSetDefault = () => {
-    try {
-      localStorage.setItem(`portfolio_${profile}_hero_baseline`, JSON.stringify(formData));
-      showToast(isEn ? 'Current home data set as module default!' : '當前「首頁」內容已設為此模板預設值！');
-    } catch {
-      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
-    }
-  };
-
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_hero_baseline`);
-    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? (isBaseline ? 'Reset home module to the pinned default state?' : 'Are you sure you want to reset the "Home" module to default?')
-        : (isBaseline ? '確定要將「首頁」還原至設定的預設值嗎？' : '確定要將「首頁」模組還原為初始預設值嗎？此操作僅會重置首頁模組的內容，不會影響其他模組。'),
+        ? 'Are you sure you want to reset the "Home" module to repository defaults?'
+        : '確定要將「首頁」模組還原為初始預設值嗎？此操作僅會重置首頁模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
         const templateDefault = getFallbacksByProfile(profile).hero as unknown as HeroSectionFullData;
-        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as HeroSectionFullData) : JSON.parse(JSON.stringify(templateDefault));
+        const resetData = JSON.parse(JSON.stringify(templateDefault));
         setFormData(resetData);
         try {
           localStorage.removeItem(`portfolio_${profile}_hero_data`);
           localStorage.removeItem('portfolio_hero_data');
           window.dispatchEvent(new Event('portfolio_hero_data_updated'));
           await updateDocument('hero', resetData);
-          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Home" restored to initial defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「首頁」模組已還原為初始預設資料！'));
+          showToast(isEn ? '"Home" restored to initial defaults!' : '「首頁」模組已還原為初始預設資料！');
         } catch (err) {
           console.error(err);
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
@@ -294,19 +281,6 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={isPreview ? undefined : handleSetDefault}
-            disabled={isPreview}
-            title={isEn ? 'Pin current home data as module default' : '將當前首頁內容設為預設值'}
-            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
-              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
-            }`}
-          >
-            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
 
           <button

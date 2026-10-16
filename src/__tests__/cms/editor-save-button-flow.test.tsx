@@ -22,6 +22,15 @@ import { PortfolioDataProvider, getContentFingerprint } from '../../context/Port
 import { CmsDirtyProvider, useCmsDirty } from '../../cms/context/CmsDirtyContext';
 import { CmsModeProvider } from '../../cms/context/CmsModeContext';
 
+// 模擬 savePortfolioDoc 雲端存檔成功，確保按鈕操作流程測試穩定且不發送實體外網請求
+vi.mock('../../services/portfolioDataService', async (importOriginal) => {
+  const actual = await importOriginal<any>();
+  return {
+    ...actual,
+    savePortfolioDoc: vi.fn().mockResolvedValue(true),
+  };
+});
+
 // 輔助組件：即時監看 isDirty 狀態
 const DirtyIndicator = () => {
   const { isDirty } = useCmsDirty();

@@ -124,12 +124,12 @@ const fullstackExperience = (() => {
   return clone;
 })();
 
-// 專案排序：Fullstack 專案優先
+// 專案排序：Fullstack 與 Frontend Web 專案優先
 const fullstackProjects = (() => {
   const clone = JSON.parse(JSON.stringify(projectsData));
-  const fullstackItems = clone.filter((p: any) => p.category === 'fullstack');
-  const otherItems = clone.filter((p: any) => p.category !== 'fullstack');
-  return [...fullstackItems, ...otherItems];
+  const webItems = clone.filter((p: any) => p.category === 'fullstack' || p.category === 'frontend');
+  const otherItems = clone.filter((p: any) => p.category !== 'fullstack' && p.category !== 'frontend');
+  return [...webItems, ...otherItems];
 })();
 
 export const FULLSTACK_FALLBACKS = {

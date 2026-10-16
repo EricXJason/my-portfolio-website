@@ -28,7 +28,6 @@ import {
   Bot,
   Eye,
   EyeOff,
-  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -97,6 +96,32 @@ const DEFAULT_PROJECTS_META: Record<'zh' | 'en', ProjectsMeta> = {
 interface CmsProjectsEditorProps {
   isPreview?: boolean;
 }
+
+const getCategoryDotColor = (catKey: string): string => {
+  switch (catKey) {
+    case 'fullstack':
+      return '#00f0ff'; // 青色
+    case 'frontend':
+      return '#38bdf8'; // 天藍色
+    case 'interactive':
+      return '#60a5fa'; // 藍色
+    default:
+      return '#00f0ff';
+  }
+};
+
+const getCategoryName = (key: string, isEn: boolean): string => {
+  switch (key) {
+    case 'fullstack':
+      return isEn ? 'Fullstack Dev' : '全端開發';
+    case 'frontend':
+      return isEn ? 'Frontend Dev' : '前端開發';
+    case 'interactive':
+      return isEn ? 'Interactive App' : '互動應用開發';
+    default:
+      return key;
+  }
+};
 
 export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview = false }) => {
   const { lang } = useLang();
@@ -183,7 +208,22 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     const handleResetAll = (e?: Event) => {
       const evtProfile = (e as CustomEvent)?.detail?.profile || profile;
       const targetDefault = getFallbacksByProfile(evtProfile).projects as ProjectItem[];
+      const defaultCatOrder = evtProfile === 'interactive'
+        ? ['interactive', 'fullstack', 'frontend']
+        : ['fullstack', 'frontend', 'interactive'];
+
+      try {
+        localStorage.removeItem(`portfolio_${evtProfile}_projects_data`);
+        localStorage.removeItem('portfolio_projects_data');
+        localStorage.removeItem(`portfolio_${evtProfile}_project_categories_order`);
+        localStorage.removeItem('portfolio_project_categories_order');
+      } catch {}
+
       setProjects(JSON.parse(JSON.stringify(targetDefault)));
+      setCategoryOrder(defaultCatOrder);
+      setFilterCategory('all');
+      setProjectsMeta(DEFAULT_PROJECTS_META);
+      setActiveProjectId(targetDefault[0]?.id || '');
       setIsDirty(false);
     };
     window.addEventListener('portfolio_cms_reset_all', handleResetAll);
@@ -261,6 +301,90 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
 
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
 
+  // ── 專案分類順位管理（支援 F 模式與 I 模式個別記憶與切換） ──
+  const [filterCategory, setFilterCategory] = useState<string>('all');
+
+  const defaultCategoryOrder = profile === 'interactive'
+    ? ['interactive', 'fullstack', 'frontend']
+    : ['fullstack', 'frontend', 'interactive'];
+
+  const [categoryOrder, setCategoryOrder] = useState<string[]>(() => {
+    const siteSettings = data.site_settings as any;
+    if (Array.isArray(siteSettings?.project_categories_order) && siteSettings.project_categories_order.length > 0) {
+      return siteSettings.project_categories_order;
+    }
+    try {
+      const saved = localStorage.getItem(`portfolio_${profile}_project_categories_order`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return defaultCategoryOrder;
+  });
+
+  // 當 profile (F ⇄ I) 切換時動態同步載入對應模板之分類順位
+  useEffect(() => {
+    const siteSettings = data.site_settings as any;
+    if (Array.isArray(siteSettings?.project_categories_order) && siteSettings.project_categories_order.length > 0) {
+      setCategoryOrder(siteSettings.project_categories_order);
+      return;
+    }
+    try {
+      const saved = localStorage.getItem(`portfolio_${profile}_project_categories_order`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setCategoryOrder(parsed);
+          return;
+        }
+      }
+    } catch {}
+    setCategoryOrder(
+      profile === 'interactive'
+        ? ['interactive', 'fullstack', 'frontend']
+        : ['fullstack', 'frontend', 'interactive']
+    );
+  }, [profile, data.site_settings]);
+
+  /** 切換兩相鄰分類順位 (1 ⇄ 2 / 2 ⇄ 3) */
+  const handleSwapCategoryOrder = (idx1: number, idx2: number) => {
+    if (isPreview) return;
+    setIsDirty(true);
+    setCategoryOrder((prev) => {
+      const copy = [...prev];
+      const temp = copy[idx1];
+      copy[idx1] = copy[idx2];
+      copy[idx2] = temp;
+
+      try {
+        localStorage.setItem(`portfolio_${profile}_project_categories_order`, JSON.stringify(copy));
+        window.dispatchEvent(new Event('portfolio_project_categories_order_updated'));
+      } catch {}
+
+      showToast(
+        isEn
+          ? `Swapped category order: ${getCategoryName(copy[idx1], isEn)} ⇄ ${getCategoryName(copy[idx2], isEn)}`
+          : `已切換分類順位：${getCategoryName(copy[idx1], isEn)} ⇄ ${getCategoryName(copy[idx2], isEn)}！`
+      );
+
+      // 自動將專案清單依新分類順序排序置頂
+      setProjects((prevProjects) => {
+        const sorted = [...prevProjects].sort((a, b) => {
+          const catIdxA = copy.indexOf(a.category);
+          const catIdxB = copy.indexOf(b.category);
+          const rankA = catIdxA === -1 ? 99 : catIdxA;
+          const rankB = catIdxB === -1 ? 99 : catIdxB;
+          if (rankA !== rankB) return rankA - rankB;
+          return (a.order ?? 999) - (b.order ?? 999);
+        }).map((p, i) => ({ ...p, order: i + 1 }));
+        return sorted;
+      });
+
+      return copy;
+    });
+  };
+
   const toastTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const showToast = (msg: string) => {
@@ -279,12 +403,12 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
   const interactiveFeaturedCount = projects.filter(
     (p) => p.featured && p.category === 'interactive'
   ).length;
-  const fullstackFeaturedCount = projects.filter(
-    (p) => p.featured && p.category === 'fullstack'
+  const webFeaturedCount = projects.filter(
+    (p) => p.featured && (p.category === 'fullstack' || p.category === 'frontend')
   ).length;
   const currentCatFeaturedCount = isInteractive
     ? interactiveFeaturedCount
-    : fullstackFeaturedCount;
+    : webFeaturedCount;
 
   const handleToggleFeatured = (checked: boolean) => {
     if (activeProjectIndex === -1) return;
@@ -295,18 +419,18 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
           isEn
             ? (isInteractive
                 ? 'Maximum of 3 featured Interactive projects allowed. Uncheck another first.'
-                : 'Maximum of 3 featured Fullstack projects allowed. Uncheck another first.')
+                : 'Maximum of 3 featured Web (Fullstack/Frontend) projects allowed. Uncheck another first.')
             : (isInteractive
                 ? '精選互動作品最多僅能設定 3 項，請先取消同分類其他專案的精選標記。'
-                : '精選全端作品最多僅能設定 3 項，請先取消同分類其他專案的精選標記。')
+                : '精選 Web 網頁作品（全端/前端）最多僅能設定 3 項，請先取消同領域其他專案的精選標記。')
         );
         return;
       }
-      // 自動挑選同分類中 [1, 2, 3] 順位中尚未被使用的最小序號
+      // 自動挑選同領域中 [1, 2, 3] 順位中尚未被使用的最小序號
       const sameCatProjects = projects.filter((p) =>
         isInteractive
           ? p.category === 'interactive'
-          : p.category === 'fullstack'
+          : (p.category === 'fullstack' || p.category === 'frontend')
       );
       const usedOrders = new Set(
         sameCatProjects
@@ -362,7 +486,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
           p.featured &&
           (isInteractive
             ? p.category === 'interactive'
-            : p.category === 'fullstack') &&
+            : (p.category === 'fullstack' || p.category === 'frontend')) &&
           p.featuredOrder === newOrder
       );
       if (conflictIdx !== -1) {
@@ -530,6 +654,10 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
           window.dispatchEvent(new Event('portfolio_translations_updated'));
 
           await updateDocument('projects', projects);
+          await updateDocument('site_settings', {
+            ...(data.site_settings as any || {}),
+            project_categories_order: categoryOrder,
+          });
           await updateDocument('site_translations', {
             ...(data.site_translations as any || {}),
             zh: { ...(data.site_translations as any)?.zh, ...projectsMeta.zh },
@@ -544,35 +672,26 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
     });
   };
 
-  /** handleSetDefault — 將當前專案資料設為預設值基準 */
-  const handleSetDefault = () => {
-    try {
-      localStorage.setItem(`portfolio_${profile}_projects_baseline`, JSON.stringify(projects));
-      showToast(isEn ? 'Current projects set as module default!' : '當前「專案作品」內容已設為此模板預設值！');
-    } catch {
-      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
-    }
-  };
-
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_projects_baseline`);
-    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? (isBaseline ? 'Reset projects to the pinned default state?' : 'Are you sure you want to reset the "Projects" module to default?')
-        : (isBaseline ? '確定要將「專案作品」還原至設定的預設值嗎？' : '確定要將「專案作品」模組還原為初始預設值嗎？此操作僅會重置專案作品模組的內容，不會影響其他模組。'),
+        ? 'Are you sure you want to reset the "Projects" module to repository defaults?'
+        : '確定要將「專案作品」模組還原為初始預設值嗎？此操作僅會重置專案作品模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
         const templateDefault = getFallbacksByProfile(profile).projects as ProjectItem[];
-        const defaultList = baselineRaw ? (JSON.parse(baselineRaw) as ProjectItem[]) : JSON.parse(JSON.stringify(templateDefault));
+        const defaultList = JSON.parse(JSON.stringify(templateDefault));
         try {
           localStorage.removeItem(`portfolio_${profile}_projects_data`);
           localStorage.removeItem('portfolio_projects_data');
+          localStorage.removeItem(`portfolio_${profile}_project_categories_order`);
+          localStorage.removeItem('portfolio_project_categories_order');
           window.dispatchEvent(new Event('portfolio_projects_data_updated'));
+          window.dispatchEvent(new Event('portfolio_project_categories_order_updated'));
 
           const existingCustom = localStorage.getItem('portfolio_custom_translations');
           if (existingCustom) {
@@ -592,11 +711,13 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
           // 忽略例外
         }
         setProjects(defaultList);
+        setCategoryOrder(defaultCategoryOrder);
+        setFilterCategory('all');
         setProjectsMeta(DEFAULT_PROJECTS_META);
         setActiveProjectId(defaultList[0]?.id || '');
         try {
           await updateDocument('projects', defaultList);
-          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Projects" restored to initial defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「專案作品」模組已還原為初始預設資料！'));
+          showToast(isEn ? '"Projects" restored to initial defaults!' : '「專案作品」模組已還原為初始預設資料！');
         } catch {
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
         }
@@ -772,18 +893,6 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
           </button>
 
-          <button
-            type="button"
-            onClick={isPreview ? undefined : handleSetDefault}
-            disabled={isPreview}
-            title={isEn ? 'Pin current projects as module default' : '將當前專案作品內容設為預設值'}
-            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
-              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
-            }`}
-          >
-            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
-          </button>
 
           <button
             type="button"
@@ -814,6 +923,89 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
         isPreview={isPreview}
       />
 
+      {/* ── 專案作品分類順序與切換控制列 (支援 1 ⇄ 2 / 2 ⇄ 3 順位調配與獨立記憶) ── */}
+      <div className="space-y-2.5">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
+          {/* 全部作品篩選按鈕 */}
+          <button
+            type="button"
+            onClick={() => setFilterCategory('all')}
+            style={
+              filterCategory === 'all'
+                ? {
+                    backgroundColor: 'rgba(0, 240, 255, 0.12)',
+                    borderColor: 'var(--neon-cyan)',
+                    color: 'var(--neon-cyan)',
+                    boxShadow: '0 0 14px rgba(0, 240, 255, 0.25)',
+                  }
+                : undefined
+            }
+            className={`px-3.5 py-2 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
+              filterCategory === 'all'
+                ? ''
+                : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
+            }`}
+          >
+            <span>{isEn ? 'All Works' : '全部專案'}</span>
+            <span className="text-[10px] font-mono opacity-80">({projects.length})</span>
+          </button>
+
+          {/* 各分類標籤頁與主修順位調配按鈕 */}
+          {categoryOrder.map((catKey, idx) => {
+            const isActive = filterCategory === catKey;
+            const dotColor = getCategoryDotColor(catKey);
+            const count = projects.filter((p) => p.category === catKey).length;
+            const catName = getCategoryName(catKey, isEn);
+
+            return (
+              <React.Fragment key={catKey}>
+                <button
+                  type="button"
+                  onClick={() => setFilterCategory(catKey)}
+                  style={
+                    isActive
+                      ? {
+                          backgroundColor: `${dotColor}18`,
+                          borderColor: dotColor,
+                          color: dotColor,
+                          boxShadow: `0 0 15px ${dotColor}35`,
+                        }
+                      : undefined
+                  }
+                  className={`px-3.5 py-2 border cyber-cut-sm text-xs sm:text-sm font-['Noto_Sans_TC'] font-bold transition-all flex items-center gap-2 cursor-pointer ${
+                    isActive
+                      ? ''
+                      : 'bg-[var(--card-bg)] border-[var(--border-color)] text-[var(--text-sub)] hover:text-[var(--text-main)] hover:border-[var(--text-sub)]/40'
+                  }`}
+                >
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, display: 'inline-block', flexShrink: 0 }} />
+                  <span>{catName}</span>
+                  <span className="text-[10px] font-mono opacity-80">({count})</span>
+                </button>
+
+                {/* 前相鄰主修之間的交換按鈕 (1 ⇄ 2 / 2 ⇄ 3) */}
+                {idx < categoryOrder.length - 1 && (
+                  <button
+                    type="button"
+                    onClick={() => handleSwapCategoryOrder(idx, idx + 1)}
+                    disabled={isPreview}
+                    title={isEn ? `Swap order (${catName} ⇄ ${getCategoryName(categoryOrder[idx + 1], isEn)})` : `切換分類順位 (${catName} ⇄ ${getCategoryName(categoryOrder[idx + 1], isEn)})`}
+                    aria-label={`Swap category order`}
+                    className={`w-8 h-8 border cyber-cut-sm flex items-center justify-center font-mono text-sm font-bold transition-all shrink-0 ${
+                      isPreview
+                        ? 'opacity-40 cursor-not-allowed border-[var(--border-color)] text-[var(--text-sub)]'
+                        : 'bg-[var(--card-inner)] border-[var(--neon-cyan)]/50 text-[var(--neon-cyan)] hover:bg-[var(--neon-cyan)]/20 hover:border-[var(--neon-cyan)] hover:scale-105 active:scale-95 cursor-pointer shadow-[0_0_10px_rgba(0,240,255,0.15)]'
+                    }`}
+                  >
+                    ⇄
+                  </button>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </div>
+      </div>
+
       {/* ── 主工作區 (垂直專案清單與詳細編輯面板) ── */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* 左側欄：垂直專案選擇器（佔 4 欄寬度） */}
@@ -840,9 +1032,11 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
             )}
           </div>
 
-          {/* 垂直專案列表（嚴格垂直排列，零水平溢出） */}
+          {/* 垂直專案列表（嚴格垂直排列，零水平溢出，支援分類過濾） */}
           <div className="space-y-2">
-            {projects.map((proj, idx) => {
+            {projects
+              .filter((p) => filterCategory === 'all' || p.category === filterCategory)
+              .map((proj, idx) => {
               const isActive = proj.id === activeProjectId;
               const title = isEn ? (proj.title_en || proj.title_zh) : (proj.title_zh || proj.title_en);
               const isDraggingThis = projDragging === proj.id;
@@ -903,6 +1097,8 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                           <span className="text-[9px] font-['Noto_Sans_TC'] px-1.5 py-0.2 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-[var(--text-sub)]">
                             {proj.category === 'interactive'
                               ? (isEn ? 'Interactive App' : '互動應用開發')
+                              : proj.category === 'frontend'
+                              ? (isEn ? 'Frontend Dev' : '前端開發')
                               : (isEn ? 'Fullstack Dev' : '全端開發')}
                           </span>
 
@@ -1065,8 +1261,9 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                 }}
                 className="w-full px-4 py-2.5 border cyber-cut-sm bg-[var(--card-inner)] border-[var(--border-color)] text-sm text-[var(--text-main)] focus:border-[var(--neon-cyan)] focus:outline-none font-['Noto_Sans_TC'] cursor-pointer"
               >
-                <option value="interactive">{isEn ? 'Interactive App' : '互動應用開發'}</option>
                 <option value="fullstack">{isEn ? 'Fullstack Dev' : '全端開發'}</option>
+                <option value="frontend">{isEn ? 'Frontend Dev' : '前端開發'}</option>
+                <option value="interactive">{isEn ? 'Interactive App' : '互動應用開發'}</option>
               </select>
             </div>
 
@@ -1201,7 +1398,7 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
                   >
                     {isInteractive
                       ? (isEn ? `Interactive: ${interactiveFeaturedCount}/3` : `精選互動: ${interactiveFeaturedCount}/3`)
-                      : (isEn ? `Fullstack: ${fullstackFeaturedCount}/3` : `精選全端: ${fullstackFeaturedCount}/3`)}
+                      : (isEn ? `Web: ${webFeaturedCount}/3` : `精選 Web: ${webFeaturedCount}/3`)}
                   </span>
                 </div>
               </div>

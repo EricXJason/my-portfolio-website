@@ -20,7 +20,6 @@ import {
   ArrowUp,
   ArrowDown,
   BookOpen,
-  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useCmsDirty } from '../context/CmsDirtyContext';
@@ -345,31 +344,19 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     });
   };
 
-  /** handleSetDefault — 將當前關於我資料設為預設值基準 */
-  const handleSetDefault = () => {
-    try {
-      localStorage.setItem(`portfolio_${profile}_about_baseline`, JSON.stringify(formData));
-      showToast(isEn ? 'Current about data set as module default!' : '當前「關於我」內容已設為此模板預設值！');
-    } catch {
-      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
-    }
-  };
-
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_about_baseline`);
-    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? (isBaseline ? 'Reset about module to the pinned default state?' : 'Are you sure you want to reset the "About" module to default?')
-        : (isBaseline ? '確定要將「關於我」還原至設定的預設值嗎？' : '確定要將「關於我」模組還原為初始預設值嗎？此操作僅會重置關於我模組的內容，不會影響其他模組。'),
+        ? 'Are you sure you want to reset the "About" module to repository defaults?'
+        : '確定要將「關於我」模組還原為初始預設值嗎？此操作僅會重置關於我模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: async () => {
         setIsDirty(false);
         const templateDefault = getFallbacksByProfile(profile).about as unknown as AboutFullData;
-        const resetData = baselineRaw ? (JSON.parse(baselineRaw) as unknown as AboutFullData) : JSON.parse(JSON.stringify(templateDefault));
+        const resetData = JSON.parse(JSON.stringify(templateDefault));
         try {
           localStorage.removeItem(`portfolio_${profile}_about_data`);
           localStorage.removeItem('portfolio_about_data');
@@ -377,7 +364,7 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
           setFormData(resetData);
           setAboutMeta({ zhTitle: '關於我', enTitle: 'About' });
           await updateDocument('about', resetData);
-          showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"About" restored to initial defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「關於我」模組已還原為初始預設資料！'));
+          showToast(isEn ? '"About" restored to initial defaults!' : '「關於我」模組已還原為初始預設資料！');
         } catch {
           showToast(isEn ? 'Restored locally' : '已重設本地資料');
         }
@@ -419,16 +406,6 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
-          </button>
-          <button
-            type="button"
-            onClick={isPreview ? undefined : handleSetDefault}
-            disabled={isPreview}
-            title={isEn ? 'Pin current about data as module default' : '將當前關於我內容設為預設值'}
-            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'}`}
-          >
-            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
           <button
             type="button"

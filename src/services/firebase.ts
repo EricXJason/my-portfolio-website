@@ -1,12 +1,15 @@
 /**
- * ─────────────────────────────────────────────────────────────────────────────
- * 【服務層】Firebase 核心配置與雲端服務實例單例 (Firebase Core Client Singleton)
- * ─────────────────────────────────────────────────────────────────────────────
- * 職責：
- * 1. 讀取環境變數 (VITE_FIREBASE_*) 並初始化 Firebase App。
- * 2. 封裝導出 Authentication、Firestore Database 與 Cloud Storage 實例。
- * 3. 具備防禦性配置驗證，避免因金鑰未提供導致頁面 Crash。
- * ─────────────────────────────────────────────────────────────────────────────
+ * ============================================================================
+ * 檔案名稱: firebase.ts
+ * 所屬模組: Cloud Services & Backend Singletons
+ * 責任描述: 初始化並提供 Firebase 核心客戶端單例 (Auth、Firestore、Storage)，
+ *           封裝防禦性憑證檢驗，未配置時安全降級至靜態離線模式。
+ * 架構分層: Infrastructure & Services Layer
+ * 聯動關係:
+ *   - 上游依賴: 環境變數 (VITE_FIREBASE_*)
+ *   - 下游消費: PortfolioDataService (持久化存取)、CmsHeaderActions (管理者鑑權)、CmsImageUploader (Storage 上傳)
+ * 邊界處理: Auth 採惰性初始化，避免前臺首頁被注入 150KB 肥大 Auth iframe；金鑰缺失時優雅報警不 Crash。
+ * ============================================================================
  */
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
@@ -46,7 +49,11 @@ if (isFirebaseConfigured) {
   console.warn('[Firebase Warning]: Firebase credentials not found or unconfigured. Running in static fallback mode.');
 }
 
-// 惰性載入 Firebase Auth：僅在 CMS 後臺真正調用身分驗證時才初始化，避免前臺首頁被注入 150KB Auth iframe
+/**
+ * 惰性初始化並取得 Firebase Auth 實例
+ * [Why]: 僅在 CMS 後臺真正調用身分驗證時才初始化，避免前臺首頁被注入 150KB 肥大 Auth iframe
+ * @returns Firebase Auth 實例或 null (未配置時)
+ */
 let _auth: Auth | null = null;
 export const getFirebaseAuth = (): Auth | null => {
   if (!_auth && appInstance) {

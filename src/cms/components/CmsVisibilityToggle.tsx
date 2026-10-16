@@ -5,6 +5,9 @@
  * 責任描述: 封裝工整、賽博科技風、固定青色主題的前臺顯示/隱藏切換控制元件。
  * 設計規範: 嚴格遵循直角/切角科技風（cyber-cut-sm rounded-none），開啟固定為青色（#00f0ff），
  *           關閉為暗灰科技黑底，杜絕雜色（嚴禁黃色/紅色圓角），提供一致的 UI/UX。
+ * 聯動關係:
+ *   - 上游依賴: LangContext (多語系文字標籤)
+ *   - 下游消費: CmsSidebar、各大區塊編輯器 (CmsProjectsEditor, CmsSkillsEditor 等)
  * ============================================================================
  */
 
@@ -24,6 +27,11 @@ export interface CmsVisibilityToggleProps {
   title?: string;
 }
 
+/**
+ * 前臺可視性切換開關元件
+ * 業務目的：提供統一視覺規格之顯示/隱藏切換操作，連動 CMS 模組或各子項目在前臺的可視狀態
+ * @param props 開關狀態、回呼與尺寸設定
+ */
 export const CmsVisibilityToggle: React.FC<CmsVisibilityToggleProps> = ({
   visible,
   checked,

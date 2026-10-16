@@ -3,8 +3,11 @@
  * 檔案名稱: portfolio.ts
  * 所屬模組: Core Data Types & CMS Contracts
  * 責任描述: 定義全站作品集前端展示與 CMS 編輯之統一資料模型契約 (Single Source of Truth)，
- *           供 React 元件、CMS 表單與未來 Firebase 資料庫持久化全面對齊。
- * 架構分層: Types & Domain Model Layer
+ *           供 React 元件、CMS 表單與 Firebase 資料庫持久化全面對齊。
+ * 架構分層: Types & Domain Model Layer (SSOT 源頭)
+ * 聯動關係:
+ *   - 上游依賴: Firestore 文件儲存結構、本地種子 JSON (src/data/*.json)
+ *   - 下游消費: PortfolioDataContext、PortfolioDataService、全臺前臺展示元件、CMS 編輯器
  * 邊界處理: 支援雙語多國語言結構 (zh / en)，區隔多語文字與跨語系同步之結構欄位。
  * ============================================================================
  */
@@ -130,7 +133,7 @@ export interface ProjectItemData {
   subtitle: string;
   description: string;
   date: string;
-  category: 'interactive' | 'fullstack';
+  category: 'interactive' | 'fullstack' | 'frontend';
   tags: string[];
   techStack?: string[];
   image: string;

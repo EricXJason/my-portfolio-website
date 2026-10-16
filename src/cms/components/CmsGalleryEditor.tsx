@@ -22,7 +22,6 @@ import {
   ArrowUp,
   ArrowDown,
   EyeOff,
-  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -460,22 +459,10 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
     }
   };
 
-  /** handleSetDefault — 將當前畫廊資料設為預設值基準 */
-  const handleSetDefault = () => {
-    try {
-      localStorage.setItem(`portfolio_${profile}_gallery_baseline`, JSON.stringify(items));
-      showToast(isEn ? 'Current gallery set as module default!' : '當前「美術畫廊」內容已設為此模板預設值！');
-    } catch {
-      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
-    }
-  };
-
   const doReset = async () => {
     setIsDirty(false);
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_gallery_baseline`);
-    const isBaseline = !!baselineRaw;
     const templateDefault = getFallbacksByProfile(profile).gallery as GalleryItem[];
-    const resetData = baselineRaw ? (JSON.parse(baselineRaw) as GalleryItem[]) : JSON.parse(JSON.stringify(templateDefault));
+    const resetData = JSON.parse(JSON.stringify(templateDefault));
     try {
       localStorage.removeItem(`portfolio_${profile}_gallery_data`);
       localStorage.removeItem('portfolio_gallery_data');
@@ -498,7 +485,7 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
       setItems(resetData);
       setGalleryMeta(DEFAULT_GALLERY_META);
       await updateDocument('gallery', resetData);
-      showToast(isEn ? (isBaseline ? 'Restored to module defaults!' : '"Art Gallery" restored to defaults!') : (isBaseline ? '已還原至設定的預設值！' : '「美術畫廊」模組已還原為模板預設資料！'));
+      showToast(isEn ? '"Art Gallery" restored to defaults!' : '「美術畫廊」模組已還原為模板預設資料！');
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
@@ -518,15 +505,13 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
   };
 
   const triggerResetDialog = () => {
-    const baselineRaw = localStorage.getItem('portfolio_gallery_baseline');
-    const isBaseline = !!baselineRaw;
     setDialog({
       isOpen: true,
       type: 'reset',
       title: isEn ? 'Confirm Module Reset' : '確認還原此模組預設',
       message: isEn
-        ? (isBaseline ? 'Reset the "Art Gallery" module to the pinned default state?' : 'Are you sure you want to reset the "Art Gallery" module to default?')
-        : (isBaseline ? '確定要將「美術畫廊」還原至設定的預設值嗎？' : '確定要將「美術畫廊」模組還原為初始預設值嗎？此操作僅會重置美術畫廊模組的內容，不會影響其他模組。'),
+        ? 'Are you sure you want to reset the "Art Gallery" module to repository defaults?'
+        : '確定要將「美術畫廊」模組還原為初始預設值嗎？此操作僅會重置美術畫廊模組的內容，不會影響其他模組。',
       confirmText: isEn ? 'Restore Defaults' : '確定還原預設',
       onConfirm: doReset,
     });
@@ -590,17 +575,6 @@ export const CmsGalleryEditor: React.FC<CmsGalleryEditorProps> = ({ isPreview = 
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={isPreview ? undefined : handleSetDefault}
-            disabled={isPreview}
-            title={isEn ? 'Pin current gallery as module default' : '將當前美術畫廊內容設為預設值'}
-            className="flex items-center gap-1.5 px-3.5 py-2 border cyber-cut-sm text-xs font-['Share_Tech_Mono'] font-bold text-[var(--text-sub)] hover:text-amber-400 border-[var(--border-color)] hover:border-amber-400/40 bg-[var(--card-inner)] transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
 
           <button

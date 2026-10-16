@@ -2,16 +2,24 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    // 履歷素材與個人大頭照上傳路徑
-    match /uploads/{allPaths=**} {
-      // 公開唯讀
+    // 履歷素材與多媒體圖片上傳路徑 (portfolio_assets 與 uploads)
+    match /portfolio_assets/{allPaths=**} {
+      // 前臺訪客享有公開唯讀權限
       allow read: if true;
-      // 僅限管理者帳號寫入，且限制檔案大小在 15MB 內且必須為圖片類型
+      // 僅限通過 Firebase Auth 認證之管理員寫入，且限制檔案大小在 15MB 內且必須為圖片類型
       allow write: if request.auth != null
                     && request.resource.size < 15 * 1024 * 1024
                     && request.resource.contentType.matches('image/.*');
     }
 
+    match /uploads/{allPaths=**} {
+      allow read: if true;
+      allow write: if request.auth != null
+                    && request.resource.size < 15 * 1024 * 1024
+                    && request.resource.contentType.matches('image/.*');
+    }
+
+    // 預設保護：其餘路徑公開讀取、限認證管理員寫入
     match /{allPaths=**} {
       allow read: if true;
       allow write: if request.auth != null;

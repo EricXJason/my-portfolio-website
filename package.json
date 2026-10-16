@@ -10,7 +10,9 @@
     "lint": "oxlint",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:storage": "firebase deploy --only storage"
   },
   "dependencies": {
     "firebase": "^12.19.0",
@@ -29,6 +31,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.3",
+    "firebase-tools": "^15.34.0",
     "jsdom": "^30.1.1",
     "lighthouse": "^13.5.0",
     "oxlint": "^1.71.0",

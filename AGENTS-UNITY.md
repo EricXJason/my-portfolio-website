@@ -27,6 +27,10 @@
 | **常數 / Readonly** | `PascalCase` | 名詞，描述邏輯意義 | `private const int MaxLives = 3;` |
 | **事件 (Event)** | `PascalCase` | 動詞過去式；搭配 `On` 前綴觸發函式 | `public event Action<int> ScoreChanged;` |
 
+- **Unity 腳本頂部與方法註解 (默認落實)**:
+  - 所有 MonoBehaviour、ScriptableObject 頂部必備繁中 Header，說明「腳本做什麼」與「與哪些場景物件/腳本聯動 (如依賴 GameManager, 監聽 InputManager)」。
+  - 核心方法上方強制使用 XML 註解 (`/// <summary>方法目的說明</summary>`) 標記業務意圖與參數。
+
 ---
 
 ## 2. Inspector 組織與記憶體管理
@@ -36,3 +40,9 @@
   - 嚴禁在 `Update()`, `FixedUpdate()`, `LateUpdate()` 等高頻更新週期內調用 `new`、字串拼接或使用 LINQ。
   - 子彈、特效、音效等高頻生成銷毀物件，強制導入物件池機制 (Object Pooling)，嚴禁頻繁調用 `Instantiate` 與 `Destroy`。
 - **目錄拓撲彈性**: 順應 Unity 專案既有資產分類與 Assembly Definition (asmdef)，不強制死板目錄架構。
+
+---
+
+## 3. Unity 遊戲開發 MCP 賦能建議
+
+當人類使用者提及或要求對接 Unity 專案資產結構、場景階層檢查、Prefab 依賴關係診斷或編譯設定查詢時，若環境具備 Unity MCP 支援，Agent **必須主動建議啟用 Unity MCP 工具**，並說明其加速能力（例如：直接讀取場景物件樹、深度搜尋失聯引用 Broken References、分析 Assembly 依賴圖，免去手動啟動龐大 Editor 逐一檢查 Inspector 的時間）。

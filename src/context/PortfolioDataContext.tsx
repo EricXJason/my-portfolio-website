@@ -329,13 +329,36 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
     // 1. 立即重置本地 React 狀態
     setData(targetDefaults);
 
-    // 2. 清除該 profile 的所有快取與預覽暫存
+    // 2. 清除該 profile 的所有快取與預覽暫存，並徹底清除舊版全域 key 與自訂設定
     const docIds = Object.keys(fallbacks) as PortfolioDocId[];
     docIds.forEach((docId) => {
       try {
         const key = getModuleStorageKey(docId, profile);
         localStorage.setItem(key, JSON.stringify(targetDefaults[docId]));
         localStorage.removeItem(getPreviewStorageKey(docId, profile));
+        if (LEGACY_KEY_MAP[docId]) {
+          localStorage.removeItem(LEGACY_KEY_MAP[docId]);
+        }
+      } catch {}
+    });
+
+    // 徹底清理所有舊版全域 key、自訂翻譯與分類排序快取
+    const extraKeysToRemove = [
+      'portfolio_projects_data',
+      'portfolio_about_data',
+      'portfolio_skills_data',
+      'portfolio_experience_data',
+      'portfolio_certifications_data',
+      'portfolio_gallery_data',
+      'portfolio_custom_translations',
+      'portfolio_fullstack_project_categories_order',
+      'portfolio_interactive_project_categories_order',
+      'portfolio_project_categories_order',
+      `portfolio_${profile}_project_categories_order`,
+    ];
+    extraKeysToRemove.forEach((k) => {
+      try {
+        localStorage.removeItem(k);
       } catch {}
     });
 
@@ -344,7 +367,7 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
       const keysToRemove: string[] = [];
       for (let i = 0; i < localStorage.length; i++) {
         const k = localStorage.key(i);
-        if (k && (k.startsWith('portfolio_preview_') || k.endsWith('_baseline'))) {
+        if (k && (k.startsWith('portfolio_preview_') || k.endsWith('_baseline') || k.includes('_baseline_'))) {
           keysToRemove.push(k);
         }
       }
@@ -368,19 +391,7 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
       }
     } catch {}
 
-    // 3. 批次同步還原至 Firestore 對應集合
-    await Promise.all(
-      docIds.map((docId) =>
-        savePortfolioDoc(docId, fallbacks[docId], profile).catch((err) =>
-          console.error(`[DataContext]: Resetting ${docId} (${profile}) to cloud failed:`, err)
-        )
-      )
-    );
-
-    setLastUpdated(new Date());
-    setIsLoadingCloud(false);
-
-    // 4. 廣播全域重置事件
+    // 3. 立即廣播全域重置事件（優先確保前端介面瞬間刷新）
     window.dispatchEvent(new CustomEvent('portfolio_cms_reset_all', { detail: { profile } }));
     window.dispatchEvent(new Event('portfolio_data_updated'));
     window.dispatchEvent(new Event('portfolio_projects_data_updated'));
@@ -390,6 +401,23 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
     window.dispatchEvent(new Event('portfolio_experience_data_updated'));
     window.dispatchEvent(new Event('portfolio_certifications_data_updated'));
     window.dispatchEvent(new Event('portfolio_gallery_data_updated'));
+    window.dispatchEvent(new Event('portfolio_project_categories_order_updated'));
+
+    // 4. 批次同步還原至 Firestore 對應集合（非阻塞背景同步，防禦性容錯）
+    try {
+      await Promise.all(
+        docIds.map((docId) =>
+          savePortfolioDoc(docId, fallbacks[docId], profile).catch((err) =>
+            console.warn(`[DataContext]: Resetting ${docId} (${profile}) to cloud skipped/failed:`, err)
+          )
+        )
+      );
+    } catch (err) {
+      console.warn('[DataContext]: Cloud batch reset encountered warnings:', err);
+    }
+
+    setLastUpdated(new Date());
+    setIsLoadingCloud(false);
   }, [profile]);
 
   // 5. 自動指紋同步：當程式碼 JSON 修改時，更新本地指紋標記

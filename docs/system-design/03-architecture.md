@@ -28,10 +28,11 @@
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart LR
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
 
     subgraph Layer1 ["1. 展示層 (Presentation)"]
         L1["前臺展示元件矩陣<br>自研 CMS 視覺化後臺"]:::hudCard
@@ -117,11 +118,12 @@ flowchart LR
   },
   'flowchart': {
     'curve': 'linear'
-  }
+  },
+  'themeCSS': 'rect, .node rect { rx: 0px !important; ry: 0px !important; }'
 }}%%
 flowchart TD
-    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc;
-    classDef lazyCard fill:#0b0f19,stroke:#38bdf8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#f8fafc;
+    classDef hudCard fill:#0b0f19,stroke:#00f0ff,stroke-width:1.5px,color:#f8fafc,rx:0px,ry:0px;
+    classDef lazyCard fill:#0b0f19,stroke:#38bdf8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#f8fafc,rx:0px,ry:0px;
 
     subgraph EntryTier ["入口與路由中樞 (Routing and Shell Tier)"]
         App["主應用入口<br>App.tsx"]:::hudCard

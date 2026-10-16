@@ -65,13 +65,14 @@
 * **`master` 分支**: 生產環境穩定分支。嚴禁日常直接 Commit。
 * **`development` 分支**: 整合測試主幹。由發布指令將 `feature` 壓平匯入。
 * **`feature` 分支**: 日常開發沙盒。
-* **⚠️ AI 自動 Commit 規範**:
+* **⚠️ AI 回應前強制原子 Commit 守衛 (Mandatory In-Sandbox Commit Guard)**:
   - **前置防禦守衛**: **若專案尚未執行 `初始化 git`（本地無 `.git` 目錄），嚴禁執行任何 Git 指令。**
-  - 僅於專案已完成 Git 初始化且當前處於 `feature` 分支時，每次 AI 完成一次程式碼生成、修改或指令任務後，必須自主於 `feature` 分支執行 CLI 原子提交：
+  - **絕對執行時機**: 專案已完成 Git 初始化且當前處於 `feature` 分支時，**Agent 每次完成任何程式碼生成、修改、文檔任務後，在向人類輸出最終回覆文字前，強制必須自動於背景執行 CLI 原子提交**：
     ```bash
     git add .
     git commit -m "<type>(<scope>): <short imperative description>"
     ```
+  - **工作區零殘留底線**: 嚴禁在結束對話或回報時遺留未提交變更（Uncommitted changes）於本地工作區交差；工作區必須永遠維持乾淨已提交狀態，進度 100% 入庫。
 
 ---
 
@@ -171,3 +172,9 @@ Commit 訊息為全協定中**唯一強制 100% 使用純英文**之項目，格
 ```
 
 * 允許類型：`feat`, `fix`, `refactor`, `perf`, `chore`, `docs`, `style`, `test`。
+
+---
+
+## 5. GitHub 服務 MCP 賦能建議
+
+當人類使用者提及或要求對接遠端儲存庫管理、PR 審查、Issue 追蹤或 Release 發布時，若環境具備 GitHub MCP 支援，Agent **必須主動建議啟用 GitHub MCP 工具**，並說明其加速能力（例如：直接透過 API 建立同名空白遠端庫、自動提取遠端分支狀態、建立 Pull Request 與發布 Release 標籤，省去使用者手動開啟瀏覽器設定權限與複製網址的繁瑣步驟）。

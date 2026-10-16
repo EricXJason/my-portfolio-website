@@ -21,7 +21,6 @@ import {
   BookOpen,
   Award,
   EyeOff,
-  BookmarkCheck,
 } from 'lucide-react';
 import { useLang } from '../../context/LangContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -826,13 +825,8 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
   };
 
   const handleResetConfirm = async () => {
-    // 優先還原使用者設定的「基準值」，若無則還原當前 profile 模板之預設資料
-    const baselineRaw = localStorage.getItem(`portfolio_${profile}_experience_baseline`);
     const templateDefault = getFallbacksByProfile(profile).experience as unknown as ExperienceFullData;
-    const defaults = baselineRaw
-      ? (JSON.parse(baselineRaw) as ExperienceFullData)
-      : JSON.parse(JSON.stringify(templateDefault));
-    const isBaseline = !!baselineRaw;
+    const defaults = JSON.parse(JSON.stringify(templateDefault));
 
     try {
       localStorage.removeItem(`portfolio_${profile}_experience_data`);
@@ -855,23 +849,11 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
     window.dispatchEvent(new Event('portfolio_custom_translations_updated'));
     try {
       await updateDocument('experience', defaults);
-      showToast(isEn
-        ? (isBaseline ? 'Restored to baseline data' : 'Reset to default data')
-        : (isBaseline ? '已還原至基準資料' : '已重設回模板預設資料'));
+      showToast(isEn ? 'Reset to repository default data' : '已重設回初始預設資料');
     } catch {
       showToast(isEn ? 'Restored locally' : '已重設本地資料');
     }
     setDialog(EMPTY_DIALOG);
-  };
-
-  /** handleSetDefault — 將當前經歷資料儲存為預設值基準，reset 時優先還原此預設 */
-  const handleSetDefault = () => {
-    try {
-      localStorage.setItem(`portfolio_${profile}_experience_baseline`, JSON.stringify(formData));
-      showToast(isEn ? 'Current data set as module default. Reset will restore to this state.' : '當前「經歷」內容已設為此模板預設值，還原預設將回到此狀態！');
-    } catch {
-      showToast(isEn ? 'Failed to set default' : '設定預設值失敗');
-    }
   };
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.25)';
@@ -909,7 +891,7 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
                 type: 'reset',
                 title: isEn ? 'Reset Experience Data' : '重設經歷與學術資料',
                 message: isEn
-                  ? 'Are you sure you want to reset all experience data to default? Unsaved changes will be lost.'
+                  ? 'Are you sure you want to reset all experience data to repository defaults? Unsaved changes will be lost.'
                   : '確定要將所有學歷、工作經歷、研習與論文資料重設為初始預設值嗎？此操作無法撤銷。',
                 confirmText: isEn ? 'Confirm Reset' : '確認重設',
                 onConfirm: handleResetConfirm,
@@ -922,20 +904,6 @@ export const CmsExperienceEditor: React.FC<CmsExperienceEditorProps> = ({ isPrev
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>{isEn ? 'Restore Defaults' : '還原預設'}</span>
-          </button>
-
-          {/* 設為預設值按鈕 */}
-          <button
-            type="button"
-            disabled={isPreview}
-            onClick={handleSetDefault}
-            title={isEn ? 'Pin current data as module default' : '將當前內容設為此模組預設值'}
-            className={`px-4 py-2 border cyber-cut-sm text-xs font-['Noto_Sans_TC'] font-medium bg-[var(--card-inner)] text-[var(--text-sub)] border-[var(--border-color)] flex items-center gap-1.5 transition-colors ${
-              isPreview ? 'opacity-40 cursor-not-allowed' : 'hover:bg-amber-500/10 hover:text-amber-400 hover:border-amber-500/30 cursor-pointer'
-            }`}
-          >
-            <BookmarkCheck className="w-3.5 h-3.5 text-amber-400" />
-            <span>{isEn ? 'Set as Default' : '設為預設值'}</span>
           </button>
 
           <button

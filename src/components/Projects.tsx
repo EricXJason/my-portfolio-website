@@ -166,6 +166,17 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         lightText: fullstackStyle.lightText,
         iconName: 'fullstack',
       },
+      frontend: {
+        zh: '前端開發',
+        en: 'Frontend Dev',
+        darkBg: 'rgba(56, 189, 248, 0.12)',
+        darkBorder: 'rgba(56, 189, 248, 0.45)',
+        darkText: '#38bdf8',
+        lightBg: '#f0f9ff',
+        lightBorder: '#0ea5e9',
+        lightText: '#0284c7',
+        iconName: 'frontend',
+      },
       interactive: {
         zh: '互動應用開發',
         en: 'Interactive App',
@@ -221,7 +232,33 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
     return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [selectedProjectModal]);
 
-  // 依精選排序權重 (featuredOrder) 與預設序號 (order) 進行專案穩定排序
+  // 聆聽分類順位即時更新事件
+  const [, setCatOrderTick] = useState(0);
+  useEffect(() => {
+    const handleCatOrderUpdate = () => setCatOrderTick((t) => t + 1);
+    window.addEventListener('portfolio_project_categories_order_updated', handleCatOrderUpdate);
+    return () => window.removeEventListener('portfolio_project_categories_order_updated', handleCatOrderUpdate);
+  }, []);
+
+  // 專案分類順序：支援從 site_settings 或 localStorage 讀取自訂順位，並依當前模式 (F vs I) 動態調整
+  const categoryOrder = useMemo(() => {
+    const siteSettings = data.site_settings as any;
+    if (Array.isArray(siteSettings?.project_categories_order) && siteSettings.project_categories_order.length > 0) {
+      return siteSettings.project_categories_order as string[];
+    }
+    try {
+      const saved = localStorage.getItem(`portfolio_${isInteractiveMode ? 'interactive' : 'fullstack'}_project_categories_order`);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed as string[];
+      }
+    } catch {}
+    return isInteractiveMode
+      ? ['interactive', 'fullstack', 'frontend']
+      : ['fullstack', 'frontend', 'interactive'];
+  }, [data.site_settings, isInteractiveMode]);
+
+  // 依精選排序權重 (featuredOrder) 與分類自訂順位進行專案穩定排序
   const allProjectsSorted = useMemo(() => {
     return [...projects].sort((a, b) => {
       if (a.featured && !b.featured) return -1;
@@ -229,9 +266,14 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
       if (a.featured && b.featured) {
         return (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999);
       }
+      const catIdxA = categoryOrder.indexOf(a.category);
+      const catIdxB = categoryOrder.indexOf(b.category);
+      const rankA = catIdxA === -1 ? 99 : catIdxA;
+      const rankB = catIdxB === -1 ? 99 : catIdxB;
+      if (rankA !== rankB) return rankA - rankB;
       return (a.order ?? 999) - (b.order ?? 999);
     });
-  }, [projects]);
+  }, [projects, categoryOrder]);
 
   const targetProjectsList = useMemo(() => {
     if (filter === 'featured') {
@@ -262,7 +304,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const featuredFullstackProjects = useMemo(() => {
     return projects
-      .filter((p) => p.category === 'fullstack' && p.featured && p.visible !== false)
+      .filter((p) => (p.category === 'fullstack' || p.category === 'frontend') && p.featured && p.visible !== false)
       .sort((a, b) => (a.featuredOrder ?? 999) - (b.featuredOrder ?? 999))
       .slice(0, 3);
   }, [projects]);
@@ -279,20 +321,24 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
   const isFeaturedSideBySideView = filter === 'featured';
 
-  // 專案類別篩選順序：依當前模式動態調整順序 (全端優先 vs 互動優先)
-  const filters = isInteractiveMode
-    ? [
-        { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
-        { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
-        { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
-        { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
-      ]
-    : [
-        { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
-        { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
-        { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> },
-        { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> },
-      ];
+  // 專案類別篩選順序：依 categoryOrder 動態映射
+  const filters = useMemo(() => {
+    const catItems = categoryOrder.map((key) => {
+      if (key === 'interactive') {
+        return { key: 'interactive', label: t('cat_interactive'), icon: <Gamepad2 size={15} /> };
+      }
+      if (key === 'frontend') {
+        return { key: 'frontend', label: t('cat_frontend'), icon: <Layout size={15} /> };
+      }
+      return { key: 'fullstack', label: t('cat_fullstack'), icon: <Globe size={15} /> };
+    });
+
+    return [
+      { key: 'featured', label: t('cat_featured'), icon: <Star size={15} className="text-amber-400 fill-amber-400" /> },
+      { key: 'all', label: t('cat_all'), icon: <Layers size={15} /> },
+      ...catItems,
+    ];
+  }, [categoryOrder, t]);
 
   const borderCol = isLight ? '#cbd5e1' : 'rgba(0, 240, 255, 0.3)';
   const cyanCol = isLight ? '#0369a1' : '#00f0ff';
@@ -551,6 +597,16 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
                   boxShadow: isLight ? '0 4px 14px rgba(15, 23, 42, 0.30)' : '0 0 14px rgba(255, 255, 255, 0.45)',
                 };
               }
+            } else if (f.key === 'frontend') {
+              hoverClass = 'hover:border-sky-400 hover:text-sky-300';
+              if (isActive) {
+                customActiveStyle = {
+                  backgroundColor: isLight ? '#0284c7' : 'rgba(14, 165, 233, 0.18)',
+                  color: isLight ? '#ffffff' : '#38bdf8',
+                  borderColor: isLight ? '#0284c7' : '#38bdf8',
+                  boxShadow: isLight ? '0 4px 14px rgba(2, 132, 199, 0.35)' : '0 0 14px rgba(56, 189, 248, 0.45)',
+                };
+              }
             } else if (f.key === 'fullstack' || f.key === 'interactive') {
               const isFirstMajor = isInteractiveMode ? f.key === 'interactive' : f.key === 'fullstack';
               const styleConfig = isFirstMajor ? PRIMARY_MAJOR_STYLE : SECONDARY_MAJOR_STYLE;
@@ -793,8 +849,12 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
               const leftProjects = isInteractiveMode ? featuredInteractiveProjects : featuredFullstackProjects;
               const rightProjects = isInteractiveMode ? featuredFullstackProjects : featuredInteractiveProjects;
 
-              const leftTitle = lang === 'zh' ? categoryMap[leftCategoryKey].zh : categoryMap[leftCategoryKey].en;
-              const rightTitle = lang === 'zh' ? categoryMap[rightCategoryKey].zh : categoryMap[rightCategoryKey].en;
+              const leftTitle = isInteractiveMode
+                ? (lang === 'zh' ? '互動應用開發' : 'Interactive App')
+                : (lang === 'zh' ? '全端／前端開發' : 'Fullstack / Frontend');
+              const rightTitle = isInteractiveMode
+                ? (lang === 'zh' ? '全端／前端開發' : 'Fullstack / Frontend')
+                : (lang === 'zh' ? '互動應用開發' : 'Interactive App');
 
               return (
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-stretch">
