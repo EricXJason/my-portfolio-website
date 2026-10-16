@@ -873,9 +873,9 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
 
               const leftTitle = isInteractiveMode
                 ? (lang === 'zh' ? '互動應用開發' : 'Interactive App')
-                : (lang === 'zh' ? '全端／前端開發' : 'Fullstack / Frontend');
+                : (lang === 'zh' ? '全端作品' : 'Fullstack Projects');
               const rightTitle = isInteractiveMode
-                ? (lang === 'zh' ? '全端／前端開發' : 'Fullstack / Frontend')
+                ? (lang === 'zh' ? '全端作品' : 'Fullstack Projects')
                 : (lang === 'zh' ? '互動應用開發' : 'Interactive App');
 
               return (

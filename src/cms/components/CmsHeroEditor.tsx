@@ -84,12 +84,22 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
     return templateDefault || (defaultHeroData as HeroSectionFullData);
   });
 
+  // 當切換 F ⇄ I 模式時重新載入該模式之 Hero 內容，平時在乾淨狀態下同步外部更新
+  const prevProfileRef = useRef(profile);
   useEffect(() => {
-    // 僅在非編輯（乾淨）狀態下才允許外部 data.hero 覆寫本地表單，徹底杜絕雙向同步無限迴圈
+    if (prevProfileRef.current !== profile) {
+      prevProfileRef.current = profile;
+      const targetData = data.hero || (getFallbacksByProfile(profile).hero as unknown as HeroSectionFullData);
+      if (targetData) {
+        setFormData(targetData as HeroSectionFullData);
+      }
+      setIsDirty(false);
+      return;
+    }
     if (data.hero && !isDirty) {
       setFormData(data.hero as HeroSectionFullData);
     }
-  }, [data.hero, isDirty]);
+  }, [profile, data.hero, isDirty, setIsDirty]);
 
   useEffect(() => {
     return () => setIsDirty(false);
@@ -132,10 +142,12 @@ export const CmsHeroEditor: React.FC<CmsHeroEditorProps> = ({ isPreview = false 
     if (!isDirty) return;
     updateDocument('hero', formData, true).catch(() => {});
     try {
-      localStorage.setItem('portfolio_hero_data', JSON.stringify(formData));
+      localStorage.setItem(`portfolio_${profile}_hero_data`, JSON.stringify(formData));
+      localStorage.removeItem('portfolio_hero_data');
+      window.dispatchEvent(new Event(`portfolio_${profile}_hero_data_updated`));
       window.dispatchEvent(new Event('portfolio_hero_data_updated'));
     } catch {}
-  }, [formData, isDirty, updateDocument]);
+  }, [formData, isDirty, profile, updateDocument]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);

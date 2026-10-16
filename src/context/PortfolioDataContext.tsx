@@ -114,9 +114,13 @@ const getInitialModuleData = <T,>(docId: PortfolioDocId, profile: ProfileType): 
 
     const primaryKey = getModuleStorageKey(docId, profile);
     const previewKey = getPreviewStorageKey(docId, profile);
-    // 嚴格隔離：site_settings 與 experience 涉及雙模板特異化開關與可見度，禁止讀取舊版未分模板之 legacyKey
+    // 嚴格隔離：site_settings、experience、hero 與 about 涉及雙模板特異化自傳、自介與開關，禁止讀取舊版未分模板之 legacyKey
     const legacyKey =
-      profile === 'fullstack' && docId !== 'site_settings' && docId !== 'experience'
+      profile === 'fullstack' &&
+      docId !== 'site_settings' &&
+      docId !== 'experience' &&
+      docId !== 'about' &&
+      docId !== 'hero'
         ? LEGACY_KEY_MAP[docId]
         : null;
 
@@ -297,6 +301,54 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
         } catch {}
 
         await savePortfolioDoc(docId, newPayload, profile);
+
+        // ── 實體全域同步與呈現隔離調度機制 ──
+        const otherProfile: ProfileType = profile === 'fullstack' ? 'interactive' : 'fullstack';
+
+        // 1. 專案作品 (Projects)：實體欄位雙向同步，但保留另一個模式專屬的 visible、featured、featuredOrder、order
+        if (docId === 'projects' && Array.isArray(newPayload)) {
+          try {
+            const otherKey = getModuleStorageKey('projects', otherProfile);
+            const otherSaved = localStorage.getItem(otherKey);
+            const otherFallbacks = getFallbacksByProfile(otherProfile).projects as any[];
+            const otherProjects = (otherSaved ? JSON.parse(otherSaved) : otherFallbacks) || [];
+
+            if (Array.isArray(otherProjects)) {
+              const mergedOther = newPayload.map((proj: any) => {
+                const existingOther = otherProjects.find((op: any) => op.id === proj.id);
+                if (existingOther) {
+                  return {
+                    ...proj,
+                    visible: existingOther.visible !== undefined ? existingOther.visible : proj.visible,
+                    featured: existingOther.featured !== undefined ? existingOther.featured : proj.featured,
+                    featuredOrder: existingOther.featuredOrder !== undefined ? existingOther.featuredOrder : proj.featuredOrder,
+                    order: existingOther.order !== undefined ? existingOther.order : proj.order,
+                  };
+                }
+                return {
+                  ...proj,
+                  visible: proj.visible ?? true,
+                  featured: false,
+                };
+              });
+
+              localStorage.setItem(otherKey, JSON.stringify(mergedOther));
+              savePortfolioDoc('projects', mergedOther, otherProfile).catch(() => {});
+            }
+          } catch (e) {
+            console.warn('[DataContext]: Projects cross-profile entity sync error:', e);
+          }
+        }
+
+        // 2. 完全共用模組 (Gallery, Skills, Certifications, Translations)：一處修改全域同步
+        if (['gallery', 'skills', 'certifications', 'site_translations'].includes(docId)) {
+          try {
+            const otherKey = getModuleStorageKey(docId, otherProfile);
+            localStorage.setItem(otherKey, JSON.stringify(newPayload));
+            savePortfolioDoc(docId, newPayload, otherProfile).catch(() => {});
+          } catch {}
+        }
+
         setLastUpdated(new Date());
         return true;
       } catch (error) {

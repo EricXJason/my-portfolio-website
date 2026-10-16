@@ -75,7 +75,7 @@ interface CmsAboutEditorProps {
 export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = false }) => {
   const { lang } = useLang();
   const isEn = lang === 'en';
-  const { setIsDirty } = useCmsDirty();
+  const { isDirty, setIsDirty } = useCmsDirty();
   const { data, updateDocument, profile } = usePortfolioData();
 
   useEffect(() => {
@@ -90,11 +90,22 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     return templateDefault || (defaultAboutData as unknown as AboutFullData);
   });
 
+  // 當切換 F ⇄ I 模式時重新載入該模式之 About 與自傳內容，平時在乾淨狀態下同步外部更新
+  const prevProfileRef = useRef(profile);
   useEffect(() => {
-    if (data.about) {
+    if (prevProfileRef.current !== profile) {
+      prevProfileRef.current = profile;
+      const targetData = data.about || (getFallbacksByProfile(profile).about as unknown as AboutFullData);
+      if (targetData) {
+        setFormData(targetData as AboutFullData);
+      }
+      setIsDirty(false);
+      return;
+    }
+    if (data.about && !isDirty) {
       setFormData(data.about as unknown as AboutFullData);
     }
-  }, [data.about]);
+  }, [profile, data.about, isDirty, setIsDirty]);
 
   // 區塊標題中繼資料（儲存於 portfolio_custom_translations）
   const [aboutMeta, setAboutMeta] = useState<{ zhTitle: string; enTitle: string }>(() => {
@@ -157,10 +168,12 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
     }
     updateDocument('about', formData, true).catch(() => {});
     try {
-      localStorage.setItem('portfolio_about_data', JSON.stringify(formData));
+      localStorage.setItem(`portfolio_${profile}_about_data`, JSON.stringify(formData));
+      localStorage.removeItem('portfolio_about_data');
+      window.dispatchEvent(new Event(`portfolio_${profile}_about_data_updated`));
       window.dispatchEvent(new Event('portfolio_about_data_updated'));
     } catch {}
-  }, [formData, updateDocument]);
+  }, [formData, profile, updateDocument]);
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [dialog, setDialog] = useState<CmsConfirmDialogState>(EMPTY_DIALOG);
@@ -318,7 +331,8 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
       onConfirm: async () => {
         setIsDirty(false);
         try {
-          localStorage.setItem('portfolio_about_data', JSON.stringify(formData));
+          localStorage.setItem(`portfolio_${profile}_about_data`, JSON.stringify(formData));
+          localStorage.removeItem('portfolio_about_data');
           const existing = (() => {
             try { return JSON.parse(localStorage.getItem('portfolio_custom_translations') || '{}'); }
             catch { return {}; }
@@ -326,6 +340,7 @@ export const CmsAboutEditor: React.FC<CmsAboutEditorProps> = ({ isPreview = fals
           existing.zh = { ...existing.zh, about_section_title: aboutMeta.zhTitle };
           existing.en = { ...existing.en, about_section_title: aboutMeta.enTitle };
           localStorage.setItem('portfolio_custom_translations', JSON.stringify(existing));
+          window.dispatchEvent(new Event(`portfolio_${profile}_about_data_updated`));
           window.dispatchEvent(new Event('portfolio_about_data_updated'));
           window.dispatchEvent(new Event('portfolio_translations_updated'));
 

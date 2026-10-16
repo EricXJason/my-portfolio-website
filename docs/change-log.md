@@ -4,6 +4,24 @@
 
 ---
 
+## [2026-10-16 10:01] - 全面落實 F/I 雙履歷自傳自介嚴格隔離與專案實體全域同步中樞架構
+- **改動原因**: 依使用者明確架構指示，全端 (F) 與互動 (I) 履歷係針對不同招募崗位 HR 打造：自傳與自介（Hero 職稱標籤、簡介段落、About 模組引言、核心專長標題與自介內文、三段自傳故事篇章）必須支援各自獨立修改、儲存與讀取，彼此徹底隔離絕不互相覆蓋；而專案作品實體內容（標題、描述、圖片、連結、影片、標籤等）全域共用，但專案呈現控制（可視性 visible、精選 featured、排序 order）按模式各自獨立。
+- **具體內容**:
+  1. **首頁 (Hero) 與 關於我 (About) 嚴格隔離 ([src/cms/components/CmsHeroEditor.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/cms/components/CmsHeroEditor.tsx) & [src/cms/components/CmsAboutEditor.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/cms/components/CmsAboutEditor.tsx))**:
+     - 本地快照全面改為按模式隔離儲存：`portfolio_${profile}_hero_data` 與 `portfolio_${profile}_about_data`，徹底清除舊版全域 key 防止跨模式踩踏。
+     - 實作智慧模式偵測（`prevProfileRef`）：在 CMS 頂部切換 F ⇄ I 時，表單立即載入該模式之專屬自傳與自介內容；在同一模式編輯時維持嚴格的髒污 (`isDirty`) 防護。
+  2. **資料中樞實體雙向同步與特異化隔離 ([src/context/PortfolioDataContext.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/context/PortfolioDataContext.tsx))**:
+     - 在 `getInitialModuleData` 中將 `hero` 與 `about` 納入防護，禁止降級讀取未分模式之 `legacyKey`。
+     - 實作專案作品實體跨模式自動同步：於任何模式編輯專案基本資料時，自動同步更新另一模式的對應專案實體，但嚴格保留另一模式專屬的 `visible`、`featured`、`featuredOrder`、`order` 呈現屬性。
+     - 完全共用模組（美術畫廊 `gallery`、技能 `skills`、證照 `certifications`、翻譯 `site_translations`）一處修改全域雙向同步。
+- **影響範圍**: `src/context/PortfolioDataContext.tsx`、`src/cms/components/CmsHeroEditor.tsx`、`src/cms/components/CmsAboutEditor.tsx`、`docs/change-log.md`。
+
+## [2026-10-16 09:07] - 精選作品雙欄標頭文案精準對齊為「全端作品」
+- **改動原因**: 依使用者介面視覺調整需求，將精選作品展示區右側（或全端主修側）之欄位標頭文案由「全端／前端開發」精準精簡為「全端作品」。
+- **具體內容**:
+  - [src/components/Projects.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/components/Projects.tsx)：更新精選作品雙欄模式之領域標頭渲染邏輯，繁中統一採用「全端作品」，英文對應「Fullstack Projects」。
+- **影響範圍**: `src/components/Projects.tsx`、`docs/change-log.md`。
+
 ## [2026-10-16 09:05] - 專案分類按鈕全面改為順位驅動色（青、藍、紫）與 CMS 分類拖曳排序支援
 - **改動原因**: 依使用者設計指示，專案分類色彩嚴格改為依順位位置決定（不論內容為何，第 1 順位永遠配青色、第 2 順位永遠配藍色、第 3 順位永遠配紫色）；同時淨化 CMS 介面，移除分類標籤上的固有色彩圓點，並支援在 CMS 中直接透過水平拖曳調配專案作品分類順序。
 - **具體內容**:
