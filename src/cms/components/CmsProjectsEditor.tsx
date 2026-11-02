@@ -811,8 +811,8 @@ export const CmsProjectsEditor: React.FC<CmsProjectsEditorProps> = ({ isPreview 
 
   const buttonDefinitions: Record<string, { label_zh: string; label_en: string; icon: React.ReactNode; color: string }> = {
     live: {
-      label_zh: '前往前臺',
-      label_en: 'Live Demo',
+      label_zh: '前往網站',
+      label_en: 'Visit Website',
       icon: <Globe className="w-3.5 h-3.5 text-[var(--neon-cyan)] shrink-0" />,
       color: '#00f0ff',
     },

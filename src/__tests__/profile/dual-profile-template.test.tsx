@@ -66,15 +66,15 @@ describe('雙履歷模板中樞單元測試 (Dual Profile Template System)', () 
     });
   });
 
-  describe('三、性能優化 Unity Profiler / Addressables 條目驗收', () => {
-    it('互動應用開發分類中必須具備獨立的性能優化條目 (中文)', () => {
+  describe('三、效能優化 Unity Profiler / 效能分析條目驗收', () => {
+    it('互動應用開發分類中必須具備獨立的效能優化條目 (中文)', () => {
       const zhSkills = FULLSTACK_FALLBACKS.skills.zh.find((c: any) => c.catType === 'game');
       expect(zhSkills).toBeDefined();
 
-      const perfItem = zhSkills?.items.find((item: any) => item.label === '性能優化');
+      const perfItem = zhSkills?.items.find((item: any) => item.label === '效能優化' || item.label === '性能優化');
       expect(perfItem).toBeDefined();
       expect(perfItem?.content).toContain('Unity Profiler');
-      expect(perfItem?.content).toContain('Addressables');
+      expect(perfItem?.content).toContain('Profile Analyzer');
 
       // 核心技術中不重複出現 Addressables
       const coreItem = zhSkills?.items.find((item: any) => item.label === '核心技術');
@@ -88,7 +88,7 @@ describe('雙履歷模板中樞單元測試 (Dual Profile Template System)', () 
       const perfItem = enSkills?.items.find((item: any) => item.label === 'Performance Optimization');
       expect(perfItem).toBeDefined();
       expect(perfItem?.content).toContain('Unity Profiler');
-      expect(perfItem?.content).toContain('Addressables');
+      expect(perfItem?.content).toContain('Profile Analyzer');
 
       const coreItem = enSkills?.items.find((item: any) => item.label === 'Core Technologies');
       expect(coreItem?.content).not.toContain('Addressables');

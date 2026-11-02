@@ -4,15 +4,15 @@
     "title": "關於我",
     "intro": "畢業於臺藝大新媒體藝術碩士，專注於全端網頁開發與即時互動應用。",
     "heading": "核心專長與專業定位",
-    "p1": "我是許哲誠，擁有新媒體藝術與程式開發的跨領域背景。平時主要使用 React、Node.js 與 Java Spring Boot 開發全端網頁，並具備 Unity (C#) 互動專案經驗。在開發過程中，我重視程式碼的易讀性與好維護性，能獨立處理從資料庫、後端 API 到前端畫面的完整串接，致力於做出穩定、好用的數位產品。",
+    "p1": "我是許哲誠，具備機械製圖底子、次世代 3D 美術管線與軟體工程的跨領域背景。專注於 Unity (C#) 客戶端架構設計，堅持高內聚、低耦合與模組解耦原則，熟練運用狀態機模式、事件驅動架構與運行期零 GC 物件池調校。同時具備全端通訊與關聯式資料庫整合視野，能無障礙銜接機構硬體、3D 美術資產與後端系統，致力於打造兼具流暢運行效能與高維護性的互動產品。",
     "bio": {
       "title": "個人自傳",
-      "p1_title": "從 Unity 互動到打穩資工基礎",
-      "p1": "大學時因為喜歡做出好玩的互動體驗，從 Unity C# 開始寫程式。做專題時發現想要系統跑得順，底層基礎非常重要，因此主動跨系去修了計算機概論、資料結構與演算法，把觀念打穩。求學期間也連續三年擔任教授的研究助理參與國科會計畫，在無數次寫原型、排查問題與除錯的過程中，確定了自己想走軟體開發這條路。",
-      "p2_title": "模組拆分與前後端實作經驗",
-      "p2": "碩士班開發較複雜的互動專案時，曾體會過模組耦合嚴重、改一個功能到處報錯的痛苦，這讓我學會注重模組拆分與物件導向設計，把畫面邏輯和資料處理分開。之後我也把開發範疇延伸到全端 Web，動手實作 Spring Boot / Node.js 後端服務、關聯式資料庫設計與 React 前端狀態管理。過往在遊戲引擎打下的程式邏輯，讓我在串接前後端資料時能更順暢地綜觀全局。",
-      "p3_title": "務實的工程態度與工作思維",
-      "p3": "現在有許多 AI 輔助工具能加快寫程式的速度，但我認為工程師的關鍵價值，在於能否真正把關邏輯細節與程式碼好不好讀。我始終維持務實的開發習慣：把變數命名清楚、注意邊界條件、把架構理順，用踏實的態度寫出對團隊和使用者都好維護的穩定程式。"
+      "p1_title": "工程基礎與跨領域積累",
+      "p1": "具備紮實的工程邏輯與數位資產整合實力。大學期間主導開發動作射擊遊戲《滅境之星》，奪得專題競賽第一名；連續三年擔任專任研發助理，主導《飛機檢修行動學習平臺》等三項產學互動系統，深入負責介面切版、事件監聽與流程控制。於樂美館參與商業遊戲次世代 3D 外包，熟練掌握 PBR 製程，具備嚴格控管模型面數預算與 Draw Call 的美術視野。",
+      "p2_title": "Unity 客戶端架構與效能調校",
+      "p2": "碩士期間深耕 Unity (C#) 客戶端研發，堅持高內聚、低耦合的架構原則。在 2D 節奏跑酷專案《節奏同奏》中，實作純 C# 有限狀態機徹底消滅動畫過渡衝突，並以泛型物件池循環複用高頻物件，有效降低運行期記憶體配置與 GC 卡頓；於 VR 解謎專案《覺醒協議》中深度客製空間抓取與插槽機制，並自研純數學正弦插值取代高耗能狀態機評估，有效降低 CPU 負載，確保 VR 空間維持高度流暢。",
+      "p3_title": "全端通訊視野與團隊協作",
+      "p3": "兼具全端架構與軟體工程思維，能運用後端 API 打通前後端通訊，建立完整的 Client-Server 與資料庫整合視野。在開發流程中深度整合版本控制與現代 AI 協作流程，能高效進行模組設計、邏輯排查與快速交付，致力為團隊打造兼具優秀效能與穩定可維護性的互動產品。"
     },
     "stats": [
       {
@@ -41,16 +41,16 @@
   "en": {
     "title": "About",
     "intro": "M.A. graduate in New Media Art, focusing on full-stack web development and real-time interactive applications.",
-    "heading": "Core Competency & Specialization",
-    "p1": "I am Che-Cheng Hsu, bringing an interdisciplinary background across multimedia design and software engineering. Experienced in building full-stack applications with React, Node.js, and Spring Boot, alongside interactive 3D systems in Unity (C#). I value clean, readable code and maintainable structures, with hands-on capability spanning database modeling, backend APIs, and responsive frontends.",
+    "heading": "Core Competencies & Professional Specialization",
+    "p1": "I am Che-Cheng Hsu, bringing an interdisciplinary background across mechanical drafting, next-gen 3D art pipelines, and software engineering. I specialize in Unity (C#) client architecture design, adhering to high-cohesion, loose-coupling, and modular decoupling principles, proficient in finite state machines, event-driven architectures, and zero-GC object pool optimization. Concurrently equipped with fullstack communication and relational database integration vision, I seamlessly bridge hardware mechanisms, 3D artistic assets, and backend systems to deliver high-performance, maintainable interactive products.",
     "bio": {
       "title": "Personal Biography",
-      "p1_title": "From Unity Interactions to CS Fundamentals",
-      "p1": "My programming journey started with Unity C# out of enthusiasm for interactive media. Realizing that stability and performance stem from strong foundations, I actively cross-enrolled in core CS courses such as Data Structures and Algorithms. Serving as a research assistant on NSTC research projects for three consecutive years solidified my practical debugging, rapid prototyping, and engineering mindset.",
-      "p2_title": "Modular Architecture & Full-Stack Practices",
-      "p2": "Leading larger interactive projects in graduate school taught me the hard lessons of code coupling. This spurred me to practice modular decoupling and object-oriented design, separating business logic from presentation. I then extended my skill set to full-stack web development, working with Spring Boot, Node.js backends, relational databases, and React frontends. The computational rigor from game engines allows me to navigate end-to-end data flows with clarity.",
-      "p3_title": "Pragmatic Engineering Mindset",
-      "p3": "While modern developer tools and AI accelerate code generation, an engineer's true value lies in verifying edge cases and ensuring code maintainability. I consistently practice solid engineering fundamentals: meaningful naming, defensive logic, and decoupled structure, dedicated to shipping robust, user-friendly software."
+      "p1_title": "Engineering Foundations & Cross-Discipline Accumulation",
+      "p1": "Equipped with solid engineering logic and digital asset integration expertise. During undergraduate studies, led the development of action shooter Planet of Extinction, winning 1st place in the National Special Topic Competition; served as a full-time research assistant for 3 consecutive years, directing 3 industry-academia interactive systems such as Aircraft Maintenance Mobile Learning Platform, taking charge of UI layout, event listening, and state flow control. Participated in commercial next-gen 3D AAA outsourcing at XPEC Art Center, mastering PBR workflows with strict polygon and Draw Call budget control.",
+      "p2_title": "Unity Client Architecture & Performance Profiling",
+      "p2": "Dedicated to Unity (C#) client engineering during master's studies, adhering to high cohesion and low coupling architectural principles. In 2D rhythm runner Ensemble Rhythm, implemented pure C# finite state machines to eliminate animation transition conflicts, utilizing generic object pools to recycle high-frequency objects, effectively minimizing runtime memory allocations and GC lag; in VR puzzle project Awakening Protocol, deeply customized spatial grab and socket mechanics, developing sinusoidal mathematical interpolation to replace heavy state evaluations, cutting CPU overhead and ensuring smooth VR experiences.",
+      "p3_title": "Full-Stack Communication Vision & Team Collaboration",
+      "p3": "Combining fullstack architecture with software engineering rigor, proficient in connecting frontend-backend communications via RESTful APIs, establishing comprehensive Client-Server and database integration perspectives. Deeply integrating modern version control and AI-assisted workflows into the development lifecycle, facilitating efficient module design, systematic debugging, and agile delivery to build high-performance, maintainable interactive products."
     },
     "stats": [
       {

@@ -1,4 +1,4 @@
-# 個人作品集網站含視覺化內容管理系統 (My Portfolio Website + CMS)
+# 個人作品集網站
 
 > 採用 React 19、TypeScript、Vite 與 Tailwind CSS 建置，融合賽博龐克戰術 HUD 設計體系之企業級高效能作品集與自研視覺化內容管理系統。
 

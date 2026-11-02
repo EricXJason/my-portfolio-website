@@ -47,7 +47,7 @@ interface ProfileProviderProps {
 
 export const ProfileProvider: React.FC<ProfileProviderProps> = ({
   children,
-  initialProfile = 'fullstack',
+  initialProfile = 'interactive',
   currentProfile,
   onProfileChange,
 }) => {

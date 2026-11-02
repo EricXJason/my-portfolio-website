@@ -17,6 +17,14 @@ import {
 } from '../../context/PortfolioDataContext';
 import { LOCAL_FALLBACKS } from '../../services/portfolioDataService';
 
+vi.mock('../../services/portfolioDataService', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../services/portfolioDataService')>();
+  return {
+    ...actual,
+    savePortfolioDoc: vi.fn().mockResolvedValue(true),
+  };
+});
+
 describe('PortfolioDataContext 全站資料狀態與快取中樞測試', () => {
   beforeEach(() => {
     localStorage.clear();

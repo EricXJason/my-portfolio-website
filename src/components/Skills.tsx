@@ -24,7 +24,6 @@ import {
   Monitor,
   Layout,
   Database,
-  Cloud,
   Wrench,
   GitBranch,
   Bot,
@@ -38,6 +37,7 @@ import {
   LucideIcon,
   Zap,
   Layers,
+  Cloud,
 } from 'lucide-react';
 import skillsData from '../data/skills-section.json';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -68,23 +68,24 @@ const CAT_ICON_MAP: Record<string, LucideIcon> = {
 
 const getLabelIcon = (label: string, catColor: string) => {
   const l = label.toLowerCase();
-  // 互動應用開發 (5 個獨特圖示)
+  // 互動應用開發 (6 個獨特圖示)
   if (l.includes('遊戲引擎') || l.includes('game engine'))                              return <Cpu       size={16} style={{ color: catColor }} />;
   if (l.includes('核心技術') || l.includes('core tech'))                               return <Wrench    size={16} style={{ color: catColor }} />;
-  if (l.includes('動畫') || l.includes('animation') || l.includes('相機'))              return <Monitor   size={16} style={{ color: catColor }} />;
+  if (l.includes('效能') || l.includes('性能') || l.includes('performance') || l.includes('optimization')) return <LineChart size={16} style={{ color: catColor }} />;
   if (l.includes('xr') || l.includes('xr 實境') || l.includes('xr dev'))                return <Glasses   size={16} style={{ color: catColor }} />;
   if (l.includes('多人') || l.includes('multiplayer'))                                 return <Wifi      size={16} style={{ color: catColor }} />;
+  if (l.includes('動畫') || l.includes('animation') || l.includes('相機'))              return <Monitor   size={16} style={{ color: catColor }} />;
   // 全端開發 (6 個獨特圖示)
   if (l.includes('程式語言') || l.includes('programming lang'))                      return <Code2     size={16} style={{ color: catColor }} />;
-  if (l.includes('前端') || l.includes('frontend') || l.includes('樣式'))              return <Layout    size={16} style={{ color: catColor }} />;
   if (l.includes('後端') || l.includes('backend'))                                    return <Server    size={16} style={{ color: catColor }} />;
-  if (l.includes('資料庫') || l.includes('database') || l.includes('service'))        return <Database  size={16} style={{ color: catColor }} />;
-  if (l.includes('雲端') || l.includes('cloud') || l.includes('edge') || l.includes('部署')) return <Cloud     size={16} style={{ color: catColor }} />;
-  if (l.includes('開發與測試') || l.includes('dev & test') || l.includes('tool'))     return <Terminal  size={16} style={{ color: catColor }} />;
+  if (l.includes('資料庫') || l.includes('database'))                                 return <Database  size={16} style={{ color: catColor }} />;
+  if (l.includes('雲端') || l.includes('容器') || l.includes('cloud') || l.includes('docker')) return <Cloud size={16} style={{ color: catColor }} />;
+  if (l.includes('前端') || l.includes('frontend') || l.includes('樣式'))              return <Layout    size={16} style={{ color: catColor }} />;
+  if (l.includes('測試') || l.includes('品質') || l.includes('test') || l.includes('quality')) return <Terminal  size={16} style={{ color: catColor }} />;
   // 通用軟體工程能力 (4 個獨特圖示)
   if (l.includes('架構') || l.includes('設計模式') || l.includes('architecture'))     return <Boxes     size={16} style={{ color: catColor }} />;
   if (l.includes('版本控制') || l.includes('version control') || l.includes('devops'))    return <GitBranch size={16} style={{ color: catColor }} />;
-  if (l.includes('系統分析') || l.includes('system anal') || l.includes('圖表'))       return <LineChart size={16} style={{ color: catColor }} />;
+  if (l.includes('系統分析') || l.includes('system anal') || l.includes('圖表'))       return <Layers    size={16} style={{ color: catColor }} />;
   if (l.includes('ai') || l.includes('aigc') || l.includes('輔助開發') || l.includes('輔助創作')) return <Bot   size={16} style={{ color: catColor }} />;
   // 多媒體設計 (2 個獨特圖示)
   if (l.includes('3d') || l.includes('建模') || l.includes('model'))                  return <Box       size={16} style={{ color: catColor }} />;
@@ -103,7 +104,18 @@ export const Skills: React.FC = () => {
   const { data } = usePortfolioData();
   const isLight = theme === 'light';
 
-  const dataMap = (data.skills || skillsData) as unknown as Record<Language, SkillCategory[]>;
+  // 雙保險：優先檢驗傳入之 data.skills 是否具備最新 104 規格結構，若否則直接採用最新靜態 skillsData
+  const activeSkillsData = (() => {
+    if (data.skills?.zh) {
+      const isLatest = data.skills.zh.some((cat: any) =>
+        cat.items?.some((it: any) => it.label === '效能優化' || it.content?.includes('UniTask'))
+      );
+      if (isLatest) return data.skills;
+    }
+    return skillsData;
+  })();
+
+  const dataMap = activeSkillsData as unknown as Record<Language, SkillCategory[]>;
   const rawSkills: SkillCategory[] = dataMap[lang] ?? dataMap.zh;
   const currentSkills: SkillCategory[] = rawSkills
     .filter((s) => s.visible !== false)
@@ -241,7 +253,7 @@ export const Skills: React.FC = () => {
                           color: accent.main,
                         }}
                       >
-                        {lang === 'zh' ? '核心專長' : 'CORE'}
+                        {lang === 'zh' ? '核心專業' : 'CORE'}
                       </span>
                     </div>
 

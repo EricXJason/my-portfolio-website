@@ -42,19 +42,12 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [mobileExpOpen, setMobileExpOpen] = useState(false);
   const [showVolumePopup, setShowVolumePopup] = useState(false);
 
-  // [DEV-TEST-TOGGLE] 取得當前 Profile 並提供切換函式
-  let currentProfile = 'fullstack';
+  // 取得當前 Profile（供導覽項目狀態判斷使用）
+  let currentProfile = 'interactive';
   try {
     const profCtx = useProfile();
     currentProfile = profCtx.profile;
   } catch {}
-
-  const handleToggleProfile = () => {
-    const target = currentProfile === 'fullstack' ? '/i' : '/f';
-    if (typeof window !== 'undefined') {
-      window.location.href = target;
-    }
-  };
 
   /**
    * [全域設定管理] 網站全域設定 (網頁標題、雙層導覽列品牌名稱、動畫速度)
@@ -513,43 +506,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 )}
               </div>
             </button>
-
-            {/* 雙履歷模板切換開關 (F: Fullstack | I: Interactive) */}
-            <button
-              onClick={handleToggleProfile}
-              className="w-[48px] sm:w-[56px] h-[28px] sm:h-[30px] border cyber-cut-sm relative p-[2px] flex items-center transition-all duration-300 cursor-pointer font-tech text-xs font-bold active:scale-95 hover:scale-105 hover:border-cyan-400 shrink-0 select-none overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-              style={{
-                backgroundColor: isLight ? '#f1f5f9' : '#080e1a',
-                borderColor: borderCol,
-              }}
-              aria-label={currentProfile === 'fullstack' ? '切換為 Interactive 模板 (I)' : '切換為 Fullstack 模板 (F)'}
-              title={currentProfile === 'fullstack' ? '當前: Fullstack (F) · 點擊切換為 Interactive (I)' : '當前: Interactive (I) · 點擊切換為 Fullstack (F)'}
-            >
-              <div className="w-full h-full flex items-center justify-between pointer-events-none z-0">
-                <span
-                  className="w-1/2 text-center text-[10px] sm:text-xs font-bold"
-                  style={{ color: currentProfile === 'fullstack' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}
-                >
-                  F
-                </span>
-                <span
-                  className="w-1/2 text-center text-[10px] sm:text-xs font-bold"
-                  style={{ color: currentProfile === 'interactive' ? 'transparent' : (isLight ? '#475569' : '#94a3b8') }}
-                >
-                  I
-                </span>
-              </div>
-              <div
-                className="absolute top-[2px] bottom-[2px] left-[2px] w-[calc(50%-2px)] cyber-cut-sm flex items-center justify-center transition-transform duration-300 ease-out z-10 shadow-sm text-[10px] sm:text-xs font-black"
-                style={{
-                  transform: currentProfile === 'interactive' ? 'translateX(100%)' : 'translateX(0%)',
-                  backgroundColor: isLight ? '#0369a1' : '#00f0ff',
-                  color: isLight ? '#ffffff' : '#030712',
-                }}
-              >
-                {currentProfile === 'fullstack' ? 'F' : 'I'}
-              </div>
-            </button>
+            {/* 雙履歷模板切換開關 (暫行隱藏，目前全站專注於 i 模式展示) */}
 
             {/* 行動端動畫漢堡選單按鈕 (符合 WCAG 2.2 觸控面積 >= 44x44px 與 aria-expanded 語意) */}
             <button

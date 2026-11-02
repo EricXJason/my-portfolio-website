@@ -68,7 +68,7 @@ const LEGACY_KEY_MAP: Record<PortfolioDocId, string> = {
 /**
  * 計算本地靜態資料指紋，當程式碼中的 JSON 變更時自動偵測並同步最新設定
  */
-export const getContentFingerprint = (profile: ProfileType = 'fullstack'): string => {
+export const getContentFingerprint = (profile: ProfileType = 'interactive'): string => {
   try {
     const fallbacks = getFallbacksByProfile(profile);
     const raw = JSON.stringify({
@@ -80,8 +80,10 @@ export const getContentFingerprint = (profile: ProfileType = 'fullstack'): strin
       heroSubtitle: fallbacks.hero?.zh?.subtitle || '',
       galleryVis: (fallbacks.site_settings as any)?.modules_visibility?.gallery ?? true,
       workXacVis: (fallbacks.experience as any)?.zh?.workExperiences?.[1]?.visible ?? true,
+      skillsData: fallbacks.skills || '',
+      projectsSummary: Array.isArray(fallbacks.projects) ? fallbacks.projects.map((p: any) => `${p.id}:${p.featuredOrder}:${p.image}`).join(',') : '',
       profile,
-      buildVer: '2026.09.30.dual_profile.v3_strict_sync_fixed',
+      buildVer: '2026.11.02.bio_and_projects_sync_v6',
     });
     let hash = 0;
     for (let i = 0; i < raw.length; i++) {
@@ -105,24 +107,30 @@ const getInitialModuleData = <T,>(docId: PortfolioDocId, profile: ProfileType): 
     return fallbackVal;
   }
   try {
-    // 指紋檢查
-    const currentFp = getContentFingerprint(profile);
-    const savedFp = localStorage.getItem(`portfolio_${profile}_fingerprint`);
-    if (savedFp !== currentFp) {
-      return fallbackVal;
-    }
-
     const primaryKey = getModuleStorageKey(docId, profile);
     const previewKey = getPreviewStorageKey(docId, profile);
-    // 嚴格隔離：site_settings、experience、hero 與 about 涉及雙模板特異化自傳、自介與開關，禁止讀取舊版未分模板之 legacyKey
+    // 嚴格隔離：site_settings、experience、hero、about 與 projects 涉及模板特異化，禁止讀取舊版未分模板之 legacyKey
     const legacyKey =
       profile === 'fullstack' &&
       docId !== 'site_settings' &&
       docId !== 'experience' &&
       docId !== 'about' &&
-      docId !== 'hero'
+      docId !== 'hero' &&
+      docId !== 'projects'
         ? LEGACY_KEY_MAP[docId]
         : null;
+
+    // 指紋檢查
+    const currentFp = getContentFingerprint(profile);
+    const savedFp = localStorage.getItem(`portfolio_${profile}_fingerprint`);
+    if (savedFp !== currentFp) {
+      try {
+        localStorage.removeItem(primaryKey);
+        localStorage.removeItem(previewKey);
+        if (legacyKey) localStorage.removeItem(legacyKey);
+      } catch {}
+      return fallbackVal;
+    }
 
     const saved =
       localStorage.getItem(primaryKey) ||
@@ -132,6 +140,63 @@ const getInitialModuleData = <T,>(docId: PortfolioDocId, profile: ProfileType): 
     if (saved) {
       const parsed = JSON.parse(saved);
       if (parsed !== null && parsed !== undefined) {
+        // 針對專業技能特別檢查：若快取中仍為舊版條目結構，主動清除舊快取並採用最新程式碼
+        if (docId === 'skills') {
+          const zhList = parsed?.zh || (Array.isArray(parsed) ? parsed : []);
+          const isLatestSkills = zhList.some((cat: any) =>
+            cat.items?.some((it: any) => it.label === '效能優化' || it.content?.includes('UniTask') || it.content?.includes('MyBatis'))
+          );
+          if (!isLatestSkills) {
+            try {
+              localStorage.removeItem(primaryKey);
+              localStorage.removeItem(previewKey);
+              if (legacyKey) localStorage.removeItem(legacyKey);
+            } catch {}
+            return fallbackVal;
+          }
+        }
+
+        // 針對作品專案檢查：若快取中未包含最新 線上問卷設計系統 或仍含 ecommerce-platform，清除快取
+        if (docId === 'projects') {
+          const projectList = Array.isArray(parsed) ? parsed : [];
+          const hasSurveyFlow = projectList.some((p: any) => p.id === 'survey-flow' && p.title_zh === '線上問卷設計系統');
+          const hasEcommerce = projectList.some((p: any) => p.id === 'ecommerce-platform');
+          if (!hasSurveyFlow || hasEcommerce) {
+            try {
+              localStorage.removeItem(primaryKey);
+              localStorage.removeItem(previewKey);
+              if (legacyKey) localStorage.removeItem(legacyKey);
+            } catch {}
+            return fallbackVal;
+          }
+        }
+
+        // 針對 Hero 檢查最新自傳與自我介紹
+        if (docId === 'hero') {
+          const zhDesc = parsed?.zh?.description || '';
+          if (!zhDesc.includes('Unity (C#) 客戶端架構')) {
+            try {
+              localStorage.removeItem(primaryKey);
+              localStorage.removeItem(previewKey);
+              if (legacyKey) localStorage.removeItem(legacyKey);
+            } catch {}
+            return fallbackVal;
+          }
+        }
+
+        // 針對 About 檢查最新核心專長自傳
+        if (docId === 'about') {
+          const zhP1 = parsed?.zh?.p1 || '';
+          if (!zhP1.includes('機械製圖底子')) {
+            try {
+              localStorage.removeItem(primaryKey);
+              localStorage.removeItem(previewKey);
+              if (legacyKey) localStorage.removeItem(legacyKey);
+            } catch {}
+            return fallbackVal;
+          }
+        }
+
         if (Array.isArray(parsed) ? parsed.length > 0 : Object.keys(parsed).length > 0) {
           return parsed as T;
         }
@@ -154,15 +219,15 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
   children,
   profile: explicitProfile,
 }) => {
-  // 嘗試從外部 prop 或 ProfileContext 取得 profile，預設降級為 'fullstack'
-  let contextProfile: ProfileType = 'fullstack';
+  // 嘗試從外部 prop 或 ProfileContext 取得 profile，預設降級為 'interactive'
+  let contextProfile: ProfileType = 'interactive';
   try {
     // 若在 ProfileProvider 內呼叫
     const profCtx = useProfile();
     contextProfile = profCtx.profile;
   } catch {
-    // 若獨立使用（如特定單元測試），容錯為 fullstack
-    contextProfile = 'fullstack';
+    // 若獨立使用（如特定單元測試），容錯為 interactive
+    contextProfile = 'interactive';
   }
 
   const profile = explicitProfile || contextProfile;
@@ -215,6 +280,39 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
           try {
             const payload = await getPortfolioDoc(key, profile);
             if (payload) {
+              // 防禦：若雲端上的 skills 仍為舊版結構，不覆蓋本地最新定義
+              if (key === 'skills') {
+                const zhList = (payload as any)?.zh || (Array.isArray(payload) ? (payload as any) : []);
+                const isLatest = zhList.some((cat: any) =>
+                  cat.items?.some((it: any) => it.label === '效能優化' || it.content?.includes('UniTask') || it.content?.includes('MyBatis'))
+                );
+                if (!isLatest) {
+                  return;
+                }
+              }
+              // 防禦：若雲端上的 projects 缺少最新線上問卷設計系統或仍含未完成專案，不覆蓋本地最新定義
+              if (key === 'projects') {
+                const pList = Array.isArray(payload) ? payload : [];
+                const hasValidSurveyFlow = pList.some((p: any) => p.id === 'survey-flow' && p.title_zh === '線上問卷設計系統');
+                const hasComingSoon = pList.some((p: any) => p.id === 'movie-collection' || p.id === 'ecommerce-platform' || p.desc?.includes('規劃中'));
+                if (!hasValidSurveyFlow || hasComingSoon) {
+                  return;
+                }
+              }
+              // 防禦：若雲端上的 hero 仍為舊版簡介，不覆蓋本地最新定義
+              if (key === 'hero') {
+                const zhDesc = (payload as any)?.zh?.description || '';
+                if (!zhDesc.includes('Unity (C#) 客戶端架構')) {
+                  return;
+                }
+              }
+              // 防禦：若雲端上的 about 仍為舊版專長/自傳，不覆蓋本地最新定義
+              if (key === 'about') {
+                const zhP1 = (payload as any)?.zh?.p1 || '';
+                if (!zhP1.includes('機械製圖底子')) {
+                  return;
+                }
+              }
               cloudUpdates[key] = payload;
               hasAnyCloudData = true;
             }
@@ -487,6 +585,13 @@ export const PortfolioDataProvider: React.FC<PortfolioDataProviderProps> = ({
           localStorage.removeItem(`portfolio_${profile}_site_settings_data`);
           localStorage.removeItem(`portfolio_${profile}_modules_visibility`);
           localStorage.removeItem(`portfolio_${profile}_experience_data`);
+          localStorage.removeItem('portfolio_skills_data');
+          localStorage.removeItem(`portfolio_${profile}_skills_data`);
+          localStorage.removeItem('portfolio_interactive_skills_data');
+          localStorage.removeItem('portfolio_fullstack_skills_data');
+          localStorage.removeItem(`portfolio_preview_${profile}_skills`);
+          localStorage.removeItem('portfolio_preview_interactive_skills');
+          localStorage.removeItem('portfolio_preview_fullstack_skills');
         } catch {}
 
         const isCms = typeof window !== 'undefined' && window.location.pathname.startsWith('/cms');

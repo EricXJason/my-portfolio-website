@@ -56,13 +56,13 @@ const fullstackHero = {
     ...heroData.zh,
     subtitle: '全端開發／互動應用開發',
     description:
-      '專注於全端網頁開發與系統實作，熟悉前後端串接、RESTful API 與資料庫設計。寫程式重視清晰好維護的架構，並能將互動體驗思維融入 Web 開發，打造穩定好用的數位產品。',
+      '新媒體藝術碩士，專注 Unity (C#) 客戶端架構、XR 體感互動與遊戲核心邏輯開發。具備軟體工程架構與全端開發整合實力，能無縫打通前端體驗、後端通訊與 3D 數位資產，並熟練運用 AI 工具加速產出，兼具美術視野與工程思維，能獨立高效落實各類互動系統與流暢體驗。',
   },
   en: {
     ...heroData.en,
     subtitle: 'Fullstack Dev / Interactive App Dev',
     description:
-      'Focusing on full-stack web development with hands-on experience in RESTful APIs, relational databases, and frontend state management. Committed to writing readable, maintainable code to build stable and responsive applications.',
+      'Master of New Media Arts specializing in Unity (C#) client architecture, XR physical interaction, and core game logic development. Possesses software engineering architecture and fullstack integration capabilities, seamlessly bridging frontend experience, backend communications, and 3D digital assets, proficient in AI tools to accelerate delivery, combining artistic vision with engineering rigor to independently build high-performance interactive systems.',
   },
 };
 
@@ -80,25 +80,33 @@ const fullstackAbout = {
   zh: {
     ...aboutData.zh,
     intro: '畢業於臺藝大新媒體藝術碩士，專注於全端網頁開發與即時互動應用。',
-    p1: '我是許哲誠，擁有新媒體藝術與程式開發的跨領域背景。平時主要使用 React、Node.js 與 Java Spring Boot 開發全端網頁，並具備 Unity (C#) 互動專案經驗。在開發過程中，我重視程式碼的易讀性與好維護性，能獨立處理從資料庫、後端 API 到前端畫面的完整串接，致力於做出穩定、好用的數位產品。',
+    heading: '核心專長與專業定位',
+    p1: '我是許哲誠，具備機械製圖底子、次世代 3D 美術管線與軟體工程的跨領域背景。專注於 Unity (C#) 客戶端架構設計，堅持高內聚、低耦合與模組解耦原則，熟練運用狀態機模式、事件驅動架構與運行期零 GC 物件池調校。同時具備全端通訊與關聯式資料庫整合視野，能無障礙銜接機構硬體、3D 美術資產與後端系統，致力於打造兼具流暢運行效能與高維護性的互動產品。',
     bio: {
       ...aboutData.zh.bio,
-      p1_title: '從 Unity 互動到打穩資工基礎',
-      p1: '大學時因為喜歡做出好玩的互動體驗，從 Unity C# 開始寫程式。做專題時發現想要系統跑得順，底層基礎非常重要，因此主動跨系去修了計算機概論、資料結構與演算法，把觀念打穩。求學期間也連續三年擔任教授的研究助理參與國科會計畫，在無數次寫原型、排查問題與除錯的過程中，確定了自己想走軟體開發這條路。',
-      p2_title: '模組拆分與前後端實作經驗',
-      p2: '碩士班開發較複雜的互動專案時，曾體會過模組耦合嚴重、改一個功能到處報錯的痛苦，這讓我學會注重模組拆分與物件導向設計，把畫面邏輯和資料處理分開。之後我也把開發範疇延伸到全端 Web，動手實作 Spring Boot / Node.js 後端服務、關聯式資料庫設計與 React 前端狀態管理。過往在遊戲引擎打下的程式邏輯，讓我在串接前後端資料時能更順暢地綜觀全局。',
+      title: '個人自傳',
+      p1_title: '工程基礎與跨領域積累',
+      p1: '具備紮實的工程邏輯與數位資產整合實力。大學期間主導開發動作射擊遊戲《滅境之星》，奪得專題競賽第一名；連續三年擔任專任研發助理，主導《飛機檢修行動學習平臺》等三項產學互動系統，深入負責介面切版、事件監聽與流程控制。於樂美館參與商業遊戲次世代 3D 外包，熟練掌握 PBR 製程，具備嚴格控管模型面數預算與 Draw Call 的美術視野。',
+      p2_title: 'Unity 客戶端架構與效能調校',
+      p2: '碩士期間深耕 Unity (C#) 客戶端研發，堅持高內聚、低耦合的架構原則。在 2D 節奏跑酷專案《節奏同奏》中，實作純 C# 有限狀態機徹底消滅動畫過渡衝突，並以泛型物件池循環複用高頻物件，有效降低運行期記憶體配置與 GC 卡頓；於 VR 解謎專案《覺醒協議》中深度客製空間抓取與插槽機制，並自研純數學正弦插值取代高耗能狀態機評估，有效降低 CPU 負載，確保 VR 空間維持高度流暢。',
+      p3_title: '全端通訊視野與團隊協作',
+      p3: '兼具全端架構與軟體工程思維，能運用後端 API 打通前後端通訊，建立完整的 Client-Server 與資料庫整合視野。在開發流程中深度整合版本控制與現代 AI 協作流程，能高效進行模組設計、邏輯排查與快速交付，致力為團隊打造兼具優秀效能與穩定可維護性的互動產品。',
     },
   },
   en: {
     ...aboutData.en,
     intro: 'M.A. graduate in New Media Art, focusing on full-stack web development and real-time interactive applications.',
-    p1: 'I am Che-Cheng Hsu, bringing an interdisciplinary background across multimedia design and software engineering. Experienced in building full-stack applications with React, Node.js, and Spring Boot, alongside interactive 3D systems in Unity (C#). I value clean, readable code and maintainable structures, with hands-on capability spanning database modeling, backend APIs, and responsive frontends.',
+    heading: 'Core Competencies & Professional Specialization',
+    p1: 'I am Che-Cheng Hsu, bringing an interdisciplinary background across mechanical drafting, next-gen 3D art pipelines, and software engineering. I specialize in Unity (C#) client architecture design, adhering to high-cohesion, loose-coupling, and modular decoupling principles, proficient in finite state machines, event-driven architectures, and zero-GC object pool optimization. Concurrently equipped with fullstack communication and relational database integration vision, I seamlessly bridge hardware mechanisms, 3D artistic assets, and backend systems to deliver high-performance, maintainable interactive products.',
     bio: {
       ...aboutData.en.bio,
-      p1_title: 'From Unity Interactions to CS Fundamentals',
-      p1: 'My programming journey started with Unity C# out of enthusiasm for interactive media. Realizing that stability and performance stem from strong foundations, I actively cross-enrolled in core CS courses such as Data Structures and Algorithms. Serving as a research assistant on NSTC research projects for three consecutive years solidified my practical debugging, rapid prototyping, and engineering mindset.',
-      p2_title: 'Modular Architecture & Full-Stack Practices',
-      p2: 'Leading larger interactive projects in graduate school taught me the hard lessons of code coupling. This spurred me to practice modular decoupling and object-oriented design, separating business logic from presentation. I then extended my skill set to full-stack web development, working with Spring Boot, Node.js backends, relational databases, and React frontends. The computational rigor from game engines allows me to navigate end-to-end data flows with clarity.',
+      title: 'Personal Biography',
+      p1_title: 'Engineering Foundations & Cross-Discipline Accumulation',
+      p1: 'Equipped with solid engineering logic and digital asset integration expertise. During undergraduate studies, led the development of action shooter Planet of Extinction, winning 1st place in the National Special Topic Competition; served as a full-time research assistant for 3 consecutive years, directing 3 industry-academia interactive systems such as Aircraft Maintenance Mobile Learning Platform, taking charge of UI layout, event listening, and state flow control. Participated in commercial next-gen 3D AAA outsourcing at XPEC Art Center, mastering PBR workflows with strict polygon and Draw Call budget control.',
+      p2_title: 'Unity Client Architecture & Performance Profiling',
+      p2: 'Dedicated to Unity (C#) client engineering during master\'s studies, adhering to high cohesion and low coupling architectural principles. In 2D rhythm runner Ensemble Rhythm, implemented pure C# finite state machines to eliminate animation transition conflicts, utilizing generic object pools to recycle high-frequency objects, effectively minimizing runtime memory allocations and GC lag; in VR puzzle project Awakening Protocol, deeply customized spatial grab and socket mechanics, developing sinusoidal mathematical interpolation to replace heavy state evaluations, cutting CPU overhead and ensuring smooth VR experiences.',
+      p3_title: 'Full-Stack Communication Vision & Team Collaboration',
+      p3: 'Combining fullstack architecture with software engineering rigor, proficient in connecting frontend-backend communications via RESTful APIs, establishing comprehensive Client-Server and database integration perspectives. Deeply integrating modern version control and AI-assisted workflows into the development lifecycle, facilitating efficient module design, systematic debugging, and agile delivery to build high-performance, maintainable interactive products.',
     },
   },
 };
@@ -132,11 +140,25 @@ const fullstackProjects = (() => {
   return [...webItems, ...otherItems];
 })();
 
+// 技能排序：Fullstack 分類移至第一順位
+const fullstackSkills = (() => {
+  const clone = JSON.parse(JSON.stringify(skillsData));
+  const zhFullstack = clone.zh.find((c: any) => c.catType === 'fullstack');
+  const zhOthers = clone.zh.filter((c: any) => c.catType !== 'fullstack');
+  const enFullstack = clone.en.find((c: any) => c.catType === 'fullstack');
+  const enOthers = clone.en.filter((c: any) => c.catType !== 'fullstack');
+
+  return {
+    zh: zhFullstack ? [zhFullstack, ...zhOthers] : clone.zh,
+    en: enFullstack ? [enFullstack, ...enOthers] : clone.en,
+  };
+})();
+
 export const FULLSTACK_FALLBACKS = {
   hero: fullstackHero,
   site_settings: fullstackSiteSettings,
   about: fullstackAbout,
-  skills: skillsData, // 預設第一項為全端開發，已含性能優化 Unity Profiler / Addressables 條目
+  skills: fullstackSkills,
   projects: fullstackProjects,
   experience: fullstackExperience,
   certifications: certsData,
@@ -151,13 +173,13 @@ const interactiveHero = {
     ...heroData.zh,
     subtitle: '互動應用開發／全端開發',
     description:
-      '專注於 Unity (C#) 與 XR 互動應用開發，具備遊戲迴圈邏輯、即時著色器 (Shader) 與效能調校實務。同時具備全端資料串接能力，致力於打造流暢且有臨場感的互動體驗。',
+      '新媒體藝術碩士，專注 Unity (C#) 客戶端架構、XR 體感互動與遊戲核心邏輯開發。具備軟體工程架構與全端開發整合實力，能無縫打通前端體驗、後端通訊與 3D 數位資產，並熟練運用 AI 工具加速產出，兼具美術視野與工程思維，能獨立高效落實各類互動系統與流暢體驗。',
   },
   en: {
     ...heroData.en,
     subtitle: 'Interactive App Dev / Fullstack Dev',
     description:
-      'Focusing on Unity (C#) and XR interactive applications, with hands-on practice in game loops, custom shaders, and runtime profiling, backed by reliable full-stack data integration.',
+      'Master of New Media Arts specializing in Unity (C#) client architecture, XR physical interaction, and core game logic development. Possesses software engineering architecture and fullstack integration capabilities, seamlessly bridging frontend experience, backend communications, and 3D digital assets, proficient in AI tools to accelerate delivery, combining artistic vision with engineering rigor to independently build high-performance interactive systems.',
   },
 };
 
@@ -175,25 +197,33 @@ const interactiveAbout = {
   zh: {
     ...aboutData.zh,
     intro: '畢業於臺藝大新媒體藝術碩士，專注於 Unity 核心開發、XR 互動應用與即時視覺呈現。',
-    p1: '我是許哲誠，擁有新媒體藝術與程式開發背景。專注於 Unity (C#) 互動專案開發，熟悉遊戲迴圈邏輯、事件驅動架構與即時著色器 (Shader) 撰寫，並具備全端資料庫與 API 串接能力。在專案實作中重視效能調校與程式碼好讀性，致力於打造兼具流暢手感與穩定表現的互動產品。',
+    heading: '核心專長與專業定位',
+    p1: '我是許哲誠，具備機械製圖底子、次世代 3D 美術管線與軟體工程的跨領域背景。專注於 Unity (C#) 客戶端架構設計，堅持高內聚、低耦合與模組解耦原則，熟練運用狀態機模式、事件驅動架構與運行期零 GC 物件池調校。同時具備全端通訊與關聯式資料庫整合視野，能無障礙銜接機構硬體、3D 美術資產與後端系統，致力於打造兼具流暢運行效能與高維護性的互動產品。',
     bio: {
       ...aboutData.zh.bio,
-      p1_title: '從遊戲互動到打穩資工基礎',
-      p1: '大學時因為喜歡做出好玩的互動體驗，從 Unity C# 開始寫程式。做專題時發現想要遊戲跑得順，底層基礎非常重要，因此主動跨系去修了計算機概論、資料結構與演算法，把觀念打穩。求學期間也連續三年擔任教授的研究助理參與國科會計畫，在無數次寫原型、排查問題與除錯的過程中，奠定了扎實的程式底子。',
-      p2_title: '互動系統架構與效能調校',
-      p2: '碩士班主導較大型的 VR/XR 與多人互動專案時，曾遇過模組寫得太黏、執行效能低落的挑戰。我透過事件驅動架構、物件池與 ScriptableObject 將 UI、音效、動畫等子系統拆分開來，並利用 Unity Profiler 找出效能瓶頸進行優化。同時我也串接了雲端後端與資料庫，讓即時互動系統也能順暢處理連線與資料儲存。',
+      title: '個人自傳',
+      p1_title: '工程基礎與跨領域積累',
+      p1: '具備紮實的工程邏輯與數位資產整合實力。大學期間主導開發動作射擊遊戲《滅境之星》，奪得專題競賽第一名；連續三年擔任專任研發助理，主導《飛機檢修行動學習平臺》等三項產學互動系統，深入負責介面切版、事件監聽與流程控制。於樂美館參與商業遊戲次世代 3D 外包，熟練掌握 PBR 製程，具備嚴格控管模型面數預算與 Draw Call 的美術視野。',
+      p2_title: 'Unity 客戶端架構與效能調校',
+      p2: '碩士期間深耕 Unity (C#) 客戶端研發，堅持高內聚、低耦合的架構原則。在 2D 節奏跑酷專案《節奏同奏》中，實作純 C# 有限狀態機徹底消滅動畫過渡衝突，並以泛型物件池循環複用高頻物件，有效降低運行期記憶體配置與 GC 卡頓；於 VR 解謎專案《覺醒協議》中深度客製空間抓取與插槽機制，並自研純數學正弦插值取代高耗能狀態機評估，有效降低 CPU 負載，確保 VR 空間維持高度流暢。',
+      p3_title: '全端通訊視野與團隊協作',
+      p3: '兼具全端架構與軟體工程思維，能運用後端 API 打通前後端通訊，建立完整的 Client-Server 與資料庫整合視野。在開發流程中深度整合版本控制與現代 AI 協作流程，能高效進行模組設計、邏輯排查與快速交付，致力為團隊打造兼具優秀效能與穩定可維護性的互動產品。',
     },
   },
   en: {
     ...aboutData.en,
     intro: 'M.A. graduate in New Media Art, focusing on Unity core development, XR interactions, and real-time graphics.',
-    p1: 'I am Che-Cheng Hsu, bringing an interdisciplinary background in multimedia and interactive engineering. Focusing on Unity (C#) projects with practical experience in game loops, event-driven architecture, and custom shaders, complemented by full-stack database and API integration. Committed to runtime profiling and readable code to deliver responsive interactive systems.',
+    heading: 'Core Competencies & Professional Specialization',
+    p1: 'I am Che-Cheng Hsu, bringing an interdisciplinary background across mechanical drafting, next-gen 3D art pipelines, and software engineering. I specialize in Unity (C#) client architecture design, adhering to high-cohesion, loose-coupling, and modular decoupling principles, proficient in finite state machines, event-driven architectures, and zero-GC object pool optimization. Concurrently equipped with fullstack communication and relational database integration vision, I seamlessly bridge hardware mechanisms, 3D artistic assets, and backend systems to deliver high-performance, maintainable interactive products.',
     bio: {
       ...aboutData.en.bio,
-      p1_title: 'From Game Interactions to CS Fundamentals',
-      p1: 'Driven by enthusiasm for interactive media, I started programming with Unity C# in college. Realizing that game stability depends on solid fundamentals, I audited core CS courses including Data Structures and Algorithms. Serving as an NSTC project research assistant for three years gave me deep hands-on experience in debugging and system building.',
-      p2_title: 'Interactive Systems & Profiler Optimization',
-      p2: 'Managing larger VR/XR interactive systems in graduate school exposed performance bottlenecks and coupling challenges. I decoupled UI, audio, and physics systems using Event-Driven Architecture, Object Pooling, and ScriptableObjects, while profiling runtime bottlenecks with Unity Profiler. Integrating cloud backends further enabled cross-platform data synchronization.',
+      title: 'Personal Biography',
+      p1_title: 'Engineering Foundations & Cross-Discipline Accumulation',
+      p1: 'Equipped with solid engineering logic and digital asset integration expertise. During undergraduate studies, led the development of action shooter Planet of Extinction, winning 1st place in the National Special Topic Competition; served as a full-time research assistant for 3 consecutive years, directing 3 industry-academia interactive systems such as Aircraft Maintenance Mobile Learning Platform, taking charge of UI layout, event listening, and state flow control. Participated in commercial next-gen 3D AAA outsourcing at XPEC Art Center, mastering PBR workflows with strict polygon and Draw Call budget control.',
+      p2_title: 'Unity Client Architecture & Performance Profiling',
+      p2: 'Dedicated to Unity (C#) client engineering during master\'s studies, adhering to high cohesion and low coupling architectural principles. In 2D rhythm runner Ensemble Rhythm, implemented pure C# finite state machines to eliminate animation transition conflicts, utilizing generic object pools to recycle high-frequency objects, effectively minimizing runtime memory allocations and GC lag; in VR puzzle project Awakening Protocol, deeply customized spatial grab and socket mechanics, developing sinusoidal mathematical interpolation to replace heavy state evaluations, cutting CPU overhead and ensuring smooth VR experiences.',
+      p3_title: 'Full-Stack Communication Vision & Team Collaboration',
+      p3: 'Combining fullstack architecture with software engineering rigor, proficient in connecting frontend-backend communications via RESTful APIs, establishing comprehensive Client-Server and database integration perspectives. Deeply integrating modern version control and AI-assisted workflows into the development lifecycle, facilitating efficient module design, systematic debugging, and agile delivery to build high-performance, maintainable interactive products.',
     },
   },
 };

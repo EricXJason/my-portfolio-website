@@ -27,7 +27,6 @@ import {
   ChevronDown,
   ChevronUp,
   Cpu,
-  LayoutDashboard,
   Code2,
 } from 'lucide-react';
 import { TechIcon } from './icons/TechIcon';
@@ -409,10 +408,10 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
    */
   const renderProjectActionButtons = (project: ProjectItem, isCompact = false) => {
     const orderList = project.buttonOrder && project.buttonOrder.length > 0
-      ? project.buttonOrder
-      : ['video', 'live', 'admin', 'github'];
+      ? project.buttonOrder.filter((k) => k !== 'admin')
+      : ['video', 'live', 'github'];
 
-    type ButtonKey = 'video' | 'live' | 'admin' | 'github';
+    type ButtonKey = 'video' | 'live' | 'github';
     const availableKeys: ButtonKey[] = [];
 
     for (const rawKey of orderList) {
@@ -421,19 +420,16 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
         if (!availableKeys.includes('video')) availableKeys.push('video');
       } else if (key === 'live' && (project.websiteUrl || project.liveUrl)) {
         if (!availableKeys.includes('live')) availableKeys.push('live');
-      } else if (key === 'admin' && project.adminUrl) {
-        if (!availableKeys.includes('admin')) availableKeys.push('admin');
       } else if (key === 'github' && project.githubUrl) {
         if (!availableKeys.includes('github')) availableKeys.push('github');
       }
     }
 
-    const allKeys: ButtonKey[] = ['video', 'live', 'admin', 'github'];
+    const allKeys: ButtonKey[] = ['video', 'live', 'github'];
     for (const key of allKeys) {
       if (!availableKeys.includes(key)) {
         if (key === 'video' && (project.ytId || project.videoUrl)) availableKeys.push('video');
         else if (key === 'live' && (project.websiteUrl || project.liveUrl)) availableKeys.push('live');
-        else if (key === 'admin' && project.adminUrl) availableKeys.push('admin');
         else if (key === 'github' && project.githubUrl) availableKeys.push('github');
       }
     }
@@ -492,27 +488,7 @@ export const Projects: React.FC<ProjectsProps> = ({ onOpenYoutube: _onOpenYoutub
             }}
           >
             <Globe size={isCompact ? 13 : 14} className="shrink-0" />
-            <span className="whitespace-nowrap">{lang === 'zh' ? '前往前臺' : 'LIVE DEMO'}</span>
-          </a>
-        );
-      }
-
-      if (key === 'admin') {
-        return (
-          <a
-            key="btn-admin"
-            href={project.adminUrl}
-            target="_blank"
-            rel="noreferrer"
-            className={baseClass}
-            style={{
-              backgroundColor: isLight ? '#f3e8ff' : 'rgba(168, 85, 247, 0.20)',
-              borderColor: isLight ? '#a855f7' : '#c084fc',
-              color: isLight ? '#6b21a8' : '#e9d5ff',
-            }}
-          >
-            <LayoutDashboard size={isCompact ? 13 : 14} className="shrink-0" />
-            <span className="whitespace-nowrap">{lang === 'zh' ? '前往後臺' : 'ADMIN CMS'}</span>
+            <span className="whitespace-nowrap">{lang === 'zh' ? '前往網站' : 'VISIT WEBSITE'}</span>
           </a>
         );
       }

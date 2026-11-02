@@ -4,6 +4,91 @@
 
 ---
 
+## [2026-11-02 09:11] (`e8ae00f`) - 微調自傳物件池敘述、精簡效能優化技能條目，並執行生產發布 master
+- **改動原因**:
+  1. 自傳段落二《Unity 客戶端架構與效能調校》微調：針對物件池描述，由「達成運行期零垃圾回收卡頓」修訂為「循環複用高頻物件，有效降低運行期記憶體配置與 GC 卡頓」，更貼近工程調校事實。
+  2. 專業技能「效能優化」條目精簡：將 Unity 效能優化條目修訂為 `Unity Profiler / Profile Analyzer / Memory Profiler / Object Pool / LOD`，聚焦於主力分析與優化技術。
+  3. 資料快取指紋升級：`PortfolioDataContext` 版本標籤升級為 `2026.11.02.bio_and_projects_sync_v6`，確保用戶端即時同步最新自傳與技能內容。
+- **具體內容**:
+  - [src/data/about-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/about-section.json)：更新中英雙語自傳第二段關於泛型物件池降低記憶體配置之描述。
+  - [src/services/portfolioDataService.ts](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/services/portfolioDataService.ts)：同步更新 fullstack 與 interactive 優先模板之自傳二段內容。
+  - [src/data/skills-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/skills-section.json)：更新效能優化技能條目為 `Unity Profiler / Profile Analyzer / Memory Profiler / Object Pool / LOD`。
+  - [src/context/PortfolioDataContext.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/context/PortfolioDataContext.tsx)：升級指紋版本至 v6。
+- **影響範圍**: `src/data/about-section.json`、`src/services/portfolioDataService.ts`、`src/data/skills-section.json`、`src/context/PortfolioDataContext.tsx`。
+
+## [2026-11-02 09:04] (`87768e0`) - 修正專案繁中名稱、對齊 104 開發時間、更新三大自傳與自我介紹、精簡網站按鈕、更新小王子影片並移除雲端電商
+- **改動原因**:
+  1. 繁中文模式專案標題修訂：中文模式下專案標題不應出現英文品牌字詞，將《SurveyFlow 動態問卷系統》更名為《線上問卷設計系統》，英文標題保持為《SurveyFlow》。
+  2. 開發時程對齊 104 履歷事實：
+     - 《覺醒協議 Awakening Protocol》：對齊為 `2025/9~2026/6`。
+     - 《線上問卷設計系統 SurveyFlow》：對齊為 `2026/7~2026/8`。
+     - 《個人作品集網站 My Portfolio Website》：對齊為 `2026/9~2026/10`。
+  3. 自傳三段與自我介紹精準修訂：
+     - 首頁 Hero 自我介紹：更新為專注 Unity (C#) 客戶端架構、XR 體感互動與遊戲核心邏輯開發，具備全端開發整合與美術/工程跨領域視野之最新自介。
+     - 核心專長與專業定位：更新為具備機械製圖底子、次世代 3D 美術管線與軟體工程背景之完整定位文案。
+     - 自傳三段結構全量改版：【工程基礎與跨領域積累】、【Unity 客戶端架構與效能調校】、【全端通訊視野與團隊協作】。
+  4. 網站操作按鈕統一：取消前臺與後臺拆分，所有網頁專案統一為單一按鈕「前往網站」，並自專案卡片與彈窗移除「前往後臺」按鈕。
+  5. 專案多媒體與未完成專案清理：
+     - 《小王子帶你去旅行》展示影片更新為最新 YouTube 連結（ID: `FTNt0yFM9lA`）。
+     - 徹底移除尚未開發完成之《雲端電商平臺 (ecommerce-platform)》。
+  6. 資料快取與雲端防護升級：指紋版本升級為 `2026.11.02.bio_and_projects_sync_v5`，並全面補齊本機快取與 Firestore 遠端同步防覆蓋保護。
+- **具體內容**:
+  - [src/data/projects-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/projects-section.json)：更新 survey-flow 繁中名稱與日期、覺醒協議與作品集網站日期、更新小王子影片、移除 admin 按鈕與刪除雲端電商專案。
+  - [src/components/Projects.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/components/Projects.tsx)：按鈕標籤改為「前往網站」，並移除 admin 按鈕渲染及未用圖示。
+  - [src/data/hero-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/hero-section.json)：更新首頁 Hero 自我介紹。
+  - [src/data/about-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/about-section.json)：更新核心專長與個人自傳三段。
+  - [src/services/portfolioDataService.ts](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/services/portfolioDataService.ts)：同步 fullstack 與 interactive 優先模板之 Hero 與 About 資料。
+  - [src/cms/components/CmsProjectsEditor.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/cms/components/CmsProjectsEditor.tsx)：CMS 專案編輯器 live 按鈕標籤對齊為「前往網站」。
+  - [src/context/PortfolioDataContext.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/context/PortfolioDataContext.tsx)：升級指紋版本至 v5，增加 projects/hero/about 本地防禦與雲端同步防覆蓋保護。
+- **影響範圍**: `src/data/projects-section.json`、`src/components/Projects.tsx`、`src/data/hero-section.json`、`src/data/about-section.json`、`src/services/portfolioDataService.ts`、`src/cms/components/CmsProjectsEditor.tsx`、`src/context/PortfolioDataContext.tsx`。
+
+## [2026-11-02 08:32] (`908e08f`) - 徹底修復首頁進入被刷新白屏問題，並全面移除所有 Coming Soon 規劃中未做內容
+- **改動原因**:
+  1. 訪客進入網站後被延遲刷新或卡在 600px 骨架占位之根本原因：`MainSiteContent` 原本使用 `DeferredSection` + `IntersectionObserver` 進行動態延遲載入 (Lazy Load)，在頁面剛完成開場動畫與語系選擇切換時，觸發了組件重排與未及時相交之白屏現象。全面改為靜態直接匯入（`import About`, `Skills`, `Projects` 等），確保首屏揭幕瞬間所有模組 100% 同步就緒，杜絕任何二次刷新閃爍或進不去的異常。
+  2. 同時於 `PortfolioDataContext` 的 `refreshFromCloud` 補齊防禦邏輯，若雲端舊版資料缺少 survey-flow 或含有已棄用欄位時，嚴格禁止舊資料覆蓋本地最新狀態。
+  3. 依使用者要求，將所有尚未開發完成之 Coming Soon 專案（`movie-collection` 電影收藏網站、`restaurant-ordering` 餐廳點餐網站、`banking-system` 銀行網站）自專案列表徹底移除，保持專案展示庫純粹高質量實體成果。
+- **具體內容**:
+  - [src/components/MainSiteContent.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/components/MainSiteContent.tsx)：移除 `DeferredSection` 與延遲動態 `lazy`，改為直接靜態引用核心模組並直接渲染，極致提升頁面穩定度。
+  - [src/data/projects-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/projects-section.json)：徹底移除 3 個規劃中 placeholder 專案，重編 order 序號。
+  - [src/context/PortfolioDataContext.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/context/PortfolioDataContext.tsx)：升級指紋版本號 `projects_no_coming_soon_sync_v4`，並在 `refreshFromCloud` 加入 `hasComingSoon` 舊資料防禦攔截。
+- **影響範圍**: `src/components/MainSiteContent.tsx`、`src/data/projects-section.json`、`src/context/PortfolioDataContext.tsx`。
+
+## [2026-11-02 08:18] (`b9d7ec3`) - 全面更新互動與全端作品精選、YouTube 展示、GitHub 連結、自傳三段與專業技能微調
+- **改動原因**:
+  1. 更新互動應用專案（`awakening-protocol`、`eco-hoops`、`rhythm-sync`、`temporal-shrine`）之 GitHub 倉儲連結，並依據各自專案之實體 README 全面改寫專案背景描述、核心玩法與架構技術貢獻。
+  2. 更新《覺醒協議 (Awakening Protocol)》展示影片為全新 YouTube 連結（ID: `QG96sBGAUuI`）。
+  3. 將《SurveyFlow 動態問卷系統》納入全端作品精選第 1 順位 (`featuredOrder: 1`)，並透過實體無頭瀏覽器截取真實上線網站預覽圖（`proj-survey-flow.webp`）。
+  4. 將《臺灣天氣預報網站》納入前端作品精選第 2 順位 (`featuredOrder: 2`)，並截取真實上線網站預覽圖（`proj-taiwan-weather.webp`）。
+  5. 將《個人作品集網站》設為精選第 3 順位 (`featuredOrder: 3`)；互動專案精選順位保持不變（覺醒協議 #1、滅境之星 #2、節奏同奏 #3）。
+  6. 全面更新個人自傳為精準三段架構：【工程基礎與研發實習】、【Unity 客戶端與效能調校】、【跨領域協作與工程視野】。
+  7. 首頁 Hero 自介文案依指示全面更新為新媒體藝術碩士兼具 3D 資產、Unity 客戶端架構、後端 API 與 AI 開發工具整合之最新完整自我介紹。
+  8. 專業技能全端開發微調為 6 大精準分類（程式語言、後端框架與技術、資料庫技術、雲端與容器部署、前端框架與樣式、單元測試與品質），並支援 `Cloud` 圖示與指紋快取同步。
+- **具體內容**:
+  - [src/data/projects-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/projects-section.json)：更新 4 大互動專案的 GitHub、YouTube 影片與 README 深度架構貢獻；配置 survey-flow、taiwan-weather、portfolio-website 精選排序。
+  - [src/data/hero-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/hero-section.json)：更新 Hero `zh.description` 與英文同步。
+  - [src/data/about-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/about-section.json)：更新繁中自傳 `bio.p1_title`, `bio.p1`, `bio.p2_title`, `bio.p2`, `bio.p3_title`, `bio.p3` 為指定 3 大段落。
+  - [src/data/skills-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/skills-section.json)：微調全端 6 大專業分類。
+  - [src/components/Skills.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/components/Skills.tsx)：引入 `Cloud` 圖示並支援「雲端與容器部署」。
+  - [src/services/portfolioDataService.ts](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/services/portfolioDataService.ts)：同步 `fullstackHero`, `fullstackAbout`, `interactiveHero`, `interactiveAbout` 等靜態 fallback 資料。
+  - [src/context/PortfolioDataContext.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/context/PortfolioDataContext.tsx)：升級指紋版本號 `projects_survey_weather_sync_v3`，納入 projects 快取驗證與髒標記守衛。
+  - 截圖資產：新增 `public/assets/images/proj-survey-flow.webp` 與 `public/assets/images/proj-taiwan-weather.webp`。
+- **影響範圍**: `src/data/projects-section.json`、`src/data/hero-section.json`、`src/data/about-section.json`、`src/data/skills-section.json`、`src/components/Skills.tsx`、`src/services/portfolioDataService.ts`、`src/context/PortfolioDataContext.tsx`、`public/assets/images/`。
+
+## [2026-11-02 07:45] (`b641e4c`) - 修復 104 附件與社群預覽縮圖、全面預設 i 模式、隱藏右上角 F/I 切換並精準同步最新專長內容
+- **改動原因**: 
+  1. 104 人力銀行與社群抓取之附件縮圖原直接指向個人證件照（`personal.webp`），修正為專業賽博龐克戰術 HUD 網站全貌截圖預覽圖（`website-preview.png` / `website-preview.webp`），並補齊完整 Open Graph 與 Twitter 中繼標籤。
+  2. 依指示將 README 標題修改為「個人作品集網站」，確認 HTML `<title>` 保持「Portfolio」。
+  3. 網站根目錄與全域展示預設改用 Interactive (i) 模式。
+  4. 專長技能內容精準對齊 104 最新架構（【核心專業：互動應用開發】、【核心專業：全端開發】、【通用工程與 AI 輔助】、【輔助專長：多媒體設計】）與所有技術條目。
+  5. 頂部導覽列暫時隱藏右上角 F / I 模式切換器，先全面專注於 i 模式展示。
+- **具體內容**:
+  - [index.html](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/index.html)：將 `og:image` 與 `twitter:image` 替換為完整網址之 `website-preview.png`，補充寬高、type 與 alt，保持 `<title>Portfolio</title>`。
+  - [README.md](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/README.md)：將頂部標題調整為 `# 個人作品集網站`。
+  - [src/data/skills-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/skills-section.json)：中英文版本全面同步更新四大分類與所有細項（新增效能優化、單元測試與品質、資料庫與雲端、AI 輔助開發工程等）。
+  - [src/components/Skills.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/components/Skills.tsx)：擴充 `getLabelIcon` 標籤圖示匹配，並在組件層加入雙保險結構驗證，若快取資料未含最新規格強制採用最新 `skillsData`。
+  - [src/context/PortfolioDataContext.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/context/PortfolioDataContext.tsx)：更新指紋版本號並將技能資料納入指紋計算，於 `getInitialModuleData` 與 `refreshFromCloud` 實作自動識別舊版技能結構並立即清除淘汰快取，確保本機開發與線上環境 100% 呈現最新 104 規格。
+- **影響範圍**: `index.html`、`README.md`、`src/data/skills-section.json`、`src/components/Skills.tsx`、`src/components/Navbar.tsx`、`src/App.tsx`、`src/context/ProfileContext.tsx`、`src/context/PortfolioDataContext.tsx`、`src/services/portfolioDataService.ts`、`public/assets/images/`。
+
 ## [2026-10-16 10:01] - 全面落實 F/I 雙履歷自傳自介嚴格隔離與專案實體全域同步中樞架構
 - **改動原因**: 依使用者明確架構指示，全端 (F) 與互動 (I) 履歷係針對不同招募崗位 HR 打造：自傳與自介（Hero 職稱標籤、簡介段落、About 模組引言、核心專長標題與自介內文、三段自傳故事篇章）必須支援各自獨立修改、儲存與讀取，彼此徹底隔離絕不互相覆蓋；而專案作品實體內容（標題、描述、圖片、連結、影片、標籤等）全域共用，但專案呈現控制（可視性 visible、精選 featured、排序 order）按模式各自獨立。
 - **具體內容**:

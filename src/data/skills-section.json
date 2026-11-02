@@ -1,40 +1,40 @@
 {
   "zh": [
     {
-      "category": "全端開發",
-      "catTier": "primary",
-      "catType": "fullstack",
-      "items": [
-        { "label": "程式語言", "rowType": "tech", "content": "Java / Node.js / TypeScript / JavaScript / HTML / CSS" },
-        { "label": "前端框架與樣式", "rowType": "tech", "content": "React / Angular / Tailwind CSS / SCSS / Bootstrap" },
-        { "label": "後端框架與技術", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / Hibernate / Express" },
-        { "label": "資料庫與服務", "rowType": "tech", "content": "MySQL / PostgreSQL / Firebase Firestore (BaaS)" },
-        { "label": "雲端與邊緣部署", "rowType": "tech", "content": "Cloudflare / Linux Server (Ubuntu) / AWS / GCP" },
-        { "label": "開發與測試工具", "rowType": "tech", "content": "Docker / Vite / Swagger / JUnit" }
-      ]
-    },
-    {
       "category": "互動應用開發",
       "catTier": "primary",
       "catType": "game",
       "items": [
         { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
-        { "label": "核心技術", "rowType": "text", "content": "URP / Shader Graph / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
-        { "label": "性能優化", "rowType": "tech", "content": "Unity Profiler / Addressables" },
-        { "label": "動畫與相機", "rowType": "tech", "content": "Timeline / Cinemachine / DOTween Pro" },
-        { "label": "XR 實境開發", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
-        { "label": "多人連線框架", "rowType": "tech", "content": "Netcode / Photon Pun" }
+        { "label": "核心技術", "rowType": "tech", "content": "ScriptableObject / Save System (JSON, PlayerPrefs) / Input System / UniTask (Async) / UGUI / TextMeshPro / URP / Post-Processing" },
+        { "label": "效能優化", "rowType": "tech", "content": "Unity Profiler / Profile Analyzer / Memory Profiler / Object Pool / LOD" },
+        { "label": "XR 實境開發", "rowType": "tech", "content": "XR Interaction Toolkit (XRI) / Meta Quest SDK / Vuforia SDK" },
+        { "label": "多人連線開發", "rowType": "tech", "content": "Photon PUN" },
+        { "label": "動畫與相機", "rowType": "tech", "content": "Cinemachine / DOTween / Animation / Animator / Timeline" }
       ]
     },
     {
-      "category": "通用軟體工程",
+      "category": "全端開發",
+      "catTier": "primary",
+      "catType": "fullstack",
+      "items": [
+        { "label": "程式語言", "rowType": "tech", "content": "Java / TypeScript / JavaScript / HTML / CSS" },
+        { "label": "後端框架與技術", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / Hibernate / MyBatis / Spring Security (JWT) / Redis" },
+        { "label": "資料庫技術", "rowType": "tech", "content": "MySQL / TiDB Cloud / Firebase" },
+        { "label": "雲端與容器部署", "rowType": "tech", "content": "Docker / GCP / Cloudflare Pages / Render" },
+        { "label": "前端框架與樣式", "rowType": "tech", "content": "Angular / React / Tailwind CSS / SCSS" },
+        { "label": "單元測試與品質", "rowType": "tech", "content": "JUnit / Mockito" }
+      ]
+    },
+    {
+      "category": "通用工程與 AI 輔助",
       "catTier": "common",
       "catType": "common",
       "items": [
-        { "label": "軟體架構與設計模式", "rowType": "tech", "content": "SOLID Principles / Clean Code / Observer Pattern / Event-driven Architecture / Object Pool / Singleton" },
-        { "label": "版本控制與維運工具", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Sourcetree" },
-        { "label": "系統分析與架構圖表", "rowType": "tech", "content": "Mermaid / draw.io / Notion / Markdown / Office Suite" },
-        { "label": "AI 輔助開發工程", "rowType": "tech", "content": "AGENTS.md / MCP / Skills / Claude Code / Cursor / Antigravity" }
+        { "label": "軟體架構與設計模式", "rowType": "tech", "content": "SOLID / Clean Code / Event-Driven Architecture / FSM / Object Pool / Observer / Singleton" },
+        { "label": "版本控制與維運工具", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Sourcetree / Docker / Vite / Swagger" },
+        { "label": "系統分析與架構圖表", "rowType": "tech", "content": "Mermaid / draw.io / Markdown / Notion" },
+        { "label": "AI 輔助開發工程", "rowType": "tech", "content": "Cursor / Claude Code / Codex / MCP / AGENTS.md / Skills" }
       ]
     },
     {
@@ -42,47 +42,47 @@
       "catTier": "secondary",
       "catType": "media",
       "items": [
-        { "label": "3D 建模與材質", "rowType": "tech", "content": "Blender / Maya / 3ds Max / ZBrush / Substance Painter / RizomUV / Marmoset Toolbag / AutoCAD" },
-        { "label": "視覺設計與影音後製", "rowType": "tech", "content": "Canva / Figma / Photoshop / Illustrator / Premiere / DaVinci Resolve" }
+        { "label": "3D 建模與材質", "rowType": "tech", "content": "Blender / Maya / 3ds Max / ZBrush / Substance Painter / Marmoset Toolbag / RizomUV / AutoCAD" },
+        { "label": "視覺設計與影音後製", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator / Premiere / DaVinci Resolve" }
       ]
     }
   ],
   "en": [
-    {
-      "category": "Fullstack Web Dev",
-      "catTier": "primary",
-      "catType": "fullstack",
-      "items": [
-        { "label": "Programming Languages", "rowType": "tech", "content": "Java / Node.js / TypeScript / JavaScript / HTML / CSS" },
-        { "label": "Frontend Frameworks & Styling", "rowType": "tech", "content": "React / Angular / Tailwind CSS / SCSS / Bootstrap" },
-        { "label": "Backend Frameworks & Tech", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / Hibernate / Express" },
-        { "label": "Databases & Services", "rowType": "tech", "content": "MySQL / PostgreSQL / Firebase Firestore (BaaS)" },
-        { "label": "Cloud & Edge Deployment", "rowType": "tech", "content": "Cloudflare / Linux Server (Ubuntu) / AWS / GCP" },
-        { "label": "Dev & Testing Tools", "rowType": "tech", "content": "Docker / Vite / Swagger / JUnit" }
-      ]
-    },
     {
       "category": "Interactive App Dev",
       "catTier": "primary",
       "catType": "game",
       "items": [
         { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
-        { "label": "Core Technologies", "rowType": "text", "content": "URP / Shader Graph / ScriptableObject / Editor Scripting (Inspector, EditorWindow) / Save System (PlayerPrefs, JSON) / AI Navigation" },
-        { "label": "Performance Optimization", "rowType": "tech", "content": "Unity Profiler / Addressables" },
-        { "label": "Animation & Camera", "rowType": "tech", "content": "Timeline / Cinemachine / DOTween Pro" },
-        { "label": "XR Development", "rowType": "tech", "content": "Vuforia / Meta SDK / XR Interaction Toolkit" },
-        { "label": "Multiplayer Frameworks", "rowType": "tech", "content": "Netcode / Photon Pun" }
+        { "label": "Core Technologies", "rowType": "tech", "content": "ScriptableObject / Save System (JSON, PlayerPrefs) / Input System / UniTask (Async) / UGUI / TextMeshPro / URP / Post-Processing" },
+        { "label": "Performance Optimization", "rowType": "tech", "content": "Unity Profiler / Profile Analyzer / Memory Profiler / Object Pool / LOD" },
+        { "label": "XR Development", "rowType": "tech", "content": "XR Interaction Toolkit (XRI) / Meta Quest SDK / Vuforia SDK" },
+        { "label": "Multiplayer Networking", "rowType": "tech", "content": "Photon PUN" },
+        { "label": "Animation & Camera", "rowType": "tech", "content": "Cinemachine / DOTween / Animation / Animator / Timeline" }
       ]
     },
     {
-      "category": "General Software Engineering",
+      "category": "Fullstack Web Dev",
+      "catTier": "primary",
+      "catType": "fullstack",
+      "items": [
+        { "label": "Programming Languages", "rowType": "tech", "content": "Java / TypeScript / JavaScript / HTML / CSS" },
+        { "label": "Backend Frameworks & Tech", "rowType": "tech", "content": "Spring Boot / Spring MVC / Spring Data JPA / Hibernate / MyBatis / Spring Security (JWT) / Redis" },
+        { "label": "Database Technologies", "rowType": "tech", "content": "MySQL / TiDB Cloud / Firebase" },
+        { "label": "Cloud & Container Deployment", "rowType": "tech", "content": "Docker / GCP / Cloudflare Pages / Render" },
+        { "label": "Frontend Frameworks & Styling", "rowType": "tech", "content": "Angular / React / Tailwind CSS / SCSS" },
+        { "label": "Unit Testing & Quality", "rowType": "tech", "content": "JUnit / Mockito" }
+      ]
+    },
+    {
+      "category": "General Engineering & AI Tools",
       "catTier": "common",
       "catType": "common",
       "items": [
-        { "label": "Software Architecture & Design Patterns", "rowType": "tech", "content": "SOLID Principles / Clean Code / Observer Pattern / Event-driven Architecture / Object Pool / Singleton" },
-        { "label": "Version Control & DevOps", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Sourcetree" },
-        { "label": "System Analysis & Diagrams", "rowType": "tech", "content": "Mermaid / draw.io / Notion / Markdown / Office Suite" },
-        { "label": "AI-Assisted Development Engineering", "rowType": "tech", "content": "AGENTS.md / MCP / Skills / Claude Code / Cursor / Antigravity" }
+        { "label": "Software Architecture & Design Patterns", "rowType": "tech", "content": "SOLID / Clean Code / Event-Driven Architecture / FSM / Object Pool / Observer / Singleton" },
+        { "label": "Version Control & DevOps", "rowType": "tech", "content": "Git / GitHub / GitHub Actions (CI/CD) / Sourcetree / Docker / Vite / Swagger" },
+        { "label": "System Analysis & Diagrams", "rowType": "tech", "content": "Mermaid / draw.io / Markdown / Notion" },
+        { "label": "AI-Assisted Engineering", "rowType": "tech", "content": "Cursor / Claude Code / Codex / MCP / AGENTS.md / Skills" }
       ]
     },
     {
@@ -90,8 +90,8 @@
       "catTier": "secondary",
       "catType": "media",
       "items": [
-        { "label": "3D Modeling & Materials", "rowType": "tech", "content": "Blender / Maya / 3ds Max / ZBrush / Substance Painter / RizomUV / Marmoset Toolbag / AutoCAD" },
-        { "label": "Visual Design & Post-Production", "rowType": "tech", "content": "Canva / Figma / Photoshop / Illustrator / Premiere / DaVinci Resolve" }
+        { "label": "3D Modeling & Materials", "rowType": "tech", "content": "Blender / Maya / 3ds Max / ZBrush / Substance Painter / Marmoset Toolbag / RizomUV / AutoCAD" },
+        { "label": "Visual Design & Post-Production", "rowType": "tech", "content": "Figma / Canva / Photoshop / Illustrator / Premiere / DaVinci Resolve" }
       ]
     }
   ]

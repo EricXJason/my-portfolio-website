@@ -152,14 +152,14 @@ export function App() {
       <LangProvider>
         <ThemeProvider>
           <Routes>
-            {/* 1. 根目錄預設指向 Fullstack 模板 (維持網址為 /，不重定向) */}
-            <Route path="/" element={<ProfileSiteRoute profile="fullstack" />} />
+            {/* 1. 根目錄預設指向 Interactive (i) 模板 (維持網址為 /，不重定向) */}
+            <Route path="/" element={<ProfileSiteRoute profile="interactive" />} />
 
             {/* 2. /f 與 /f/* 明確指向 Fullstack 模板 */}
             <Route path="/f" element={<ProfileSiteRoute profile="fullstack" />} />
             <Route path="/f/*" element={<ProfileSiteRoute profile="fullstack" />} />
 
-            {/* 3. /i 與 /i/* 明確指向 Interactive App Dev 模板 */}
+            {/* 3. /i 與 /i/* 明確指向 Interactive 模板 */}
             <Route path="/i" element={<ProfileSiteRoute profile="interactive" />} />
             <Route path="/i/*" element={<ProfileSiteRoute profile="interactive" />} />
 

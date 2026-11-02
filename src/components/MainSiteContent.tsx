@@ -10,7 +10,7 @@
  * ============================================================================
  */
 
-import React, { useState, lazy, Suspense, useEffect, useRef } from 'react';
+import React, { useState, lazy, Suspense } from 'react';
 import { useTheme } from '../context/ThemeContext';
 import { Navbar } from './Navbar';
 import { Hero } from './Hero';
@@ -27,13 +27,13 @@ import { getFallbacksByProfile } from '../services/portfolioDataService';
 // 背景代碼流裝飾：採動態延遲載入，不佔用首屏關鍵執行路徑
 const FullStackCodeStreamBackground = lazy(() => import('./FullStackCodeStreamBackground').then(m => ({ default: m.FullStackCodeStreamBackground })));
 
-// 首屏以下區塊：全面採動態延遲載入 (Lazy Load) 以極限縮減首屏 JS 解析與 Style & Layout 重排時間
-const About          = lazy(() => import('./About'));
-const Skills         = lazy(() => import('./Skills'));
-const Projects       = lazy(() => import('./Projects'));
-const Certifications = lazy(() => import('./Certifications'));
-const Education      = lazy(() => import('./Education'));
-const ArtGallery     = lazy(() => import('./ArtGallery'));
+// 前臺核心模組直接靜態載入，確保開場進入後立即流暢呈現，絕無延遲白屏與骨架閃爍
+import About from './About';
+import Skills from './Skills';
+import Projects from './Projects';
+import Certifications from './Certifications';
+import Education from './Education';
+import ArtGallery from './ArtGallery';
 
 interface MainSiteContentProps {
   siteEntered: boolean;
@@ -49,65 +49,6 @@ interface YtModalState {
   title: string;
 }
 
-interface DeferredSectionProps {
-  id: string;
-  children: React.ReactNode;
-}
-
-const DeferredSection: React.FC<DeferredSectionProps> = ({ id, children }) => {
-  const [shouldLoad, setShouldLoad] = useState(() => {
-    if (typeof window !== 'undefined') {
-      if (window.location.hash === `#${id}` || window.location.hash.includes(id)) return true;
-    }
-    return false;
-  });
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (shouldLoad) return;
-    const el = containerRef.current;
-    if (!el) return;
-
-    if (typeof IntersectionObserver === 'undefined') {
-      setShouldLoad(true);
-      return;
-    }
-
-    const isBot =
-      typeof navigator !== 'undefined' &&
-      (Boolean(navigator.webdriver) ||
-        /Lighthouse|HeadlessChrome|Chrome-Lighthouse|bot|crawl|spider/i.test(navigator.userAgent));
-    if (isBot) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0]?.isIntersecting) {
-          setShouldLoad(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '100px 0px' }
-    );
-
-    observer.observe(el);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [shouldLoad]);
-
-  return (
-    <div ref={containerRef} id={id} className="min-w-0">
-      {shouldLoad ? (
-        <Suspense fallback={null}>{children}</Suspense>
-      ) : (
-        <div style={{ minHeight: '600px' }} aria-hidden="true" />
-      )}
-    </div>
-  );
-};
 
 export const MainSiteContent: React.FC<MainSiteContentProps> = ({
   siteEntered,
@@ -211,41 +152,17 @@ export const MainSiteContent: React.FC<MainSiteContentProps> = ({
       case 'home':
         return <Hero key="home" soundPlaying={soundPlaying} />;
       case 'about':
-        return (
-          <DeferredSection key="about" id="about">
-            <About />
-          </DeferredSection>
-        );
+        return <About key="about" />;
       case 'skills':
-        return (
-          <DeferredSection key="skills" id="skills">
-            <Skills />
-          </DeferredSection>
-        );
+        return <Skills key="skills" />;
       case 'projects':
-        return (
-          <DeferredSection key="projects" id="projects">
-            <Projects onOpenYoutube={handleOpenYoutube} />
-          </DeferredSection>
-        );
+        return <Projects key="projects" onOpenYoutube={handleOpenYoutube} />;
       case 'awards':
-        return (
-          <DeferredSection key="awards" id="awards">
-            <Certifications />
-          </DeferredSection>
-        );
+        return <Certifications key="awards" />;
       case 'experience':
-        return (
-          <DeferredSection key="experience" id="experience">
-            <Education />
-          </DeferredSection>
-        );
+        return <Education key="experience" />;
       case 'gallery':
-        return (
-          <DeferredSection key="gallery" id="gallery">
-            <ArtGallery />
-          </DeferredSection>
-        );
+        return <ArtGallery key="gallery" />;
       default:
         return null;
     }
