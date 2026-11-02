@@ -83,7 +83,7 @@ export const getContentFingerprint = (profile: ProfileType = 'interactive'): str
       skillsData: fallbacks.skills || '',
       projectsSummary: Array.isArray(fallbacks.projects) ? fallbacks.projects.map((p: any) => `${p.id}:${p.featuredOrder}:${p.image}`).join(',') : '',
       profile,
-      buildVer: '2026.11.02.bio_and_projects_sync_v6',
+      buildVer: '2026.11.02.bio_and_projects_sync_v7',
     });
     let hash = 0;
     for (let i = 0; i < raw.length; i++) {

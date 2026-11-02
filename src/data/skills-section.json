@@ -5,10 +5,10 @@
       "catTier": "primary",
       "catType": "game",
       "items": [
-        { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
-        { "label": "核心技術", "rowType": "tech", "content": "ScriptableObject / Save System (JSON, PlayerPrefs) / Input System / UniTask (Async) / UGUI / TextMeshPro / URP / Post-Processing" },
+        { "label": "遊戲引擎", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprint)" },
+        { "label": "核心技術", "rowType": "tech", "content": "ScriptableObject / Save System (JSON, PlayerPrefs) / Input System / UGUI / TextMeshPro / URP / Post-Processing" },
         { "label": "效能優化", "rowType": "tech", "content": "Unity Profiler / Profile Analyzer / Memory Profiler / Object Pool / LOD" },
-        { "label": "XR 實境開發", "rowType": "tech", "content": "XR Interaction Toolkit (XRI) / Meta Quest SDK / Vuforia SDK" },
+        { "label": "XR 實境開發", "rowType": "tech", "content": "XR Interaction Toolkit / Meta Quest SDK / Vuforia SDK" },
         { "label": "多人連線開發", "rowType": "tech", "content": "Photon PUN" },
         { "label": "動畫與相機", "rowType": "tech", "content": "Cinemachine / DOTween / Animation / Animator / Timeline" }
       ]
@@ -53,10 +53,10 @@
       "catTier": "primary",
       "catType": "game",
       "items": [
-        { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprints)" },
-        { "label": "Core Technologies", "rowType": "tech", "content": "ScriptableObject / Save System (JSON, PlayerPrefs) / Input System / UniTask (Async) / UGUI / TextMeshPro / URP / Post-Processing" },
+        { "label": "Game Engines", "rowType": "tech", "content": "Unity (C#) / Unreal Engine (Blueprint)" },
+        { "label": "Core Technologies", "rowType": "tech", "content": "ScriptableObject / Save System (JSON, PlayerPrefs) / Input System / UGUI / TextMeshPro / URP / Post-Processing" },
         { "label": "Performance Optimization", "rowType": "tech", "content": "Unity Profiler / Profile Analyzer / Memory Profiler / Object Pool / LOD" },
-        { "label": "XR Development", "rowType": "tech", "content": "XR Interaction Toolkit (XRI) / Meta Quest SDK / Vuforia SDK" },
+        { "label": "XR Development", "rowType": "tech", "content": "XR Interaction Toolkit / Meta Quest SDK / Vuforia SDK" },
         { "label": "Multiplayer Networking", "rowType": "tech", "content": "Photon PUN" },
         { "label": "Animation & Camera", "rowType": "tech", "content": "Cinemachine / DOTween / Animation / Animator / Timeline" }
       ]

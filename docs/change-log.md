@@ -4,6 +4,27 @@
 
 ---
 
+## [2026-11-02 09:38] (`965408f`) - 更新首頁 Hero 自介、精準對齊互動專長條目、修訂關於我與個人自傳二段
+- **改動原因**:
+  1. 首頁 Hero 自介更新：強調新媒體藝術碩士，專注 Unity (C#) 客戶端架構、XR 互動開發與遊戲核心邏輯實作，具備全端開發整合實力，兼具美術視野與工程思維。
+  2. 互動應用專長精準對齊：
+     - 遊戲引擎：`Unity (C#) / Unreal Engine (Blueprint)`。
+     - 核心技術：`ScriptableObject / Save System (JSON, PlayerPrefs) / Input System / UGUI / TextMeshPro / URP / Post-Processing`。
+     - 效能優化：`Unity Profiler / Profile Analyzer / Memory Profiler / Object Pool / LOD`。
+     - XR 實境開發：`XR Interaction Toolkit / Meta Quest SDK / Vuforia SDK`。
+     - 多人連線開發：`Photon PUN`。
+     - 動畫與相機：`Cinemachine / DOTween / Animation / Animator / Timeline`。
+  3. 「關於我」核心定位更新：強調專注於 Unity (C#) 客戶端架構設計與核心互動邏輯實作，遵循高內聚低耦合，熟練運用狀態機模式、事件驅動架構與物件池記憶體管理，兼具全端通訊與關聯式資料庫整合實力。
+  4. 個人自傳第二段修訂：說明 2D 節奏跑酷專案《節奏同奏》運用純 C# 有限狀態機管理角色動作狀態避免條件衝突，並以泛型物件池循環複用高頻物件降低記憶體配置與卡頓；VR 解謎專案《覺醒協議》擴充空間抓取與插槽吸附機制，並以 DOTween 補間動畫替代 Animator 狀態機處理物件位移與旋轉，降低 CPU 計算開銷。
+  5. 用戶端資料快取指紋升級：`PortfolioDataContext` 版本升級為 `2026.11.02.bio_and_projects_sync_v7`。
+- **具體內容**:
+  - [src/data/hero-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/hero-section.json)：更新 Hero 描述中英雙語。
+  - [src/data/skills-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/skills-section.json)：更新互動應用專長各項技術條目。
+  - [src/data/about-section.json](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/data/about-section.json)：更新關於我段落與個人自傳二段中英雙語。
+  - [src/services/portfolioDataService.ts](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/services/portfolioDataService.ts)：同步 fullstack 與 interactive 優先模板之 Hero 與 About 資料。
+  - [src/context/PortfolioDataContext.tsx](file:///Users/hsuche-cheng/Documents/project/my-portfolio-website/src/context/PortfolioDataContext.tsx)：升級指紋版本至 v7。
+- **影響範圍**: `src/data/hero-section.json`、`src/data/skills-section.json`、`src/data/about-section.json`、`src/services/portfolioDataService.ts`、`src/context/PortfolioDataContext.tsx`。
+
 ## [2026-11-02 09:11] (`e8ae00f`) - 微調自傳物件池敘述、精簡效能優化技能條目，並執行生產發布 master
 - **改動原因**:
   1. 自傳段落二《Unity 客戶端架構與效能調校》微調：針對物件池描述，由「達成運行期零垃圾回收卡頓」修訂為「循環複用高頻物件，有效降低運行期記憶體配置與 GC 卡頓」，更貼近工程調校事實。
